@@ -1,0 +1,9 @@
+auto-reload yes
+
+# unbind keys
+unbind-key j
+unbind-key k
+
+# bind keys - vim style
+bind-key j down
+bind-key k up
