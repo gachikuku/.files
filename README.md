@@ -1,1 +1,1 @@
-# Can I stow this on linux if needed? new set up needed.
+# AsssASssssssASSSssssssa Asashi Linux it is then
