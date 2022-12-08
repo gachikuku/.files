@@ -2,12 +2,12 @@ local Remap = require("gachikuku.keymap")
 local nnoremap = Remap.nnoremap
 local inoremap = Remap.inoremap
 
--- MacOS bad bad bad
+-- MacOS
 --local sumneko_root_path = "/Users/hubas0n/personal/sumneko"
 --local sumneko_binary = sumneko_root_path .. "/bin/lua-language-server"
 
-local sumneko_root_path = "/usr/bin"
-local sumneko_binary = sumneko_root_path .. "/lua-language-server"
+local sumneko_root_path = "/usr/bin/"
+local sumneko_binary = sumneko_root_path .. "lua-language-server"
 
 -- Setup nvim-cmp.
 local cmp = require("cmp")
