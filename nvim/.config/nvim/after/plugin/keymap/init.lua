@@ -30,7 +30,7 @@ nnoremap("<leader>d", "\"_d")
 vnoremap("<leader>d", "\"_d")
 
 -- This is going to get me cancelled
-inoremap("<C-c>", "<Esc>")
+-- inoremap("<C-c>", "<Esc>")
 
 nnoremap("<C-k>", "<cmd>cnext<CR>zz")
 nnoremap("<C-j>", "<cmd>cprev<CR>zz")
