@@ -1,1 +1,1 @@
-# AsssASssssssASSSssssssa Asashi Linux it is then
+# Checking man pages and they teach you 
