@@ -7,6 +7,7 @@ local nmap = Remap.nmap
 
 nnoremap("<leader>pv", ":Ex<CR>")
 nnoremap("<leader>u", ":UndotreeToggle<CR>")
+nnoremap("<leader>dw", "%s/\\s\\+$//e")
 
 vnoremap("J", ":m '>+1<CR>gv=gv")
 vnoremap("K", ":m '<-2<CR>gv=gv")
