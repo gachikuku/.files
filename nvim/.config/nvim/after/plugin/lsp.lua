@@ -120,6 +120,16 @@ require("lspconfig").tsserver.setup(config())
 
 require("lspconfig").cssls.setup(config())
 
+require("lspconfig").astro.setup(config())
+
+
+-- I pray this works...
+
+    require("lspconfig").clangd.setup(config())
+
+-- Hope this works...
+-- require("lspconfig").ccls.setup(config())
+
 require("lspconfig").gopls.setup(config({
 	cmd = { "gopls", "serve" },
 	settings = {
@@ -146,7 +156,7 @@ require("lspconfig").rust_analyzer.setup(config({
     --]]
 }))
 
-require("lspconfig").sumneko_lua.setup(config({
+require("lspconfig").lua_ls.setup(config({
 	cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
 	settings = {
 		Lua = {
