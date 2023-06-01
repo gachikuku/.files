@@ -35,3 +35,7 @@ stow
 chmod
 chown
 make
+as
+ld
+gcc
+clang
