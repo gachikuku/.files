@@ -24,3 +24,11 @@ PS1="%m:%~%(!.#.$) "                 # prompt
 # Aliases
 alias grep="grep --color=always"
 alias vim="$VIM"
+alias ls="ls -F"
+
+# Edit line in vim with Meta-e:
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^[e' edit-command-line
+bindkey -M vicmd '^[[P' vi-delete-char
+bindkey -M vicmd '^[e' edit-command-line
+bindkey -M visual '^[[P' vi-delete
