@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+find . -type f -exec sed -i '' 's/file/file/g' {} +
+# find . -type f -exec cat {} \; | grep --colour='always' 'file'
+
+find . -type f -exec grep {-i 'file' .} \;
