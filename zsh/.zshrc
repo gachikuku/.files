@@ -5,6 +5,8 @@ export PATH="/opt/homebrew/bin:$PATH"
 
 # ChatGBT as of generate that for linux and BSD compatability as luke's version didn't work (27/07/23).
 # export PATH="$PATH:$(find ~/.local/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
+# export PATH="$PATH:$(find ~/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
+export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH
 
 # Variables
 VIM="nvim"
