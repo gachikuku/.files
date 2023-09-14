@@ -19,7 +19,7 @@ export BROWSER="firefox"
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
 
-bindkey -e
+bindkey -e                           # Emacs keys
 
 PS1="%m:%~%(!.#.$) "                 # prompt
 
@@ -37,3 +37,10 @@ bindkey '^[e' edit-command-line
 bindkey -M vicmd '^[[P' vi-delete-char
 bindkey -M vicmd '^[e' edit-command-line
 bindkey -M visual '^[[P' vi-delete
+
+# Basic auto/tab complete:
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+_comp_options+=(globdots)		# Include hidden files.
