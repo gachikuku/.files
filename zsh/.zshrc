@@ -27,11 +27,9 @@ PS1="%m:%~%(!.#.$) "                 # prompt
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 # alias ls="ls -F"
 alias \
-	ls="ls -hNF --color=auto --group-directories-first" \
+	ls="ls -F" \
 	grep="grep --color=auto" \
 	diff="diff --color=auto" \
-	ccat="highlight --out-format=ansi" \
-	ip="ip -color=auto"
 
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
