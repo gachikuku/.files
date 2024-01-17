@@ -24,10 +24,17 @@ vim.opt.termguicolors = true
 
 -- see <C-d>, <C-u> remap 
 -- vim.opt.scrolloff = 8
-vim.opt.signcolumn = "yes"
+
+-- vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 vim.opt.exrc = true
+vim.opt.winheight = 9999
+
+-- clearing up the netrw view
+vim.g.netrw_browse_split = 0
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize = 25
