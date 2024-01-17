@@ -5,7 +5,7 @@ autoload -U colors && colors
 # export PATH="$PATH:$(find ~/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
 # Adds `~/.local/bin` to $PATH
 # export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
-export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/bin:$PATH
+export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:~/go/bin:$PATH
 
 # Variables
 export EDITOR="nvim"
@@ -15,6 +15,7 @@ export DOTFILES="$HOME/.dotfiles"
 export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
 export GIT_EDITOR="nvim"
 export BROWSER="firefox"
+export RUBYOPT="rubygems"
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
@@ -27,7 +28,7 @@ PS1="%m:%~%(!.#.$) "                 # prompt
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 # alias ls="ls -F"
 alias \
-	ls="ls -F" \
+	ls="ls -GF" \
 	grep="grep --color=auto" \
 	diff="diff --color=auto" \
 

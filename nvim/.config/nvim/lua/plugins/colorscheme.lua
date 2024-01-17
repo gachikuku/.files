@@ -4,17 +4,17 @@ return {
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
         require("kanagawa").setup({
-	    transparent = true,
-        colors = {
-            theme = {
-                all = {
-                    ui = {
-                        bg_gutter = "none"
+            transparent = true,
+            colors = {
+                theme = {
+                    all = {
+                        ui = {
+                            bg_gutter = "none"
+                        }
                     }
                 }
-            }
-        },
-	})
+            },
+        })
         -- load the colorscheme here
         vim.cmd("colorscheme kanagawa-lotus")
     end,
