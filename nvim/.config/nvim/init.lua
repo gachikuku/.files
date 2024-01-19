@@ -1,3 +1,5 @@
+-- Is there a plugin or a program that whathes for remap conflicts?
+
 require("config.set")
 require("config.keymap")
 
