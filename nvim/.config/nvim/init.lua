@@ -1,5 +1,5 @@
 require("config.set")
-require("config.remap")
+require("config.keymap")
 
 local augroup = vim.api.nvim_create_augroup
 local gachikukugroup = augroup('gachikuku', {})
