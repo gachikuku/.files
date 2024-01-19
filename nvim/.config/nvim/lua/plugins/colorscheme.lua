@@ -9,7 +9,7 @@ return {
                 theme = {
                     all = {
                         ui = {
-                            bg_gutter = "none"
+                            bg_gutter = "#F4F0E3"
                         }
                     }
                 }
