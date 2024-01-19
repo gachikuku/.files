@@ -1,7 +1,7 @@
 vim.opt.guicursor = ""
 
-vim.opt.nu = true
-vim.opt.relativenumber = true
+-- vim.opt.nu = true
+-- vim.opt.relativenumber = true
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -25,16 +25,31 @@ vim.opt.termguicolors = true
 -- see <C-d>, <C-u> remap 
 -- vim.opt.scrolloff = 8
 
--- vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
-vim.opt.colorcolumn = "80"
+-- This can have security implications
 vim.opt.exrc = true
+
+-- Extra tight for netiquette
+vim.opt.colorcolumn = "73"
 vim.opt.winheight = 9999
 
 -- clearing up the netrw view
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
+
+-- see hidden chars and their colors
+-- Seen IppSec using for hidden chars
+-- vim.o.list = true
+vim.opt.listchars = { 
+	tab = "| ",
+	eol = "¬",
+	trail = "·",
+}
+
+-- greek spelling
+vim.opt.spelllang = "el"
