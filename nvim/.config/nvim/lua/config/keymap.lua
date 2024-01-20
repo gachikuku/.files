@@ -25,8 +25,3 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
-
---- from craftzdog
-vim.keymap.set("n", "te", ":tabedit", opts)
-vim.keymap.set("n", "<tab>", ":tabnext<Return>", opts)
-vim.keymap.set("n", "<s-tab>", ":tabprev<Return>", opts)
