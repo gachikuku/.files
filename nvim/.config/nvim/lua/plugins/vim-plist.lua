@@ -1,3 +1,4 @@
 return {
-    "darfink/vim-plist"
+    "darfink/vim-plist",
+    lazy = true
 }

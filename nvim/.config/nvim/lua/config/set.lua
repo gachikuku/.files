@@ -25,7 +25,6 @@ vim.opt.termguicolors = true
 -- see <C-d>, <C-u> remap 
 -- vim.opt.scrolloff = 8
 
-vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
@@ -53,3 +52,7 @@ vim.opt.listchars = {
 
 -- greek spelling
 vim.opt.spelllang = "el"
+
+-- jcs influence? 
+vim.opt.completeopt = "preview"
+vim.opt.signcolumn = "no"
