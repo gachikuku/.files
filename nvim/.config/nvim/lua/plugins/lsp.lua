@@ -3,6 +3,7 @@ return {
     config = function()
         local lsp = require("lspconfig")
         lsp.gopls.setup({})
+        lsp.templ.setup({})
         lsp.lua_ls.setup({
             settings = {
                 Lua = {
