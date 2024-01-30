@@ -16,6 +16,7 @@ export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
 export GIT_EDITOR="nvim"
 export BROWSER="firefox"
 export RUBYOPT="rubygems"
+export GOPATH="$HOME/go"
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
