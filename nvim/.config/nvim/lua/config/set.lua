@@ -1,7 +1,8 @@
-vim.opt.guicursor = ""
+-- Can't tell if I'm normal or insert and my eyes are generally on top
+-- vim.opt.guicursor = ""
 
--- vim.opt.nu = true
--- vim.opt.relativenumber = true
+vim.opt.nu = true
+vim.opt.relativenumber = true
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -29,11 +30,11 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
--- This can have security implications
+-- This can have security implications, that's why it asks you to trust .exrc
 vim.opt.exrc = true
 
 -- Extra tight for netiquette
-vim.opt.colorcolumn = "73"
+vim.opt.colorcolumn = "80"
 vim.opt.winheight = 9999
 
 -- clearing up the netrw view
@@ -44,7 +45,7 @@ vim.g.netrw_winsize = 25
 -- see hidden chars and their colors
 -- Seen IppSec using for hidden chars
 -- vim.o.list = true
-vim.opt.listchars = { 
+vim.opt.listchars = {
 	tab = "| ",
 	eol = "¬",
 	trail = "·",

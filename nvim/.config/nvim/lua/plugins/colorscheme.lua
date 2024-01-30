@@ -9,16 +9,15 @@ return {
                 theme = {
                     all = {
                         ui = {
-                            bg_gutter = "#F4F0C0"
+                            bg_gutter = "none"
                         }
                     }
                 }
-            },
+            }
         })
         -- load the colorscheme here
         vim.cmd("colorscheme kanagawa-lotus")
     end,
 }
-
 
 -- https://github.com/ThePrimeagen/init.lua/issues/108 
