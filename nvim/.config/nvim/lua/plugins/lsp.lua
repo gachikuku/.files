@@ -4,6 +4,7 @@ return {
         local lsp = require("lspconfig")
         lsp.gopls.setup({})
         lsp.templ.setup({})
+        lsp.rust_analyzer.setup({})
         lsp.lua_ls.setup({
             settings = {
                 Lua = {

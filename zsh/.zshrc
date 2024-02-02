@@ -17,6 +17,7 @@ export GIT_EDITOR="nvim"
 export BROWSER="firefox"
 export RUBYOPT="rubygems"
 export GOPATH="$HOME/go"
+export CARGO_HOME="$HOME/cargo"
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'

@@ -54,6 +54,7 @@ vim.opt.listchars = {
 -- greek spelling
 vim.opt.spelllang = "el"
 
--- jcs influence? 
-vim.opt.completeopt = "preview"
-vim.opt.signcolumn = "no"
+vim.opt.signcolumn = "yes"
+
+-- netiquette
+vim.opt.textwidth = 72
