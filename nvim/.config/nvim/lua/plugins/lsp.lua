@@ -3,6 +3,7 @@ return {
     config = function()
         local lsp = require("lspconfig")
         lsp.gopls.setup({})
+        lsp.clangd.setup({})
         lsp.templ.setup({})
         lsp.rust_analyzer.setup({})
         lsp.lua_ls.setup({
