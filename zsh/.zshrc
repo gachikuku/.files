@@ -18,6 +18,9 @@ export BROWSER="firefox"
 export RUBYOPT="rubygems"
 export GOPATH="$HOME/go"
 export CARGO_HOME="$HOME/cargo"
+export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
+echo 'export PATH="/opt/homebrew/opt/curl/bin:$PATH"'
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
