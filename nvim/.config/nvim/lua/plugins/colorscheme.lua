@@ -16,7 +16,7 @@ return {
             },
         })
         -- load the colorscheme here
-        vim.cmd("colorscheme kanagawa-lotus")
+        vim.cmd("colorscheme kanagawa-wave")
     end,
 }
 
