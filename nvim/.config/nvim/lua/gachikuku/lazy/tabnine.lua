@@ -1,7 +1,9 @@
 return {
-    'codota/tabnine-nvim', build = "./dl_binaries.sh" ,
+    'codota/tabnine-nvim',
+    build = "./dl_binaries.sh" ,
     config = function()
         require("tabnine").setup({
+            build = "./dl_binaries.sh",
             disable_auto_comment=true,
             accept_keymap="<Tab>",
             dismiss_keymap = "<C-]>",
