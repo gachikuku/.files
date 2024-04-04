@@ -33,7 +33,7 @@ PS1="%m:%~%(!.#.$) "                 # prompt
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 # alias ls="ls -F"
 alias \
-	ls="ls -GF" \
+	ls="ls -lGF" \
 	grep="grep --color=auto" \
 	diff="diff --color=auto" \
 
