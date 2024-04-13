@@ -44,3 +44,14 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
 
+local function toggle_line_numbers()
+    local current_nu = vim.o.nu
+    local current_relativenumber = vim.o.relativenumber
+
+    -- Toggle both options
+    vim.o.nu = not current_nu
+    vim.o.relativenumber = not current_relativenumber
+end
+
+vim.keymap.set('n', '<leader>nn', toggle_line_numbers, { noremap = true, silent = true })
+
