@@ -43,25 +43,3 @@ vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
-
--- Function to toggle line numbers and sign column
-local function toggle_line_numbers_and_sign_column()
-    local current_nu = vim.o.nu
-    local current_relativenumber = vim.o.relativenumber
-    local current_signcolumn = vim.o.signcolumn
-
-    -- Toggle line number options
-    vim.o.nu = not current_nu
-    vim.o.relativenumber = not current_relativenumber
-
-    -- Toggle sign column ('yes' displays the sign column, 'no' hides it)
-    if current_signcolumn == 'yes' then
-        vim.o.signcolumn = 'no'
-    else
-        vim.o.signcolumn = 'yes'
-    end
-end
-
--- Mapping <leader>nn to toggle line numbers and sign column
-vim.keymap.set('n', '<leader>nn', toggle_line_numbers_and_sign_column, { noremap = true, silent = true })
-
