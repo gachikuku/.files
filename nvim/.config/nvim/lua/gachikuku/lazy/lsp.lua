@@ -54,6 +54,8 @@ return {
             }
         })
 
+        -- Start of LuaSnip snippet configuration
+
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
         cmp.setup({
