@@ -54,3 +54,5 @@ _comp_options+=(globdots)		# Include hidden files.
 # Created by `pipx` on 2024-05-30 12:37:30
 export PATH="$PATH:/Users/gachikuku/.local/bin"
 if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
+
+export TERM=xterm-kitty
