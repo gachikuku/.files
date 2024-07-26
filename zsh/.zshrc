@@ -55,4 +55,4 @@ _comp_options+=(globdots)		# Include hidden files.
 export PATH="$PATH:/Users/gachikuku/.local/bin"
 if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
 
-export TERM=xterm-kitty
+export TERM=xterm-256color
