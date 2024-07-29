@@ -21,6 +21,7 @@ export CARGO_HOME="$HOME/cargo"
 export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+export GPG_TTY="$(tty)"
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
@@ -54,5 +55,3 @@ _comp_options+=(globdots)		# Include hidden files.
 # Created by `pipx` on 2024-05-30 12:37:30
 export PATH="$PATH:/Users/gachikuku/.local/bin"
 if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
-
-export TERM=xterm-256color

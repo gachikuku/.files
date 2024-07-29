@@ -1,0 +1,9 @@
+#!/bin/bash
+                                                                     
+domains=$(echo "$1" | hakrawler | sort -u)
+                                                                     
+for domain in $domains
+do
+    echo "$domain"
+    curl -s "$domain" | sed -n '/<script>/,/<\/script>/p'
+done
