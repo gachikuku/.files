@@ -22,7 +22,7 @@ export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 export GPG_TTY="$(tty)"
-export TERM="screen-256color"
+# export TERM="screen-256color"
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
