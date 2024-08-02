@@ -23,6 +23,11 @@ export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 export GPG_TTY="$(tty)"
 
+export GOPROXY=direct
+export GOSUMDB=off
+export GOTELEMETRY=off
+export GOTOOLCHAIN=local
+
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
 
