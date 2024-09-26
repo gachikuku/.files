@@ -40,7 +40,7 @@ return {
             ls.add_snippets("markdown", {
                 s("lab", {
                     t({"<details>", "<summary>"}),
-                    t({"", "", "### Lab: "}),
+                    t({"", "", "### Practitioner [lab]():<br>"}),
                     i(0),
                     t({"", "", "</summary>", "", "******", "", "</details>"})
                 })
