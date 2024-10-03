@@ -47,6 +47,18 @@ autocmd('LspAttach', {
     end
 })
 
+--- Need this for mitmproxy
+vim.api.nvim_create_augroup("MitmproxySettings", { clear = true })
+vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
+  pattern = "mitmproxy*",
+  group = "MitmproxySettings",
+  callback = function()
+	--- I DON'T WANT NEW LINE WHEN I EDIT A REQUEST
+    vim.opt.eol = false
+    vim.opt.list = true
+  end
+})
+
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25

@@ -31,3 +31,9 @@ vim.api.nvim_set_hl(0, "CmpItemKindCody", { fg = "Red" })
 
 -- ddvault 
 vim.opt.listchars = { tab = '▸ ', eol = '¬', space = '.' }
+-- :set list no :set listchar
+
+
+-- need custom vimrcs
+vim.o.exrc = true
+vim.o.secure = true
