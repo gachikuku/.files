@@ -47,5 +47,6 @@ end)
 vim.keymap.set('n', '<leader>pp', ':set paste<CR>"+p:set nopaste<CR>', { silent = true })
 
 -- URL encode
--- vim.api.nvim_set_keymap('v', '<leader>ue', [[:'<,'>!jq -sRr @uri<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<leader>ue', [[:'<,'>!jq -sRr '. | rtrimstr("\n") | @uri'<CR>]], { noremap = true, silent = true })
+-- URL decode
+vim.api.nvim_set_keymap('v', '<leader>ud', [[:'<,'>!python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()), end='');"<CR>]], { noremap = true, silent = true })
