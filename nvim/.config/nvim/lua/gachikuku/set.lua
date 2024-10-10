@@ -37,3 +37,6 @@ vim.opt.listchars = { tab = '▸ ', eol = '¬', space = '.' }
 -- need custom vimrcs
 vim.o.exrc = true
 vim.o.secure = true
+
+-- case insesitive search?
+vim.opt.ignorecase = true
