@@ -27,6 +27,7 @@
 
       system.defaults = {
         dock.autohide = true;
+	NSGlobalDomain.AppleICUForce24HourTime = true;
       };
 
       system.keyboard = {
