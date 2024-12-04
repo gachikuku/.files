@@ -12,16 +12,17 @@
     configuration = { pkgs, ... }: {
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
-      environment.systemPackages =
+      environment.systemPackages = with pkgs;
         [ 
-	  pkgs.vim
-	  pkgs.gnupg
-	  pkgs.coreutils-full
-	  pkgs.gopass
-	  pkgs.tailscale
-	  pkgs.aerc
-	  pkgs.senpai
-	  pkgs.stow
+	  vim
+	  gnupg
+	  coreutils-full
+	  gopass
+	  tailscale
+	  aerc
+	  senpai
+	  stow
+	  tmux
         ];
 
       system.defaults = {
