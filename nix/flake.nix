@@ -14,27 +14,32 @@
       # $ nix-env -qaP | grep wget
       environment.systemPackages = with pkgs;
         [ 
-	  vim
-	  gnupg
-	  coreutils-full
-	  gopass
-	  tailscale
 	  aerc
+	  coreutils-full
+	  gnupg
+	  gopass
+	  neovim
+	  nodejs_23
 	  senpai
 	  stow
+	  tailscale
 	  tmux
+	  vim
+          kitty
         ];
-
-      system.defaults = {
-        dock.autohide = true;
-	NSGlobalDomain.AppleICUForce24HourTime = true;
-      };
 
       system.keyboard = {
         enableKeyMapping = true;
         remapCapsLockToControl = true;
       };
 
+      system.defaults = {
+        dock.autohide = true;
+		dock.orientation = "left";
+		NSGlobalDomain.AppleShowAllExtensions = true;
+		menuExtraClock.ShowDayOfWeek = false;
+      };
+	  
       # Necessary for using flakes on this system.
       nix.settings.experimental-features = "nix-command flakes";
 
@@ -60,6 +65,6 @@
     };
 
     # NOT DEFAULT: Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."gachimacos".pkgs;
+    # darwinPackages = self.darwinConfigurations."gachimacos".pkgs;
   };
 }
