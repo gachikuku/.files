@@ -16,11 +16,11 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						aerc
-						mkalias
 						coreutils-full
 						gnupg
 						gopass
 						kitty
+						mkalias
 						neovim
 						nodejs_23
 						senpai
@@ -49,10 +49,10 @@
 					controlcenter.Sound = true;
 					dock.autohide = true;
 					dock.orientation = "left";
+					finder.FXPreferredViewStyle = "clmv";
 					menuExtraClock.ShowAMPM = false;
 					menuExtraClock.ShowDayOfWeek = false;
 					screencapture.location = "~/Screenshots";
-					finder.FXPreferredViewStyle = "clmv";
 				};
 
 				system.activationScripts.applications.text = let
