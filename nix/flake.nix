@@ -37,6 +37,8 @@
         dock.autohide = true;
 		dock.orientation = "left";
 		NSGlobalDomain.AppleShowAllExtensions = true;
+		NSGlobalDomain.AppleICUForce24HourTime = true;
+		menuExtraClock.ShowAMPM = false;
 		menuExtraClock.ShowDayOfWeek = false;
       };
 	  
