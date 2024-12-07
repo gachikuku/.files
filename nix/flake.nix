@@ -76,7 +76,7 @@
 					NSGlobalDomain.NSAutomaticQuoteSubstitutionEnabled = false;
 					NSGlobalDomain.NSAutomaticSpellingCorrectionEnabled = false;
 					NSGlobalDomain._HIHideMenuBar = false;
-					controlcenter.Sound = true;
+					controlcenter.Sound = false;
 					dock.autohide = true;
 					dock.orientation = "left";
 					dock.persistent-apps = [
