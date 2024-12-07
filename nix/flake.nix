@@ -25,6 +25,7 @@
 						gnupg
 						go
 						gopass
+						gopass-jsonapi
 						html-tidy
 						icdiff
 						jq
@@ -55,8 +56,8 @@
 						"docker"
 						"firefox"
 						"hammerspoon"
-						"tailscale"
 					];
+					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
 					onActivation.upgrade = true;
 				};
