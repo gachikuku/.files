@@ -20,6 +20,7 @@
 						aerc
 						cmus
 						coreutils-full
+						fabric-ai
 						ffmpeg
 						gnupg
 						go
@@ -65,6 +66,7 @@
 					NSGlobalDomain.AppleICUForce24HourTime = true;
 					NSGlobalDomain.AppleInterfaceStyle = "Dark";
 					NSGlobalDomain.AppleShowAllExtensions = true;
+					NSGlobalDomain.AppleShowAllFiles = true;
 					NSGlobalDomain.InitialKeyRepeat = 10;
 					NSGlobalDomain.KeyRepeat = 2;
 					NSGlobalDomain.NSAutomaticCapitalizationEnabled = false;
@@ -73,7 +75,7 @@
 					NSGlobalDomain.NSAutomaticPeriodSubstitutionEnabled = false;
 					NSGlobalDomain.NSAutomaticQuoteSubstitutionEnabled = false;
 					NSGlobalDomain.NSAutomaticSpellingCorrectionEnabled = false;
-					NSGlobalDomain._HIHideMenuBar = true;
+					NSGlobalDomain._HIHideMenuBar = false;
 					controlcenter.Sound = true;
 					dock.autohide = true;
 					dock.orientation = "left";
@@ -81,6 +83,11 @@
 						"/System/Applications/Calendar.app"
 					];
 					dock.showhidden = true;
+					dock.autohide-delay = 0.24;
+					dock.show-recents = false;
+					dock.static-only = true;
+					dock.tilesize = 48;
+					finder.AppleShowAllFiles = true;
 					finder.FXPreferredViewStyle = "clmv";
 					loginwindow.GuestEnabled = false;
 					menuExtraClock.ShowAMPM = false;

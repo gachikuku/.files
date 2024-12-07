@@ -1,18 +1,18 @@
 [user]
 	name = Alnoman Kamil
-    username = gachikuku
+	username = gachikuku
 	email = noman@kamil.gr
 	signingkey = A4DF6340
 [sendemail]
-    smtpserver = mail.kamil.gr
-    smtpuser = noman@kamil.gr
-    smtpencryption = tls
-    smtpserverport = 587
+	smtpserver = mail.kamil.gr
+	smtpuser = noman@kamil.gr
+	smtpencryption = tls
+	smtpserverport = 587
 	annotate = yes
 	confirm = always
 [core]
 	editor = vim
 [commit]
-    gpgsign = true
+	gpgsign = true
 [tag]
-    gpgsign = true
+	gpgsign = true
