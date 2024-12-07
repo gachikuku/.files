@@ -18,30 +18,43 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						aerc
+						cmus
 						coreutils-full
+						ffmpeg
 						gnupg
+						go
 						gopass
+						html-tidy
+						icdiff
 						jq
 						kitty
 						lima
+						mitmproxy
 						mkalias
+						mpv
 						neovim
 						nodejs_23
+						python312
+						python312Packages.ipython
 						senpai
+						sqlmap
 						stow
-						tailscale
 						tmux
 						tree
 						vim
 						wget
+						wireguard-tools
+						yazi
 					];
 
 				homebrew = {
 					enable = true;
 					casks = [
-						"firefox"
 						"discord"
+						"docker"
+						"firefox"
 						"hammerspoon"
+						"tailscale"
 					];
 					onActivation.autoUpdate = true;
 					onActivation.upgrade = true;
@@ -50,9 +63,10 @@
 				system.defaults = {
 					NSGlobalDomain."com.apple.sound.beep.feedback" = 0;
 					NSGlobalDomain.AppleICUForce24HourTime = true;
+					NSGlobalDomain.AppleInterfaceStyle = "Dark";
 					NSGlobalDomain.AppleShowAllExtensions = true;
 					NSGlobalDomain.InitialKeyRepeat = 10;
-					NSGlobalDomain.KeyRepeat = 1;
+					NSGlobalDomain.KeyRepeat = 2;
 					NSGlobalDomain.NSAutomaticCapitalizationEnabled = false;
 					NSGlobalDomain.NSAutomaticDashSubstitutionEnabled = false;
 					NSGlobalDomain.NSAutomaticInlinePredictionEnabled = false;
@@ -63,8 +77,12 @@
 					controlcenter.Sound = true;
 					dock.autohide = true;
 					dock.orientation = "left";
+					dock.persistent-apps = [
+						"/System/Applications/Calendar.app"
+					];
 					dock.showhidden = true;
 					finder.FXPreferredViewStyle = "clmv";
+					loginwindow.GuestEnabled = false;
 					menuExtraClock.ShowAMPM = false;
 					menuExtraClock.ShowDayOfWeek = false;
 					screencapture.location = "~/Pictures/Screenshots";
