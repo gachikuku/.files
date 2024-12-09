@@ -42,6 +42,7 @@
 						senpai
 						sqlmap
 						stow
+						tealdeer
 						tmux
 						tree
 						vim
