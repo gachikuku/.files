@@ -49,6 +49,7 @@
 						wget
 						wireguard-tools
 						yazi
+						zbar
 					];
 
 				homebrew = {
@@ -58,6 +59,8 @@
 						"docker"
 						"firefox"
 						"hammerspoon"
+						"affinity-designer"
+						"affinity-photo"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
@@ -93,6 +96,10 @@
 					dock.wvous-br-corner = 1; 
 					finder.AppleShowAllFiles = true;
 					finder.FXPreferredViewStyle = "clmv";
+					finder.ShowExternalHardDrivesOnDesktop = false;
+					finder.ShowPathbar = true;
+					finder.ShowStatusBar = true;
+					finder._FXShowPosixPathInTitle = true;
 					loginwindow.GuestEnabled = false;
 					menuExtraClock.ShowAMPM = false;
 					menuExtraClock.ShowDayOfWeek = false;
