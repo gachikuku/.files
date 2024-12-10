@@ -1,0 +1,5 @@
+[manager]
+ratio = [1, 1, 4]
+[preview]
+max_width = 2400
+max_height = 2400

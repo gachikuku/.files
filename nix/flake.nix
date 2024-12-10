@@ -85,11 +85,12 @@
 					dock.persistent-apps = [
 						"/System/Applications/Calendar.app"
 					];
-					dock.showhidden = true;
 					dock.autohide-delay = 0.24;
 					dock.show-recents = false;
+					dock.showhidden = true;
 					dock.static-only = true;
 					dock.tilesize = 48;
+					dock.wvous-br-corner = 1; 
 					finder.AppleShowAllFiles = true;
 					finder.FXPreferredViewStyle = "clmv";
 					loginwindow.GuestEnabled = false;
