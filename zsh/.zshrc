@@ -42,6 +42,7 @@ alias \
 	ls="ls -lGF" \
 	grep="grep --color=auto" \
 	diff="diff --color=auto" \
+alias jwt_tool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
 
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line

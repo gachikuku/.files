@@ -22,6 +22,7 @@
 						coreutils-full
 						fabric-ai
 						ffmpeg
+						ffuf
 						gnupg
 						go
 						gopass
