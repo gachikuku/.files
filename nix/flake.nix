@@ -23,6 +23,7 @@
 						fabric-ai
 						ffmpeg
 						ffuf
+						fzf
 						gnupg
 						go
 						gopass
@@ -40,6 +41,7 @@
 						nodejs_23
 						python312
 						python312Packages.ipython
+						ripgrep
 						senpai
 						sqlmap
 						stow
