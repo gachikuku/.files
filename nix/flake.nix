@@ -18,9 +18,11 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						aerc
+						cargo
 						cmus
 						coreutils-full
 						fabric-ai
+						fd
 						ffmpeg
 						ffuf
 						fzf
@@ -58,12 +60,13 @@
 				homebrew = {
 					enable = true;
 					casks = [
+						"affinity-designer"
+						"affinity-photo"
+						"chromium"
 						"discord"
 						"docker"
 						"firefox"
 						"hammerspoon"
-						"affinity-designer"
-						"affinity-photo"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
