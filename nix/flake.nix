@@ -33,13 +33,13 @@
 						html-tidy
 						icdiff
 						jq
-						kitty
 						lima
 						mitmproxy
 						mkalias
 						mpv
 						neovim
 						nixpkgs#nix-prefetch-url #https://nixos.org/manual/nixpkgs/stable/#ssec-language-go for https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS
+						nmap
 						nodejs_23
 						python312
 						python312Packages.ipython
@@ -55,6 +55,11 @@
 						wireguard-tools
 						yazi
 						zbar
+
+						#needed for discordirc
+						redis
+						figlet
+						caddy
 					];
 
 				homebrew = {
