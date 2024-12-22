@@ -40,7 +40,7 @@
 						neovim
 						nixpkgs#nix-prefetch-url #https://nixos.org/manual/nixpkgs/stable/#ssec-language-go for https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS
 						nmap
-						nodejs_23
+						nodejs_22
 						python312
 						python312Packages.ipython
 						ripgrep
