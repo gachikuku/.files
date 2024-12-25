@@ -55,11 +55,6 @@
 						wireguard-tools
 						yazi
 						zbar
-
-						#needed for discordirc
-						redis
-						figlet
-						caddy
 					];
 
 				homebrew = {
@@ -105,7 +100,7 @@
 					dock.static-only = true;
 					dock.tilesize = 48;
 					dock.wvous-br-corner = 1; 
-					finder.AppleShowAllFiles = true;
+					#finder.AppleShowAllFiles = true;
 					finder.FXPreferredViewStyle = "clmv";
 					finder.ShowExternalHardDrivesOnDesktop = false;
 					finder.ShowPathbar = true;
