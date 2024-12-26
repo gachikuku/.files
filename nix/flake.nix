@@ -44,6 +44,7 @@
 						python312
 						python312Packages.ipython
 						ripgrep
+						sacc
 						senpai
 						sqlmap
 						stow
@@ -54,6 +55,7 @@
 						wget
 						wireguard-tools
 						yazi
+						youtube-dl
 						zbar
 					];
 
