@@ -1,7 +1,7 @@
 # Font
 font-family =
 font-family = Input Mono Narrow
-font-size = 15
+font-size = 16
 font-thicken = true
 adjust-cell-height = 5
 adjust-cell-width = -2
@@ -20,7 +20,7 @@ foreground = #e9e6de
 # Window
 title = 
 window-padding-x = 18
-window-padding-y = 6
+window-padding-y = 9
 macos-titlebar-style = hidden
 window-height =	54
 window-width = 196
