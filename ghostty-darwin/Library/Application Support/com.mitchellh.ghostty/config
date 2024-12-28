@@ -1,1 +1,13 @@
-font-family = "InputMonoNarrow"
+# Font
+font-family =
+font-family = Input Mono Narrow
+font-size = 15
+adjust-cell-height = 1
+adjust-cell-width = -2
+adjust-font-baseline = 3
+
+# Cursor
+
+# Theme
+background = #222222
+foreground = #e9E6de
