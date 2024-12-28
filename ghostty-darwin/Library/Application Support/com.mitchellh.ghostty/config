@@ -1,24 +1,26 @@
 # Font
-font-family	= ""
-font-family = "Input Mono Narrow"
+font-family =
+font-family = Input Mono Narrow
 font-size = 15
 font-thicken = true
 adjust-cell-height = 5
-adjust-cell-width =	-2
+adjust-cell-width = -2
 
 # Cursor
-cursor-style = "block"
+cursor-style = block
 cursor-style-blink = true
 mouse-hide-while-typing = true
+shell-integration = detect
+shell-integration-features = no-cursor
 
-# Theme
-background = "#222222"
-foreground = "#E9E6DE"
+# Colours
+background = #222222
+foreground = #e9e6de
 
 # Window
-title =	" "
+title = 
 window-padding-x = 18
 window-padding-y = 16
-macos-titlebar-style = "hidden"
+macos-titlebar-style = hidden
 window-height =	54
 window-width = 196
