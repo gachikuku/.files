@@ -20,7 +20,7 @@ foreground = #e9e6de
 # Window
 title = 
 window-padding-x = 18
-window-padding-y = 16
+window-padding-y = 6
 macos-titlebar-style = hidden
 window-height =	54
 window-width = 196
