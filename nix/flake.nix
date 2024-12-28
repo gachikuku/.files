@@ -55,7 +55,6 @@
 						wget
 						wireguard-tools
 						yazi
-						youtube-dl
 						zbar
 					];
 
@@ -68,6 +67,7 @@
 						"discord"
 						"docker"
 						"firefox"
+						"ghostty"
 						"hammerspoon"
 					];
 					onActivation.cleanup = "zap";
