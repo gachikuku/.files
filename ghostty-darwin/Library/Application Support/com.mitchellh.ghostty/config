@@ -13,10 +13,6 @@ mouse-hide-while-typing = true
 shell-integration = detect
 shell-integration-features = no-cursor
 
-# Colours
-background = #222222
-foreground = #e9e6de
-
 # Window
 title = 
 window-padding-x = 18
@@ -25,3 +21,24 @@ window-padding-balance = true
 macos-titlebar-style = hidden
 window-height =	54
 window-width = 196
+
+# Colours (jcs's kitty)
+background = #2a2a2a
+foreground = #e9e6de
+palette = 0=#e9e6de
+palette = 1=#dc322f
+palette = 2=#859900
+palette = 3=#b58900
+palette = 4=#268bd2
+palette = 5=#d33682
+palette = 6=#2aa198
+palette = 7=#d9d7cc
+palette = 8=#111111
+palette = 9=#cb4b16
+palette = 10=#93a1a1
+palette = 11=#839496
+palette = 12=#657b83
+palette = 13=#6c71c4
+palette = 14=#586e75
+palette = 15=#e5e5e5
+cursor-color = e9e6de
