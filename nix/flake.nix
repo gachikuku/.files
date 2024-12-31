@@ -20,7 +20,9 @@
 						aerc
 						cargo
 						cmus
+						colima
 						coreutils-full
+						docker
 						fabric-ai
 						fd
 						ffmpeg
@@ -65,7 +67,6 @@
 						"affinity-photo"
 						"chromium"
 						"discord"
-						"docker"
 						"firefox"
 						"ghostty"
 						"hammerspoon"
