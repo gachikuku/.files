@@ -35,7 +35,7 @@ palette = 12=#657b83
 palette = 13=#6c71c4
 palette = 14=#586e75
 palette = 15=#e5e5e5
-cursor-color = e9e6de
+cursor-color = 2aea5e
 
 # Opacity (mitchellh's defaults)
 background-opacity = 0.95
