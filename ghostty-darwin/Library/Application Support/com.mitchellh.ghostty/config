@@ -1,5 +1,4 @@
 # Font
-font-family =
 font-family = Input Mono Narrow
 font-size = 16
 font-thicken = true
@@ -38,11 +37,11 @@ palette = 14=#586e75
 palette = 15=#e5e5e5
 cursor-color = e9e6de
 
-# Opacity
+# Opacity (mitchellh's defaults)
 background-opacity = 0.95
 background-blur-radius = 20
 
-# mitchellh
+# Macos specific
 macos-option-as-alt = left
-link-url = true
 macos-titlebar-style = native
+macos-titlebar-proxy-icon = hidden
