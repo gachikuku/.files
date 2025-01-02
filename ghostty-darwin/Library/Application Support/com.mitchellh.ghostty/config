@@ -10,17 +10,12 @@ adjust-cell-width = -2
 cursor-style = block
 cursor-style-blink = true
 mouse-hide-while-typing = true
-shell-integration = detect
-shell-integration-features = no-cursor
 
 # Window
-title = 
-window-padding-x = 18
-window-padding-y = 9
-window-padding-balance = true
-macos-titlebar-style = hidden
+title = " "
 window-height =	54
 window-width = 196
+window-padding-balance = true
 
 # Colours (jcs's kitty)
 background = #2a2a2a
@@ -42,3 +37,12 @@ palette = 13=#6c71c4
 palette = 14=#586e75
 palette = 15=#e5e5e5
 cursor-color = e9e6de
+
+# Opacity
+background-opacity = 0.95
+background-blur-radius = 20
+
+# mitchellh
+macos-option-as-alt = left
+link-url = true
+macos-titlebar-style = native
