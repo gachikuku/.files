@@ -1,11 +1,12 @@
 # Font
-font-family = Input Mono Narrow
+font-family = SF Mono
 font-size = 16
-font-thicken = true
+
+# Theme
+theme = GruvboxDark
 
 # Cursor
 cursor-style = block
-cursor-style-blink = true
 mouse-hide-while-typing = true
 
 # Window
@@ -13,31 +14,7 @@ title = " "
 window-height =	54
 window-width = 196
 window-padding-balance = true
-
-# Colours (jcs's kitty)
-background = #2a2a2a
-foreground = #e9e6de
-#palette = 0=#e9e6de
-#palette = 1=#dc322f
-#palette = 2=#859900
-#palette = 3=#b58900
-#palette = 4=#268bd2
-#palette = 5=#d33682
-#palette = 6=#2aa198
-#palette = 7=#d9d7cc
-#palette = 8=#111111
-#palette = 9=#cb4b16
-#palette = 10=#93a1a1
-#palette = 11=#839496
-#palette = 12=#657b83
-#palette = 13=#6c71c4
-#palette = 14=#586e75
-#palette = 15=#e5e5e5
-#cursor-color = 2aea5e
-
-# Opacity (mitchellh's defaults)
-background-opacity = 0.95
-background-blur-radius = 20
+window-padding-x = 4
 
 # Macos specific
 macos-option-as-alt = left
