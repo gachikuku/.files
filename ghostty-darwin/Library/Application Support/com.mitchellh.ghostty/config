@@ -20,6 +20,7 @@ macos-titlebar-proxy-icon = hidden
 
 # Theme
 theme = vesper
+cursor-color = ff8080
 
 # Opacity
 background-opacity = 0.95

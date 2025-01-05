@@ -11,7 +11,7 @@
 	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }:
 		let
 			username = "gachikuku";
-			configuration = { pkgs, config, ... }: {
+			configuration = { pkgs, config, lib, ... }: {
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
 
@@ -40,6 +40,7 @@
 						mkalias
 						mpv
 						neovim
+						ngrok
 						nixpkgs#nix-prefetch-url #https://nixos.org/manual/nixpkgs/stable/#ssec-language-go for https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS
 						nmap
 						nodejs_22
@@ -59,6 +60,10 @@
 						yazi
 						zbar
 					];
+
+				nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+					"ngrok"
+				];
 
 				homebrew = {
 					enable = true;
