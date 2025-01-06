@@ -31,12 +31,6 @@ return {
             local i = ls.insert_node
 
 
-            ls.add_snippets("lua", {
-                s("hello", {
-                    t('print("fuck you world")')
-                })
-            })
-
             ls.add_snippets("markdown", {
                 s("lab", {
                     t({"<details>", "<summary>"}),
