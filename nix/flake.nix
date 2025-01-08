@@ -70,8 +70,8 @@
 					casks = [
 						"affinity-designer"
 						"affinity-photo"
-						"chromium"
 						"discord"
+						"eloston-chromium"
 						"firefox"
 						"ghostty"
 						"hammerspoon"
