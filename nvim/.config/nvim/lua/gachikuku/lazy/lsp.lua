@@ -23,14 +23,10 @@ return {
             cmp_lsp.default_capabilities())
 
 		require("luasnip.loaders.from_vscode").lazy_load()
+
         require("fidget").setup({})
         require("mason").setup()
         require("mason-lspconfig").setup({
-            ensure_installed = {
-                "lua_ls",
-                "rust_analyzer",
-                "tsserver",
-            },
             handlers = {
                 function(server_name) -- default handler (optional)
 
