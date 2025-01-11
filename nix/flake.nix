@@ -36,7 +36,6 @@
 						icdiff
 						jq
 						lima
-						mitmproxy
 						mkalias
 						mpv
 						neovim
@@ -44,9 +43,9 @@
 						nixpkgs#nix-prefetch-url #https://nixos.org/manual/nixpkgs/stable/#ssec-language-go for https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS
 						nmap
 						nodejs_22
-						python312
-						python312Packages.ipython
+						python313Full
 						ripgrep
+						rustc
 						sacc
 						senpai
 						sqlmap
@@ -75,6 +74,7 @@
 						"firefox"
 						"ghostty"
 						"hammerspoon"
+						"raycast"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
