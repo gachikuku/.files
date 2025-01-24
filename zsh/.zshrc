@@ -44,7 +44,7 @@ alias \
 	diff="diff --color=auto" \
 alias \
 	jwt_tool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool' \
-	mpv='mpv --ytdl-raw-options="no-check-certificates"=' \
+	mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio' \
 
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
