@@ -95,8 +95,7 @@ RFC_get()
   then
     # Format RFC_INDEX to show short description of each RFC
     rfc_describe \
-      | grep -v 'Not Issued' \
-      | sed 's/ .*//; s/^0*//'
+      | grep -v 'Not Issued'
     return 0
   # Print list of available RFCs
   elif [ "$arg_lower" = ":describe" ]
