@@ -43,7 +43,8 @@
 						nixpkgs#nix-prefetch-url #https://nixos.org/manual/nixpkgs/stable/#ssec-language-go for https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS
 						nmap
 						nodejs_22
-						python313Full
+						python312Full
+						python312Packages.ipython
 						ripgrep
 						rustc
 						sacc
@@ -69,8 +70,8 @@
 					casks = [
 						"affinity-designer"
 						"affinity-photo"
+						"chromium"
 						"discord"
-						"eloston-chromium"
 						"firefox"
 						"ghostty"
 						"hammerspoon"
@@ -146,8 +147,6 @@
 						${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
 					  done
 					'';
-
-				services.nix-daemon.enable = true;
 
 				# Necessary for using flakes on this system.
 				nix.settings.experimental-features = "nix-command flakes";
