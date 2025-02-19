@@ -72,7 +72,6 @@
 						"affinity-photo"
 						"chromium"
 						"discord"
-						"firefox"
 						"ghostty"
 						"hammerspoon"
 						"raycast"
