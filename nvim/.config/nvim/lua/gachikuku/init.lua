@@ -54,8 +54,10 @@ vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
   group = "MitmproxySettings",
   callback = function()
 	--- I DON'T WANT NEW LINE WHEN I EDIT A REQUEST
-	vim.opt.fixeol = false
-    vim.opt.list = true
+	vim.opt.wrap   = true
+	vim.opt.binary = true
+	vim.opt.eol    = false
+	vim.opt.list   = true
   end
 })
 
