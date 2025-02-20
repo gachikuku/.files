@@ -29,7 +29,7 @@
 						ffuf
 						fzf
 						gnupg
-						go
+						go_1_24
 						gopass
 						gopass-jsonapi
 						html-tidy
