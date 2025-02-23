@@ -7,7 +7,7 @@ autoload -U colors && colors
 # export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
 export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:~/go/bin:~/cargo/bin:~/.local/bin:$PATH
 
-# Variables
+# env variables
 export EDITOR="nvim"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
@@ -22,7 +22,6 @@ export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 export GPG_TTY="$(tty)"
-
 export GOPROXY=direct
 export GOSUMDB=off
 export GOTELEMETRY=off
@@ -31,12 +30,16 @@ export GOTOOLCHAIN=local
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
 
-bindkey -e                           # Emacs keys
+# Emacs keys
+bindkey -e
 
-PS1="%m:%~%(!.#.$) "                 # prompt
+# prompt
+PS1="%m:%~%(!.#.$) "
+
+# Use neovim for vim if present.
+[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
-[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 alias ls="ls -lGF"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
