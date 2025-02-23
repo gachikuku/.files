@@ -15,6 +15,23 @@
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
 
+				nixpkgs.config = {
+					# Allow specific unfree packages
+					allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+						"ngrok"
+					];
+
+					# Accept Input Fonts license
+					#input-fonts.acceptLicense = true;
+				};
+
+				fonts = {
+					packages = [
+						pkgs.geist-font
+					];
+				};
+
+
 				environment.systemPackages = with pkgs;
 					[ 
 						aerc
@@ -61,9 +78,6 @@
 						zbar
 					];
 
-				nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-					"ngrok"
-				];
 
 				homebrew = {
 					enable = true;
@@ -184,4 +198,5 @@
 			# NOT DEFAULT: Expose the package set, including overlays, for convenience.
 			darwinPackages = self.darwinConfigurations."gachimacos".pkgs;
 		};
+
 }
