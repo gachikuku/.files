@@ -37,15 +37,12 @@ PS1="%m:%~%(!.#.$) "                 # prompt
 
 # Aliases
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
-# alias ls="ls -F"
-alias \
-	ls="ls -lGF" \
-	grep="grep --color=auto" \
-	diff="diff --color=auto" \
-alias \
-	jwt_tool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool' \
-	mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio' \
-	vid='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en' \
+alias ls="ls -lGF"
+alias grep="grep --color=auto"
+alias diff="diff --color=auto"
+alias jwt_tool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
+alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
+alias vid='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
