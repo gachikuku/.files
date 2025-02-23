@@ -40,7 +40,6 @@
 						mpv
 						neovim
 						ngrok
-						nixpkgs#nix-prefetch-url #https://nixos.org/manual/nixpkgs/stable/#ssec-language-go for https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS
 						nmap
 						nodejs_22
 						python312Full
@@ -51,6 +50,7 @@
 						senpai
 						sqlmap
 						stow
+						tailscale
 						tealdeer
 						tmux
 						tree
