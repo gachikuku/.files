@@ -45,6 +45,7 @@ alias \
 alias \
 	jwt_tool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool' \
 	mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio' \
+	vid='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en' \
 
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
