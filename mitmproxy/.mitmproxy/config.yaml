@@ -1,1 +1,2 @@
 console_layout_headers: false
+validate_inbound_headers: false
