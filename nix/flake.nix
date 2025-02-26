@@ -42,7 +42,6 @@
 						cargo
 						cmus
 						colima
-						coreutils-full
 						docker
 						fabric-ai
 						fd
@@ -63,6 +62,7 @@
 						ngrok
 						nmap
 						nodejs_22
+						plan9port
 						python312Full
 						python312Packages.ipython
 						ripgrep
