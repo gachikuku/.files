@@ -27,10 +27,12 @@
 				};
 
 				fonts = {
-					packages = [
-						pkgs.geist-font
-						pkgs.input-fonts
-					];
+					packages = with pkgs; 
+						[
+							geist-font
+							input-fonts
+							go-font
+						];
 				};
 
 
