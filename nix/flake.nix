@@ -19,16 +19,17 @@
 					# Allow specific unfree packages
 					allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
 						"ngrok"
+						"input-fonts"
 					];
 
 					# Accept Input Fonts license
-					#input-fonts.acceptLicense = true;
+					input-fonts.acceptLicense = true;
 				};
 
 				fonts = {
 					packages = with pkgs; 
 						[
-							go-font
+							input-fonts
 						];
 				};
 
