@@ -7,3 +7,4 @@ macos-titlebar-proxy-icon = hidden
 window-padding-balance = true
 theme = vesper
 cursor-color = ff8080
+mouse-scroll-multiplier = 0
