@@ -1,13 +1,17 @@
 font-size = 17
 font-family = Input
+
 title = " "
-mouse-hide-while-typing = true
-macos-option-as-alt = left
-macos-titlebar-proxy-icon = hidden
 window-padding-balance = true
+macos-titlebar-proxy-icon = hidden
+macos-option-as-alt = left
 mouse-scroll-multiplier = 0
+mouse-hide-while-typing = true
+
 theme = vesper
 cursor-color = ff8080
+background = 2a2a2a
+foreground = e9e6de
 
 # Solarized values
 palette = 0=#e9e6de
