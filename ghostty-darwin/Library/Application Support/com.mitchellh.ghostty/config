@@ -18,7 +18,7 @@ foreground = e9e6de
 theme = vesper
 
 # Solarized values
-palette = 0=#e9e6de
+#palette = 0=#e9e6de
 #palette = 8=#111111
 palette = 1=#dc322f
 palette = 9=#cb4b16
