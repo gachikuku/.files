@@ -14,6 +14,7 @@ cursor-style-blink = true
 
 cursor-color = ff8080
 #background = 2a2a2a
+background = 121212
 foreground = e9e6de
 theme = vesper
 
