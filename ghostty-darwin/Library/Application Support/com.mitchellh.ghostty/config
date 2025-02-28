@@ -8,8 +8,12 @@ macos-option-as-alt = left
 mouse-scroll-multiplier = 0
 mouse-hide-while-typing = true
 
-theme = vesper
+shell-integration-features = no-cursor
+cursor-style = block
+cursor-style-blink = true
+
 cursor-color = ff8080
+theme = vesper
 background = 2a2a2a
 foreground = e9e6de
 
