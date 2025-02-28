@@ -92,6 +92,7 @@
 						"ghostty"
 						"hammerspoon"
 						"raycast"
+						"wireshark"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
