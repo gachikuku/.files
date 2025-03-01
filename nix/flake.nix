@@ -18,8 +18,10 @@
 				nixpkgs.config = {
 					# Allow specific unfree packages
 					allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+						"discord"
 						"ngrok"
-						#"input-fonts"
+						"raycast"
+						#"input-fonts" #manual install better
 					];
 
 					# Accept Input Fonts license
@@ -39,8 +41,11 @@
 					[ 
 						aerc
 						cargo
+						cmake
 						cmus
 						colima
+						coreutils
+						discord
 						docker
 						fabric-ai
 						fd
@@ -51,10 +56,12 @@
 						go_1_24
 						gopass
 						gopass-jsonapi
+						hexedit
 						html-tidy
 						icdiff
 						jq
 						lima
+						llvm
 						mkalias
 						mpv
 						neovim
@@ -64,6 +71,7 @@
 						plan9port
 						python312Full
 						python312Packages.ipython
+						raycast
 						ripgrep
 						rustc
 						sacc
@@ -77,6 +85,7 @@
 						vim
 						wget
 						wireguard-tools
+						witnessme
 						yazi
 						zbar
 					];
@@ -88,10 +97,8 @@
 						"affinity-designer"
 						"affinity-photo"
 						"chromium"
-						"discord"
 						"ghostty"
 						"hammerspoon"
-						"raycast"
 						"wireshark"
 					];
 					onActivation.cleanup = "zap";
