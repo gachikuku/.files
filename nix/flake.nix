@@ -145,6 +145,8 @@
 					screencapture.location = "~/Pictures/Screenshots";
 				};
 
+				time.timeZone = "Europe/Athens";
+
 				system.keyboard = {
 					enableKeyMapping = true;
 					remapCapsLockToControl = true;
