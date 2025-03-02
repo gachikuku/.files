@@ -10,7 +10,6 @@ mouse-hide-while-typing = true
 
 shell-integration-features = no-cursor
 cursor-style = block
-cursor-style-blink = true
 
 cursor-color = ff8080
 #background = 2a2a2a
