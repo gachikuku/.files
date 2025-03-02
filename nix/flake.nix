@@ -140,9 +140,16 @@
 					finder.ShowStatusBar = true;
 					finder._FXShowPosixPathInTitle = true;
 					loginwindow.GuestEnabled = false;
+					loginwindow.SHOWFULLNAME = true;
 					menuExtraClock.ShowAMPM = false;
 					menuExtraClock.ShowDayOfWeek = false;
 					screencapture.location = "~/Pictures/Screenshots";
+				};
+
+				networking = {
+					localHostName = "gachimacos";
+					computerName = "gachimacos";
+					hostName = "gachimacos";
 				};
 
 				time.timeZone = "Europe/Athens";
