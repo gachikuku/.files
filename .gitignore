@@ -1,2 +1,8 @@
 nvim/.config/nvim/plugin/packer_compiled.lua
 irssi/.irssi/config
+mitmproxy/.mitmproxy/mitmproxy-ca-cert.cer
+mitmproxy/.mitmproxy/mitmproxy-ca-cert.p12
+mitmproxy/.mitmproxy/mitmproxy-ca-cert.pem
+mitmproxy/.mitmproxy/mitmproxy-ca.p12
+mitmproxy/.mitmproxy/mitmproxy-ca.pem
+mitmproxy/.mitmproxy/mitmproxy-dhparam.pem
