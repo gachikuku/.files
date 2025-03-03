@@ -1,5 +1,6 @@
 font-size = 17
 font-family = Input
+font-thicken = true
 
 title = " "
 window-padding-balance = true
