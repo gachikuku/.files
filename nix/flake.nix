@@ -21,17 +21,13 @@
 						"discord"
 						"ngrok"
 						"raycast"
-						#"input-fonts" #manual install better
 					];
 
-					# Accept Input Fonts license
-					#input-fonts.acceptLicense = true;
 				};
 
 				fonts = {
 					packages = with pkgs; 
 						[
-							#input-fonts
 							go-font
 						];
 				};
