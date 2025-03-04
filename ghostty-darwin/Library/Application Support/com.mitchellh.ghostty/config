@@ -1,9 +1,6 @@
 font-family = Go Mono
 font-size = 18
 font-thicken = true
-font-thicken-strength = 64
-adjust-cell-height = 8%
-adjust-cell-width = -8%
 
 title = " "
 macos-titlebar-proxy-icon = hidden
