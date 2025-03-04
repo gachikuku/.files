@@ -1,12 +1,17 @@
-font-size = 18
 font-family = Go Mono
+font-size = 18
 font-thicken = true
+font-thicken-strength = 64
+adjust-cell-height = 8%
+adjust-cell-width = -8%
 
 title = " "
 macos-titlebar-proxy-icon = hidden
+macos-titlebar-style = native
 macos-option-as-alt = left
 mouse-scroll-multiplier = 0
 mouse-hide-while-typing = true
+window-padding-balance = true
 
 shell-integration-features = no-cursor
 cursor-style = block
