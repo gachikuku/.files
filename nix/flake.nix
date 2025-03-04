@@ -52,10 +52,12 @@
 						go_1_24
 						gopass
 						gopass-jsonapi
+						hashcat
 						hexedit
 						html-tidy
 						icdiff
 						jq
+						libxo
 						lima
 						llvm
 						mkalias
