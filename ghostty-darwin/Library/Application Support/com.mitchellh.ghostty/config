@@ -1,9 +1,7 @@
-font-size = 17
-font-family = Input
-font-thicken = true
+font-size = 18
+font-family = Go Mono
 
 title = " "
-window-padding-balance = true
 macos-titlebar-proxy-icon = hidden
 macos-option-as-alt = left
 mouse-scroll-multiplier = 0
@@ -16,7 +14,6 @@ cursor-color = ff8080
 #background = 2a2a2a
 background = 121212
 foreground = e9e6de
-theme = vesper
 
 # Solarized values
 #palette = 0=#e9e6de
