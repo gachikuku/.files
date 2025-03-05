@@ -43,8 +43,6 @@ PS1="%m:%~%(!.#.$) "
 alias ls="ls -lGF"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
-#if -r is used make sure to prepend /tmp/
-alias jwt_tool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
 alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
 alias vid='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 
