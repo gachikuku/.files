@@ -8,9 +8,7 @@ macos-titlebar-style = native
 macos-option-as-alt = left
 mouse-scroll-multiplier = 0
 mouse-hide-while-typing = true
-window-padding-balance = true
 
-shell-integration-features = no-cursor
 cursor-style = block
 
 cursor-color = ff8080

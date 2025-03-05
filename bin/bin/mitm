@@ -24,7 +24,7 @@ enable_proxy
 echo "Starting mitmproxy..."
 docker run --rm -it \
 	-v ~/.mitmproxy:/home/mitmproxy/.mitmproxy \
-	-v /Users/gachikuku/Developer/portswigger/scripts/addons:/addons \
+	-v "${HOME}/scripts/addons:/addons" \
 	-p 8080:8080 mitmproxy/mitmproxy:dev mitmproxy \
 	--set console_layout_headers=false \
 	--set console_mouse=false #\
