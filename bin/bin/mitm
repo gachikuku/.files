@@ -24,11 +24,11 @@ enable_proxy
 echo "Starting mitmproxy..."
 docker run --rm -it \
 	-v ~/.mitmproxy:/home/mitmproxy/.mitmproxy \
-	-v "${HOME}/scripts/addons:/addons" \
+	-v "${HOME}/.mitmproxy/addons:/addons" \
 	-p 8080:8080 mitmproxy/mitmproxy:dev mitmproxy \
 	--set console_layout_headers=false \
-	--set console_mouse=false #\
-	#-s /addons/chunkcontrol.py
+	--set console_mouse=false \
+	-s /addons/chunkcontrol.py
 
 echo "mitmproxy exited. Cleaning up..."
 disable_proxy
