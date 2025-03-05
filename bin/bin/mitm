@@ -22,14 +22,7 @@ disable_proxy() {
 enable_proxy
 
 echo "Starting mitmproxy..."
-
-docker run --rm -it \
-    -v ~/.files/mitmproxy/.mitmproxy:/home/mitmproxy/.mitmproxy \
-    -v "${HOME}/.files/mitmproxy/.mitmproxy/addons:/addons" \
-    -p $PROXY_PORT:$PROXY_PORT mitmproxy/mitmproxy:dev mitmproxy \
-    --set console_layout_headers=false \
-    --set console_mouse=false \
-    --scripts /addons/single_packet_attack.py
+mitmproxy #-s ~/.mitmproxy/addons/chunkcontrol.py
 
 echo "mitmproxy exited. Cleaning up..."
 disable_proxy
