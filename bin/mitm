@@ -1,0 +1,36 @@
+#!/bin/bash
+
+NETWORK_SERVICE="Wi-Fi"
+PROXY_SERVER="127.0.0.1"
+PROXY_PORT="8080"
+
+enable_proxy() {
+    echo "Enabling web proxy for $NETWORK_SERVICE..."
+    sudo networksetup -setwebproxy "$NETWORK_SERVICE" "$PROXY_SERVER" "$PROXY_PORT"
+    sudo networksetup -setsecurewebproxy "$NETWORK_SERVICE" "$PROXY_SERVER" "$PROXY_PORT"
+    echo "Web proxy enabled."
+}
+
+disable_proxy() {
+    echo "Disabling web proxy for $NETWORK_SERVICE..."
+    sudo networksetup -setwebproxystate "$NETWORK_SERVICE" off
+    sudo networksetup -setsecurewebproxystate "$NETWORK_SERVICE" off
+    echo "Web proxy disabled."
+}
+
+# Main script
+enable_proxy
+
+echo "Starting mitmproxy..."
+docker run --rm -it \
+	-v ~/.mitmproxy:/home/mitmproxy/.mitmproxy \
+	-v /Users/gachikuku/Developer/portswigger/scripts/addons:/addons \
+	-p 8080:8080 mitmproxy/mitmproxy:dev mitmproxy \
+	--set console_layout_headers=false \
+	--set console_mouse=false \
+	-s /addons/chunkcontrol.py
+
+echo "mitmproxy exited. Cleaning up..."
+disable_proxy
+
+echo "Done."
