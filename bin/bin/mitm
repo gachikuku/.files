@@ -29,7 +29,7 @@ docker run --rm -it \
     -p $PROXY_PORT:$PROXY_PORT mitmproxy/mitmproxy:dev mitmproxy \
     --set console_layout_headers=false \
     --set console_mouse=false \
-    --scripts /addons/chunkcontrol.py
+    --scripts /addons/single_packet_attack.py
 
 echo "mitmproxy exited. Cleaning up..."
 disable_proxy
