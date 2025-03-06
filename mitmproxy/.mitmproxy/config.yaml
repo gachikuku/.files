@@ -1,2 +1,3 @@
 console_layout_headers: false
 console_mouse: false
+content_view_lines_cutoff: 999999999999999999999999999999999999999999999999999
