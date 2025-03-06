@@ -26,6 +26,7 @@ export GOPROXY=direct
 export GOSUMDB=off
 export GOTELEMETRY=off
 export GOTOOLCHAIN=local
+export PIP_NO_SSL_VERIFY=1
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
