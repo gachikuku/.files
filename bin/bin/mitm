@@ -22,7 +22,8 @@ disable_proxy() {
 enable_proxy
 
 echo "Starting mitmproxy..."
-mitmproxy #-s ~/.mitmproxy/addons/chunkcontrol.py
+#mitmproxy #-s ~/.mitmproxy/addons/chunkcontrol.py
+mitmproxy
 
 echo "mitmproxy exited. Cleaning up..."
 disable_proxy

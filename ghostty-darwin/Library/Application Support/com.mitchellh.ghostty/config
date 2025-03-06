@@ -1,17 +1,26 @@
-font-family = Input
-font-size = 18
+font-family = Go Mono
+font-size = 16
 font-thicken = true
 
 title = " "
+
 macos-titlebar-proxy-icon = hidden
 macos-titlebar-style = native
+macos-non-native-fullscreen = visible-menu
 macos-option-as-alt = left
+
 mouse-scroll-multiplier = 0
 mouse-hide-while-typing = true
 
-cursor-style = block
+window-padding-balance = true
 
+shell-integration-features = no-cursor
+cursor-style = block
 cursor-color = ff8080
+
+background-opacity = 0.95
+background-blur-radius = 20
+
 #background = 2a2a2a
 background = 121212
 foreground = e9e6de
