@@ -39,6 +39,7 @@
 						cargo
 						cmake
 						cmus
+						hashcat
 						colima
 						coreutils
 						discord
@@ -52,7 +53,6 @@
 						go_1_24
 						gopass
 						gopass-jsonapi
-						hashcat
 						hexedit
 						html-tidy
 						icdiff
@@ -76,7 +76,7 @@
 						senpai
 						sqlmap
 						stow
-						tailscale
+						#tailscale
 						tealdeer
 						tmux
 						tree
