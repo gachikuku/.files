@@ -39,7 +39,6 @@
 						cargo
 						cmake
 						cmus
-						hashcat
 						colima
 						coreutils
 						discord
@@ -53,12 +52,14 @@
 						go_1_24
 						gopass
 						gopass-jsonapi
+						hashcat
 						hexedit
 						html-tidy
 						icdiff
 						jq
 						libxo
 						lima
+						llm
 						llvm
 						mkalias
 						mpv
