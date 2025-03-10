@@ -1,5 +1,5 @@
 font-family = Go Mono
-font-size = 17
+font-size = 18
 
 title = " "
 
@@ -7,7 +7,6 @@ title = " "
 window-height = 1370000000
 window-width = 440000000
 window-padding-balance = true
-window-decoration = none
 
 macos-titlebar-proxy-icon = hidden
 #macos-titlebar-style = hidden
