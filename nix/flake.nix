@@ -76,7 +76,7 @@
 						senpai
 						sqlmap
 						stow
-						#tailscale
+						tailscale
 						tealdeer
 						tmux
 						tree
