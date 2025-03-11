@@ -61,6 +61,7 @@
 						lima
 						llm
 						llvm
+						mitmproxy
 						mkalias
 						mpv
 						neovim
