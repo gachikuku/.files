@@ -28,5 +28,5 @@ For each identified endpoint:
 * Generate raw HTTP request examples suitable for direct import into proxy tools like mitmproxy.
 * Highlight potential security concerns you notice in endpoint implementation (such as insecure authentication practices or overly permissive endpoints).
 
-The output should be in markdown and it provides actionable reconnaissance data that directly supports further security testing and clearly highlights immediate security concerns."
+The output should be in markdown and it provides actionable reconnaissance data that directly supports further security testing and clearly highlights immediate security concerns. Also if there is an API key anywhere, or something else interisting like UUIDs or any other keys make sure you list it"
 }
