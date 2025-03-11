@@ -1,5 +1,5 @@
 function ColorMyPencils(color)
-	color = color or "vesper"
+	color = color or "poimandres"
 	vim.cmd.colorscheme(color)
 
 	vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
@@ -9,7 +9,7 @@ end
 
 return {
 
-    "datsfilipe/vesper.nvim",
+    "olivercederborg/poimandres.nvim",
 
     lazy = false,
     priority = 1000,
