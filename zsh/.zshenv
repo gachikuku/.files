@@ -15,3 +15,18 @@ finish(){
   echo -n $message
   echo -n $message | llm -s 'Finish this input. Respond with only the completion text. Do not respond with the input. Do not preamble or say anything before or after the completion. For example: If the user sent "The sky  is", you would simply reply " blue." If the input is code, write quality code that is syntactically correct. If the input is text, respond as a wise, succinct writer such as Paul Graham or Tyler Cowen, but only use high   school term paper vocabulary or lower.' -o temperature .4 -o presence_penalty .2 -m gpt-4
 }
+jsai () {
+		llm -m 4o "I'm doing an authotized security assessment on a web application. Analyse the provided JavaScript code to identify and document all API endpoints, methods, parameters, headers, and authentication requirements.
+
+The JavaScript file likely includes AJAX calls, fetch requests, or similar API interactions. Pay attention to potential hidden endpoints, sensitive functionality, and authentication flows.
+
+For each identified endpoint:
+* Clearly document the endpoint URL and HTTP method.
+* List required parameters and example/sample values.
+* Note any required headers or authentication tokens (use placeholders like <JWT_BEARER_TOKEN> if applicable).
+* Generate ready-to-use curl commands.
+* Generate raw HTTP request examples suitable for direct import into proxy tools like mitmproxy.
+* Highlight potential security concerns you notice in endpoint implementation (such as insecure authentication practices or overly permissive endpoints).
+
+The output should be in markdown and it provides actionable reconnaissance data that directly supports further security testing and clearly highlights immediate security concerns."
+}
