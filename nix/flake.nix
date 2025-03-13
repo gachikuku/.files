@@ -46,7 +46,7 @@
 						fabric-ai
 						fd
 						ffmpeg
-						ffuf
+						ffuf # remember uff! https://github.com/sw33tLie/uff
 						fzf
 						gnupg
 						go_1_24
