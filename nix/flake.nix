@@ -32,6 +32,21 @@
 						];
 				};
 
+				uff = pkgs.buildGoModule rec {
+					pname = "uff";
+					version = "main";
+
+					src = pkgs.fetchFromGitHub {
+						owner = "sw33tLie";
+						repo = "uff";
+						rev = "v${version}";
+						hash = "";
+					};
+
+					vendorHash = "";
+				};
+
+
 
 				environment.systemPackages = with pkgs;
 					[ 
@@ -47,6 +62,7 @@
 						fd
 						ffmpeg
 						ffuf # remember uff! https://github.com/sw33tLie/uff
+						uff
 						fzf
 						gnupg
 						go_1_24
