@@ -7,6 +7,7 @@ title = " "
 window-height = 1370000000
 window-width = 440000000
 window-padding-balance = true
+window-padding-x = 0
 
 macos-titlebar-proxy-icon = hidden
 #macos-titlebar-style = hidden
