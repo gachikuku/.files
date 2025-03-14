@@ -3,6 +3,8 @@ font-size = 16.5
 
 title = " "
 
+theme = flexoki-dark
+
 #maximized-by-default
 window-height = 1370000000
 window-width = 440000000
@@ -10,7 +12,6 @@ window-padding-balance = true
 window-padding-x = 0
 
 macos-titlebar-proxy-icon = hidden
-#macos-titlebar-style = hidden
 macos-non-native-fullscreen = visible-menu
 macos-option-as-alt = left
 
@@ -24,7 +25,21 @@ cursor-color = ff8080
 background-opacity = 0.95
 background-blur-radius = 20
 
-theme = flexoki-dark
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # taken from jcs
 ##background = 2a2a2a
