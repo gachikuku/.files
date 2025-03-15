@@ -4,3 +4,4 @@ password-cmd gopass --password soju
 colors {
 	nicks fixed grey green
 }
+typings false
