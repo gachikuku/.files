@@ -1,3 +1,6 @@
 address "chitchat.kamil.gr:6697"
 nickname "gachikuku"
 password-cmd gopass --password soju
+colors {
+	nicks fixed grey green
+}
