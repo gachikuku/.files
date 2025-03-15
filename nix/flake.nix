@@ -159,6 +159,13 @@
 					remapCapsLockToControl = true;
 				};
 
+				nix = {
+					linux-builder.enable = true;
+
+					# This line is a prerequisite
+					settings.trusted-users = [ "@admin" ];
+				};
+
 
 				# mkalias acitvation script so spotlight can spot it
 				system.activationScripts.applications.text = let
