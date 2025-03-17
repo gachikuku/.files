@@ -20,7 +20,6 @@
 					allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
 						"discord"
 						"ngrok"
-						"raycast"
 					];
 
 				};
@@ -65,13 +64,13 @@
 						mkalias
 						mpv
 						neovim
+						net-news-wire
 						ngrok
 						nmap
 						nodejs_22
 						plan9port
 						python312Full
 						python312Packages.ipython
-						raycast
 						ripgrep
 						rustc
 						sacc
