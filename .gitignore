@@ -3,3 +3,4 @@ irssi/.irssi/config
 mitmproxy/.mitmproxy/mitmproxy*
 mitmproxy/.mitmproxy/addons/__pycache__/*
 sfeed/.sfeed/feeds/*
+sfeed/.sfeed/feeds.txt
