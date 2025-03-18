@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sfeed_update
+sfeed_plain $HOME/.sfeed/feeds/* > "$HOME/.sfeed/feeds.txt"
+sfeed_curses ~/.sfeed/feeds/*
