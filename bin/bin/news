@@ -2,4 +2,5 @@
 
 sfeed_update
 sfeed_curses ~/.sfeed/feeds/*
+
 rm -rdf ~/.sfeed/feeds/*
