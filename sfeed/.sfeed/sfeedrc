@@ -9,7 +9,6 @@ feeds() {
 	feed "codemadness" "https://www.codemadness.org/atom_content.xml"
 	feed "explosm" "http://feeds.feedburner.com/Explosm"
 	feed "golang github releases" "https://github.com/golang/go/releases.atom"
-	feed "linux kernel" "https://www.kernel.org/feeds/kdist.xml" "https://www.kernel.org"
 	feed "reddit openbsd" "https://old.reddit.com/r/openbsd/.rss"
 	feed "slashdot" "http://rss.slashdot.org/Slashdot/slashdot" "http://slashdot.org"
 	feed "tweakers" "http://feeds.feedburner.com/tweakers/mixed" "http://tweakers.net" "iso-8859-1"
