@@ -1,0 +1,133 @@
+  2024-02-02 02:00  codemadness      Chess puzzle book generator                                            https://www.codemadness.org/chess-puzzles.html
+  2023-11-22 02:00  codemadness      xargs: an example for parallel batch jobs                              https://www.codemadness.org/xargs.html
+  2023-11-20 02:00  codemadness      Improved Youtube RSS/Atom feed                                         https://www.codemadness.org/youtube-feed.html
+  2023-11-20 02:00  codemadness      webdump HTML to plain-text converter                                   https://www.codemadness.org/webdump.html
+  2023-10-25 03:00  codemadness      Setup your own mail paste service                                      https://www.codemadness.org/mailservice.html
+  2022-07-01 03:00  codemadness      A simple TODO application                                              https://www.codemadness.org/todo-application.html
+  2022-03-23 02:00  codemadness      2FA TOTP without crappy authenticator apps                             https://www.codemadness.org/totp.html
+  2021-10-23 03:00  codemadness      Setup an OpenBSD RISCV64 VM in QEMU                                    https://www.codemadness.org/openbsd-riscv64-vm.html
+  2020-06-25 03:00  codemadness      Sfeed_curses: a curses UI front-end for sfeed                          https://www.codemadness.org/sfeed_curses-ui.html
+  2019-11-10 02:00  codemadness      hurl: HTTP, HTTPS and Gopher file grabber                              https://www.codemadness.org/hurl.html
+  2019-10-13 03:00  codemadness      json2tsv: a JSON to TSV converter                                      https://www.codemadness.org/json2tsv.html
+  2019-04-24 03:00  codemadness      OpenBSD: setup a local auto-installation server                        https://www.codemadness.org/openbsd-autoinstall.html
+  2019-02-10 02:00  codemadness      Idiotbox: Youtube interface                                            https://www.codemadness.org/idiotbox.html
+  2018-08-17 03:00  codemadness      Gopher HTTP proxy                                                      https://www.codemadness.org/gopher-proxy.html
+  2018-03-10 02:00  codemadness      Setup your own file paste service                                      https://www.codemadness.org/paste-service.html
+  2018-02-25 02:00  codemadness      Setup your own git hosting service                                     https://www.codemadness.org/setup-git-hosting.html
+  2017-12-11 02:00  codemadness      Setup an OpenBSD SPARC64 VM in QEMU                                    https://www.codemadness.org/openbsd-sparc64-vm.html
+  2017-09-24 03:00  codemadness      Tscrape: a Twitter scraper                                             https://www.codemadness.org/tscrape.html
+  2017-09-24 03:00  codemadness      jsdatatable: a small datatable Javascript                              https://www.codemadness.org/datatable.html
+  2017-08-04 03:00  codemadness      Stagit-gopher: a static git page generator for gopher                  https://www.codemadness.org/stagit-gopher.html
+  2017-06-10 03:00  codemadness      Saait: a boring HTML page generator                                    https://www.codemadness.org/saait.html
+  2017-05-10 03:00  codemadness      Stagit: a static git page generator                                    https://www.codemadness.org/stagit.html
+  2015-07-05 03:00  codemadness      OpenBSD httpd, slowcgi and cgit                                        https://www.codemadness.org/openbsd-httpd-and-cgit.html
+  2014-11-23 02:00  codemadness      twitch: application to watch Twitch streams                            https://www.codemadness.org/twitch-interface.html
+  2014-03-02 02:00  codemadness      Userscript: focus input field                                          https://www.codemadness.org/userscript-focus-input-field.html
+  2013-02-21 02:00  codemadness      Userscript: Youtube circumvent age verification                        https://www.codemadness.org/userscript-youtube-circumvent-age-verification.html
+  2012-10-21 03:00  codemadness      Userscript: block stupid fonts                                         https://www.codemadness.org/userscript-block-stupid-fonts.html
+  2011-04-01 03:00  codemadness      Sfeed: simple RSS and Atom parser                                      https://www.codemadness.org/sfeed-simple-feed-parser.html
+  2011-01-07 02:00  codemadness      Vim theme: relaxed                                                     https://www.codemadness.org/vim-theme-relaxed.html
+  2010-10-31 03:00  codemadness      Seturgent: set urgency hints for X applications                        https://www.codemadness.org/seturgent-set-urgency-hints-for-x-applications.html
+  2010-08-12 03:00  codemadness      DWM-hiltjo: my windowmanager configuration                             https://www.codemadness.org/dwm-hiltjo-my-windowmanager-configuration.html
+  2010-04-21 03:00  codemadness      Query unused CSS rules on current document state                       https://www.codemadness.org/query-unused-css-rules-on-current-document-state.html
+  2009-07-05 03:00  codemadness      Driconf: enabling S3 texture compression on Linux                      https://www.codemadness.org/driconf-enabling-s3-texture-compression-on-linux.html
+  2009-04-13 03:00  codemadness      Getting the USB-powerline bridge to work on Linux                      https://www.codemadness.org/getting-the-usb-powerline-bridge-to-work-on-linux.html
+  2009-04-12 03:00  codemadness      Gothic 1 game guide                                                    https://www.codemadness.org/gothic-1-guide.html
+  2021-12-21 08:00  explosm          Comic for 2021.12.21                                                   http://explosm.net/comics/6060/
+  2021-12-20 08:00  explosm          Comic for 2021.12.20                                                   http://explosm.net/comics/6059/
+  2021-12-19 08:00  explosm          Comic for 2021.12.19                                                   http://explosm.net/comics/6058/
+  2021-12-18 08:00  explosm          Comic for 2021.12.18                                                   http://explosm.net/comics/6057/
+  2021-12-17 08:00  explosm          Comic for 2021.12.17                                                   http://explosm.net/comics/6056/
+  2025-03-04 21:27  golang github …  [release-branch.go1.24] go1.24.1                                       https://github.com/golang/go/releases/tag/go1.24.1
+  2025-03-04 21:14  golang github …  [release-branch.go1.23] go1.23.7                                       https://github.com/golang/go/releases/tag/go1.23.7
+  2025-02-11 19:55  golang github …  [release-branch.go1.24] go1.24.0                                       https://github.com/golang/go/releases/tag/go1.24.0
+  2025-02-05 22:35  golang github …  [release-branch.go1.24] go1.24rc3                                      https://github.com/golang/go/releases/tag/go1.24rc3
+  2025-02-04 18:39  golang github …  [release-branch.go1.22] go1.22.12                                      https://github.com/golang/go/releases/tag/go1.22.12
+  2025-02-04 18:39  golang github …  [release-branch.go1.23] go1.23.6                                       https://github.com/golang/go/releases/tag/go1.23.6
+  2025-01-16 22:13  golang github …  [release-branch.go1.24] go1.24rc2                                      https://github.com/golang/go/releases/tag/go1.24rc2
+  2025-01-16 22:07  golang github …  [release-branch.go1.22] go1.22.11                                      https://github.com/golang/go/releases/tag/go1.22.11
+  2025-01-16 22:07  golang github …  [release-branch.go1.23] go1.23.5                                       https://github.com/golang/go/releases/tag/go1.23.5
+  2024-12-13 18:52  golang github …  [release-branch.go1.24] go1.24rc1                                      https://github.com/golang/go/releases/tag/go1.24rc1
+N 2025-03-17 14:58  linux kernel     next-20250317: linux-next                                              https://www.kernel.org/
+  2025-03-17 00:55  linux kernel     6.14-rc7: mainline                                                     https://www.kernel.org/
+  2025-03-13 14:08  linux kernel     6.13.7: stable                                                         https://www.kernel.org/
+  2025-03-13 14:02  linux kernel     6.12.19: longterm                                                      https://www.kernel.org/
+  2025-03-13 13:59  linux kernel     6.6.83: longterm                                                       https://www.kernel.org/
+  2025-03-13 13:53  linux kernel     6.1.131: longterm                                                      https://www.kernel.org/
+  2025-03-13 13:51  linux kernel     5.15.179: longterm                                                     https://www.kernel.org/
+  2025-03-13 13:47  linux kernel     5.10.235: longterm                                                     https://www.kernel.org/
+  2025-03-13 13:44  linux kernel     5.4.291: longterm                                                      https://www.kernel.org/
+N 2025-03-18 02:02  slashdot         Roku Tests Autoplaying Ads Loading Before the Home Screen              https://slashdot.org/story/25/03/17/2122232/roku-tests-autoplaying-ads-loading-before-the-home-screen?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-18 01:20  slashdot         Top Broadband Official Exits Commerce Department With Warning About S… https://tech.slashdot.org/story/25/03/17/2117212/top-broadband-official-exits-commerce-department-with-warning-about-starlink?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-18 00:40  slashdot         Alphabet Back In Talks To Buy Wiz For $30 Billion                      https://tech.slashdot.org/story/25/03/17/215231/alphabet-back-in-talks-to-buy-wiz-for-30-billion?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-18 00:00  slashdot         Apple To Launch Thinner iPhone 17 'Air' as Step Toward Port-Free Desi… https://apple.slashdot.org/story/25/03/17/206213/apple-to-launch-thinner-iphone-17-air-as-step-toward-port-free-design?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 23:20  slashdot         GIMP 3.0 Released                                                      https://tech.slashdot.org/story/25/03/17/1948219/gimp-30-released?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 22:42  slashdot         Sobering Revenue Stats of 70K Mobile Apps Show Why Devs Beg For Subsc… https://developers.slashdot.org/story/25/03/17/1946256/sobering-revenue-stats-of-70k-mobile-apps-show-why-devs-beg-for-subscriptions?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 22:02  slashdot         People Are Using Google's New AI Model To Remove Watermarks From Imag… https://tech.slashdot.org/story/25/03/17/1939254/people-are-using-googles-new-ai-model-to-remove-watermarks-from-images?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 21:22  slashdot         Huawei To Pivot To Linux, HarmonyOS as Microsoft Windows License Expi… https://tech.slashdot.org/story/25/03/17/183209/huawei-to-pivot-to-linux-harmonyos-as-microsoft-windows-license-expires?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 20:42  slashdot         Xbox 360 Consoles Can Now Be Hacked With Just a USB Key                https://games.slashdot.org/story/25/03/17/1747227/xbox-360-consoles-can-now-be-hacked-with-just-a-usb-key?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 20:00  slashdot         Harvard Says Tuition Will Be Free For Families Making $200K or Less    https://news.slashdot.org/story/25/03/17/1740242/harvard-says-tuition-will-be-free-for-families-making-200k-or-less?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 19:20  slashdot         Alphabet Spins Off Laser-Based Internet Project Taara From 'Moonshot'… https://tech.slashdot.org/story/25/03/17/0723230/alphabet-spins-off-laser-based-internet-project-taara-from-moonshot-unit?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 18:40  slashdot         European Tech Firms Push EU for 'Buy European' Tech Mandate            https://slashdot.org/story/25/03/17/0628241/european-tech-firms-push-eu-for-buy-european-tech-mandate?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 18:00  slashdot         Have Humans Passed Peak Brain Power?                                   https://science.slashdot.org/story/25/03/17/0954252/have-humans-passed-peak-brain-power?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 17:20  slashdot         Should Friday be the New Saturday?                                     https://news.slashdot.org/story/25/03/17/0749239/should-friday-be-the-new-saturday?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 16:40  slashdot         Heat Can Age You As Much As Smoking, a New Study Finds                 https://news.slashdot.org/story/25/03/17/1435237/heat-can-age-you-as-much-as-smoking-a-new-study-finds?utm_source=rss1.0mainlinkanon&utm_medium=feed
+N 2025-03-17 22:49  tweakers         Intel brengt XeSS 2 uit voor alle ontwikkelaars, komt met Unreal Engi… https://tweakers.net/nieuws/232968/intel-brengt-xess-2-uit-voor-alle-ontwikkelaars-komt-met-unreal-engine-plug-ins.html
+N 2025-03-17 21:52  tweakers         'Nieuwe Intel-ceo legt focus op chipproductie en AI, overweegt reorga… https://tweakers.net/nieuws/232944/nieuwe-intel-ceo-legt-focus-op-chipproductie-en-ai-overweegt-reorganisatie.html
+N 2025-03-17 21:45  tweakers         GIMP 3.0.0                                                             https://tweakers.net/downloads/71986/gimp-300.html
+N 2025-03-17 21:10  tweakers         Qualcomm komt met nieuwe Snapdragon G-chips voor gaminghandhelds       https://tweakers.net/nieuws/232960/qualcomm-komt-met-nieuwe-snapdragon-g-chips-voor-gaminghandhelds.html
+N 2025-03-17 19:47  tweakers         Hyundai gaat automobilisten waarschuwen voor naderende ambulances      https://tweakers.net/nieuws/232966/hyundai-gaat-automobilisten-waarschuwen-voor-naderende-ambulances.html
+N 2025-03-17 19:22  tweakers         Eigenaar van TI-84shop is aangehouden en wordt verdacht van interneto… https://tweakers.net/nieuws/232962/eigenaar-van-ti-84shop-is-aangehouden-en-wordt-verdacht-van-internetoplichting.html
+N 2025-03-17 18:58  tweakers         CPU-Z 2.15                                                             https://tweakers.net/downloads/71988/cpu-z-215.html
+N 2025-03-17 18:40  tweakers         Dummy's tonen alle iPhone 17-modellen, waaronder extra dunne iPhone 1… https://tweakers.net/nieuws/232950/dummys-tonen-alle-iphone-17-modellen-waaronder-extra-dunne-iphone-17-air.html
+N 2025-03-17 18:06  tweakers         GreenFlux ontkent 'niet-transparante aanpassingen' van laadpaaltariev… https://tweakers.net/nieuws/232946/greenflux-ontkent-niet-transparante-aanpassingen-van-laadpaaltarieven-in-nl.html
+N 2025-03-17 17:27  tweakers         Samsung onderzoekt probleem met firmware die soundbars van tweakers b… https://tweakers.net/nieuws/232958/samsung-onderzoekt-probleem-met-firmware-die-soundbars-van-tweakers-brickt.html
+N 2025-03-17 17:17  tweakers         Ontwikkelaars kunnen Discord voortaan direct in hun games integreren   https://tweakers.net/nieuws/232952/ontwikkelaars-kunnen-discord-voortaan-direct-in-hun-games-integreren.html
+N 2025-03-17 16:06  tweakers         Belgische minister wil ID-controle voor sociale media onderzoeken      https://tweakers.net/nieuws/232948/belgische-minister-wil-id-controle-voor-sociale-media-onderzoeken.html
+N 2025-03-17 15:35  tweakers         Alphabet brengt Project Taara onder in spin-off                        https://tweakers.net/nieuws/232942/alphabet-brengt-project-taara-onder-in-spin-off.html
+N 2025-03-17 13:47  tweakers         EU-landen dienen klacht in tegen Rusland wegens verstoring satellieten https://tweakers.net/nieuws/232938/eu-landen-dienen-klacht-in-tegen-rusland-wegens-verstoring-satellieten.html
+N 2025-03-17 13:47  tweakers         Home Assistant OS 15.0                                                 https://tweakers.net/downloads/71984/home-assistant-os-150.html
+N 2025-03-17 12:15  tweakers         Google moet 76 miljoen euro betalen aan Belgisch advertentiebedrijf    https://tweakers.net/nieuws/232936/google-moet-76-miljoen-euro-betalen-aan-belgisch-advertentiebedrijf.html
+N 2025-03-17 11:30  tweakers         MusicBee 3.6                                                           https://tweakers.net/downloads/71982/musicbee-36.html
+N 2025-03-17 10:58  tweakers         SwitchBot Hub 3 met fysieke draaiknop en Matter-ondersteuning verschi… https://tweakers.net/nieuws/232930/switchbot-hub-3-met-fysieke-draaiknop-en-matter-ondersteuning-verschijnt-online.html
+N 2025-03-17 10:05  tweakers         'Aantal mbo-vacatures in ict-sector gaat dalen'                        https://tweakers.net/nieuws/232928/aantal-mbo-vacatures-in-ict-sector-gaat-dalen.html
+N 2025-03-17 10:00  tweakers         MKVToolnix 91.0                                                        https://tweakers.net/downloads/71980/mkvtoolnix-910.html
+N 2025-03-17 09:00  tweakers         .Actie - Maak 3 maal kans op de nieuwe Sony LinkBuds Fit in-ears       https://tweakers.net/plan/4366/maak-3-maal-kans-op-de-nieuwe-sony-linkbuds-fit-in-ears.html
+N 2025-03-17 08:46  tweakers         Gerucht: Apple werkt aan twee nieuwe externe monitors                  https://tweakers.net/nieuws/232924/gerucht-apple-werkt-aan-twee-nieuwe-externe-monitors.html
+N 2025-03-17 08:30  tweakers         ScreenToGif 2.41.2                                                     https://tweakers.net/downloads/71978/screentogif-2412.html
+N 2025-03-17 07:00  tweakers         Nothing Phone 3a en 3a Pro - EÃ©n schot in de roos en Ã©Ã©n net ernaa… https://tweakers.net/reviews/13038/nothing-phone-3a-en-3a-pro-een-schot-in-de-roos-en-een-net-ernaast.html
+  2025-03-16 21:00  tweakers         Zotero 7.0.15                                                          https://tweakers.net/downloads/71976/zotero-7015.html
+  2025-03-16 17:00  tweakers         FreeBSD 13.5                                                           https://tweakers.net/downloads/71974/freebsd-135.html
+  2025-03-16 15:00  tweakers         Git 2.49                                                               https://tweakers.net/downloads/71972/git-249.html
+  2025-03-16 14:23  tweakers         Apple brengt Surveyor-app uit in VS om gegevens voor Kaarten te verza… https://tweakers.net/nieuws/232922/apple-brengt-surveyor-app-uit-in-vs-om-gegevens-voor-kaarten-te-verzamelen.html
+  2025-03-16 13:49  tweakers         Populaire tj-actions-tool op GitHub bevatte code die secrets openbaart https://tweakers.net/nieuws/232920/populaire-tj-actions-tool-op-github-bevatte-code-die-secrets-openbaart.html
+  2025-03-16 13:00  tweakers         Apple iOS 18.3.2                                                       https://tweakers.net/downloads/71970/apple-ios-1832.html
+  2025-03-16 12:25  tweakers         Synology kondigt nassystemen aan met 2,5Gbit/s-ethernetaansluitingen   https://tweakers.net/nieuws/232918/synology-kondigt-nassystemen-aan-met-2-komma-5gbit-s-ethernetaansluitingen.html
+  2025-03-16 11:17  tweakers         China gaat labelen van AI-gegenereerde content verplichten             https://tweakers.net/nieuws/232916/china-gaat-labelen-van-ai-gegenereerde-content-verplichten.html
+  2025-03-16 11:00  tweakers         Debian GNU/Linux 12.10                                                 https://tweakers.net/downloads/71968/debian-gnu-linux-1210.html
+  2025-03-16 09:00  tweakers         digiKam 8.6.0                                                          https://tweakers.net/downloads/71966/digikam-860.html
+  2025-03-16 07:00  tweakers         Slimme deurbel voor 15 euro - Maak je deurbel zelf slim met ESPHome    https://tweakers.net/reviews/12992/slimme-deurbel-voor-15-euro-maak-je-deurbel-zelf-slim-met-esphome.html
+  2025-03-15 23:00  tweakers         MobaXterm 25.1                                                         https://tweakers.net/downloads/71964/mobaxterm-251.html
+  2025-03-15 21:00  tweakers         SystemRescue 12.00                                                     https://tweakers.net/downloads/71962/systemrescue-1200.html
+  2025-03-15 19:01  tweakers         XYplorer 27.00                                                         https://tweakers.net/downloads/71960/xyplorer-2700.html
+  2025-03-15 14:42  tweakers         Android-gebruikers kunnen via 'Vind mijn apparaat'-app locatie delen   https://tweakers.net/nieuws/232914/android-gebruikers-kunnen-via-vind-mijn-apparaat-app-locatie-delen.html
+  2025-03-15 14:06  tweakers         Amazon verwijdert optie om Echo-spraakopnames niet naar de cloud te s… https://tweakers.net/nieuws/232912/amazon-verwijdert-optie-om-echo-spraakopnames-niet-naar-de-cloud-te-sturen.html
+  2025-03-17 02:00  xkcd             Lungfish                                                               https://xkcd.com/3064/
+  2025-03-14 02:00  xkcd             Planet Definitions                                                     https://xkcd.com/3063/
+  2025-03-12 02:00  xkcd             Off By One                                                             https://xkcd.com/3062/
+  2025-03-10 02:00  xkcd             Water Balloons                                                         https://xkcd.com/3061/
+  2024-04-09 15:00  youtube golang   Build a web server with Go                                             https://www.youtube.com/watch?v=3tpGH3dsvAQ
+  2024-04-02 16:00  youtube golang   Security in Go                                                         https://www.youtube.com/watch?v=CeBtpTKnLnk
+  2024-03-26 15:01  youtube golang   LLMs can Go                                                            https://www.youtube.com/watch?v=w7DPrNH0-Bo
+  2024-03-22 20:33  youtube golang   How to achieve concurrency                                             https://www.youtube.com/watch?v=PfbFtY0aHbI
+  2024-03-07 16:00  youtube golang   Go with Firebase                                                       https://www.youtube.com/watch?v=CmalBIEZ868
+  2024-02-07 16:00  youtube golang   Go’s Ecosystem                                                         https://www.youtube.com/watch?v=KuuyXrmdFkM
+  2024-01-23 16:00  youtube golang   Arrays and Slices                                                      https://www.youtube.com/watch?v=T1T8-MG-mPg
+  2024-01-09 16:00  youtube golang   Overview of Go                                                         https://www.youtube.com/watch?v=EcRmt8Gpou4
+  2023-05-10 23:48  youtube golang   Build more secure apps with Go and Google                              https://www.youtube.com/watch?v=HSt6FhsPT8c
+  2023-05-01 19:00  youtube golang   Choosing Go to process your data                                       https://www.youtube.com/watch?v=OqDucku2V-I
+  2023-04-24 19:00  youtube golang   Sustainable software development with Go                               https://www.youtube.com/watch?v=KvZgBlHNt-M
+  2023-04-17 19:00  youtube golang   Go is great for command-line tools                                     https://www.youtube.com/watch?v=vOhLCTwtgiQ
+  2023-04-10 19:00  youtube golang   Go development for your startup                                        https://www.youtube.com/watch?v=Gp3iKZMW21g
+  2023-04-03 19:00  youtube golang   Enjoy Kubernetes with Go                                               https://www.youtube.com/watch?v=U7RKEqfM1XY
+  2023-03-27 19:00  youtube golang   Deploy Go applications in a serverless environment                     https://www.youtube.com/watch?v=pHCKVXUwceg

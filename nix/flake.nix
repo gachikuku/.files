@@ -60,6 +60,7 @@
 						lima
 						llm
 						llvm
+						mblaze
 						mitmproxy
 						mkalias
 						mpv
@@ -75,6 +76,7 @@
 						rustc
 						sacc
 						senpai
+						sfeed
 						sqlmap
 						stow
 						tailscale
@@ -85,6 +87,7 @@
 						wget
 						wireguard-tools
 						witnessme
+						xdg-utils
 						yazi
 						zbar
 					];
