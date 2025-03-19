@@ -36,7 +36,7 @@ feeds() {
 	feed "Y Combinator" "https://news.ycombinator.com/rss"
 	feed "brutecat.com" "https://brutecat.com/rss.xml"
 	feed "delthas" "https://delthas.fr/blog/atom.xml"
-	feed "drkhsh" "https://drkhsh.at/rss.xml"
+	feed "drkhsh" "https://drkhsh.at/atom_content.xml"
 	feed "emerson" "https://emersonveenstra.net/index.xml"
 	feed "env.fail" "https://env.fail/blog.rss"
 	feed "joshua stein jcs" "https://jcs.org/rss"

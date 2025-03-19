@@ -43,7 +43,7 @@ audio() {
 
 # movie(url)
 movie() {
-	test -n "$1" && mpv "$1"
+	test -n "$1" && mpv --autofit=100%x100% "$1"
 }
 
 # handle pastebin-like url.
