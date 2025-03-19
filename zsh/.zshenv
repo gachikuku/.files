@@ -30,3 +30,13 @@ For each identified endpoint:
 
 The output should be in markdown and it provides actionable reconnaissance data that directly supports further security testing and clearly highlights immediate security concerns. Also if there is an API key anywhere, or something else interisting like UUIDs or any other keys make sure you list it"
 }
+
+# Thanks! https://github.com/Crypto-Cat/CTF/blob/main/my_bash_aliases.md
+urlencode() {
+    python3 -c "from pwn import *; print(urlencode('$1'));"
+}
+
+urldecode() {
+    python3 -c "from pwn import *; print(urldecode('$1'));"
+}
+
