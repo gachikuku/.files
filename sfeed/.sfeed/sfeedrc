@@ -11,6 +11,7 @@ feeds() {
 	feed "0xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
 	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
+	feed "Auth0" "https://auth0.com/blog/rss.xml"
 	feed "Bitreich" "gopher://bitreich.org/0/news.atom.xml"
 	feed "CTFTime writeups" "https://ctftime.org/writeups/rss/"
 	feed "Critical Thinking" "https://rss.beehiiv.com/feeds/SQSpYiG1E1.xml"
