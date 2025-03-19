@@ -6,7 +6,18 @@
 # list of feeds to fetch:
 feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
+	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
 	feed "codemadness" "https://www.codemadness.org/atom_content.xml"
 	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
-	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
+	feed "Drew DeVault's blog" "https://drewdevault.com/blog/index.xml"
+	feed "Mitchell Hashimoto" "https://mitchellh.com/feed.xml"
+	feed "marcan.st" "https://marcan.st/index.xml"
+	feed "PortSwigger Research" "https://portswigger.net/research/rss"
+	feed "Maksym Vatsyk aka adeadfed" "https://adeadfed.com/feed.xml"
+	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
+	feed "Luke Smith" "https://lukesmith.xyz/index.xml"
+	feed "drkhsh" "https://drkhsh.at/rss.xml"
+	feed "Critical Thinking" "https://rss.beehiiv.com/feeds/SQSpYiG1E1.xml"
+	feed "Intigriti Blog" "https://blog.intigriti.com/feed/"
+	feed "Joseph Thacker" "https://josephthacker.com/feed.xml"
 }
