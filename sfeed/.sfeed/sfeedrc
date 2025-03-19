@@ -20,6 +20,7 @@ feeds() {
 	feed "Paged Out!" "https://pagedout.institute/rss.xml"
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
 	feed "ctftime writeups" "https://ctftime.org/writeups/rss/"
+	feed "delthas" "https://delthas.fr/blog/atom.xml"
 	feed "drkhsh" "https://drkhsh.at/rss.xml"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
 }
