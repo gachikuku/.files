@@ -37,6 +37,7 @@ feeds() {
 	feed "emerson" "https://emersonveenstra.net/index.xml"
 	feed "env.fail" "https://env.fail/blog.rss"
 	feed "joshua stein jcs" "https://jcs.org/rss"
+	feed "lyra.horse" "https://lyra.horse/blog/posts/index.xml"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
 	feed "yt Bug Bounty Reports Explained" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "yt Critical Thinking" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6zbKG1pqq2do-_oa9QFliA"
