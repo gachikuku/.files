@@ -7,6 +7,7 @@
 feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
 	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
+	feed "';--have i been pwned?" "https://feeds.feedburner.com/HaveIBeenPwnedLatestBreaches"
 	feed "0xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
 	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
