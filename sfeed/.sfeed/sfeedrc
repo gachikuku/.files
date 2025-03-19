@@ -32,6 +32,8 @@ feeds() {
 	feed "Paged Out!" "https://pagedout.institute/rss.xml"
 	feed "Patrick Peng retr0" "https://retr0.blog/api/rss/feed.xml"
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
+	feed "SourceHut" "https://sourcehut.org/blog/index.xml"
+	feed "The Go Blog" "https://go.dev/blog/feed.atom"
 	feed "TheLabda" "https://www.thelabda.com/feed/"
 	feed "Y Combinator" "https://news.ycombinator.com/rss"
 	feed "brutecat.com" "https://brutecat.com/rss.xml"
