@@ -17,8 +17,6 @@ feeds() {
 	feed "Mitchell Hashimoto" "https://mitchellh.com/feed.xml"
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
 	feed "codemadness" "https://www.codemadness.org/atom_content.xml"
-	feed "ctftime archive" "https://ctftime.org/event/list/archive/rss/"
-	feed "ctftime upcoming" "https://ctftime.org/event/list/upcoming/rss/"
 	feed "ctftime writeups" "https://ctftime.org/writeups/rss/"
 	feed "drkhsh" "https://drkhsh.at/rss.xml"
 	feed "marcan.st" "https://marcan.st/index.xml"
