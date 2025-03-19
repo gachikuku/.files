@@ -13,6 +13,7 @@ feeds() {
 	feed "Bitreich" "gopher://bitreich.org/0/news.atom.xml"
 	feed "CTFTime writeups" "https://ctftime.org/writeups/rss/"
 	feed "Critical Thinking" "https://rss.beehiiv.com/feeds/SQSpYiG1E1.xml"
+	feed "David Buchanan retr0id" "https://www.da.vidbuchanan.co.uk/blog/rss.xml"
 	feed "Drew DeVault ddevault" "https://drewdevault.com/blog/index.xml"
 	feed "Embrace The Red" "https://embracethered.com/blog/index.xml"
 	feed "Google Bug Hunters" "https://bughunters.google.com/feed/en"
