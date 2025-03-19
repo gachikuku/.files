@@ -9,6 +9,7 @@ feeds() {
 	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
 	feed "AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
 	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
+	feed "CTFTime writeups" "https://ctftime.org/writeups/rss/"
 	feed "Critical Thinking" "https://rss.beehiiv.com/feeds/SQSpYiG1E1.xml"
 	feed "Drew DeVault ddevault" "https://drewdevault.com/blog/index.xml"
 	feed "Hector Martin marcan" "https://marcan.st/index.xml"
@@ -20,7 +21,6 @@ feeds() {
 	feed "Mitchell Hashimoto mitchellh" "https://mitchellh.com/feed.xml"
 	feed "Paged Out!" "https://pagedout.institute/rss.xml"
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
-	feed "ctftime writeups" "https://ctftime.org/writeups/rss/"
 	feed "delthas" "https://delthas.fr/blog/atom.xml"
 	feed "drkhsh" "https://drkhsh.at/rss.xml"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
