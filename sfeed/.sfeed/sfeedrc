@@ -6,6 +6,7 @@
 # list of feeds to fetch:
 feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
+	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
 	feed "0xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
 	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
@@ -14,6 +15,7 @@ feeds() {
 	feed "Critical Thinking" "https://rss.beehiiv.com/feeds/SQSpYiG1E1.xml"
 	feed "Drew DeVault ddevault" "https://drewdevault.com/blog/index.xml"
 	feed "Embrace The Red" "https://embracethered.com/blog/index.xml"
+	feed "Google Bug Hunters" "https://bughunters.google.com/feed/en"
 	feed "Hector Martin marcan" "https://marcan.st/index.xml"
 	feed "Hiltjo Posthuma Evil_Bob" "https://www.codemadness.org/atom_content.xml"
 	feed "Jacques-Chevallier Louka" "https://thinkloveshare.com/index.xml"
@@ -35,7 +37,6 @@ feeds() {
 	feed "env.fail" "https://env.fail/blog.rss"
 	feed "joshua stein jcs" "https://jcs.org/rss"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
-	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
 	feed "yt Bug Bounty Reports Explained" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "yt Critical Thinking" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6zbKG1pqq2do-_oa9QFliA"
 	feed "yt CryptoCat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEeuul0q7C8Zs5C8rc4REFQ"
