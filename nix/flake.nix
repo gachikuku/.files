@@ -64,6 +64,7 @@
 						mitmproxy
 						mkalias
 						mpv
+						mupdf
 						neovim
 						net-news-wire
 						ngrok
