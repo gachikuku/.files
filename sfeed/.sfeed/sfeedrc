@@ -36,6 +36,7 @@ feeds() {
 	feed "joshua stein jcs" "https://jcs.org/rss"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
 	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
+	feed "yt Bug Bounty Reports Explained" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "yt Critical Thinking" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6zbKG1pqq2do-_oa9QFliA"
 	feed "yt CryptoCat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEeuul0q7C8Zs5C8rc4REFQ"
 	feed "yt LiveOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UClcE-kVhqyiHCcjYwcpfj9w"
