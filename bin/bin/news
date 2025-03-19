@@ -3,7 +3,7 @@
 # Have to learn plumbing!
 # https://git.codemadness.org/randomcrap/file/config/scripts/plumb.sh.html
 
-#SFEED_PLUMBER_INTERACTIVE default is 0!
+export SFEED_PLUMBER_INTERACTIVE=1
 export SFEED_PLUMBER=plumb.sh
 export SFEED_AUTOCMD="m"
 

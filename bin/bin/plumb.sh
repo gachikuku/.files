@@ -104,7 +104,7 @@ if match "$text" '^(gopher|gophers)://'; then
 	fetch "$text" > "${out}"
 
 	if test "$gophertype" = "0"; then
-		osascript -e "tell application \"Terminal\" to do script \"less \\\"$out\\\"\""
+		less "$out"
 	elif test "$gophertype" = "I"; then
 		image "$out"
 	elif test "$gophertype" = "g"; then
