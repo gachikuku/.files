@@ -28,6 +28,7 @@ feeds() {
 	feed "Patrick Peng retr0" "https://retr0.blog/api/rss/feed.xml"
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
 	feed "TheLabda" "https://www.thelabda.com/feed/"
+	feed "brutecat.com" "https://brutecat.com/rss.xml"
 	feed "delthas" "https://delthas.fr/blog/atom.xml"
 	feed "drkhsh" "https://drkhsh.at/rss.xml"
 	feed "emerson" "https://emersonveenstra.net/index.xml"
