@@ -23,5 +23,6 @@ feeds() {
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
 	feed "delthas" "https://delthas.fr/blog/atom.xml"
 	feed "drkhsh" "https://drkhsh.at/rss.xml"
+	feed "emerson" "https://emersonveenstra.net/index.xml"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
 }
