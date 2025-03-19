@@ -7,5 +7,6 @@
 feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
 	feed "codemadness" "https://www.codemadness.org/atom_content.xml"
+	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
 	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
 }

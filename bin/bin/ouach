@@ -1,4 +1,7 @@
 #!/bin/sh
+if [ "$1" = "-u" ]; then
+    sfeed_update
+fi
 url=$(sfeed_plain "$HOME/.sfeed/feeds/"* | fzf | sed -n 's@^.* \([a-zA-Z]*://\)\(.*\)$@\1\2@p')
 if [ -n "${url}" ]; then
     if echo "$url" | grep -iq "youtube"; then
