@@ -22,5 +22,6 @@ feeds() {
 	feed "ctftime writeups" "https://ctftime.org/writeups/rss/"
 	feed "delthas" "https://delthas.fr/blog/atom.xml"
 	feed "drkhsh" "https://drkhsh.at/rss.xml"
+	feed "lobste.rs" "https://lobste.rs/rss"
 	feed "mitmproxy" "https://mitmproxy.org/posts/index.xml"
 }
