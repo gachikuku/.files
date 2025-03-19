@@ -161,12 +161,13 @@
 					remapCapsLockToControl = true;
 				};
 
-				launchd.user.agents.sfeed_update = {
-					serviceConfig = {
-						ProgramArguments = [ "${pkgs.sfeed}/bin/sfeed_update" ];
-						StartCalendarInterval = { Minute = 0; };
-					};
-				};
+				#launchd.user.agents.sfeed_update = {
+				#	serviceConfig = {
+				#		ProgramArguments = [ "${pkgs.sfeed}/bin/sfeed_update" "~/.sfeed/sfeedrc" ];
+				#		#StartCalendarInterval = { Minute = 0; };
+				#		StartInterval = 60; # Run every 60 seconds (1 minute)
+				#	};
+				#};
 
 				nix = {
 					linux-builder.enable = true;
