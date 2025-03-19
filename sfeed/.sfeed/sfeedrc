@@ -32,6 +32,7 @@ feeds() {
 	feed "MonkeHacks" "https://rss.beehiiv.com/feeds/dMZNmTvThi.xml"
 	feed "Paged Out!" "https://pagedout.institute/rss.xml"
 	feed "Patrick Peng retr0" "https://retr0.blog/api/rss/feed.xml"
+	feed "PentesterLab" "https://pentesterlab.com/blog/feed"
 	feed "PortSwigger Research" "https://portswigger.net/research/rss"
 	feed "RatSec" "https://blog.hackxpert.com/feed/rss"
 	feed "SourceHut" "https://sourcehut.org/blog/index.xml"
