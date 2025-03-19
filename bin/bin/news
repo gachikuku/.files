@@ -1,7 +1,22 @@
 #!/bin/sh
-# Check if the first argument is "-u"
+
 if [ "$1" = "-u" ]; then
     sfeed_update
 fi
 
-sfeed_curses ~/.sfeed/feeds/*
+while true; do
+    url=$(sfeed_plain "$HOME/.sfeed/feeds/"* | fzf | sed -n 's@^.* \([a-zA-Z]*://\)\(.*\)$@\1\2@p')
+    
+    # Exit loop if no URL was selected (user pressed Esc in fzf)
+    if [ -z "${url}" ]; then
+        break
+    fi
+    
+    if echo "$url" | grep -iq "youtube\|youtu\.be"; then
+        mpv --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en "$url"
+    elif echo "$url" | grep -q "^gopher://\|^gophers://"; then
+        sacc "$url"
+    else
+        $BROWSER "$url"
+    fi
+done
