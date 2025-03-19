@@ -45,7 +45,7 @@ alias ls="ls -lGF"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
-alias vid='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
+alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>"'
 
 # Edit line in vim with Meta-e:
