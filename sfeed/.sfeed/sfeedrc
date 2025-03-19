@@ -8,9 +8,11 @@ feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
 	# get youtube Atom feed: curl -s -L 'https://www.youtube.com/user/gocoding/videos' | sfeed_web | cut -f 1
 	feed "';--have i been pwned?" "https://feeds.feedburner.com/HaveIBeenPwnedLatestBreaches"
+	feed "0x00sec" "https://0x00sec.org/latest.rss"
 	feed "0xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
 	feed "Asahi Linux" "https://asahilinux.org/blog/index.xml"
+	feed "Assetnote" "https://www.assetnote.io/resources/research/rss.xml"
 	feed "Auth0" "https://auth0.com/blog/rss.xml"
 	feed "Bitreich" "gopher://bitreich.org/0/news.atom.xml"
 	feed "CTFTime writeups" "https://ctftime.org/writeups/rss/"
@@ -50,6 +52,7 @@ feeds() {
 	feed "yt Arabic 101" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEcQu_9GNDiGU_vqjVZXj3Q"
 	feed "yt Bug Bounty Reports Explained" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "yt Bug Bounty With Marco" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqSval7ahyD6bA5-l0k6oMw"
+	feed "yt Bugcrowd" "https://www.youtube.com/feeds/videos.xml?channel_id=UCo1NHk_bgbAbDBc4JinrXww"
 	feed "yt Critical Thinking" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6zbKG1pqq2do-_oa9QFliA"
 	feed "yt CryptoCat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEeuul0q7C8Zs5C8rc4REFQ"
 	feed "yt Dreams of Autonomy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEEVcDuBRDiwxfXAgQjLGug"
@@ -58,6 +61,7 @@ feeds() {
 	feed "yt Joseph Choe" "https://www.youtube.com/feeds/videos.xml?channel_id=UCz_u0h4usMbnFsIHSVdjUQw"
 	feed "yt LiveOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UClcE-kVhqyiHCcjYwcpfj9w"
 	feed "yt Lupin" "https://www.youtube.com/feeds/videos.xml?channel_id=UCh3ecxx3c6qZDlccBjjiDyQ"
+	feed "yt NahamSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCZDt7MuC3Hzs6IH4xODLBw"
 	feed "yt Renaissance Periodization" "https://www.youtube.com/feeds/videos.xml?channel_id=UCfQgsKhHjSyRLOp9mnffqVg"
 	feed "yt ThePrimeagen" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8ENHE5xdFSwx71u3fDH5Xw"
 	feed "yt huntr" "https://www.youtube.com/feeds/videos.xml?channel_id=UC33YyLk3vdtnPqLeOuEZc2w"
