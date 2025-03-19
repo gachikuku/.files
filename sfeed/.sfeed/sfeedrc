@@ -23,6 +23,7 @@ feeds() {
 	feed "Jacques-Chevallier Louka" "https://thinkloveshare.com/index.xml"
 	feed "Jorian Woltjer" "https://jorianwoltjer.com/blog/rss.xml"
 	feed "Joseph Thacker rez0" "https://josephthacker.com/feed.xml"
+	feed "Josh Grossman" "https://joshcgrossman.com/feed.xml"
 	feed "Lobsters" "https://lobste.rs/rss"
 	feed "Luke Smith" "https://lukesmith.xyz/index.xml"
 	feed "Maksym Vatsyk adeadfed" "https://adeadfed.com/feed.xml"
