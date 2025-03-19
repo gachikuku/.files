@@ -161,6 +161,13 @@
 					remapCapsLockToControl = true;
 				};
 
+				launchd.user.agents.sfeed_update = {
+					serviceConfig = {
+						ProgramArguments = [ "${pkgs.sfeed}/bin/sfeed_update" ];
+						StartCalendarInterval = { Minute = 0; };
+					};
+				};
+
 				nix = {
 					linux-builder.enable = true;
 
