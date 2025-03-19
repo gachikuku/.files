@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Have to learn plumbing!
+# https://git.codemadness.org/randomcrap/file/config/scripts/plumb.sh.html#l10
+
 if [ "$1" = "-u" ]; then
     sfeed_update
 fi
