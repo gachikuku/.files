@@ -135,7 +135,6 @@ feeds() {
 	feed "pspaul's blog" "https://blog.pspaul.de/atom.xml"
 	feed "pyn3rd" "https://blog.pyn3rd.com/atom.xml"
 	feed "securing" "https://www.securing.pl/feed/"
-	feed "tildeverse" "https://rss.tildeverse.org/"
 	feed "yt Arabic 101" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEcQu_9GNDiGU_vqjVZXj3Q"
 	feed "yt Bug Bounty Reports Explained" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "yt Bug Bounty With Marco" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqSval7ahyD6bA5-l0k6oMw"
