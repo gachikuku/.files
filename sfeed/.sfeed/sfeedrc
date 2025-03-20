@@ -104,6 +104,7 @@ feeds() {
 	feed "lyra.horse" "https://lyra.horse/blog/posts/index.xml"
 	feed "medium Jang" "https://medium.com/feed/@testbnull"
 	feed "medium Petrus Viet" "https://medium.com/feed/@petrusviet"
+	feed "medium Rachid.A" "https://medium.com/feed/@zhero_"
 	feed "medium Renwa" "https://medium.com/feed/@renwa"
 	feed "medium Rikesh Baniya" "https://medium.com/feed/@rikeshbaniya"
 	feed "medium pedbap" "https://medium.com/feed/@pedbap"
