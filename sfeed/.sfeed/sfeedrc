@@ -58,6 +58,7 @@ feeds() {
 	feed "Masato Kinugawa" "https://speakerdeck.com/masatokinugawa.rss"
 	feed "Mitchell Hashimoto mitchellh" "https://mitchellh.com/feed.xml"
 	feed "MonkeHacks" "https://rss.beehiiv.com/feeds/dMZNmTvThi.xml"
+	feed "OpenBSD Journal" "https://undeadly.org/cgi?action=rss"
 	feed "Orange Tsai" "https://blog.orange.tw/atom.xml"
 	feed "OtterSec" "https://osec.io/rss.xml"
 	feed "Outpost24" "https://outpost24.com/feed/"
