@@ -33,10 +33,9 @@ The output should be in markdown and it provides actionable reconnaissance data 
 
 # Thanks! https://github.com/Crypto-Cat/CTF/blob/main/my_bash_aliases.md
 urlencode() {
-    python3 -c "from pwn import *; print(urlencode('$1'));"
+	python3 -c "import sys; from urllib.parse import quote; print(quote(sys.argv[1]))" "$1"
 }
 
 urldecode() {
-    python3 -c "from pwn import *; print(urldecode('$1'));"
+    python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.argv[1]))" "$1"
 }
-
