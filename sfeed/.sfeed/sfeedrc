@@ -52,6 +52,7 @@ feeds() {
 	feed "Josh Grossman" "https://joshcgrossman.com/feed.xml"
 	feed "Latest CVE Feed" "https://cvefeed.io/rssfeed/latest.atom"
 	feed "Latest High and Critical Severity CVE Feed" "https://cvefeed.io/rssfeed/severity/high.atom"
+	feed "Libera Chat News" "https://libera.chat/atom.xml"
 	feed "Lobsters" "https://lobste.rs/rss"
 	feed "Luke Smith" "https://lukesmith.xyz/index.xml"
 	feed "Maksym Vatsyk adeadfed" "https://adeadfed.com/feed.xml"
