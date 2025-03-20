@@ -60,6 +60,7 @@
 						lima
 						llm
 						llvm
+						lynx
 						mblaze
 						mitmproxy
 						mkalias
