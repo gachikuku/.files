@@ -10,6 +10,7 @@ feeds() {
 	# get github Atom feed: https://github.com/HackTricks-wiki/hacktricks/commits/master.atom
 	# get medium feeds https://help.medium.com/hc/en-us/articles/214874118-Using-RSS-feeds-of-profiles-publications-and-topics
 	# https://worst.fit/mapping/ fuzzing
+	# https://github.com/leafac/kill-the-newsletter Convert email newsletters into Atom feeds :)
 	feed "';--have i been pwned?" "https://feeds.feedburner.com/HaveIBeenPwnedLatestBreaches"
 	feed "(Web-)Insecurity Blog" "https://security.lauritz-holtmann.de/index.xml"
 	feed "/blog.xss.am/" "https://blog.xss.am/index.xml"
@@ -80,7 +81,7 @@ feeds() {
 	feed "The Go Blog" "https://go.dev/blog/feed.atom"
 	feed "TheLabda" "https://www.thelabda.com/feed/"
 	feed "Tyranid's Lair" "https://www.tiraniddo.dev/feeds/posts/default?alt=rss"
-	feed "Voorivex Hunting Team" "https://blog.voorivex.team/rss.xml"
+	feed "Voorivex Hunting Team" "https://kill-the-newsletter.com/feeds/v5ep1y592fkwk4zit3h7.xml"
 	feed "WebSec" "https://websec.net/rss/blog/en"
 	feed "Y Combinator" "https://news.ycombinator.com/rss"
 	feed "Your awesome title" "https://sudistark.github.io/feed.xml"
