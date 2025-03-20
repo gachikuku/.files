@@ -5,7 +5,7 @@
 
 export SFEED_PLUMBER_INTERACTIVE=1
 export SFEED_PLUMBER=plumb.sh
-export SFEED_AUTOCMD="mtGo"
+export SFEED_AUTOCMD="mt"
 
 if [ "$1" = "-u" ]; then
     sfeed_update
