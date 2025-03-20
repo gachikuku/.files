@@ -132,5 +132,6 @@ feeds() {
 	feed "yt huntr" "https://www.youtube.com/feeds/videos.xml?channel_id=UC33YyLk3vdtnPqLeOuEZc2w"
 	feed "yt ippsec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCa6eh7gCkpPo5XXUDfygQQA"
 	feed "yt media.ccc.de" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2TXq_t06Hjdr2g_KdKpHQg"
+	feed "yt pwn.college" "https://www.youtube.com/feeds/videos.xml?channel_id=UCBaWwFw7KmCN8YlfX4ERYKg"
 	feed "yt z3nsh3ll" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnWAPVvXxivIo40QpjEMU1w"
 }
