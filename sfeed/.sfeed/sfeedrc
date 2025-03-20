@@ -121,6 +121,7 @@ feeds() {
 	feed "yt Critical Thinking" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6zbKG1pqq2do-_oa9QFliA"
 	feed "yt CryptoCat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEeuul0q7C8Zs5C8rc4REFQ"
 	feed "yt DEFCONConference" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6Om9kAkl32dWlDSNlDS9Iw"
+	feed "yt DeadOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UCRgAOWBpaksZ_plUlJNs1ew"
 	feed "yt Dreams of Autonomy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEEVcDuBRDiwxfXAgQjLGug"
 	feed "yt Dreams of Code" "https://www.youtube.com/feeds/videos.xml?channel_id=UCWQaM7SpSECp9FELz-cHzuQ"
 	feed "yt Eli the Computer Guy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
