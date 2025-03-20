@@ -128,6 +128,7 @@ feeds() {
 	feed "yt Eli the Computer Guy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
 	feed "yt Intigriti" "https://www.youtube.com/feeds/videos.xml?channel_id=UCcBgAEHAW0ESGwfoLJYg_Tg"
 	feed "yt Joseph Choe" "https://www.youtube.com/feeds/videos.xml?channel_id=UCz_u0h4usMbnFsIHSVdjUQw"
+	feed "yt Kris Occhipinti" "https://www.youtube.com/feeds/videos.xml?channel_id=UCf93fPKwotph47H3_KDcRyg"
 	feed "yt LiveOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UClcE-kVhqyiHCcjYwcpfj9w"
 	feed "yt Lupin" "https://www.youtube.com/feeds/videos.xml?channel_id=UCh3ecxx3c6qZDlccBjjiDyQ"
 	feed "yt NahamSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCZDt7MuC3Hzs6IH4xODLBw"
