@@ -91,6 +91,7 @@ feeds() {
 	feed "elttam" "https://www.elttam.com/feed.xml"
 	feed "email Truffle Security" "https://kill-the-newsletter.com/feeds/tew4q4137kbg8bq24l9q.xml"
 	feed "email Voorivex Hunting Team" "https://kill-the-newsletter.com/feeds/v5ep1y592fkwk4zit3h7.xml"
+	feed "email snyk" "https://kill-the-newsletter.com/feeds/djjti6hi66l5ol80ulkg.xml"
 	feed "emerson" "https://emersonveenstra.net/index.xml"
 	feed "env.fail" "https://env.fail/blog.rss"
 	feed "git http-garden" "https://github.com/narfindustries/http-garden/commits/main/.atom"
