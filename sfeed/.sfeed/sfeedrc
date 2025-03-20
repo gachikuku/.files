@@ -122,6 +122,7 @@ feeds() {
 	feed "yt NahamSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCZDt7MuC3Hzs6IH4xODLBw"
 	feed "yt Renaissance Periodization" "https://www.youtube.com/feeds/videos.xml?channel_id=UCfQgsKhHjSyRLOp9mnffqVg"
 	feed "yt ThePrimeagen" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8ENHE5xdFSwx71u3fDH5Xw"
+	feed "yt Tristyn Lee" "https://www.youtube.com/feeds/videos.xml?channel_id=UC53s-VII9tDkMRzg2zqFzmw"
 	feed "yt Truffle Security" "https://www.youtube.com/feeds/videos.xml?channel_id=UCGwKrfQJWHgZeFFumnjrpAA"
 	feed "yt huntr" "https://www.youtube.com/feeds/videos.xml?channel_id=UC33YyLk3vdtnPqLeOuEZc2w"
 	feed "yt ippsec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCa6eh7gCkpPo5XXUDfygQQA"
