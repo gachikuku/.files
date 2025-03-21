@@ -158,7 +158,7 @@ feeds() {
 	feed "yt ThePrimeagen" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8ENHE5xdFSwx71u3fDH5Xw"
 	feed "yt Tib3rius" "https://www.youtube.com/feeds/videos.xml?channel_id=UCs6dtu4e0JL-N4hVszsFpBw"
 	feed "yt Tristyn Lee" "https://www.youtube.com/feeds/videos.xml?channel_id=UC53s-VII9tDkMRzg2zqFzmw"
-	feed "yt Truffle Security" "https://www.youtube.com/feeds/videos.xml?channel_id=UCGwKrfQJWHgZeFFumnjrpAA"
+	feed "yt TruffleSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCGwKrfQJWHgZeFFumnjrpAA"
 	feed "yt black hat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ6q9Ie29ajGqKApbLqfBOg"
 	feed "yt eli" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
 	feed "yt elliottminns" "https://www.youtube.com/feeds/videos.xml?channel_id=UCWQaM7SpSECp9FELz-cHzuQ"
