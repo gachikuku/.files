@@ -65,7 +65,7 @@ feeds() {
 	feed "Masato Kinugawa" "https://speakerdeck.com/masatokinugawa.rss"
 	feed "Mitchell Hashimoto" "https://mitchellh.com/feed.xml"
 	feed "MonkeHacks" "https://rss.beehiiv.com/feeds/dMZNmTvThi.xml"
-	feed "N/A" "https://sudistark.github.io/feed.xml"
+	feed "NA" "https://sudistark.github.io/feed.xml"
 	feed "NixOS" "https://nixos.org/blog/announcements-rss.xml"
 	feed "Nixcademy" "https://nixcademy.com/feed.xml"
 	feed "OpenBSD" "https://undeadly.org/cgi?action=rss"
