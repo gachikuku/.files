@@ -155,6 +155,7 @@ feeds() {
 	feed "yt LiveOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UClcE-kVhqyiHCcjYwcpfj9w"
 	feed "yt Lupin" "https://www.youtube.com/feeds/videos.xml?channel_id=UCh3ecxx3c6qZDlccBjjiDyQ"
 	feed "yt NahamSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCZDt7MuC3Hzs6IH4xODLBw"
+	feed "yt PinkDraconian" "https://www.youtube.com/feeds/videos.xml?channel_id=UCmXwpkCXmIKjoRLMsq9I3RA"
 	feed "yt PwnFunction" "https://www.youtube.com/feeds/videos.xml?channel_id=UCW6MNdOsqv2E9AjQkv9we7A"
 	feed "yt RP" "https://www.youtube.com/feeds/videos.xml?channel_id=UCfQgsKhHjSyRLOp9mnffqVg"
 	feed "yt ThePrimeagen" "https://www.youtube.com/feeds/videos.xml?channel_id=UC8ENHE5xdFSwx71u3fDH5Xw"
