@@ -128,6 +128,7 @@ feeds() {
 	feed "joshua stein" "https://jcs.org/rss"
 	feed "jub0bs" "https://jub0bs.com/posts/index.xml"
 	feed "lyra.horse" "https://lyra.horse/blog/posts/index.xml"
+	feed "medium JD" "https://medium.com/feed/@jad2121"
 	feed "medium Jang" "https://medium.com/feed/@testbnull"
 	feed "medium Petrus Viet" "https://medium.com/feed/@petrusviet"
 	feed "medium Rachid.A" "https://medium.com/feed/@zhero_"
