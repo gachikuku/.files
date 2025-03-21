@@ -11,7 +11,7 @@ feeds() {
 	# get medium feeds https://help.medium.com/hc/en-us/articles/214874118-Using-RSS-feeds-of-profiles-publications-and-topics
 	# https://worst.fit/mapping/ fuzzing
 	# https://github.com/leafac/kill-the-newsletter Convert at newsletters into Atom feeds :)
-	feed "!Salah Athens" "https://www.salahtimes.com/greece/athens/rss"
+	feed "Salah Athens" "https://www.salahtimes.com/greece/athens/rss"
 	feed "(Web-)Insecurity" "https://security.lauritz-holtmann.de/index.xml"
 	feed "/blog.xss.am/" "https://blog.xss.am/index.xml"
 	feed "0x00sec" "https://0x00sec.org/latest.rss"
@@ -177,7 +177,6 @@ feeds() {
 	feed "yt huntr" "https://www.youtube.com/feeds/videos.xml?channel_id=UC33YyLk3vdtnPqLeOuEZc2w"
 	feed "yt ippsec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCa6eh7gCkpPo5XXUDfygQQA"
 	feed "yt marcotuliocnd" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqSval7ahyD6bA5-l0k6oMw"
-	feed "yt media.ccc.de" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2TXq_t06Hjdr2g_KdKpHQg"
 	feed "yt media.ccc.de" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2TXq_t06Hjdr2g_KdKpHQg"
 	feed "yt netletic" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2-Ypw1pR78s8sq_icbNybQ"
 	feed "yt popo_hack" "https://www.youtube.com/feeds/videos.xml?channel_id=UC9TtZdZoE9aCfuw0fubHVGw"
