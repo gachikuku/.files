@@ -125,6 +125,7 @@ feeds() {
 	feed "git http-garden" "https://github.com/narfindustries/http-garden/commits/main/.atom"
 	feed "git mitmproxy" "https://github.com/mitmproxy/mitmproxy/releases.atom"
 	feed "joshua stein" "https://jcs.org/rss"
+	feed "jub0bs" "https://jub0bs.com/posts/index.xml"
 	feed "lyra.horse" "https://lyra.horse/blog/posts/index.xml"
 	feed "medium Jang" "https://medium.com/feed/@testbnull"
 	feed "medium Petrus Viet" "https://medium.com/feed/@petrusviet"
