@@ -137,6 +137,7 @@ feeds() {
 	feed "pspaul" "https://blog.pspaul.de/atom.xml"
 	feed "pyn3rd" "https://blog.pyn3rd.com/atom.xml"
 	feed "securing" "https://www.securing.pl/feed/"
+	feed "someodd" "gopher://gopher.someodd.zip:70/0/phlog/atom.xml"
 	feed "soroush" "https://soroush.me/blog/feed/"
 	feed "tv NahamSec" "https://twitchrss.appspot.com/vod/nahamsec"
 	feed "tv ThePrimeagen" "https://twitchrss.appspot.com/vod/theprimeagen"
