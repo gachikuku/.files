@@ -11,7 +11,7 @@ feeds() {
 	# get medium feeds https://help.medium.com/hc/en-us/articles/214874118-Using-RSS-feeds-of-profiles-publications-and-topics
 	# https://worst.fit/mapping/ fuzzing
 	# https://github.com/leafac/kill-the-newsletter Convert at newsletters into Atom feeds :)
-	feed "Salah Athens" "https://www.salahtimes.com/greece/athens/rss"
+	feed "Salah Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
 	feed "(Web-)Insecurity" "https://security.lauritz-holtmann.de/index.xml"
 	feed "/blog.xss.am/" "https://blog.xss.am/index.xml"
 	feed "0x00sec" "https://0x00sec.org/latest.rss"
