@@ -48,7 +48,7 @@ feeds() {
 	feed "Github Security" "https://securitylab.github.com/feed.xml"
 	feed "Go" "https://go.dev/blog/feed.atom"
 	feed "Google BugHunt" "https://bughunters.google.com/feed/en"
-	feed "Hacktivity" "http://rss.ricterz.me/hacktivity"
+	feed "H1 hacktivity" "http://rss.ricterz.me/hacktivity"
 	feed "Harel" "https://nokline.github.io/feed.xml"
 	feed "Hector Martin" "https://marcan.st/index.xml"
 	feed "Hiltjo Posthuma" "https://www.codemadness.org/atom_content.xml"
