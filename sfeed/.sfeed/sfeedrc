@@ -151,6 +151,7 @@ feeds() {
 	feed "tv NahamSec" "https://twitchrss.appspot.com/vod/nahamsec"
 	feed "tv ThePrimeagen" "https://twitchrss.appspot.com/vod/theprimeagen"
 	feed "tv Tib3rius" "https://twitchrss.appspot.com/vod/0xtib3rius"
+	feed "yt 0xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "yt 7SeasSecurity" "https://www.youtube.com/feeds/videos.xml?channel_id=UCuHzD8nmIdBZ5mTluQ0hkwA"
 	feed "yt Arabic101" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEcQu_9GNDiGU_vqjVZXj3Q"
 	feed "yt BBRE" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
