@@ -115,6 +115,7 @@ feeds() {
 	feed "bsky Soroush Dalili" "https://bsky.app/profile/did:plc:6ysasozowffu5oqqkchrhwvl/rss"
 	feed "bsky TomNomNom" "https://bsky.app/profile/did:plc:bsr5iihqqdhacakua2ua3l5a/rss"
 	feed "bsky d4d" "https://bsky.app/profile/did:plc:ipjbzqbe5op5xmlcojtyeqzr/rss"
+	feed "bsky fr4via" "https://bsky.app/profile/did:plc:dtl6ypbecapu6i2wipdzbp4o/rss"
 	feed "bsky joaxcar" "https://bsky.app/profile/did:plc:bmqw5ojrtwbceecsmafgjvkn/rss"
 	feed "bsky renniepak" "https://bsky.app/profile/did:plc:coormhn4vzpjg4qy73vcwwko/rss"
 	feed "bsky shubs" "https://bsky.app/profile/did:plc:n4oyocfy4tw7ssudbpx6xniy/rss"
