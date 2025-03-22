@@ -70,6 +70,7 @@ feeds() {
 	feed "NA" "https://sudistark.github.io/feed.xml"
 	feed "NixOS" "https://nixos.org/blog/announcements-rss.xml"
 	feed "Nixcademy" "https://nixcademy.com/feed.xml"
+	feed "OWASP chtsh" "https://cheatsheetseries.owasp.org/News.xml"
 	feed "OpenBSD" "https://undeadly.org/cgi?action=rss"
 	feed "Orange Tsai" "https://blog.orange.tw/atom.xml"
 	feed "OtterSec" "https://osec.io/rss.xml"
