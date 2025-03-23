@@ -98,6 +98,7 @@ feeds() {
 	feed "Source Incite" "https://srcincite.io/feed.xml"
 	feed "SourceHut" "https://sourcehut.org/blog/index.xml"
 	feed "Spaceraccoon" "https://spaceraccoon.dev/feed.xml"
+	feed "The Spanner" "https://thespanner.co.uk/rss.xml"
 	feed "TheLabda" "https://www.thelabda.com/feed/"
 	feed "Tyranid's Lair" "https://www.tiraniddo.dev/feeds/posts/default?alt=rss"
 	feed "WebSec" "https://websec.net/rss/blog/en"
