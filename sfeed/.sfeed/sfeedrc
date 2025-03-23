@@ -53,6 +53,7 @@ feeds() {
 	feed "Hector Martin" "https://marcan.st/index.xml"
 	feed "Hiltjo Posthuma" "https://www.codemadness.org/atom_content.xml"
 	feed "Huntr blog" "https://blog.huntr.com/rss.xml"
+	feed "Immunefi" "https://immunefi.com/blog/rss/"
 	feed "Invicti" "https://www.invicti.com/blog/feed/"
 	feed "Jacques-Chevallier" "https://thinkloveshare.com/index.xml"
 	feed "Jorian Woltjer" "https://jorianwoltjer.com/blog/rss.xml"
