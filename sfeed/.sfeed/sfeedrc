@@ -134,6 +134,7 @@ feeds() {
 	feed "elttam" "https://www.elttam.com/feed.xml"
 	feed "emerson" "https://emersonveenstra.net/index.xml"
 	feed "env.fail" "https://env.fail/blog.rss"
+	feed "git HackTricks" "https://github.com/HackTricks-wiki/hacktricks/commits/master/.atom"
 	feed "git http-garden" "https://github.com/narfindustries/http-garden/commits/main/.atom"
 	feed "git mitmproxy" "https://github.com/mitmproxy/mitmproxy/releases.atom"
 	feed "hafiz" "https://hafiz.ng/feed/"
