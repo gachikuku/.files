@@ -182,6 +182,7 @@ feeds() {
 	feed "🕸️ SYNACKTIV" "https://www.synacktiv.com/en/feed/lastblog.xml"
 	feed "🕸️ Sam Curry" "https://samcurry.net/api/feed.rss"
 	feed "🕸️ Sean Pesce" "https://seanpesce.blogspot.com/feeds/posts/default"
+	feed "🕸️ Sector035" "https://sector035.nl/articles.atom"
 	feed "🕸️ Shazzer" "https://shazzer.co.uk/blog/rss.xml"
 	feed "🕸️ Sicuranext" "https://blog.sicuranext.com/rss/"
 	feed "🕸️ Skii.dev" "https://skii.dev/rss/"
