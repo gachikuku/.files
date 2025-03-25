@@ -132,6 +132,7 @@ feeds() {
 	feed "🕸️ Asahi Linux" "https://asahilinux.org/blog/index.xml"
 	feed "🕸️ Assetnote" "https://www.assetnote.io/resources/research/rss.xml"
 	feed "🕸️ Auth0" "https://auth0.com/blog/rss.xml"
+	feed "🕸️ BHIS" "https://www.blackhillsinfosec.com/feed/"
 	feed "🕸️ Bartek Nowotarski" "https://nowotarski.info/index.xml"
 	feed "🕸️ Bishop Fox" "https://bishopfox.com/feeds/blog.rss"
 	feed "🕸️ Bitreich" "gopher://bitreich.org/0/news.atom.xml"
