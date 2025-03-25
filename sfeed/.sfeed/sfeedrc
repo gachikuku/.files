@@ -5,11 +5,11 @@
 
 # allow for 1 redirect, set User-Agent, timeout is 15 seconds.
 fetch(){
-		curl \
-			-f -s -m 15 \
-			-L --max-redirs 1 \
-			-H "User-Agent: sfeed" \
-			"$2" 2>/dev/null || return 1
+	curl \
+		-f -s -m 15 \
+		-L --max-redirs 1 \
+		-H "User-Agent: sfeed" \
+		"$2" 2>/dev/null || return 1
 }
 
 # list of feeds to fetch:
@@ -132,7 +132,6 @@ feeds() {
 	feed "🕸️ Assetnote" "https://www.assetnote.io/resources/research/rss.xml"
 	feed "🕸️ Auth0" "https://auth0.com/blog/rss.xml"
 	feed "🕸️ BHIS" "https://www.blackhillsinfosec.com/feed/"
-	feed "🕸️ Bartek Nowotarski" "https://nowotarski.info/index.xml"
 	feed "🕸️ Bishop Fox" "https://bishopfox.com/feeds/blog.rss"
 	feed "🕸️ Bitreich" "gopher://bitreich.org/0/news.atom.xml"
 	feed "🕸️ Borna Nematzadeh" "https://logicalhunter.me/feed/"
@@ -229,6 +228,7 @@ feeds() {
 	feed "🕸️ lyra.horse" "https://lyra.horse/blog/posts/index.xml"
 	feed "🕸️ mitchellh" "https://mitchellh.com/feed.xml"
 	feed "🕸️ mitmproxy" "https://mitmproxy.org/posts/index.xml"
+	feed "🕸️ nowotarski" "https://nowotarski.info/index.xml"
 	feed "🕸️ pspaul" "https://blog.pspaul.de/atom.xml"
 	feed "🕸️ pyn3rd" "https://blog.pyn3rd.com/atom.xml"
 	feed "🕸️ rapid7" "https://blog.rapid7.com/rss/"
