@@ -5,7 +5,7 @@
 
 # allow for 1 redirect, set User-Agent, timeout is 15 seconds.
 fetch(){
-    curl \
+		curl \
 			-f -s -m 15 \
 			-L --max-redirs 1 \
 			-H "User-Agent: sfeed" \
@@ -73,7 +73,6 @@ feeds() {
 	feed "📰 Renwa" "https://medium.com/feed/@renwa"
 	feed "📰 Rikesh.B" "https://medium.com/feed/@rikeshbaniya"
 	feed "🦋 Sean Pesce" "https://bsky.app/profile/did:plc:tcyboqfcve7vj45eodbra5mp/rss"
-	feed "🔧 SecLists" "https://github.com/danielmiessler/SecLists/commits/master/.atom"
 	feed "📰 Shaikh.M" "https://medium.com/feed/@shaikhminhaz1975"
 	feed "🦋 Soroush Dalili" "https://bsky.app/profile/did:plc:6ysasozowffu5oqqkchrhwvl/rss"
 	feed "📹 ThePrimeagen" "https://twitchrss.appspot.com/vod/theprimeagen"
@@ -116,7 +115,6 @@ feeds() {
 	feed "📺 stacksmashing" "https://www.youtube.com/feeds/videos.xml?channel_id=UC3S8vxwRfqLBdIhgRlDRVzw"
 	feed "🦋 terjanq" "https://bsky.app/profile/did:plc:anmbivfaqzqbd5rosow6ihu5/rss"
 	feed "💀 tout" "https://www.root-me.org/?page=backend&lang=en"
-	feed "🔧 trickest" "https://github.com/trickest/wordlists/commits/main/.atom"
 	feed "🤖 websecurityresearch" "https://old.reddit.com/r/websecurityresearch/.rss"
 	feed "🦋 xnl-h4ck3r" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
 	feed "📺 z3nsh3ll" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnWAPVvXxivIo40QpjEMU1w"
