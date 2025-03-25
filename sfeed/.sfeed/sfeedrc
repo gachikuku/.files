@@ -105,6 +105,7 @@ feeds() {
 	feed "📺 media.ccc.de" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2TXq_t06Hjdr2g_KdKpHQg"
 	feed "🔧 mitmproxy" "https://github.com/mitmproxy/mitmproxy/releases.atom"
 	feed "📺 netletic" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2-Ypw1pR78s8sq_icbNybQ"
+	feed "🤖 netsec" "https://old.reddit.com/r/netsec/.rss"
 	feed "📰 niruragu" "https://medium.com/feed/@niruragu"
 	feed "📰 pedbap" "https://medium.com/feed/@pedbap"
 	feed "📺 popo_hack" "https://www.youtube.com/feeds/videos.xml?channel_id=UC9TtZdZoE9aCfuw0fubHVGw"
@@ -118,6 +119,7 @@ feeds() {
 	feed "🦋 terjanq" "https://bsky.app/profile/did:plc:anmbivfaqzqbd5rosow6ihu5/rss"
 	feed "💀 tout" "https://www.root-me.org/?page=backend&lang=en"
 	feed "🔧 trickest" "https://github.com/trickest/wordlists/commits/main/.atom"
+	feed "🤖 websecurityresearch" "https://old.reddit.com/r/websecurityresearch/.rss"
 	feed "🦋 xnl-h4ck3r" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
 	feed "📺 z3nsh3ll" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnWAPVvXxivIo40QpjEMU1w"
 	feed "📰 zack0x01" "https://medium.com/feed/@zack0x01_"
@@ -233,5 +235,4 @@ feeds() {
 	feed "🕸️ securing" "https://www.securing.pl/feed/"
 	feed "🕸️ someodd" "gopher://gopher.someodd.zip:70/phlog/atom.xml"
 	feed "🕸️ soroush" "https://soroush.me/blog/feed/"
-	feed "reddit openbsd" "https://old.reddit.com/r/openbsd/.rss"
 }
