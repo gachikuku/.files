@@ -85,6 +85,7 @@ feeds() {
 	feed "📺 TruffleSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCGwKrfQJWHgZeFFumnjrpAA"
 	feed "📧 Voorivex" "https://kill-the-newsletter.com/feeds/v5ep1y592fkwk4zit3h7.xml"
 	feed "💀 WebServer" "https://www.root-me.org/?page=backend&id_rubrique=68"
+	feed "🦋 agarri.fr" "https://bsky.app/profile/did:plc:d7poh4tbrcxpfhouwkemcelp/rss"
 	feed "📺 black hat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ6q9Ie29ajGqKApbLqfBOg"
 	feed "🦋 d4d" "https://bsky.app/profile/did:plc:ipjbzqbe5op5xmlcojtyeqzr/rss"
 	feed "📺 eli" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
