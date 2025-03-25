@@ -50,6 +50,7 @@ feeds() {
 	feed "📺 NahamSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCZDt7MuC3Hzs6IH4xODLBw"
 	feed "💀 News" "https://www.root-me.org/?page=backend-breves&lang=en"
 	feed "🔔 NewsRoom Feed" "https://cvefeed.io/rssfeed/newsroom.atom"
+	feed "📰 Orwa.A" "https://medium.com/feed/@orwaatyat"
 	feed "📺 PT" "https://www.youtube.com/feeds/videos.xml?channel_id=UCAL3JXZSzSm8AlZyD3nQdBA"
 	feed "📰 Petrus.V" "https://medium.com/feed/@petrusviet"
 	feed "🦋 Phrack" "https://bsky.app/profile/did:plc:tctxyyhfec5k4rdfe6zzr6g6/rss"
