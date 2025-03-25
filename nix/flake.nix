@@ -71,6 +71,7 @@
 						ngrok
 						nmap
 						nodejs_22
+						openvpn
 						plan9port
 						python312Full
 						python312Packages.ipython
