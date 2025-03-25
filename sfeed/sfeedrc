@@ -193,7 +193,6 @@ feeds() {
 	feed "🕸️ TheLabda" "https://www.thelabda.com/feed/"
 	feed "🕸️ Tyranid's Lair" "https://www.tiraniddo.dev/feeds/posts/default?alt=rss"
 	feed "🕸️ WebSec" "https://websec.net/rss/blog/en"
-	feed "🕸️ Wiz" "https://www.wiz.io/feed/rss.xml"
 	feed "🗳️ YCombinator" "https://news.ycombinator.com/rss"
 	feed "🕸️ [0]" "https://dayzerosec.com/feed.xml"
 	feed "🕸️ brutecat.com" "https://brutecat.com/rss.xml"
