@@ -3,6 +3,15 @@
 
 #sfeedpath="$HOME/.sfeed/feeds"
 
+# allow for 1 redirect, set User-Agent, timeout is 15 seconds.
+fetch(){
+    curl \
+			-f -s -m 15 \
+			-L --max-redirs 1 \
+			-H "User-Agent: sfeed" \
+			"$2" 2>/dev/null || return 1
+}
+
 # list of feeds to fetch:
 feeds() {
 	# feed <name> <feedurl> [basesiteurl] [encoding]
@@ -224,4 +233,5 @@ feeds() {
 	feed "🕸️ securing" "https://www.securing.pl/feed/"
 	feed "🕸️ someodd" "gopher://gopher.someodd.zip:70/phlog/atom.xml"
 	feed "🕸️ soroush" "https://soroush.me/blog/feed/"
+	feed "reddit openbsd" "https://old.reddit.com/r/openbsd/.rss"
 }
