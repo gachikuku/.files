@@ -198,7 +198,7 @@ feeds() {
 	feed "🕸️ [0]" "https://dayzerosec.com/feed.xml"
 	feed "🕸️ brutecat.com" "https://brutecat.com/rss.xml"
 	feed "🕸️ delthas" "https://delthas.fr/blog/atom.xml"
-	feed "🕸️ detectify" "http://blog.detectify.com/rss"
+	feed "🕸️ detectify" "https://blog.detectify.com/rss/atom/"
 	feed "🕸️ drkhsh" "https://drkhsh.at/atom_content.xml"
 	feed "🕸️ elttam" "https://www.elttam.com/feed.xml"
 	feed "🕸️ emerson" "https://emersonveenstra.net/index.xml"
