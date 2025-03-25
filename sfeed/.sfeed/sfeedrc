@@ -119,7 +119,7 @@ feeds() {
 	feed "📺 stacksmashing" "https://www.youtube.com/feeds/videos.xml?channel_id=UC3S8vxwRfqLBdIhgRlDRVzw"
 	feed "🦋 terjanq" "https://bsky.app/profile/did:plc:anmbivfaqzqbd5rosow6ihu5/rss"
 	feed "💀 tout" "https://www.root-me.org/?page=backend&lang=en"
-	feed "🤖 websecurityresearch" "https://old.reddit.com/r/websecurityresearch/.rss"
+	feed "🤖 websec" "https://old.reddit.com/r/websecurityresearch/.rss"
 	feed "🦋 xnl-h4ck3r" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
 	feed "📺 z3nsh3ll" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnWAPVvXxivIo40QpjEMU1w"
 	feed "📰 zack0x01" "https://medium.com/feed/@zack0x01_"
