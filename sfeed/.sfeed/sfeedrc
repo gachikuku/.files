@@ -20,6 +20,7 @@ feeds() {
 	# get medium feeds https://help.medium.com/hc/en-us/articles/214874118-Using-RSS-feeds-of-profiles-publications-and-topics
 	# https://worst.fit/mapping/ fuzzing
 	# https://github.com/leafac/kill-the-newsletter Convert at newsletters into Atom feeds :)
+	# https://feedproxy.feedly.com/1437c34d-ce6d-4b92-b1ff-91e369305e2a BLOCKED
 	feed "🕌 Salah Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
 	feed "📺 0xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "📺 7SeasSecurity" "https://www.youtube.com/feeds/videos.xml?channel_id=UCuHzD8nmIdBZ5mTluQ0hkwA"
@@ -89,6 +90,7 @@ feeds() {
 	feed "👌 ZDI Upcoming" "https://www.zerodayinitiative.com/rss/upcoming/"
 	feed "🦋 agarri.fr" "https://bsky.app/profile/did:plc:d7poh4tbrcxpfhouwkemcelp/rss"
 	feed "📺 black hat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ6q9Ie29ajGqKApbLqfBOg"
+	feed "📰 bug-bounty" "https://medium.com/feed/tag/bug-bounty"
 	feed "🦋 d4d" "https://bsky.app/profile/did:plc:ipjbzqbe5op5xmlcojtyeqzr/rss"
 	feed "📺 eli" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
 	feed "📺 elliottminns" "https://www.youtube.com/feeds/videos.xml?channel_id=UCWQaM7SpSECp9FELz-cHzuQ"
@@ -213,6 +215,7 @@ feeds() {
 	feed "🕸️ WebSec" "https://websec.net/rss/blog/en"
 	feed "🕸️ Wiz" "https://www.wiz.io/feed/rss.xml"
 	feed "🗳️ YCombinator" "https://news.ycombinator.com/rss"
+	feed "🕸️ YesWeHack" "https://blog.yeswehack.com/feed/"
 	feed "🕸️ [0]" "https://dayzerosec.com/feed.xml"
 	feed "🕸️ brutecat.com" "https://brutecat.com/rss.xml"
 	feed "🕸️ ddevault" "https://drewdevault.com/blog/index.xml"
