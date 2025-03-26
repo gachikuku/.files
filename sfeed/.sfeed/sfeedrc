@@ -39,6 +39,7 @@ feeds() {
 	feed "📺 Farah Hawa" "https://www.youtube.com/feeds/videos.xml?channel_id=UCq9IyPMXiwD8yBFHkxmN8zg"
 	feed "🦋 Gareth Heyes" "https://bsky.app/profile/did:plc:eisos6r3dojkdtrafvrvfual/rss"
 	feed "📰 HX007" "https://medium.com/feed/@HX007"
+	feed "📺 HackTheBox" "https://www.youtube.com/feeds/videos.xml?channel_id=UCi67lRCd5qpaHwSXNJisuRQ"
 	feed "🔧 HackTricks" "https://github.com/HackTricks-wiki/hacktricks/commits/master/.atom"
 	feed "📺 IOBugs" "https://www.youtube.com/feeds/videos.xml?channel_id=UCfJRkBBiPtKZyZn_3PxWaiQ"
 	feed "📺 IU" "https://www.youtube.com/feeds/videos.xml?channel_id=UCUOTutZoUpcUWpWQ7VL2Hjg"
