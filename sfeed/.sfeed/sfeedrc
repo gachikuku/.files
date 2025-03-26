@@ -239,6 +239,7 @@ feeds() {
 	feed "🕸️ mitchellh" "https://mitchellh.com/feed.xml"
 	feed "🕸️ mitmproxy" "https://mitmproxy.org/posts/index.xml"
 	feed "🕸️ nowotarski" "https://nowotarski.info/index.xml"
+	feed "🕸️ paragonie" "https://paragonie.com/rss/"
 	feed "🕸️ pspaul" "https://blog.pspaul.de/atom.xml"
 	feed "🕸️ pyn3rd" "https://blog.pyn3rd.com/atom.xml"
 	feed "🕸️ rapid7" "https://blog.rapid7.com/rss/"
