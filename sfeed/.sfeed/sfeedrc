@@ -73,6 +73,7 @@ feeds() {
 	feed "📰 Rachid.A" "https://medium.com/feed/@zhero_"
 	feed "📰 Renwa" "https://medium.com/feed/@renwa"
 	feed "📰 Rikesh.B" "https://medium.com/feed/@rikeshbaniya"
+	feed "📺 Root-Me" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnvB1SJdVYv-1zkByuYM73g"
 	feed "🦋 Sean Pesce" "https://bsky.app/profile/did:plc:tcyboqfcve7vj45eodbra5mp/rss"
 	feed "📰 Shaikh.M" "https://medium.com/feed/@shaikhminhaz1975"
 	feed "🦋 Soroush" "https://bsky.app/profile/did:plc:6ysasozowffu5oqqkchrhwvl/rss"
