@@ -38,6 +38,7 @@ feeds() {
 	feed "📺 DeadOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UCRgAOWBpaksZ_plUlJNs1ew"
 	feed "📺 DigitalMetal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCf93fPKwotph47H3_KDcRyg"
 	feed "📺 Farah Hawa" "https://www.youtube.com/feeds/videos.xml?channel_id=UCq9IyPMXiwD8yBFHkxmN8zg"
+	feed "📰 Firas.F" "https://medium.com/feed/@fatnassifiras"
 	feed "🦋 Gareth Heyes" "https://bsky.app/profile/did:plc:eisos6r3dojkdtrafvrvfual/rss"
 	feed "📰 HX007" "https://medium.com/feed/@HX007"
 	feed "📺 HackTheBox" "https://www.youtube.com/feeds/videos.xml?channel_id=UCi67lRCd5qpaHwSXNJisuRQ"
