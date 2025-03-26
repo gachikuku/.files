@@ -161,7 +161,7 @@ feeds() {
 	feed "🕸️ Hiltjo Posthuma" "https://www.codemadness.org/atom_content.xml"
 	feed "🕸️ Huntr blog" "https://blog.huntr.com/rss.xml"
 	feed "🕸️ Immunefi" "https://immunefi.com/blog/rss/"
-	feed "🕸️ Intigriti" "http://blog.intigriti.com/feed/"
+	feed "🕸️ Intigriti" "https://www.intigriti.com/blog/feed"
 	feed "🕸️ Invicti" "https://www.invicti.com/blog/feed/"
 	feed "🕸️ Jorian Woltjer" "https://jorianwoltjer.com/blog/rss.xml"
 	feed "🕸️ Joseph Choe" "https://josephchoe.com/feed.xml"
