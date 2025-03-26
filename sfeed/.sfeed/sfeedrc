@@ -246,4 +246,8 @@ feeds() {
 	feed "🕸️ securing" "https://www.securing.pl/feed/"
 	feed "🕸️ someodd" "gopher://gopher.someodd.zip:70/phlog/atom.xml"
 	feed "🕸️ soroush" "https://soroush.me/blog/feed/"
+	feed "🕸️ websec.ca" "https://websec.ca/rss/"
+	feed "🕸️ websec.ca/advisories" "https://websec.ca/rss/advisories"
+	feed "🕸️ websec.ca/blog" "https://websec.ca/rss/blog"
+	feed "🕸️ websec.ca/news" "https://websec.ca/rss/news"
 }
