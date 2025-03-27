@@ -49,6 +49,7 @@ feeds() {
 	feed "🌐 Cyber NewsRoom" "https://cvefeed.io/rssfeed/newsroom.atom"
 	feed "🌐 DEFCON" "https://defcon.org/defconrss.xml"
 	feed "📺 DEFCON" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6Om9kAkl32dWlDSNlDS9Iw"
+	feed "🌐 DarkNetDiaries" "https://podcast.darknetdiaries.com/"
 	feed "🌐 David Buchanan" "https://www.da.vidbuchanan.co.uk/blog/rss.xml"
 	feed "📺 DeadOverflow" "https://www.youtube.com/feeds/videos.xml?channel_id=UCRgAOWBpaksZ_plUlJNs1ew"
 	feed "🌐 Decrypt LOL" "https://decrypt.lol/rss.xml"
