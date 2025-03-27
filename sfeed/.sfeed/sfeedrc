@@ -249,6 +249,7 @@ feeds() {
 	feed "🌐 xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "📺 xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "🦋 xnl-h4ck3r" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
+	feed "🐙 xnl-h4ck3r" "https://github.com/xnl-h4ck3r.atom"
 	feed "📺 z3nsh3ll" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnWAPVvXxivIo40QpjEMU1w"
 	feed "📰 zack0x01" "https://medium.com/feed/@zack0x01_"
 }
