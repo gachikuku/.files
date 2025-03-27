@@ -270,6 +270,7 @@ feeds() {
 	feed "🌐 websec.ca blog" "https://websec.ca/rss/blog"
 	feed "🌐 websec.ca news" "https://websec.ca/rss/news"
 	feed "🌐 x00sec" "https://0x00sec.org/latest.rss"
+	feed "🌐 xda-developers" "https://www.xda-developers.com/feed/tutorials/"
 	feed "🌐 xdaforums" "https://xdaforums.com/f/-/index.rss"
 	feed "🌐 xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "📺 xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
