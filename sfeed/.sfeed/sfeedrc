@@ -21,7 +21,7 @@ feeds() {
 	# https://worst.fit/mapping/ fuzzing
 	# https://github.com/leafac/kill-the-newsletter Convert at newsletters into Atom feeds :)
 	# https://feedproxy.feedly.com/1437c34d-ce6d-4b92-b1ff-91e369305e2a BLOCKED
-	feed "🕋 'Salah Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
+	feed "🕋 AaSalah Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
 	feed "🌐 Aethlios" "https://www.aeth.cc/index.html"
 	feed "🦋 Alex Chapman" "https://bsky.app/profile/did:plc:wisrsbijx424mwxfukfl6h2d/rss"
 	feed "🌐 AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
@@ -241,10 +241,9 @@ feeds() {
 	feed "🦋 terjanq" "https://bsky.app/profile/did:plc:anmbivfaqzqbd5rosow6ihu5/rss"
 	feed "💀 tout" "https://www.root-me.org/?page=backend&lang=en"
 	feed "🤖 websec" "https://old.reddit.com/r/websecurityresearch/.rss"
-	feed "🌐 websec.ca" "https://websec.ca/rss/"
-	feed "🌐 websec.ca/advisories" "https://websec.ca/rss/advisories"
-	feed "🌐 websec.ca/blog" "https://websec.ca/rss/blog"
-	feed "🌐 websec.ca/news" "https://websec.ca/rss/news"
+	feed "🌐 websec.ca adv" "https://websec.ca/rss/advisories"
+	feed "🌐 websec.ca blog" "https://websec.ca/rss/blog"
+	feed "🌐 websec.ca news" "https://websec.ca/rss/news"
 	feed "🌐 x00sec" "https://0x00sec.org/latest.rss"
 	feed "🌐 xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "📺 xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
