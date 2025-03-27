@@ -193,6 +193,7 @@ feeds() {
 	feed "👟 colorskates.com" "https://kill-the-newsletter.com/feeds/sizut7ikm9la8qdw1gyb.xml"
 	feed "🦋 d4d" "https://bsky.app/profile/did:plc:ipjbzqbe5op5xmlcojtyeqzr/rss"
 	feed "🌐 ddevault" "https://drewdevault.com/blog/index.xml"
+	feed "🔖 ddevault" "https://ln.ht/_/feed/~ddevault"
 	feed "🌐 delthas" "https://delthas.fr/blog/atom.xml"
 	feed "🌐 detectify" "https://blog.detectify.com/rss/atom/"
 	feed "🌐 drkhsh" "https://drkhsh.at/atom_content.xml"
