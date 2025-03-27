@@ -41,9 +41,19 @@ audio() {
 	test -n "$1" && mpv "$1"
 }
 
+convert_to_embed() {
+    local url=$1
+    local video_id=${url#*v=}
+    video_id=${video_id%%&*}
+    local embed_url="https://www.youtube.com/embed/$video_id"
+    echo "$embed_url"
+}
+
 # movie(url)
 movie() {
-	test -n "$1" && mpv --autofit=100%x100% "$1"
+	#test -n "$1" && mpv --autofit=100%x100% "$1"
+	test -n "$1" && embed_url=$(convert_to_embed "$1")
+	open -a Safari "$embed_url"
 }
 
 # handle pastebin-like url.
