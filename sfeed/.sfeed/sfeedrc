@@ -21,7 +21,7 @@ feeds() {
 	# https://worst.fit/mapping/ fuzzing
 	# https://github.com/leafac/kill-the-newsletter Convert at newsletters into Atom feeds :)
 	# https://feedproxy.feedly.com/1437c34d-ce6d-4b92-b1ff-91e369305e2a BLOCKED
-	feed "🕋 AaSalah Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
+	feed "🕋 Aathan Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
 	feed "🌐 Aethlios" "https://www.aeth.cc/index.html"
 	feed "🦋 Alex Chapman" "https://bsky.app/profile/did:plc:wisrsbijx424mwxfukfl6h2d/rss"
 	feed "🌐 AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
@@ -92,7 +92,6 @@ feeds() {
 	feed "🌐 Joseph Thacker" "https://josephthacker.com/feed.xml"
 	feed "🌐 Josh Grossman" "https://joshcgrossman.com/feed.xml"
 	feed "🌐 Julia Evans" "https://jvns.ca/atom.xml"
-	feed "🦋 Kevin Gervot" "https://bsky.app/profile/did:plc:uvjdjnxjnddm2xosuwjp77sr/rss"
 	feed "🌐 Laluka" "https://thinkloveshare.com/index.xml"
 	feed "🌐 Libera Chat" "https://libera.chat/atom.xml"
 	feed "🌐 Liran Tal" "https://www.nodejs-security.com/rss.xml"
@@ -217,6 +216,7 @@ feeds() {
 	feed "🌐 mitchellh" "https://mitchellh.com/feed.xml"
 	feed "🔧 mitmproxy" "https://github.com/mitmproxy/mitmproxy/releases.atom"
 	feed "🌐 mitmproxy" "https://mitmproxy.org/posts/index.xml"
+	feed "🦋 mizu" "https://bsky.app/profile/did:plc:uvjdjnxjnddm2xosuwjp77sr/rss"
 	feed "📺 netletic" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2-Ypw1pR78s8sq_icbNybQ"
 	feed "🤖 netsec" "https://old.reddit.com/r/netsec/.rss"
 	feed "📰 niruragu" "https://medium.com/feed/@niruragu"
