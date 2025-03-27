@@ -70,7 +70,7 @@ feeds() {
 	feed "🌐 Google BugHunt" "https://bughunters.google.com/feed/en"
 	feed "🌐 H1 hacktivity" "http://rss.ricterz.me/hacktivity"
 	feed "📰 HX007" "https://medium.com/feed/@HX007"
-	feed "🌐 HackTheBox" "https://www.hackthebox.com/rss"
+	feed "🌐 HackTheBox" "https://www.hackthebox.com/rss/blog/all"
 	feed "📺 HackTheBox" "https://www.youtube.com/feeds/videos.xml?channel_id=UCi67lRCd5qpaHwSXNJisuRQ"
 	feed "🔧 HackTricks" "https://github.com/HackTricks-wiki/hacktricks/commits/master/.atom"
 	feed "🌐 Harel" "https://nokline.github.io/feed.xml"
