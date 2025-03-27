@@ -196,6 +196,7 @@ feeds() {
 	feed "🌐 env.fail" "https://env.fail/blog.rss"
 	feed "🦋 fr4via" "https://bsky.app/profile/did:plc:dtl6ypbecapu6i2wipdzbp4o/rss"
 	feed "📺 g0lden1" "https://www.youtube.com/feeds/videos.xml?channel_id=UCsydEarQM7lEn8Pz2N7PEdA"
+	feed "🌐 hackerhideout" "https://hackerhideout.xyz/feed/"
 	feed "📺 hacktheclown" "https://www.youtube.com/feeds/videos.xml?channel_id=UCELHcNI5hYHy5iz54WUsndQ"
 	feed "🌐 hafiz" "https://hafiz.ng/feed/"
 	feed "📺 hak5" "https://www.youtube.com/feeds/videos.xml?channel_id=UC3s0BtrBJpwNDaflRSoiieQ"
