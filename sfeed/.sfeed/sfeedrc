@@ -24,6 +24,8 @@ feeds() {
 	feed "🕋 Aathan Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
 	feed "🌐 0daystolive" "https://blog.sorcery.ie/index.xml"
 	feed "🌐 0x00sec" "https://0x00sec.org/latest.rss"
+	feed "🌐 0xacb" "https://0xacb.com/feed.xml"
+	feed "🦋 0xacb" "https://bsky.app/profile/did:plc:kkrwxpggpoxmefsmybbrvn46/rss"
 	feed "🌐 0xdf" "https://0xdf.gitlab.io/feed.xml"
 	feed "📺 0xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "🌐 Aethlios" "https://www.aeth.cc/index.html"
