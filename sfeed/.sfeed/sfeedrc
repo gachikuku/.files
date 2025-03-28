@@ -21,7 +21,11 @@ feeds() {
 	# https://worst.fit/mapping/ fuzzing
 	# https://github.com/leafac/kill-the-newsletter Convert at newsletters into Atom feeds :)
 	# https://feedproxy.feedly.com/1437c34d-ce6d-4b92-b1ff-91e369305e2a BLOCKED
-	feed "🕋 Aathan Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
+	feed "🕋 Aathan Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
+	feed "🌐 0daystolive" "https://blog.sorcery.ie/index.xml"
+	feed "🌐 0x00sec" "https://0x00sec.org/latest.rss"
+	feed "🌐 0xdf" "https://0xdf.gitlab.io/feed.xml"
+	feed "📺 0xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "🌐 Aethlios" "https://www.aeth.cc/index.html"
 	feed "🦋 Alex Chapman" "https://bsky.app/profile/did:plc:wisrsbijx424mwxfukfl6h2d/rss"
 	feed "🌐 AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
@@ -197,6 +201,7 @@ feeds() {
 	feed "🔖 ddevault" "https://ln.ht/_/feed/~ddevault"
 	feed "🌐 delthas" "https://delthas.fr/blog/atom.xml"
 	feed "🌐 detectify" "https://blog.detectify.com/rss/atom/"
+	feed "🌐 devcore" "https://devco.re/rss"
 	feed "🌐 drkhsh" "https://drkhsh.at/atom_content.xml"
 	feed "📺 eli" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
 	feed "📺 elliottminns" "https://www.youtube.com/feeds/videos.xml?channel_id=UCWQaM7SpSECp9FELz-cHzuQ"
@@ -273,11 +278,8 @@ feeds() {
 	feed "🌐 websec.ca adv" "https://websec.ca/rss/advisories"
 	feed "🌐 websec.ca blog" "https://websec.ca/rss/blog"
 	feed "🌐 websec.ca news" "https://websec.ca/rss/news"
-	feed "🌐 x00sec" "https://0x00sec.org/latest.rss"
 	feed "🌐 xda-developers" "https://www.xda-developers.com/feed/tutorials/"
 	feed "🌐 xdaforums" "https://xdaforums.com/f/-/index.rss"
-	feed "🌐 xdf" "https://0xdf.gitlab.io/feed.xml"
-	feed "📺 xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "🦋 xnl-h4ck3r" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
 	feed "🐙 xnl-h4ck3r" "https://github.com/xnl-h4ck3r.atom"
 	feed "📺 z3nsh3ll" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnWAPVvXxivIo40QpjEMU1w"
