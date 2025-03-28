@@ -144,6 +144,7 @@ feeds() {
 	feed "📰 Rachid.A" "https://medium.com/feed/@zhero_"
 	feed "🌐 Rachid.A" "https://zhero-web-sec.github.io/feed.xml"
 	feed "🌐 Raesene" "https://raesene.github.io/feed.xml"
+	feed "🌐 Raj Chandel" "https://www.hackingarticles.in/feed/"
 	feed "🌐 RatSec" "https://blog.hackxpert.com/feed/rss"
 	feed "🦋 Rebane" "https://bsky.app/profile/did:plc:bzdtu4vjo2quk2ef3ykhqtv6/rss"
 	feed "📰 Renwa" "https://medium.com/feed/@renwa"
