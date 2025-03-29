@@ -54,6 +54,7 @@
 						hashcat
 						hexedit
 						html-tidy
+						htmlq
 						icdiff
 						jq
 						libxo
