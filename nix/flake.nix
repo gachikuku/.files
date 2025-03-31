@@ -65,7 +65,7 @@
 						mblaze
 						mitmproxy
 						mkalias
-						mpv
+						#mpv
 						mupdf
 						neovim
 						net-news-wire
@@ -84,6 +84,7 @@
 						sfeed
 						sqlmap
 						stow
+						syncthing
 						tailscale
 						tealdeer
 						tmux
