@@ -34,6 +34,7 @@
 
 				environment.systemPackages = with pkgs;
 					[ 
+						#mpv
 						aerc
 						cargo
 						cmake
@@ -55,6 +56,7 @@
 						hexedit
 						html-tidy
 						htmlq
+						httpx
 						icdiff
 						jq
 						libxo
@@ -65,13 +67,13 @@
 						mblaze
 						mitmproxy
 						mkalias
-						#mpv
 						mupdf
+						naabu
 						neovim
-						net-news-wire
 						ngrok
 						nmap
 						nodejs_22
+						nuclei
 						openvpn
 						plan9port
 						python312Full
