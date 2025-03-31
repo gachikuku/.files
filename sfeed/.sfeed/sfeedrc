@@ -118,6 +118,7 @@ feeds() {
 	feed "👀 NANOG" "https://seclists.org/rss/nanog.rss"
 	feed "📹 NahamSec" "https://twitchrss.appspot.com/vod/nahamsec"
 	feed "📺 NahamSec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCZDt7MuC3Hzs6IH4xODLBw"
+	feed "🔧 NeovimConfig "https://github.com/ThePrimeagen/init.lua/commits/master/.atom"
 	feed "💀 News" "https://www.root-me.org/?page=backend-breves&lang=en"
 	feed "🌐 NixOS" "https://nixos.org/blog/announcements-rss.xml"
 	feed "🌐 Nixcademy" "https://nixcademy.com/feed.xml"
