@@ -64,6 +64,7 @@ feeds() {
 	feed "📺 DigitalMetal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCf93fPKwotph47H3_KDcRyg"
 	feed "🌐 Docker" "https://www.docker.com/feed/"
 	feed "🌐 Doyensec LLC" "https://blog.doyensec.com/atom.xml"
+	feed "🌐 EFF" "https://www.eff.org/rss/updates.xml"
 	feed "🌐 EmbraceTheRed" "https://embracethered.com/blog/index.xml"
 	feed "🌐 Emily Trau" "https://emily.id.au/feed"
 	feed "📺 Farah Hawa" "https://www.youtube.com/feeds/videos.xml?channel_id=UCq9IyPMXiwD8yBFHkxmN8zg"
