@@ -35,6 +35,7 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						#mpv
+						wgcf #cloudflare
 						aerc
 						cargo
 						cmake
@@ -110,6 +111,7 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
+						"cloudflare-warp"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
