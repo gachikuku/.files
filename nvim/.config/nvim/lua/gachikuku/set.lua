@@ -40,3 +40,7 @@ vim.o.secure = true
 
 -- case insesitive search?
 vim.opt.ignorecase = true
+
+-- formatting
+-- vim.opt.formatoptions:remove('r')
+-- vim.opt.formatoptions:remove('o')

@@ -61,6 +61,15 @@ vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
   end
 })
 
+-- Add this to your init.lua
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.formatoptions:remove({ "n", "r", "q", "l", "c", "j", "t" })
+  end,
+  group = vim.api.nvim_create_augroup("PersistentFormatOptions", { clear = true }),
+})
+
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
