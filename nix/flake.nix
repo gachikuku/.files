@@ -36,6 +36,7 @@
 					[ 
 						#mpv
 						wgcf #cloudflare
+						jsluice
 						aerc
 						cargo
 						cmake
