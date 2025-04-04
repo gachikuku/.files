@@ -35,8 +35,6 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						#mpv
-						wgcf #cloudflare
-						jsluice
 						aerc
 						cargo
 						cmake
@@ -61,6 +59,7 @@
 						httpx
 						icdiff
 						jq
+						jsluice
 						libxo
 						lima
 						llm
@@ -88,6 +87,7 @@
 						sfeed
 						sqlmap
 						stow
+						subfinder
 						syncthing
 						tailscale
 						tealdeer
