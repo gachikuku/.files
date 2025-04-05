@@ -3,3 +3,5 @@ console_mouse: false
 normalize_outbound_headers: false
 export_preserve_original_ip: true
 ssl_insecure: true
+scripts:
+  - ./addons/chunkcontrol.py
