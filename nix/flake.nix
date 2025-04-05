@@ -80,7 +80,6 @@
 						plan9port
 						python312Full
 						python312Packages.ipython
-						python312Packages.pwntools
 						ripgrep
 						rustc
 						sacc
