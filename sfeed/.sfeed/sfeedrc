@@ -31,6 +31,7 @@ feeds() {
 	feed "📺 0xdf" "https://www.youtube.com/feeds/videos.xml?channel_id=UChO9OAH57Flz35RRX__E25A"
 	feed "🌐 Aethlios" "https://www.aeth.cc/index.html"
 	feed "🦋 Alex Chapman" "https://bsky.app/profile/did:plc:wisrsbijx424mwxfukfl6h2d/rss"
+	feed "📺 AndrejKarpathy" "https://www.youtube.com/feeds/videos.xml?channel_id=UCXUPKJO5MZQN11PqgIvyuvQ"
 	feed "🌐 AppSecEzine" "https://xl-sec.github.io/AppSecEzine/latest_split.atom"
 	feed "📺 Arabic101" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEcQu_9GNDiGU_vqjVZXj3Q"
 	feed "🌐 Asahi Linux" "https://asahilinux.org/blog/index.xml"
