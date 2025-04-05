@@ -145,7 +145,7 @@ feeds() {
 	feed "📰 Petrus.V" "https://medium.com/feed/@petrusviet"
 	feed "🦋 Phrack" "https://bsky.app/profile/did:plc:tctxyyhfec5k4rdfe6zzr6g6/rss"
 	feed "📺 PinkDraconian" "https://www.youtube.com/feeds/videos.xml?channel_id=UCmXwpkCXmIKjoRLMsq9I3RA"
-	feed "🔧 Pliny’s Jailbreaks" "https://github.com/elder-plinius/L1B3RT4S/commits/main/.atom"
+	feed "🔧 Pliny Jailbreaks" "https://github.com/elder-plinius/L1B3RT4S/commits/main/.atom"
 	feed "🌐 PortSwigger" "https://portswigger.net/research/rss"
 	feed "📧 ProjDiscovery" "https://kill-the-newsletter.com/feeds/ezqisqcqu058f2hxc2z3.xml"
 	feed "📺 PwnFunction" "https://www.youtube.com/feeds/videos.xml?channel_id=UCW6MNdOsqv2E9AjQkv9we7A"
