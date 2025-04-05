@@ -33,7 +33,7 @@ pdf() {
 www() {
 	test -n "$1" || return
 #	isgraphical && "${BROWSER}" "$1" || lynx "$1"
-	"${BROWSER}" "$1"
+	open -a Safari "$1"
 }
 
 #audio(url)
