@@ -296,6 +296,7 @@ feeds() {
 	feed "🌐 websec.ca adv" "https://websec.ca/rss/advisories"
 	feed "🌐 websec.ca blog" "https://websec.ca/rss/blog"
 	feed "🌐 websec.ca news" "https://websec.ca/rss/news"
+	feed "📺 wormsec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCL3sOn0xOYXkPHCaPN333pg"
 	feed "🦋 xbow" "https://bsky.app/profile/did:plc:gclnfv6x6e2fu4w4qp53m2xx/rss"
 	feed "🌐 xda-developers" "https://www.xda-developers.com/feed/tutorials/"
 	feed "🌐 xdaforums" "https://xdaforums.com/f/-/index.rss"
