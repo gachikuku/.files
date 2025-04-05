@@ -43,6 +43,7 @@
 						coreutils
 						discord
 						docker
+							dive
 						fabric-ai
 						fd
 						ffmpeg
