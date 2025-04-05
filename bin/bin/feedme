@@ -5,7 +5,7 @@
 
 # https://git.codemadness.org/frontends/files.html
 
-export SFEED_PLUMBER_INTERACTIVE=1
+#export SFEED_PLUMBER_INTERACTIVE=1
 export SFEED_PLUMBER=plumb.sh
 export SFEED_AUTOCMD="mto"
 
