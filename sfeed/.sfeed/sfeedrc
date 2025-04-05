@@ -140,6 +140,7 @@ feeds() {
 	feed "🌐 PT SWARM" "https://swarm.ptsecurity.com/feed/"
 	feed "📺 PT" "https://www.youtube.com/feeds/videos.xml?channel_id=UCAL3JXZSzSm8AlZyD3nQdBA"
 	feed "🌐 Paged Out!" "https://pagedout.institute/rss.xml"
+	feed "🌐 Paul Butler" "https://paulbutler.org/posts/index.xml"
 	feed "🌐 Paulos Yibelo" "https://feeds.feedburner.com/PaulosYibelo-OfficalBlog"
 	feed "🌐 PentesterLab" "https://pentesterlab.com/blog/feed"
 	feed "📰 Petrus.V" "https://medium.com/feed/@petrusviet"
