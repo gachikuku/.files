@@ -149,6 +149,7 @@ feeds() {
 	feed "🌐 PortSwigger" "https://portswigger.net/research/rss"
 	feed "📧 ProjDiscovery" "https://kill-the-newsletter.com/feeds/ezqisqcqu058f2hxc2z3.xml"
 	feed "📺 PwnFunction" "https://www.youtube.com/feeds/videos.xml?channel_id=UCW6MNdOsqv2E9AjQkv9we7A"
+	feed "📰 Qchad" "https://medium.com/feed/@arrheniuspaelongan09"
 	feed "👀 RISKS" "https://seclists.org/rss/risks.rss"
 	feed "📺 RP" "https://www.youtube.com/feeds/videos.xml?channel_id=UCfQgsKhHjSyRLOp9mnffqVg"
 	feed "📰 Rachid.A" "https://medium.com/feed/@zhero_"
