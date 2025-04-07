@@ -7,4 +7,3 @@ validate_inbound_headers: false
 scripts:
   - ./addons/chunkcontrol.py
   - ./addons/single_packet_attack.py
-  - ./addons/hacking.py
