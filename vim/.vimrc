@@ -24,8 +24,6 @@ set nofoldenable
 set lazyredraw
 set spc=
 
-let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 0.5, 'relative': v:true, 'yoffset': 1.0, 'border': 'none' }}
-
 let mapleader = "\<space>"
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR> " Trim trailing spaces
 nnoremap Y y$
@@ -34,14 +32,7 @@ inoremap <C-c> <ESC>
 set listchars=tab:▸\ ,eol:¬,space:.
 nnoremap <leader>l :set list!<CR>
 
-function! GitFZF()
-    let path = trim(system('cd '.shellescape(expand('%:p:h')).' && git rev-parse --show-toplevel'))
-    exe 'FZF ' . path
-endfunction
-command! GitFZF call GitFZF()
-nnoremap <C-p> :GitFZF<CR>
-
-syntax on
+syntax enable
 highlight Normal ctermfg=none ctermbg=none
 highlight NonText ctermfg=none ctermbg=none
 highlight EndOfBuffer ctermfg=none ctermbg=none
@@ -75,12 +66,3 @@ autocmd FileType markdown setlocal tw=80 et ts=2 sw=2
 autocmd FileType text setlocal tw=80
 autocmd BufNewFile,BufRead * if expand('%:t') == 'APKBUILD' | set ft=sh | endif
 autocmd BufNewFile,BufRead * if expand('%:t') == 'PKGBUILD' | set ft=sh | endif
-
-filetype plugin on
-
-" VimWiki
-let g:vimwiki_list = [{'syntax': 'markdown',
-                     \ 'ext': 'md',
-		     \ 'path': '~/iCloud'}]
-
-let g:vimwiki_global_ext = 0
