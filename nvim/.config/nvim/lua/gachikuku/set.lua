@@ -44,3 +44,7 @@ vim.opt.ignorecase = true
 -- formatting
 -- vim.opt.formatoptions:remove('r')
 -- vim.opt.formatoptions:remove('o')
+
+vim.o.laststatus = 2
+
+vim.o.scrolloff = 3

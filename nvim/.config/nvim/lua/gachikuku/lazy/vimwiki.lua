@@ -4,8 +4,13 @@ return {
 		vim.g.vimwiki_list = {
 			{
 				path = "~/iCloud/",
-				syntax = "markdown",
 				ext = ".md",
+				-- automatically enable VimwikiDiaryGenerateLinks
+				-- when opening a diary file
+				-- it's an open issue `https://github.com/vimwiki/vimwiki/issues/1055`
+				auto_diary_index = 1,
+
+				syntax = "markdown",
 			},
 		}
 		vim.g.vimwiki_global_ext = 0
