@@ -34,7 +34,7 @@
 
 				environment.systemPackages = with pkgs;
 					[ 
-						#mpv
+						mpv
 						aerc
 						cargo
 						cmake
@@ -47,7 +47,7 @@
 						fabric-ai
 						fd
 						ffmpeg
-						ffuf # remember uff! https://github.com/sw33tLie/uff
+						ffuf # remember uff and ffufai!
 						fzf
 						gnupg
 						go_1_24
@@ -95,7 +95,6 @@
 						tree
 						vim
 						wget
-						wireguard-tools
 						witnessme
 						xdg-utils
 						yazi
