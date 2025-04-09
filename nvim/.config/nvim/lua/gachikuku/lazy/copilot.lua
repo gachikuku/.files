@@ -11,9 +11,9 @@ return {
                     hide_during_completion = false,
                     debounce = 25,
                     keymap = {
-                        accept = false,
+                        accept = "<C-l>",      -- Changed from false to "<C-l>" to accept the full suggestion
                         accept_word = false,
-                        accept_line = "<Tab>",
+                        accept_line = "<Tab>", -- Remains unchanged
                         next = false,
                         prev = false,
                         dismiss = false,
