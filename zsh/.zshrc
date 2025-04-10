@@ -36,7 +36,7 @@ export WORDCHARS='*?_[]~=&;!#$%^(){}'
 bindkey -e
 
 # prompt
-PS1="%m:%~%(!.#.$) "
+PS1="%F{13}%m:%~%(!.#.$)%f "
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
