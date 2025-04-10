@@ -35,6 +35,7 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						mpv
+						yt-dlp
 						aerc
 						cargo
 						cmake
