@@ -8,7 +8,6 @@ set magic
 set scrolloff=3
 set sidescroll=3
 set ruler
-set cc=80
 set nowrap
 set ignorecase
 set smartcase
