@@ -6,9 +6,9 @@ function ColorMyPencils(color)
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
     -- vim.api.nvim_set_hl(0, "LineNr", { bg = "NONE" })
 
-    vim.api.nvim_set_hl(0, "StatusLine", { ctermfg = "darkgrey", ctermbg = "NONE" })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { ctermfg = "darkgrey", ctermbg = "NONE" })
-    vim.api.nvim_set_hl(0, "MsgArea", { ctermfg = "darkgrey", ctermbg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLine", { fg = "grey", bg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "grey", bg = "NONE" })
+    vim.api.nvim_set_hl(0, "MsgArea", { fg = "grey", bg = "NONE" })
 end
 
 return {
