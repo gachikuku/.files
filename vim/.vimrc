@@ -22,6 +22,7 @@ set noswapfile
 set nofoldenable
 set lazyredraw
 set spc=
+set wrap
 
 let mapleader = "\<space>"
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR> " Trim trailing spaces
