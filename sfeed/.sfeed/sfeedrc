@@ -240,6 +240,7 @@ feeds() {
 	feed "📺 rs0n_live" "https://www.youtube.com/feeds/videos.xml?channel_id=UCAOxHxHCj3dWey5E9tBgffg"
 	feed "🌐 RyotaK" "https://blog.ryotak.net/index.xml"
 	feed "🌐 Sam Curry" "https://samcurry.net/api/feed.rss"
+	feed "🌐 Samarth Dad" "https://samarthdad.com/feed.xml"
 	feed "🦋 Sean Pesce" "https://bsky.app/profile/did:plc:tcyboqfcve7vj45eodbra5mp/rss"
 	feed "🌐 Sean Pesce" "https://seanpesce.blogspot.com/feeds/posts/default"
 	feed "📺 SeasSecurity" "https://www.youtube.com/feeds/videos.xml?channel_id=UCuHzD8nmIdBZ5mTluQ0hkwA"
