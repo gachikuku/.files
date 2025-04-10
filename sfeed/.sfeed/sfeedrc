@@ -265,6 +265,7 @@ feeds() {
 	feed "🌐 SourceHut" "https://sourcehut.org/blog/index.xml"
 	feed "🌐 Spaceraccoon" "https://spaceraccoon.dev/feed.xml"
 	feed "📺 stacksmashing" "https://www.youtube.com/feeds/videos.xml?channel_id=UC3S8vxwRfqLBdIhgRlDRVzw"
+	feed "🐘 sven" "https://social.treehouse.systems/@sven.rss"
 	feed "🌐 SYNACKTIV" "https://www.synacktiv.com/en/feed/lastblog.xml"
 	feed "🌐 Tenable" "https://feeds.feedburner.com/tenable/qaXL"
 	feed "🦋 terjanq" "https://bsky.app/profile/did:plc:anmbivfaqzqbd5rosow6ihu5/rss"
