@@ -143,6 +143,7 @@ feeds() {
 	feed "📰 HX007" "https://medium.com/feed/@HX007"
 	feed "🌐 Immunefi" "https://immunefi.com/blog/rss/"
 	feed "📰 InfoSec" "https://infosecwriteups.com/feed"
+	feed "🌐 InfoSecMap" "https://infosecmap.com/feed/"
 	feed "🦋 InsiderPhD" "https://bsky.app/profile/did:plc:bpa5fx2ws3h2y4ciulksjvko/rss"
 	feed "📺 InsiderPhD" "https://www.youtube.com/feeds/videos.xml?channel_id=UCPiN9NPjIer8Do9gUFxKv7A"
 	feed "🦋 Intigriti" "https://bsky.app/profile/did:plc:xbnfxp6rtinedeavsy33hx6t/rss"
