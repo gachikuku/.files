@@ -37,7 +37,6 @@ vim.keymap.set(
     "oif err != nil {<CR>}<Esc>Oreturn err<Esc>"
 )
 
-vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/gachikuku/packer.lua<CR>");
 vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
 
 vim.keymap.set("n", "<leader><leader>", function()
@@ -50,3 +49,5 @@ vim.keymap.set('n', '<leader>pp', ':set paste<CR>"+p:set nopaste<CR>', { silent 
 vim.api.nvim_set_keymap('v', '<leader>ue', [[:'<,'>!jq -sRr '. | rtrimstr("\n") | @uri'<CR>]], { noremap = true, silent = true })
 -- URL decode
 vim.api.nvim_set_keymap('v', '<leader>ud', [[:'<,'>!python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()), end='');"<CR>]], { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>l', ':set list!<CR>', { noremap = true, silent = true })
