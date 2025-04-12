@@ -66,7 +66,7 @@ vim.api.nvim_create_autocmd("ModeChanged", {
       vim.g.original_statusline = vim.o.statusline
     end
     -- Set new statusline that shows byte count on the right
-    vim.o.statusline = "%<%f %h%m%r%=Selected: %{luaeval('_G.format_byte_count()')} %l,%c%V %P"
+    vim.o.statusline = "%<%f %h%m%r%=%{luaeval('_G.format_byte_count()')} %l,%c%V %P"
     -- Force an initial update
     vim.cmd("redrawstatus")
   end
