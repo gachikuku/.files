@@ -6,25 +6,19 @@ local function get_visual_selection()
   -- Save current register content to restore later
   local reg_save = vim.fn.getreg('a')
   local regtype_save = vim.fn.getregtype('a')
-  
   -- Get current mode to determine if we need to reselect
   local mode = vim.fn.mode()
   local is_visual = mode == 'v' or mode == 'V' or mode == '\22'
-  
   -- If we're in visual mode, yank the selection to register 'a'
   if is_visual then
     -- Use silent operation to avoid screen flashing
     vim.cmd('silent normal! "ay')
-    
     -- Get the selection content
     local selection = vim.fn.getreg('a')
-    
     -- Restore the visual selection
     vim.cmd('normal! gv')
-    
     -- Restore original register content
     vim.fn.setreg('a', reg_save, regtype_save)
-    
     return selection
   else
     -- If not in visual mode, try to use the '< and '> marks
@@ -32,17 +26,13 @@ local function get_visual_selection()
     if vim.fn.getpos("'<")[2] ~= 0 and vim.fn.getpos("'>")[2] ~= 0 then
       -- Temporarily enter visual mode to reselect the last selection
       vim.cmd('normal! gv"ay')
-      
       -- Get the selection
       local selection = vim.fn.getreg('a')
-      
       -- Restore original register content
       vim.fn.setreg('a', reg_save, regtype_save)
-      
       return selection
     end
   end
-  
   return ""
 end
 
@@ -50,18 +40,15 @@ end
 local function format_byte_count()
   local mode = vim.fn.mode()
   local count = 0
-  
   -- Check if we're in visual mode
   if mode == 'v' or mode == 'V' or mode == '\22' then
     -- Get the actual selected text
     local selection = get_visual_selection()
-    
     -- Return its byte length
     count = #selection
   else
     return ""
   end
-  
   -- Format byte count with hex representation
   local hex = string.format("0x%X", count)
   return string.format("%d bytes (%s)", count, hex)
@@ -78,10 +65,8 @@ vim.api.nvim_create_autocmd("ModeChanged", {
     if not vim.g.original_statusline or vim.g.original_statusline == "" then
       vim.g.original_statusline = vim.o.statusline
     end
-    
     -- Set new statusline that shows byte count on the right
     vim.o.statusline = "%<%f %h%m%r%=Selected: %{luaeval('_G.format_byte_count()')} %l,%c%V %P"
-    
     -- Force an initial update
     vim.cmd("redrawstatus")
   end
