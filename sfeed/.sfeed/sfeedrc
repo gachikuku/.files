@@ -166,6 +166,7 @@ feeds() {
 	feed "📺 Joseph Choe" "https://www.youtube.com/feeds/videos.xml?channel_id=UCz_u0h4usMbnFsIHSVdjUQw"
 	feed "🌐 joshua stein" "https://jcs.org/rss"
 	feed "📺 jstrosch" "https://www.youtube.com/feeds/videos.xml?channel_id=UCI8zwug_Lv4_-KPT62oeDUA"
+	feed "🐙 jub0bs" "https://github.com/jub0bs.atom"
 	feed "🌐 jub0bs" "https://jub0bs.com/posts/index.xml"
 	feed "🌐 Julia Evans" "https://jvns.ca/atom.xml"
 	feed "🌐 justhacking" "https://www.justhacking.com/feed/"
