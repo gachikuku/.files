@@ -255,6 +255,7 @@ feeds() {
 	feed "🌐 rapid7" "https://blog.rapid7.com/rss/"
 	feed "🌐 RatSec" "https://blog.hackxpert.com/feed/rss"
 	feed "🦋 Rebane" "https://bsky.app/profile/did:plc:bzdtu4vjo2quk2ef3ykhqtv6/rss"
+	feed "🔧 recollapse" "https://github.com/0xacb/recollapse/commits/main/.atom"
 	feed "📺 ReconCon" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqn2811xAehfLgpEy386T8Q"
 	feed "📺 reconless" "https://www.youtube.com/feeds/videos.xml?channel_id=UCCp25j1Zh9vc_WFm-nB9fhQ"
 	feed "🐘 rek2" "https://hispagatos.space/@rek2.rss"
