@@ -138,6 +138,7 @@ feeds() {
 	feed "🌐 Harel" "https://nokline.github.io/feed.xml"
 	feed "🌐 Hector Martin" "https://marcan.st/index.xml"
 	feed "🌐 Hiltjo Posthuma" "https://www.codemadness.org/atom_content.xml"
+	feed "🌐 hispagatos" "https://hispagatos.org/post/index.xml"
 	feed "🔧 http-garden" "https://github.com/narfindustries/http-garden/commits/main/.atom"
 	feed "🌐 Huntr blog" "https://blog.huntr.com/rss.xml"
 	feed "📺 huntr" "https://www.youtube.com/feeds/videos.xml?channel_id=UC33YyLk3vdtnPqLeOuEZc2w"
