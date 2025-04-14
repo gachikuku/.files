@@ -126,6 +126,7 @@ feeds() {
 	feed "🌐 hackerhideout" "https://hackerhideout.xyz/feed/"
 	feed "📺 HackerSploit" "https://www.youtube.com/feeds/videos.xml?channel_id=UC0ZTPkdxlAKf-V33tqXwi3Q"
 	feed "📺 HackingSimpl" "https://www.youtube.com/feeds/videos.xml?channel_id=UCARsgS1stRbRgh99E63Q3ng"
+	feed "🌐 hacks.mozilla" "https://hacks.mozilla.org/feed/"
 	feed "🌐 HackTheBox" "https://www.hackthebox.com/rss/blog/all"
 	feed "📺 HackTheBox" "https://www.youtube.com/feeds/videos.xml?channel_id=UCi67lRCd5qpaHwSXNJisuRQ"
 	feed "📺 hacktheclown" "https://www.youtube.com/feeds/videos.xml?channel_id=UCELHcNI5hYHy5iz54WUsndQ"
