@@ -235,6 +235,8 @@ feeds() {
 	feed "🌐 Paul Butler" "https://paulbutler.org/posts/index.xml"
 	feed "🌐 Paulos Yibelo" "https://feeds.feedburner.com/PaulosYibelo-OfficalBlog"
 	feed "📰 pedbap" "https://medium.com/feed/@pedbap"
+	feed "🦋 PedramAmini" "https://bsky.app/profile/did:plc:x3hnwwwsipzqas2y2tnjye3b/rss"
+	feed "🌐 PedramAmini" "https://pedramamini.com/rss.php"
 	feed "🌐 PentesterLab" "https://pentesterlab.com/blog/feed"
 	feed "📰 Petrus.V" "https://medium.com/feed/@petrusviet"
 	feed "🔏 PG articles" "https://www.privacyguides.org/articles/feed_rss_created.xml"
