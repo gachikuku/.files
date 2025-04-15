@@ -48,3 +48,5 @@ vim.opt.ignorecase = true
 vim.o.laststatus = 2
 
 vim.o.scrolloff = 8
+
+vim.opt.mouse = ""
