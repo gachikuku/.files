@@ -87,6 +87,7 @@ feeds() {
 	feed "📺 DEFCON" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6Om9kAkl32dWlDSNlDS9Iw"
 	feed "🌐 delthas" "https://delthas.fr/blog/atom.xml"
 	feed "🌐 devcore" "https://devco.re/rss"
+	feed "🌐 dhh" "https://world.hey.com/dhh/feed.atom"
 	feed "📺 DigitalMetal" "https://www.youtube.com/feeds/videos.xml?channel_id=UCf93fPKwotph47H3_KDcRyg"
 	feed "🌐 Docker" "https://www.docker.com/feed/"
 	feed "🐙 doomerhunter" "https://github.com/doomerhunter.atom"
