@@ -50,6 +50,7 @@ feeds() {
 	feed "📺 black hat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ6q9Ie29ajGqKApbLqfBOg"
 	feed "🐙 Blaklis" "https://github.com/Blaklis"
 	feed "🌐 blog.xss.am/" "https://blog.xss.am/index.xml"
+	feed "🤗 blog" "https://huggingface.co/blog/feed.xml"
 	feed "🌐 Borna Nematzadeh" "https://logicalhunter.me/feed/"
 	feed "🏴 Breaches" "https://feeds.feedburner.com/HaveIBeenPwnedLatestBreaches"
 	feed "🌐 Brian.c" "https://briancallahan.net/blog/feed.xml"
