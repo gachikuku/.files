@@ -57,6 +57,7 @@ feeds() {
 	feed "🌐 brutecat.com" "https://brutecat.com/rss.xml"
 	feed "👟 bstn.com" "https://kill-the-newsletter.com/feeds/q7a21th44rmzgpbvxc1j.xml"
 	feed "📰 bug-bounty" "https://medium.com/feed/tag/bug-bounty"
+	feed "🌐 bugcrowd" "https://www.bugcrowd.com/feed/"
 	feed "📺 Bugcrowd" "https://www.youtube.com/feeds/videos.xml?channel_id=UCo1NHk_bgbAbDBc4JinrXww"
 	feed "🦋 buherator" "https://bsky.app/profile/did:plc:k3bnourmyio4pxr3aadoewan/rss"
 	feed "🌐 buherator" "https://scrapco.de/blog/feed.xml"
