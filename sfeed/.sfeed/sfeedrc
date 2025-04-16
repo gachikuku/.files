@@ -293,6 +293,7 @@ feeds() {
 	feed "📺 SeasSecurity" "https://www.youtube.com/feeds/videos.xml?channel_id=UCuHzD8nmIdBZ5mTluQ0hkwA"
 	feed "🌐 Sector035" "https://sector035.nl/articles.atom"
 	feed "🌐 securing" "https://www.securing.pl/feed/"
+	feed "📧 securityrunners" "https://kill-the-newsletter.com/feeds/whbpqpmdrp40bjg0cry0.xml"
 	feed "📰 Shaikh.M" "https://medium.com/feed/@shaikhminhaz1975"
 	feed "🌐 Shazzer" "https://shazzer.co.uk/blog/rss.xml"
 	feed "🦋 shubs" "https://bsky.app/profile/did:plc:n4oyocfy4tw7ssudbpx6xniy/rss"
