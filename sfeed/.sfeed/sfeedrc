@@ -96,6 +96,7 @@ feeds() {
 	feed "🌐 Doyensec LLC" "https://blog.doyensec.com/atom.xml"
 	feed "🌐 drkhsh" "https://drkhsh.at/atom_content.xml"
 	feed "🌐 EFF" "https://www.eff.org/rss/updates.xml"
+	feed "🌐 EleutherAI" "https://blog.eleuther.ai/index.xml"
 	feed "📺 eli" "https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhCI6jlOZZYQ"
 	feed "📺 elliottminns" "https://www.youtube.com/feeds/videos.xml?channel_id=UCWQaM7SpSECp9FELz-cHzuQ"
 	feed "📺 elliottminns2" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEEVcDuBRDiwxfXAgQjLGug"
