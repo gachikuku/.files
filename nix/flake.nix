@@ -113,7 +113,6 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
-						"cloudflare-warp"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
