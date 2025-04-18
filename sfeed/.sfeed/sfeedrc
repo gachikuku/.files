@@ -319,7 +319,7 @@ feeds() {
 	feed "🔧 t_h2spacex" "https://github.com/nxenon/h2spacex/releases.atom"
 	feed "🔧 t_http-garden" "https://github.com/narfindustries/http-garden/commits/main/.atom"
 	feed "🔧 t_jxscout" "https://github.com/francisconeves97/jxscout/commits/main/.atom"
-	feed "🔧 t_misconfigmapper" "https://github.com/intigriti/misconfig-mapper/commits/main/.atom"
+	feed "🔧 t_misconfigmap" "https://github.com/intigriti/misconfig-mapper/commits/main/.atom"
 	feed "🔧 t_mitmproxy" "https://github.com/mitmproxy/mitmproxy/releases.atom"
 	feed "🔧 t_NeovimConfig" "https://github.com/ThePrimeagen/init.lua/commits/master/.atom"
 	feed "🔧 t_Pl1ny JB" "https://github.com/elder-plinius/L1B3RT4S/commits/main/.atom"
