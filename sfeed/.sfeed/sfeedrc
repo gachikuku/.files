@@ -42,6 +42,7 @@ feeds() {
 	feed "🌐 Assetnote" "https://www.assetnote.io/resources/research/rss.xml"
 	feed "🕋 Athan Athens" "https://www.salahtimes.com/greece/athens/rss?highlatitudemethod=4&prayercalculationmethod=1&asarcalculationmethod=1"
 	feed "🌐 Auth0" "https://auth0.com/blog/rss.xml"
+	feed "🌐 b_statisticien" "https://www.biostatisticien.eu/index.xml"
 	feed "🐘 Baklava Monster" "https://infosec.exchange/@ant0inet.rss"
 	feed "📺 BBRE" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "🌐 BHIS" "https://www.blackhillsinfosec.com/feed/"
