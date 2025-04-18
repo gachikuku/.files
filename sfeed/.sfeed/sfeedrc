@@ -45,6 +45,7 @@ feeds() {
 	feed "🐘 Baklava Monster" "https://infosec.exchange/@ant0inet.rss"
 	feed "📺 BBRE" "https://www.youtube.com/feeds/videos.xml?channel_id=UCZDyl7G-Lq-EMVO8PfDFp9g"
 	feed "🌐 BHIS" "https://www.blackhillsinfosec.com/feed/"
+	feed "⭕️ bird.makeup" "https://sr.ht/~cloutier/bird.makeup/feed.rss"
 	feed "🌐 Bishop Fox" "https://bishopfox.com/feeds/blog.rss"
 	feed "📺 Bishop Fox" "https://www.youtube.com/feeds/videos.xml?channel_id=UCE8o_Vx1nbvaGf_N0EsIgjg"
 	feed "🌐 Bitreich" "gopher://bitreich.org/0/news.atom.xml"
