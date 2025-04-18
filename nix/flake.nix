@@ -50,6 +50,7 @@
 						fd
 						ffmpeg
 						ffuf # remember uff and ffufai!
+						feroxbuster
 						fzf
 						gnupg
 						go_1_24
