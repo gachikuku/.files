@@ -366,6 +366,7 @@ feeds() {
 	feed "📖 wl_SecLists" "https://github.com/danielmiessler/SecLists/commits/master/.atom"
 	feed "📖 wl_trickest" "https://github.com/trickest/wordlists/commits/main/.atom"
 	feed "📺 wormsec" "https://www.youtube.com/feeds/videos.xml?channel_id=UCL3sOn0xOYXkPHCaPN333pg"
+	feed "📋 writeups.xyz" "https://writeups.xyz/index.xml"
 	feed "🦋 xbow" "https://bsky.app/profile/did:plc:gclnfv6x6e2fu4w4qp53m2xx/rss"
 	feed "🌐 xda-developers" "https://www.xda-developers.com/feed/tutorials/"
 	feed "🌐 xdaforums" "https://xdaforums.com/f/-/index.rss"
