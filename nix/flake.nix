@@ -49,6 +49,7 @@
 						fabric-ai
 						fd
 						ffmpeg
+						socat
 						ffuf # remember uff and ffufai!
 						feroxbuster
 						fzf
