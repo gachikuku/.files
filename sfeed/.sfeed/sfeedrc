@@ -299,6 +299,7 @@ feeds() {
 	feed "🦋 shubs" "https://bsky.app/profile/did:plc:n4oyocfy4tw7ssudbpx6xniy/rss"
 	feed "🌐 Sicuranext" "https://blog.sicuranext.com/rss/"
 	feed "🌐 Skii.dev" "https://skii.dev/rss/"
+	feed "🐙 SkyperTHC" "https://github.com/SkyperTHC.atom"
 	feed "🌐 slcyber.io" "https://slcyber.io/feed"
 	feed "🌐 Slonser" "https://blog.slonser.info/index.xml"
 	feed "🦋 smaury" "https://bsky.app/profile/did:plc:j2fhg6cbrw7vomjtff7ygenk/rss"
