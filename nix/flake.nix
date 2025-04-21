@@ -35,6 +35,7 @@
 				environment.systemPackages = with pkgs;
 					[ 
 						amfora #gemini browser
+						mtr
 						mpv
 						yt-dlp
 						aerc

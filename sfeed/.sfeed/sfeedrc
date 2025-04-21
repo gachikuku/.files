@@ -75,6 +75,7 @@ feeds() {
 	feed "📺 CryptoCat" "https://www.youtube.com/feeds/videos.xml?channel_id=UCEeuul0q7C8Zs5C8rc4REFQ"
 	feed "🌐 CT notes" "https://rss.beehiiv.com/feeds/SQSpYiG1E1.xml"
 	feed "🌐 CT" "https://media.rss.com/ctbbpodcast/feed.xml"
+	feed "🚩 CTFtime" "https://ctftime.org/event/list/upcoming/rss/"
 	feed "🚨 CVEs Crit" "https://cvefeed.io/rssfeed/severity/high.atom"
 	feed "🔔 CVEs" "https://cvefeed.io/rssfeed/latest.atom"
 	feed "🌐 Cyber NewsRoom" "https://cvefeed.io/rssfeed/newsroom.atom"
