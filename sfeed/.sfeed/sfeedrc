@@ -334,6 +334,7 @@ feeds() {
 	feed "🦋 terjanq" "https://bsky.app/profile/did:plc:anmbivfaqzqbd5rosow6ihu5/rss"
 	feed "🦋 tghosth" "https://bsky.app/profile/did:plc:mwf4lbaq37mpllu3ifq2gqzd/rss"
 	feed "🌐 tghosth" "https://joshcgrossman.com/feed.xml"
+	feed "🌐 thanat0s" "https://thanat0s.trollprod.org/feed/"
 	feed "🐘 thc" "https://infosec.exchange/@thc.rss"
 	feed "🌐 The Spanner" "https://thespanner.co.uk/rss.xml"
 	feed "🌐 TheLabda" "https://www.thelabda.com/feed/"
