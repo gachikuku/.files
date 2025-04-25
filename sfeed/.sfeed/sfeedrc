@@ -279,6 +279,7 @@ feeds() {
 	feed "🌐 rhinosec" "https://rhinosecuritylabs.com/blog/feed/"
 	feed "📰 Rikesh.B" "https://medium.com/feed/@rikeshbaniya"
 	feed "👀 RISKS" "https://seclists.org/rss/risks.rss"
+	feed "💀 root-me blog" "https://blog.root-me.org/index.xml"
 	feed "📺 Root-Me" "https://www.youtube.com/feeds/videos.xml?channel_id=UCnvB1SJdVYv-1zkByuYM73g"
 	feed "📺 RP" "https://www.youtube.com/feeds/videos.xml?channel_id=UCfQgsKhHjSyRLOp9mnffqVg"
 	feed "📺 rs0n_live" "https://www.youtube.com/feeds/videos.xml?channel_id=UCAOxHxHCj3dWey5E9tBgffg"
