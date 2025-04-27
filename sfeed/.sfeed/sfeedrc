@@ -276,6 +276,7 @@ feeds() {
 	feed "🌐 retr0" "https://retr0.blog/api/rss/feed.xml"
 	feed "🐙 rez0" "https://github.com/jthack.atom"
 	feed "🌐 rez0" "https://josephthacker.com/feed.xml"
+	feed "🌐 RFC" "https://www.rfc-editor.org/rfcrss.xml"
 	feed "🌐 rhinosec" "https://rhinosecuritylabs.com/blog/feed/"
 	feed "📰 Rikesh.B" "https://medium.com/feed/@rikeshbaniya"
 	feed "👀 RISKS" "https://seclists.org/rss/risks.rss"
