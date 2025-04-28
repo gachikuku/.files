@@ -42,3 +42,11 @@ urlencode() {
 urldecode() {
     python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.argv[1]))" "$1"
 }
+
+htmlencode() {
+    python3 -c "import sys; import html; print(html.escape(sys.argv[1]))" "$1"
+}
+
+htmldecode() {
+    python3 -c "import sys; import html; print(html.unescape(sys.argv[1]))" "$1"
+}
