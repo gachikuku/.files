@@ -63,6 +63,7 @@ feeds() {
 	feed "📺 Bugcrowd" "https://www.youtube.com/feeds/videos.xml?channel_id=UCo1NHk_bgbAbDBc4JinrXww"
 	feed "🦋 buherator" "https://bsky.app/profile/did:plc:k3bnourmyio4pxr3aadoewan/rss"
 	feed "🌐 buherator" "https://scrapco.de/blog/feed.xml"
+	feed "🌐 c1phy" "https://blog.munz4u.de/posts/index.xml"
 	feed "💀 Challenges" "https://www.root-me.org/?page=backend&id_rubrique=148"
 	feed "🐘 climagic" "https://mastodon.social/@climagic.rss"
 	feed "🌐 Code White Blog" "https://code-white.com/blog/index.xml"
