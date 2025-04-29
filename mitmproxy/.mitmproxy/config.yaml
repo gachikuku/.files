@@ -5,5 +5,5 @@ export_preserve_original_ip: true
 ssl_insecure: true
 validate_inbound_headers: false
 console_flowlist_layout: list
-#scripts:
-  #- ./addons/chunkcontrol.py
+scripts:
+  - ./addons/chunkcontrol.py
