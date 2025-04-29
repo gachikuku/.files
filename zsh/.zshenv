@@ -50,3 +50,11 @@ htmlencode() {
 htmldecode() {
     python3 -c "import sys; import html; print(html.unescape(sys.argv[1]))" "$1"
 }
+
+ues() {
+    python3 -c "import sys; print(''.join('\\\\u{:04x}'.format(ord(c)) for c in sys.argv[1]))" "$1"
+}
+
+unues() {
+    python3 -c "import sys; import re; print(re.sub(r'\\\\u([0-9a-fA-F]{4})', lambda m: chr(int(m.group(1), 16)), sys.argv[1]))" "$1"
+}
