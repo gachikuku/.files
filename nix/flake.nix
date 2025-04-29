@@ -104,6 +104,7 @@
 						xdg-utils
 						yazi
 						zbar
+						aerospace
 					];
 
 
