@@ -6,4 +6,4 @@ ssl_insecure: true
 validate_inbound_headers: false
 console_flowlist_layout: list
 scripts:
-  - ./addons/chunkcontrol.py
+  - ~/.files/mitmproxy/.mitmproxy/addons/chunkcontrol.py
