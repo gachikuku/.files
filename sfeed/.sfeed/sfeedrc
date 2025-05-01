@@ -206,6 +206,7 @@ feeds() {
 	feed "🦋 mccune" "https://bsky.app/profile/did:plc:7ieslzsosfxql4yvo7ykvvqx/rss"
 	feed "🌐 MDN blog" "https://developer.mozilla.org/en-US/blog/rss.xml"
 	feed "📺 media.ccc.de" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2TXq_t06Hjdr2g_KdKpHQg"
+	feed "📺 MentalOutlaw" "https://www.youtube.com/feeds/videos.xml?channel_id=UC7YOGHUfC1Tb6E4pudI9STA"
 	feed "🌐 mitchellh" "https://mitchellh.com/feed.xml"
 	feed "🌐 mitmproxy" "https://mitmproxy.org/posts/index.xml"
 	feed "🦋 mizu" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
