@@ -1,6 +1,5 @@
 require("gachikuku.set")
 require("gachikuku.remap")
-require("gachikuku.bytecounter")
 
 require("gachikuku.lazy_init")
 
