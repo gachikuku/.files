@@ -101,6 +101,7 @@ feeds() {
 	feed "🌐 Emily Trau" "https://emily.id.au/feed"
 	feed "🌐 env.fail" "https://env.fail/blog.rss"
 	feed "🌐 Exploit-DB" "https://www.exploit-db.com/rss.xml"
+	feed "📰 ExtensionTotal" "https://blog.extensiontotal.com/feed"
 	feed "📰 Firas.F" "https://medium.com/feed/@fatnassifiras"
 	feed "👟 footlocker.gr" "https://kill-the-newsletter.com/feeds/dj0p6eabnc1y1nhxnchn.xml"
 	feed "🦋 fr4via" "https://bsky.app/profile/did:plc:dtl6ypbecapu6i2wipdzbp4o/rss"
