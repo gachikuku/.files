@@ -69,7 +69,6 @@
 						jsluice
 						libxo
 						lima
-						llm
 						llvm
 						lynx
 						mblaze
@@ -117,9 +116,10 @@
 						"chromium"
 						"ghostty"
 						"hammerspoon"
+						"llm"
 						"wireshark"
 					];
-					onActivation.cleanup = "zap";
+					#onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
 					onActivation.upgrade = true;
 				};
@@ -175,6 +175,7 @@
 				system.keyboard = {
 					enableKeyMapping = true;
 					remapCapsLockToControl = true;
+					#swapLeftCommandAndLeftAlt = true;
 				};
 
 				#launchd.user.agents.sfeed_update = {
