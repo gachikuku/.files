@@ -166,6 +166,7 @@ feeds() {
 	feed "🌐 lyra.horse" "https://lyra.horse/blog/posts/index.xml"
 	feed "🐙 m0chan" "https://github.com/m0chan.atom"
 	feed "🌐 m0chan" "https://m0chan.github.io/feed.xml"
+	feed "🌐 machevalia" "https://machevalia.blog/blog?format=rss"
 	feed "🌐 Maksym Vatsyk" "https://adeadfed.com/feed.xml"
 	feed "🌐 Masato Kinugawa" "https://speakerdeck.com/masatokinugawa.rss"
 	feed "🦋 mccune" "https://bsky.app/profile/did:plc:7ieslzsosfxql4yvo7ykvvqx/rss"
