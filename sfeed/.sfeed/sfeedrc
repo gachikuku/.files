@@ -369,6 +369,7 @@ feeds() {
 	feed "📺 y_LowLevelTV" "https://www.youtube.com/feeds/videos.xml?channel_id=UC6biysICWOJ-C3P4Tyeggzg"
 	feed "📺 y_LukeSmith" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA"
 	feed "📺 y_Lupin" "https://www.youtube.com/feeds/videos.xml?channel_id=UCh3ecxx3c6qZDlccBjjiDyQ"
+	feed "📺 y_machevalia" "https://www.youtube.com/feeds/videos.xml?channel_id=UCOtvi4S42EDSR0UZGQG0L-Q"
 	feed "📺 y_marcotuliocnd" "https://www.youtube.com/feeds/videos.xml?channel_id=UCqSval7ahyD6bA5-l0k6oMw"
 	feed "📺 y_media.ccc.de" "https://www.youtube.com/feeds/videos.xml?channel_id=UC2TXq_t06Hjdr2g_KdKpHQg"
 	feed "📺 y_MentalOutlaw" "https://www.youtube.com/feeds/videos.xml?channel_id=UC7YOGHUfC1Tb6E4pudI9STA"
