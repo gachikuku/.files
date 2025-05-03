@@ -4,6 +4,7 @@ normalize_outbound_headers: false
 export_preserve_original_ip: true
 ssl_insecure: true
 validate_inbound_headers: false
+store_streamed_bodies: true
 console_flowlist_layout: list
 scripts:
   - ~/.files/mitmproxy/.mitmproxy/addons/chunkcontrol.py

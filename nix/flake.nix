@@ -43,6 +43,7 @@
 						cmake
 						cmus
 						colima
+						uv
 						coreutils
 						discord
 						docker
@@ -116,7 +117,6 @@
 						"chromium"
 						"ghostty"
 						"hammerspoon"
-						"llm"
 						"wireshark"
 					];
 					#onActivation.cleanup = "zap";
