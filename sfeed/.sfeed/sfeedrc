@@ -256,6 +256,7 @@ feeds() {
 	feed "📜 shellsharks" "https://shellsharks.com/feeds/scroll-feed.xml"
 	feed "🦋 shubs" "https://bsky.app/profile/did:plc:n4oyocfy4tw7ssudbpx6xniy/rss"
 	feed "🌐 Sicuranext" "https://blog.sicuranext.com/rss/"
+	feed "🌐 simonwillison" "https://simonwillison.net/atom/everything/"
 	feed "🌐 Skii.dev" "https://skii.dev/rss/"
 	feed "🐙 SkyperTHC" "https://github.com/SkyperTHC.atom"
 	feed "🌐 slcyber.io" "https://slcyber.io/feed"
