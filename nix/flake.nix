@@ -73,7 +73,6 @@
 						llvm
 						lynx
 						mblaze
-						mitmproxy
 						mkalias
 						mupdf
 						naabu
@@ -84,8 +83,6 @@
 						nuclei
 						openvpn
 						plan9port
-						python312Full
-						python312Packages.ipython
 						ripgrep
 						rustc
 						sacc
@@ -119,7 +116,7 @@
 						"hammerspoon"
 						"wireshark"
 					];
-					#onActivation.cleanup = "zap";
+					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
 					onActivation.upgrade = true;
 				};
