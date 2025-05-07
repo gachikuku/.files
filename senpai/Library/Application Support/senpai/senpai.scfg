@@ -5,7 +5,6 @@ colors {
 	nicks fixed grey green
 }
 pane-widths {
-	members 0
 	channels 0
 }
 typings false
