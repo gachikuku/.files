@@ -24,7 +24,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 accordion-padding = 30
 
 # Possible values: tiles|accordion
-default-root-container-layout = 'tiles'
+default-root-container-layout = 'accordion'
 
 # Possible values: horizontal|vertical|auto
 # 'auto' means: wide monitor (anything wider than high) gets horizontal orientation,
@@ -99,13 +99,13 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
     #alt-slash = 'layout tiles horizontal vertical'
-    #alt-comma = 'layout accordion horizontal vertical'
+    alt-comma = 'layout accordion horizontal vertical'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-    #alt-h = 'focus left'
-    #alt-j = 'focus down'
-    #alt-k = 'focus up'
-    #alt-l = 'focus right'
+    alt-shift-h = 'focus left'
+    alt-shift-j = 'focus down'
+    alt-shift-k = 'focus up'
+    alt-shift-l = 'focus right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     #alt-shift-h = 'move left'
