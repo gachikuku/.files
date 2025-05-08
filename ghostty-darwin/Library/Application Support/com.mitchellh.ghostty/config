@@ -1,5 +1,5 @@
 font-family = Input Mono
-font-size = 24.5
+font-size = 24
 
 title = " "
 
@@ -9,7 +9,7 @@ theme = flexoki-dark
 window-height = 1370000000
 window-width = 440000000
 window-padding-balance = true
-window-padding-x = 0
+window-padding-x = 5
 window-padding-y = 0
 
 macos-titlebar-proxy-icon = hidden
