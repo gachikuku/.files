@@ -49,9 +49,9 @@ alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no 
 alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>" --disable-features=AutoupgradeEnabled,HttpsUpgrades,IsSitePerProcess --user-data-dir=/tmp/chromium'
 alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
-alias man_openssl="curl -s 'https://man.archlinux.org/man/libressl-openssl.1.en.raw' | mandoc | less -sR"
-alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/cheat-sheet' | lynx -dump -stdin | sed -n '/^SQL injection cheat sheet$/,\$p' | less"
-alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less"
+alias man_openssl="curl -s 'https://man.archlinux.org/man/libressl-openssl.1.en.raw' | mandoc | less -sRi"
+alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/cheat-sheet' | lynx -dump -stdin | sed -n '/^SQL injection cheat sheet$/,\$p' | less -i"
+alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less -i"
 
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
