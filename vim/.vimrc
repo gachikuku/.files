@@ -32,6 +32,9 @@ inoremap <C-c> <ESC>
 set listchars=tab:▸\ ,eol:¬,space:.
 nnoremap <leader>l :set list!<CR>
 
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
 syntax enable
 highlight Normal ctermfg=none ctermbg=none
 highlight NonText ctermfg=none ctermbg=none
