@@ -1,5 +1,5 @@
 font-family = Go Mono
-font-size = 24
+font-size = 23.5
 #font-feature = -calt
 
 title = " "
@@ -10,8 +10,8 @@ theme = flexoki-dark
 window-height = 1370000000
 window-width = 440000000
 window-padding-balance = true
-window-padding-x = 5
-window-padding-y = 0
+#window-padding-x = 1
+#window-padding-y = 3
 
 macos-titlebar-proxy-icon = hidden
 macos-non-native-fullscreen = visible-menu
