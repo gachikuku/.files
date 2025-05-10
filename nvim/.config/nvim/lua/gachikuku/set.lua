@@ -48,6 +48,6 @@ vim.opt.smartcase = true
 
 vim.o.laststatus = 2
 
-vim.o.scrolloff = 8
+vim.o.scrolloff = 5
 
 vim.opt.mouse = ""
