@@ -28,6 +28,7 @@
 					packages = with pkgs; 
 						[
 							go-font
+							dejavu_fonts
 						];
 				};
 
