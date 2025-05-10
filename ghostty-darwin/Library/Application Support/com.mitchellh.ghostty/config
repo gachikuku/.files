@@ -1,6 +1,6 @@
-font-family = Go Mono
-font-size = 24
-#font-feature = -calt
+font-family = Input
+font-size = 23.5
+font-feature = -calt
 
 title = " "
 
@@ -11,7 +11,7 @@ window-height = 1370000000
 window-width = 440000000
 window-padding-balance = true
 window-padding-x = 3
-window-padding-y = 3
+window-padding-y = 5
 
 macos-titlebar-proxy-icon = hidden
 macos-non-native-fullscreen = visible-menu
