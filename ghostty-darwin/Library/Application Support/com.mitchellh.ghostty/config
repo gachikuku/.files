@@ -11,7 +11,7 @@ window-height = 1370000000
 window-width = 440000000
 window-padding-balance = true
 window-padding-x = 3
-#window-padding-y = 3
+#window-padding-y = 2
 
 macos-titlebar-proxy-icon = hidden
 macos-non-native-fullscreen = visible-menu
