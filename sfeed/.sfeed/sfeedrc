@@ -232,6 +232,7 @@ feeds() {
 	feed "🌐 RatSec" "https://blog.hackxpert.com/feed/rss"
 	feed "🦋 Rebane" "https://bsky.app/profile/did:plc:bzdtu4vjo2quk2ef3ykhqtv6/rss"
 	feed "🐘 rek2" "https://hispagatos.space/@rek2.rss"
+	feed "🌐 rek2" "https://rek2.hispagatos.org/writeups/index.rss"
 	feed "🦋 renniepak" "https://bsky.app/profile/did:plc:coormhn4vzpjg4qy73vcwwko/rss"
 	feed "🐙 renniepak" "https://github.com/renniepak.atom"
 	feed "📰 Renwa" "https://medium.com/feed/@renwa"

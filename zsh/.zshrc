@@ -28,6 +28,7 @@ export GOTELEMETRY=off
 export GOTOOLCHAIN=local
 export PIP_NO_SSL_VERIFY=1
 export MANPAGER='nvim +Man! -'
+export PAGER='nvim +Man! -'
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
