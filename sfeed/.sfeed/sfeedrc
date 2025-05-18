@@ -279,6 +279,7 @@ feeds() {
 	feed "🌐 Source Incite" "https://srcincite.io/feed.xml"
 	feed "🌐 SourceHut" "https://sourcehut.org/blog/index.xml"
 	feed "🌐 Spaceraccoon" "https://spaceraccoon.dev/feed.xml"
+	feed "🌐 sploitus" "https://sploitus.com/atom"
 	feed "🌐 steelcon" "https://www.steelcon.info/feed/"
 	feed "🐘 sven" "https://social.treehouse.systems/@sven.rss"
 	feed "🐙 sw33tLie" "https://github.com/sw33tLie.atom"
