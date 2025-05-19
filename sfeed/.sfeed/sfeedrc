@@ -123,6 +123,7 @@ feeds() {
 	feed "🌐 hacklido" "https://hacklido.com/rss"
 	feed "🌐 hacks.mozilla" "https://hacks.mozilla.org/feed/"
 	feed "🌐 HackTheBox" "https://www.hackthebox.com/rss/blog/all"
+	feed "🌐 hacktus" "https://hacktus.tech/rss.xml"
 	feed "🌐 hafiz" "https://hafiz.ng/feed/"
 	feed "🌐 hak5-gsg" "https://shop.hak5.org/collections/gsg.atom"
 	feed "🌐 hak5-payloads" "https://payloadhub.com/blogs/payloads.atom"
