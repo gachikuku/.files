@@ -181,6 +181,7 @@ feeds() {
 	feed "🦋 mizu" "https://bsky.app/profile/did:plc:vn3pcb4uqq3edhkxlebmayfh/rss"
 	feed "🐵 MonkeHacks" "https://rss.beehiiv.com/feeds/dMZNmTvThi.xml"
 	feed "🦋 mrtuxracer" "https://bsky.app/profile/did:plc:i3ctaeg2tds6laq4adgdnwfu/rss"
+	feed "🦋 n1nj4sec" "https://bsky.app/profile/did:plc:ptfzzfjpcshxvizug5oocbsr/rss"
 	feed "🌐 NA" "https://sudistark.github.io/feed.xml"
 	feed "📹 NahamSec" "https://twitchrss.appspot.com/vod/nahamsec"
 	feed "👀 NANOG" "https://seclists.org/rss/nanog.rss"
