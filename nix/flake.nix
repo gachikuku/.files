@@ -12,6 +12,7 @@
 		let
 			username = "gachikuku";
 			configuration = { pkgs, config, lib, ... }: {
+				system.primaryUser = "gachikuku";  # Replace with your actual username if different
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
 
@@ -28,7 +29,6 @@
 					packages = with pkgs; 
 						[
 							go-font
-							dejavu_fonts
 						];
 				};
 
@@ -37,8 +37,10 @@
 					[ 
 						amfora #gemini browser
 						mtr
+						radamsa
 						mpv
 						yt-dlp
+						qemu
 						aerc
 						cargo
 						cmake
