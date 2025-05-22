@@ -29,6 +29,7 @@
 					packages = with pkgs; 
 						[
 							go-font
+							spleen
 						];
 				};
 

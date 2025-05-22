@@ -1,6 +1,6 @@
 font-family = Go Mono
 font-size = 24
-font-feature = +feat
+#font-feature = +feat
 
 title = " "
 
