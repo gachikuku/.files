@@ -29,7 +29,7 @@
 					packages = with pkgs; 
 						[
 							go-font
-							spleen
+							dina-font
 						];
 				};
 
@@ -112,6 +112,11 @@
 
 				homebrew = {
 					enable = true;
+
+					brews = [
+						"llm"
+					];
+
 					casks = [
 						"affinity-designer"
 						"affinity-photo"
