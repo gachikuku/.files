@@ -118,6 +118,11 @@
 					#	"llm-gemini"
 					#];
 
+					taps = [
+						"chaychoong/tap"
+					];
+
+
 					casks = [
 						"affinity-designer"
 						"affinity-photo"
@@ -125,6 +130,7 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
+						"chaychoong/tap/font-opus-one"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
