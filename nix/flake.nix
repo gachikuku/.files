@@ -113,9 +113,10 @@
 				homebrew = {
 					enable = true;
 
-					brews = [
-						"llm"
-					];
+					#brews = [
+					#	"llm"
+					#	"llm-gemini"
+					#];
 
 					casks = [
 						"affinity-designer"
