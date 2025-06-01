@@ -30,6 +30,7 @@
 						[
 							go-font
 							dina-font
+							monaspace
 						];
 				};
 
@@ -83,7 +84,6 @@
 						neovim
 						ngrok
 						nmap
-						nodejs_22
 						nuclei
 						openvpn
 						plan9port
@@ -130,7 +130,8 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
-						"chaychoong/tap/font-opus-one"
+						"node"
+						"claude"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
