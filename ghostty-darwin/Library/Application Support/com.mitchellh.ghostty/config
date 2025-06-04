@@ -3,8 +3,8 @@ font-size = 24
 #font-feature = +feat
 
 adjust-cell-width = 1
-adjust-cell-height = 5
-#adjust-font-baseline = 1
+adjust-cell-height = 1
+adjust-font-baseline = 3
 
 title = " "
 
