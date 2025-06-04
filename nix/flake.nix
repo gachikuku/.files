@@ -105,6 +105,7 @@
 						witnessme
 						xdg-utils
 						yazi
+						nodejs_24
 						zbar
 						aerospace
 					];
@@ -130,8 +131,6 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
-						"node"
-						"claude"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
