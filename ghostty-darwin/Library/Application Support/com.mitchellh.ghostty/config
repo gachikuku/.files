@@ -4,7 +4,7 @@ font-size = 24
 
 adjust-cell-width = 1
 adjust-cell-height = 2
-#adjust-font-baseline = 3
+adjust-font-baseline = 2
 
 title = " "
 
