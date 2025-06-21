@@ -46,6 +46,7 @@
 						aerc
 						cargo
 						cmake
+						entr
 						cmus
 						colima
 						uv
@@ -108,6 +109,8 @@
 						nodejs_24
 						zbar
 						aerospace
+						w3m
+						links2
 					];
 
 
