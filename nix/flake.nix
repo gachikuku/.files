@@ -103,8 +103,8 @@
 						tree
 						vim
 						wget
-						witnessme
-						xdg-utils
+						#xdg-utils
+						exploitdb
 						yazi
 						nodejs_24
 						zbar
