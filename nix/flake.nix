@@ -40,6 +40,7 @@
 						amfora #gemini browser
 						mtr
 						radamsa
+						watch
 						mpv
 						yt-dlp
 						qemu
@@ -134,6 +135,7 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
+						"trezor-suite"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;

@@ -58,3 +58,5 @@ ues() {
 unues() {
     python3 -c "import sys; import re; print(re.sub(r'\\\\u([0-9a-fA-F]{4})', lambda m: chr(int(m.group(1), 16)), sys.argv[1]))" "$1"
 }
+
+export PATH="$PATH:/Users/gachikuku/.foundry/bin"
