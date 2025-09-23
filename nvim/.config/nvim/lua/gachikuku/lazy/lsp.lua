@@ -22,23 +22,24 @@ return {
             vim.lsp.protocol.make_client_capabilities(),
             cmp_lsp.default_capabilities())
 
-		require("luasnip.loaders.from_vscode").lazy_load()
-
+        require("luasnip.loaders.from_vscode").lazy_load()
         require("fidget").setup({})
         require("mason").setup()
+
+        -- Disable auto-start for all LSP servers
         require("mason-lspconfig").setup({
             handlers = {
-                function(server_name) -- default handler (optional)
-
+                function(server_name)
                     require("lspconfig")[server_name].setup {
-                        capabilities = capabilities
+                        capabilities = capabilities,
+                        autostart = false, -- prevent automatic start
                     }
                 end,
 
                 ["lua_ls"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.lua_ls.setup {
+                    require("lspconfig").lua_ls.setup {
                         capabilities = capabilities,
+                        autostart = false, -- prevent automatic start
                         settings = {
                             Lua = {
                                 diagnostics = {
@@ -51,14 +52,13 @@ return {
             }
         })
 
-        -- Start of LuaSnip snippet configuration
-
+        -- Completion setup
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
         cmp.setup({
             snippet = {
                 expand = function(args)
-                    require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                    require('luasnip').lsp_expand(args.body)
                 end,
             },
             mapping = cmp.mapping.preset.insert({
@@ -69,14 +69,13 @@ return {
             }),
             sources = cmp.config.sources({
                 { name = 'nvim_lsp' },
-                { name = 'luasnip' }, -- For luasnip users.
+                { name = 'luasnip' },
             }, {
                 { name = 'buffer' },
             })
         })
 
         vim.diagnostic.config({
-            -- update_in_insert = true,
             float = {
                 focusable = false,
                 style = "minimal",
@@ -88,3 +87,4 @@ return {
         })
     end
 }
+
