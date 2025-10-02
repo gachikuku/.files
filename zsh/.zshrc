@@ -27,9 +27,8 @@ export GOSUMDB=off
 export GOTELEMETRY=off
 export GOTOOLCHAIN=local
 export PIP_NO_SSL_VERIFY=1
-export MANPAGER="sh -c 'if [ -t 1 ]; then nvim +Man! -; else less; fi'"
-export PAGER="sh -c 'if [ -t 1 ]; then nvim +Man! -; else less; fi'"
-
+export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
+export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
