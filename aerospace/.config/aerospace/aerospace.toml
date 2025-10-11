@@ -102,10 +102,10 @@ automatically-unhide-macos-hidden-apps = false
     alt-comma = 'layout accordion tiles'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-    alt-shift-h = 'focus left'
-    alt-shift-j = 'focus down'
-    alt-shift-k = 'focus up'
-    alt-shift-l = 'focus right'
+    alt-h = 'focus left'
+    alt-j = 'focus down'
+    alt-k = 'focus up'
+    alt-l = 'focus right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     #alt-shift-h = 'move left'
