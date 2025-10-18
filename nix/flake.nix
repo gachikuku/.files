@@ -99,7 +99,7 @@
 						subfinder
 						syncthing
 						tailscale
-						tealdeer
+						#tealdeer
 						tmux
 						tree
 						vim
@@ -108,7 +108,7 @@
 						exploitdb
 						yazi
 						nodejs_24
-						zbar
+						#zbar
 						aerospace
 						w3m
 						links2
@@ -137,7 +137,7 @@
 						"wireshark"
 						"trezor-suite"
 					];
-					onActivation.cleanup = "zap";
+					#onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
 					onActivation.upgrade = true;
 				};
