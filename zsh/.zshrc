@@ -29,6 +29,7 @@ export GOTOOLCHAIN=local
 export PIP_NO_SSL_VERIFY=1
 export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
 export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
+export AWS_PAGER=""
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
