@@ -1,15 +1,10 @@
-SHOW_CURSOR:TRUE
-UNDERLINE_LINKS:TRUE
-COLOR_STYLE:ON
-ASSUME_CHARSET:utf-8
-RAW_MODE:TRUE
-BOOKMARK_FILE:~/.lynx_bookmarks.html
-URL_HISTORY_SIZE:20
-ACCEPT_ALL_COOKIES:TRUE
-COOKIE_FILE:~/.lynx_cookies
-VI_KEYS:ON
-USE_SELECT_POPUPS:TRUE
-NUMBER_LINKS:FALSE
-PREFERRED_LANGUAGE:en
-DOWNLOAD_DIRECTORY:~/Downloads
-USERMODE:minimal
+vi_keys=on
+user_mode=ADVANCED
+lineedit_mode=Bash-like Bindings
+file_editor=nvim
+accept_all_cookies=on
+force_ssl_cookies_secure=on
+preferred_language=en
+show_color=default
+show_cursor=ono
+verbose_images=on
