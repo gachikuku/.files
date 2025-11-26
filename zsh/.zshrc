@@ -5,9 +5,10 @@ autoload -U colors && colors
 # export PATH="$PATH:$(find ~/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
 # Adds `~/.local/bin` to $PATH
 # export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
-export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:~/go/bin:~/cargo/bin:~/.local/bin:~/Developer/depot_tools:$PATH
+export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/opt/tree-sitter/bin:~/go/bin:~/cargo/bin:~/.local/bin:~/Developer/depot_tools:$PATH
 
 # env variables
+export PATH="/Library/TeX/texbin:$PATH"
 export EDITOR="nvim"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"
@@ -27,9 +28,9 @@ export GOSUMDB=off
 export GOTELEMETRY=off
 export GOTOOLCHAIN=local
 export PIP_NO_SSL_VERIFY=1
-export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
-export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
-export AWS_PAGER=""
+#export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
+#export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
+#export AWS_PAGER=""
 
 # let control+w only delete one directory of a path, not the whole word
 export WORDCHARS='*?_[]~=&;!#$%^(){}'
