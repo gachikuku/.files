@@ -39,6 +39,7 @@
 					[ 
 						amfora #gemini browser
 						mtr
+						tree-sitter
 						radamsa
 						watch
 						mpv
@@ -73,6 +74,7 @@
 						htmlq
 						httpx
 						icdiff
+						qrencode
 						jq
 						jsluice
 						libxo
@@ -217,7 +219,7 @@
 					env = pkgs.buildEnv {
 						name = "system-applications";
 						paths = config.environment.systemPackages;
-						pathsToLink = "/Applications";
+						pathsToLink = [ "/Applications" ];
 					};
 				in
 					pkgs.lib.mkForce ''
