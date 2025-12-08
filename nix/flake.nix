@@ -100,7 +100,7 @@
 						stow
 						subfinder
 						syncthing
-						tailscale
+						#tailscale
 						#tealdeer
 						tmux
 						tree

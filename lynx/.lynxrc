@@ -1,7 +1,7 @@
 vi_keys=on
 user_mode=ADVANCED
 lineedit_mode=Bash-like Bindings
-file_editor=nvim
+file_editor=vim
 accept_all_cookies=on
 force_ssl_cookies_secure=on
 preferred_language=en
