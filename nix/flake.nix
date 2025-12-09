@@ -74,6 +74,7 @@
 						htmlq
 						httpx
 						icdiff
+						github-cli
 						qrencode
 						jq
 						jsluice
