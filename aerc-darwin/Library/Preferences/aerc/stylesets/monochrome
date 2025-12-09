@@ -1,7 +1,7 @@
 # vim: ft=dosini
 #
 # aerc monochrome styleset
-#
+# https://git.sr.ht/~rjarry/aerc/tree/master/item/stylesets/monochrome
 
 *.default = true
 *.normal = true
