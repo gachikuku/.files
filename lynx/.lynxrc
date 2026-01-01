@@ -6,5 +6,5 @@ accept_all_cookies=on
 force_ssl_cookies_secure=on
 preferred_language=en
 show_color=default
-show_cursor=ono
+show_cursor=on
 verbose_images=on
