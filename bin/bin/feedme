@@ -10,7 +10,7 @@ export SFEED_PLUMBER=plumb.sh
 export SFEED_AUTOCMD="mto"
 
 if [ "$1" = "-u" ]; then
-    sfeed_update
+	sfeed_update 2>&1 >/dev/null
 fi
 
 sfeed_curses ~/.sfeed/feeds/*
