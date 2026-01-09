@@ -45,7 +45,7 @@ PS1="%F{13}%m:%~%(!.%F{2}#.%F{2}$)%f "
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
-alias ls="ls -lGFtr"
+#alias ls="ls -lGFtr"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
