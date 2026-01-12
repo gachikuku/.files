@@ -6,6 +6,7 @@ ssl_insecure: true
 validate_inbound_headers: false
 store_streamed_bodies: true
 console_flowlist_layout: list
+console_palette: solarized_light
 #block_global: false
 scripts:
   - ~/.files/mitmproxy/.mitmproxy/addons/chunkcontrol.py

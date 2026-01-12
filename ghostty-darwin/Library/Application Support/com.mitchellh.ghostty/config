@@ -1,5 +1,6 @@
 font-family = Go Mono
 font-size = 24
+font-thicken = true
 #font-feature = +feat
 
 adjust-cell-width = 1
@@ -8,7 +9,7 @@ adjust-font-baseline = 2
 
 title = " "
 
-theme = Flexoki dark
+theme = Flexoki light
 
 #maximized-by-default
 window-height = 1370000000
@@ -29,8 +30,8 @@ shell-integration-features = no-cursor
 cursor-style = block
 cursor-color = ff8080
 
-background-opacity = 0.95
-background-blur-radius = 20
+#background-opacity = 0.95
+#background-blur-radius = 20
 
 keybind = cmd+equal=increase_font_size:0.5
 keybind = cmd+minus=decrease_font_size:0.5
