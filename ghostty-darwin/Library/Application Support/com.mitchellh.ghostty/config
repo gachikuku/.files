@@ -3,9 +3,9 @@ font-size = 24
 font-thicken = true
 #font-feature = +feat
 
-adjust-cell-width = 1
-adjust-cell-height = 2
-adjust-font-baseline = 2
+#adjust-cell-width = 1
+#adjust-cell-height = 2
+#adjust-font-baseline = 2
 
 title = " "
 

@@ -39,13 +39,14 @@ export WORDCHARS='*?_[]~=&;!#$%^(){}'
 bindkey -e
 
 # prompt
-PS1="%F{13}%m:%~%(!.%F{2}#.%F{2}$)%f "
+PS1="%F{1}%m:%~%(!.%F{2}#.%F{2}$)%f "
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
 alias ls="ls -l"
+alias lynx="lynx --nocolor"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
