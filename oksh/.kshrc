@@ -1,3 +1,7 @@
+# Basic ksh configuration for oksh on macOS
+
+# Build PATH incrementally
+# Start with system defaults
 PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Add Homebrew
@@ -48,11 +52,12 @@ export PIP_NO_SSL_VERIFY=1
 # Emacs mode
 set -o emacs
 
-# Prompt
-PS1='$(d=${PWD#$HOME}; [ "$d" != "$PWD" ] && d="~$d"; printf "\033[35m%s:%s\033[32m$ \033[0m" "$(hostname -s)" "${d:-$PWD}")'
+# Prompt - simplified for oksh compatibility
+PS1='$(d=${PWD#$HOME}; [ "$d" != "$PWD" ] && d="~$d"; printf "\033[35m%s:%s\033[32m$ \033[0m" "$(hostname -s 2>/dev/null || hostname | cut -d. -f1)" "${d:-$PWD}")'
 
-# Aliases
-[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+# Aliases - each alias must be separate in oksh
+[ -x "$(command -v nvim)" ] && alias vim="nvim"
+[ -x "$(command -v nvim)" ] && alias vimdiff="nvim -d"
 alias ls="ls -l"
 alias lynx="lynx --nocolor"
 alias grep="grep --color=auto"
@@ -61,3 +66,6 @@ alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no 
 alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>" --disable-features=AutoupgradeEnabled,HttpsUpgrades,IsSitePerProcess --user-data-dir=/tmp/chromium'
 alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+
+# fabric bootstrap
+[ -f "$HOME/.config/fabric/fabric-bootstrap.inc" ] && . "$HOME/.config/fabric/fabric-bootstrap.inc"
