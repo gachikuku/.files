@@ -1,71 +1,12 @@
-# Basic ksh configuration for oksh on macOS
+_PS1_BLUE="\\[\e[36m\\]"
+_PS1_BOLD="\\[\e[1m\\]"
+_PS1_CLEAR="\\[\e[0m\\]"
+_PS1_GREEN="\\[\e[32m\\]"
+_PS1_MAGENTA="\\[\e[35m\\]"
+_PS1_RED="\\[\e[31m\\]"
+_PS1_WHITE="\\[\e[37m\\]"
+_PS1_YELLOW="\\[\e[33m\\]"
 
-# Build PATH incrementally
-# Start with system defaults
-PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PS1='$_PS1_YELLOW\xe2\x94\x8c$_PS1_RED[$_PS1_MAGENTA\u$_PS1_GREEN@$_PS1_RED]$_PS1_YELLOW---$_PS1_RED($_PS1_MAGENTA\w$_PS1_RED)$_PS1_YELLOW$_PS1_CLEAR\n$_PS1_YELLOW\xe2\x94\x94>$_PS1_CLEAR'
 
-# Add Homebrew
-PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
-PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
-PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-PATH="/opt/homebrew/opt/curl/bin:$PATH"
-PATH="/opt/homebrew/opt/tree-sitter/bin:$PATH"
-
-# Add user paths (highest priority)
-PATH="$HOME/bin:$PATH"
-PATH="$HOME/.local/bin:$PATH"
-PATH="$HOME/go/bin:$PATH"
-PATH="$HOME/cargo/bin:$PATH"
-
-# Add other tools
-PATH="/Library/TeX/texbin:$PATH"
-PATH="$HOME/Developer/depot_tools:$PATH"
-
-export PATH
-
-# Environment variables
-export EDITOR="nvim"
-export GIT_EDITOR="nvim"
-export BROWSER="chromium"
-export DOTFILES="$HOME/.files"
-export GPG_TTY="$(tty)"
-
-# Go configuration
-export GOPATH="$HOME/go"
-export GOPROXY=direct
-export GOSUMDB=off
-export GOTELEMETRY=off
-export GOTOOLCHAIN=local
-
-# Rust configuration
-export CARGO_HOME="$HOME/cargo"
-
-# Homebrew compiler flags
-export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include -I/opt/homebrew/opt/curl/include"
-
-# Other settings
-export RUBYOPT="rubygems"
-export PIP_NO_SSL_VERIFY=1
-
-# Emacs mode
 set -o emacs
-
-# Prompt - simplified for oksh compatibility
-PS1='$(d=${PWD#$HOME}; [ "$d" != "$PWD" ] && d="~$d"; printf "\033[35m%s:%s\033[32m$ \033[0m" "$(hostname -s 2>/dev/null || hostname | cut -d. -f1)" "${d:-$PWD}")'
-
-# Aliases - each alias must be separate in oksh
-[ -x "$(command -v nvim)" ] && alias vim="nvim"
-[ -x "$(command -v nvim)" ] && alias vimdiff="nvim -d"
-alias ls="ls -l"
-alias lynx="lynx --nocolor"
-alias grep="grep --color=auto"
-alias diff="diff --color=auto"
-alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
-alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
-alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>" --disable-features=AutoupgradeEnabled,HttpsUpgrades,IsSitePerProcess --user-data-dir=/tmp/chromium'
-alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
-
-# fabric bootstrap
-[ -f "$HOME/.config/fabric/fabric-bootstrap.inc" ] && . "$HOME/.config/fabric/fabric-bootstrap.inc"
