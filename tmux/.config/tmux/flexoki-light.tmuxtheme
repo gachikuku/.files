@@ -82,7 +82,7 @@ set -g status-right "#[fg=#$color_bg_1,bg=#$color_orange]  #{b:pane_current_p
 
 # window-status
 setw -g window-status-format "#[bg=#$color_bg_2,fg=#$color_tx_2] #I-#W "
-setw -g window-status-current-format "#[bg=#$color_bg_2,fg=#$color_tx_1] *#W "
+setw -g window-status-current-format "#[bg=#$color_bg_2,fg=#$color_tx_2] *#W "
 
 # Modes
 setw -g clock-mode-colour $color_blue
