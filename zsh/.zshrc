@@ -45,7 +45,7 @@ PS1="%F{5}%m:%~%(!.%F{2}#.%F{2}$)%f "
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
-alias ls="ls -l"
+alias ls="ls -lG"
 alias lynx="lynx --nocolor"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
