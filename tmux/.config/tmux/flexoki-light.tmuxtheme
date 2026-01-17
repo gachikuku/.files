@@ -81,8 +81,8 @@ set -g status-left "#{?client_prefix,#[fg=#$color_bg_1#,bg=#$color_red],#[fg=#$c
 set -g status-right "#[fg=#$color_bg_1,bg=#$color_orange]  #{b:pane_current_path} #[fg=#$color_bg_1,bg=#$color_purple]  %Y-%m-%d %H:%M "
 
 # window-status
-setw -g window-status-format "#[bg=#$color_bg_2,fg=#$color_tx_2] #I #W "
-setw -g window-status-current-format "#[bg=#$color_bg_1,fg=#$color_tx_1] #I #W "
+setw -g window-status-format "#[bg=#$color_bg_2,fg=#$color_tx_2] #I-#W "
+setw -g window-status-current-format "#[bg=#$color_bg_1,fg=#$color_tx_1] *#W "
 
 # Modes
 setw -g clock-mode-colour $color_blue
