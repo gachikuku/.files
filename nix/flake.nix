@@ -49,6 +49,8 @@
 						cmake
 						entr
 						cmus
+						gnuplot
+						ledger
 						colima
 						gh
 						uv
@@ -66,6 +68,7 @@
 						gnupg
 						hashid
 						go_1_24
+						transmission_4
 						gopass
 						gopass-jsonapi
 						hashcat
@@ -79,6 +82,7 @@
 						libxo
 						lima
 						llvm
+						sc-im
 						lynx
 						mblaze
 						mkalias
