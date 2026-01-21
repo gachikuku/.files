@@ -21,6 +21,7 @@
 					allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
 						"discord"
 						"ngrok"
+						"claude-code"
 					];
 
 				};
@@ -75,6 +76,7 @@
 						hexedit
 						html-tidy
 						htmlq
+						oksh
 						httpx
 						icdiff
 						jq
@@ -93,6 +95,8 @@
 						nmap
 						nuclei
 						openvpn
+						opencode
+						claude-code
 						plan9port
 						ripgrep
 						rustc
