@@ -26,6 +26,8 @@
 
 				};
 
+				services.tailscale.enable = true;
+
 				fonts = {
 					packages = with pkgs; 
 						[
@@ -35,6 +37,9 @@
 						];
 				};
 
+				#nixpkgs.config.permittedInsecurePackages = [
+				#	"python3.13-ecdsa-0.19.1"
+				#];
 
 				environment.systemPackages = with pkgs;
 					[ 
@@ -47,6 +52,9 @@
 						aerc
 						pinentry_mac
 						cargo
+						#trezorctl
+						trezord
+						speedtest-cli
 						cmake
 						entr
 						cmus
@@ -150,6 +158,8 @@
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
+						"libusb"
+						"trezor-bridge"
 					];
 					onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
