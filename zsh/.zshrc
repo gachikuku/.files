@@ -78,6 +78,9 @@ _comp_options+=(globdots)		# Include hidden files.
 export PATH="$PATH:/Users/gachikuku/.local/bin"
 if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
 
-export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
-export ANTHROPIC_AUTH_TOKEN=$(gopass show -o api/openrouter)
-export ANTHROPIC_API_KEY="" # Important: Must be explicitly empty
+# uncomment when using claude-code
+#export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
+#export ANTHROPIC_AUTH_TOKEN=$(gopass show -o api/openrouter)
+#export ANTHROPIC_API_KEY="" # Important: Must be explicitly empty
+#export OPENROUTER_API_KEY=$(gopass show -o api/openrouter)
+

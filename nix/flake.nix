@@ -46,8 +46,10 @@
 						amfora #gemini browser
 						mtr
 						radamsa
-						mpv
-						yt-dlp
+						#mpv
+						#yt-dlp
+						gcc-arm-embedded
+						rustup
 						qemu
 						aerc
 						pinentry_mac
@@ -77,7 +79,6 @@
 						gnupg
 						hashid
 						go_1_24
-						transmission_4
 						gopass
 						gopass-jsonapi
 						hashcat
@@ -153,15 +154,14 @@
 
 					casks = [
 						"affinity-designer"
+						"trezor-suite"
 						"affinity-photo"
 						"chromium"
 						"ghostty"
 						"hammerspoon"
 						"wireshark"
-						"libusb"
-						"trezor-bridge"
 					];
-					onActivation.cleanup = "zap";
+					#onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
 					onActivation.upgrade = true;
 				};
