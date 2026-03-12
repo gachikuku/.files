@@ -54,7 +54,7 @@
 						aerc
 						pinentry_mac
 						cargo
-						#trezorctl
+						trezorctl
 						trezord
 						speedtest-cli
 						cmake
