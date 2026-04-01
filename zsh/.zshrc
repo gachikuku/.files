@@ -28,6 +28,7 @@ export GOSUMDB=off
 export GOTELEMETRY=off
 export GOTOOLCHAIN=local
 export PIP_NO_SSL_VERIFY=1
+export CLAUDE_DEBUG=1
 #export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
 #export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
 #export AWS_PAGER=""
