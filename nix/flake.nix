@@ -43,13 +43,15 @@
 
 				environment.systemPackages = with pkgs;
 					[ 
+						ares-cli
 						amfora #gemini browser
 						mtr
 						radamsa
-						#mpv
-						#yt-dlp
+						mpv
+						yt-dlp
 						gcc-arm-embedded
 						rustup
+						radare2
 						qemu
 						aerc
 						pinentry_mac
@@ -78,7 +80,6 @@
 						fzf
 						gnupg
 						hashid
-						go_1_24
 						gopass
 						gopass-jsonapi
 						hashcat
@@ -105,7 +106,7 @@
 						nuclei
 						openvpn
 						opencode
-						claude-code
+						#claude-code
 						plan9port
 						ripgrep
 						rustc
