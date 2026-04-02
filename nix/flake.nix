@@ -46,6 +46,8 @@
 						ares-cli
 						amfora #gemini browser
 						mtr
+						libretls
+						cacert
 						radamsa
 						mpv
 						yt-dlp
@@ -110,7 +112,6 @@
 						plan9port
 						ripgrep
 						rustc
-						sacc
 						senpai
 						sfeed
 						binwalk
