@@ -104,6 +104,7 @@
 						naabu
 						neovim
 						ngrok
+						texliveFull
 						nmap
 						nuclei
 						openvpn
