@@ -1,0 +1,3616 @@
+1
+00:00:00,120 --> 00:00:06,319
+<font color="white" size=".72c">I'm very thankful that the flipper zero</font>
+
+2
+00:00:02,720 --> 00:00:10,559
+<font color="white" size=".72c">came out at the same time I have to say</font>
+
+3
+00:00:06,319 --> 00:00:13,080
+<font color="white" size=".72c">that it has limited capabilities it's it</font>
+
+4
+00:00:10,559 --> 00:00:16,119
+<font color="white" size=".72c">it works good it does some things very</font>
+
+5
+00:00:13,080 --> 00:00:19,520
+<font color="white" size=".72c">well but it has a very limited frequency</font>
+
+6
+00:00:16,119 --> 00:00:22,480
+<font color="white" size=".72c">spectrum it has limited software we're</font>
+
+7
+00:00:19,520 --> 00:00:24,920
+<font color="white" size=".72c">seeing the signals given off by all of</font>
+
+8
+00:00:22,480 --> 00:00:26,720
+<font color="white" size=".72c">the aircraft in the area and it's</font>
+
+9
+00:00:24,920 --> 00:00:29,960
+<font color="white" size=".72c">refreshed every couple of seconds you</font>
+
+10
+00:00:26,720 --> 00:00:31,679
+<font color="white" size=".72c">can watch these planes take off and land</font>
+
+11
+00:00:29,960 --> 00:00:33,879
+<font color="white" size=".72c">I I mean it varies country to Country</font>
+
+12
+00:00:31,679 --> 00:00:36,600
+<font color="white" size=".72c">right but what what's like the legality</font>
+
+13
+00:00:33,879 --> 00:00:36,600
+<font color="white" size=".72c">of what you're doing</font>
+
+14
+00:00:37,280 --> 00:00:41,760
+<font color="white" size=".72c">here have you ever noticed how some</font>
+
+15
+00:00:39,480 --> 00:00:44,520
+<font color="white" size=".72c">developers just seem to have that extra</font>
+
+16
+00:00:41,760 --> 00:00:47,360
+<font color="white" size=".72c">Edge well a lot of it comes down to one</font>
+
+17
+00:00:44,520 --> 00:00:49,559
+<font color="white" size=".72c">key skill logic and Brilliant logic</font>
+
+18
+00:00:47,360 --> 00:00:52,600
+<font color="white" size=".72c">courses are here to give you that edge</font>
+
+19
+00:00:49,559 --> 00:00:54,879
+<font color="white" size=".72c">in 18 Hands-On lessons brilliant first</font>
+
+20
+00:00:52,600 --> 00:00:57,160
+<font color="white" size=".72c">logic course takes you on a journey from</font>
+
+21
+00:00:54,879 --> 00:00:59,000
+<font color="white" size=".72c">the very basics of logic to advanced</font>
+
+22
+00:00:57,160 --> 00:01:01,000
+<font color="white" size=".72c">concepts that can set you apart in the</font>
+
+23
+00:00:59,000 --> 00:01:03,199
+<font color="white" size=".72c">tech world you'll begin with practical</font>
+
+24
+00:01:01,000 --> 00:01:05,040
+<font color="white" size=".72c">order logic learning to organize</font>
+
+25
+00:01:03,199 --> 00:01:07,400
+<font color="white" size=".72c">thoughts and processes in a way that's</font>
+
+26
+00:01:05,040 --> 00:01:09,520
+<font color="white" size=".72c">clear and efficient it's the foundation</font>
+
+27
+00:01:07,400 --> 00:01:11,439
+<font color="white" size=".72c">of logical thinking then it's on to</font>
+
+28
+00:01:09,520 --> 00:01:13,720
+<font color="white" size=".72c">strategic order logic here's where you</font>
+
+29
+00:01:11,439 --> 00:01:16,039
+<font color="white" size=".72c">start to see things differently learning</font>
+
+30
+00:01:13,720 --> 00:01:18,439
+<font color="white" size=".72c">techniques to strategize and solve</font>
+
+31
+00:01:16,039 --> 00:01:20,240
+<font color="white" size=".72c">problems more effectively by practicing</font>
+
+32
+00:01:18,439 --> 00:01:22,439
+<font color="white" size=".72c">seeking the truth you'll develop the</font>
+
+33
+00:01:20,240 --> 00:01:24,600
+<font color="white" size=".72c">ability to discern and extrapolate</font>
+
+34
+00:01:22,439 --> 00:01:26,360
+<font color="white" size=".72c">answers from the information you have</font>
+
+35
+00:01:24,600 --> 00:01:28,000
+<font color="white" size=".72c">it's about sharpening your mind to cut</font>
+
+36
+00:01:26,360 --> 00:01:30,000
+<font color="white" size=".72c">through the complexity a really</font>
+
+37
+00:01:28,000 --> 00:01:31,640
+<font color="white" size=".72c">important skill in today's world by the</font>
+
+38
+00:01:30,000 --> 00:01:33,880
+<font color="white" size=".72c">end of the first course you won't just</font>
+
+39
+00:01:31,640 --> 00:01:36,280
+<font color="white" size=".72c">be following logic you'll be creating it</font>
+
+40
+00:01:33,880 --> 00:01:38,680
+<font color="white" size=".72c">you'll stand out not just as a developer</font>
+
+41
+00:01:36,280 --> 00:01:41,520
+<font color="white" size=".72c">but as a problem solver a critical</font>
+
+42
+00:01:38,680 --> 00:01:44,119
+<font color="white" size=".72c">thinker and a real asset in any team and</font>
+
+43
+00:01:41,520 --> 00:01:46,880
+<font color="white" size=".72c">as they say there's more in the logic 2</font>
+
+44
+00:01:44,119 --> 00:01:48,759
+<font color="white" size=".72c">course and much much more in brilliant's</font>
+
+45
+00:01:46,880 --> 00:01:51,439
+<font color="white" size=".72c">catalog so are you ready to upgrade your</font>
+
+46
+00:01:48,759 --> 00:01:53,320
+<font color="white" size=".72c">logical thinking join me on brilliant</font>
+
+47
+00:01:51,439 --> 00:01:56,560
+<font color="white" size=".72c">and unlock your potential visit</font>
+
+48
+00:01:53,320 --> 00:01:58,640
+<font color="white" size=".72c">brilliant.org David bomble to start your</font>
+
+49
+00:01:56,560 --> 00:02:03,479
+<font color="white" size=".72c">journey the first 200 signups get a</font>
+
+50
+00:01:58,640 --> 00:02:03,479
+<font color="white" size=".72c">special offer let's Master logic</font>
+
+51
+00:02:04,360 --> 00:02:08,840
+<font color="white" size=".72c">together hey everyone it's David Bumble</font>
+
+52
+00:02:06,439 --> 00:02:11,080
+<font color="white" size=".72c">back with the amazing occupy the web OTW</font>
+
+53
+00:02:08,840 --> 00:02:14,920
+<font color="white" size=".72c">welcome thank you David it's always an</font>
+
+54
+00:02:11,080 --> 00:02:17,480
+<font color="white" size=".72c">honor to be back on the best it and</font>
+
+55
+00:02:14,920 --> 00:02:19,040
+<font color="white" size=".72c">cyber security Channel on YouTube thank</font>
+
+56
+00:02:17,480 --> 00:02:20,959
+<font color="white" size=".72c">you for having me it's great to have you</font>
+
+57
+00:02:19,040 --> 00:02:22,760
+<font color="white" size=".72c">back and I will say just for everyone</font>
+
+58
+00:02:20,959 --> 00:02:24,239
+<font color="white" size=".72c">who hasn't seen our previous videos I'll</font>
+
+59
+00:02:22,760 --> 00:02:26,360
+<font color="white" size=".72c">link them below you should know who</font>
+
+60
+00:02:24,239 --> 00:02:28,040
+<font color="white" size=".72c">occupy the web is but if you don't</font>
+
+61
+00:02:26,360 --> 00:02:30,120
+<font color="white" size=".72c">amazing person to listen to in the cyber</font>
+
+62
+00:02:28,040 --> 00:02:31,680
+<font color="white" size=".72c">security space occupy the web you are</font>
+
+63
+00:02:30,120 --> 00:02:34,040
+<font color="white" size=".72c">part of the reason that my channel does</font>
+
+64
+00:02:31,680 --> 00:02:36,079
+<font color="white" size=".72c">well get so much feedback about people</font>
+
+65
+00:02:34,040 --> 00:02:37,840
+<font color="white" size=".72c">complaining that you don't come on often</font>
+
+66
+00:02:36,079 --> 00:02:39,319
+<font color="white" size=".72c">enough so it's great to have you back so</font>
+
+67
+00:02:37,840 --> 00:02:41,239
+<font color="white" size=".72c">just for everyone who hasn't seen our</font>
+
+68
+00:02:39,319 --> 00:02:43,079
+<font color="white" size=".72c">previous videos occupy the web is the</font>
+
+69
+00:02:41,239 --> 00:02:45,079
+<font color="white" size=".72c">author of this book Linux basics for</font>
+
+70
+00:02:43,079 --> 00:02:46,879
+<font color="white" size=".72c">hackers we also have a video series so</font>
+
+71
+00:02:45,079 --> 00:02:49,159
+<font color="white" size=".72c">I've link that below if you want to</font>
+
+72
+00:02:46,879 --> 00:02:51,120
+<font color="white" size=".72c">follow along with our videos and the</font>
+
+73
+00:02:49,159 --> 00:02:52,720
+<font color="white" size=".72c">book and occupy the web I love the books</font>
+
+74
+00:02:51,120 --> 00:02:54,599
+<font color="white" size=".72c">that you write getting started becoming</font>
+
+75
+00:02:52,720 --> 00:02:56,200
+<font color="white" size=".72c">a master hacker and I'd say this is my</font>
+
+76
+00:02:54,599 --> 00:02:58,000
+<font color="white" size=".72c">favorite network basics for hackers just</font>
+
+77
+00:02:56,200 --> 00:02:59,800
+<font color="white" size=".72c">because of my background I always say</font>
+
+78
+00:02:58,000 --> 00:03:01,480
+<font color="white" size=".72c">this I love the way you write because</font>
+
+79
+00:02:59,800 --> 00:03:03,080
+<font color="white" size=".72c">course you take it from a hacker's</font>
+
+80
+00:03:01,480 --> 00:03:05,360
+<font color="white" size=".72c">mindset but I got to ask you this</font>
+
+81
+00:03:03,080 --> 00:03:07,959
+<font color="white" size=".72c">question right these little devices</font>
+
+82
+00:03:05,360 --> 00:03:10,760
+<font color="white" size=".72c">really really famous but some people</font>
+
+83
+00:03:07,959 --> 00:03:13,000
+<font color="white" size=".72c">would say flipper zeros are not actually</font>
+
+84
+00:03:10,760 --> 00:03:14,560
+<font color="white" size=".72c">that good they're just toys and they</font>
+
+85
+00:03:13,000 --> 00:03:16,319
+<font color="white" size=".72c">dumb toys some people would even say</font>
+
+86
+00:03:14,560 --> 00:03:17,760
+<font color="white" size=".72c">What's your opinion of these and</font>
+
+87
+00:03:16,319 --> 00:03:20,440
+<font color="white" size=".72c">hopefully you can you know take us on a</font>
+
+88
+00:03:17,760 --> 00:03:22,599
+<font color="white" size=".72c">journey about SDR well my opinion about</font>
+
+89
+00:03:20,440 --> 00:03:25,280
+<font color="white" size=".72c">flipper zero I have one of course I got</font>
+
+90
+00:03:22,599 --> 00:03:28,599
+<font color="white" size=".72c">one early on when they first came out</font>
+
+91
+00:03:25,280 --> 00:03:30,360
+<font color="white" size=".72c">and one of the things that I love about</font>
+
+92
+00:03:28,599 --> 00:03:34,519
+<font color="white" size=".72c">the flipper zero</font>
+
+93
+00:03:30,360 --> 00:03:38,000
+<font color="white" size=".72c">is that it has made millions of people</font>
+
+94
+00:03:34,519 --> 00:03:40,959
+<font color="white" size=".72c">aware of essentially software defined</font>
+
+95
+00:03:38,000 --> 00:03:44,280
+<font color="white" size=".72c">radio of hacking radio signals it has</font>
+
+96
+00:03:40,959 --> 00:03:46,680
+<font color="white" size=".72c">raised awareness I've been doing SDR for</font>
+
+97
+00:03:44,280 --> 00:03:48,959
+<font color="white" size=".72c">hackers for a while and most people had</font>
+
+98
+00:03:46,680 --> 00:03:52,239
+<font color="white" size=".72c">no idea what I was talking about or what</font>
+
+99
+00:03:48,959 --> 00:03:54,760
+<font color="white" size=".72c">I was pursuing and all of a sudden now</font>
+
+100
+00:03:52,239 --> 00:03:57,959
+<font color="white" size=".72c">everybody millions of people around the</font>
+
+101
+00:03:54,760 --> 00:04:01,920
+<font color="white" size=".72c">world are saying wow you can do that and</font>
+
+102
+00:03:57,959 --> 00:04:04,400
+<font color="white" size=".72c">with a simple you know device and so I'm</font>
+
+103
+00:04:01,920 --> 00:04:08,079
+<font color="white" size=".72c">very thankful that the flipper zero came</font>
+
+104
+00:04:04,400 --> 00:04:12,159
+<font color="white" size=".72c">out at the same time I have to say that</font>
+
+105
+00:04:08,079 --> 00:04:14,879
+<font color="white" size=".72c">it has limited capabilities it's it it</font>
+
+106
+00:04:12,159 --> 00:04:17,560
+<font color="white" size=".72c">works good it does some things very well</font>
+
+107
+00:04:14,879 --> 00:04:22,120
+<font color="white" size=".72c">but it has a very limited frequency</font>
+
+108
+00:04:17,560 --> 00:04:24,240
+<font color="white" size=".72c">spectrum it has limited software um so</font>
+
+109
+00:04:22,120 --> 00:04:28,280
+<font color="white" size=".72c">there's a lot more things that you can</font>
+
+110
+00:04:24,240 --> 00:04:30,680
+<font color="white" size=".72c">do with SDR softwar defined radios which</font>
+
+111
+00:04:28,280 --> 00:04:33,199
+<font color="white" size=".72c">software defined radios been around for</font>
+
+112
+00:04:30,680 --> 00:04:36,639
+<font color="white" size=".72c">a while they've you know they are</font>
+
+113
+00:04:33,199 --> 00:04:39,720
+<font color="white" size=".72c">basically a hardware device that simply</font>
+
+114
+00:04:36,639 --> 00:04:42,440
+<font color="white" size=".72c">converts the analog signals or radio</font>
+
+115
+00:04:39,720 --> 00:04:45,360
+<font color="white" size=".72c">signals into a digital signal and it</font>
+
+116
+00:04:42,440 --> 00:04:47,479
+<font color="white" size=".72c">used to be not too long ago that to do</font>
+
+117
+00:04:45,360 --> 00:04:50,800
+<font color="white" size=".72c">these types of things you would have to</font>
+
+118
+00:04:47,479 --> 00:04:54,080
+<font color="white" size=".72c">have multiple pieces of hardware and</font>
+
+119
+00:04:50,800 --> 00:04:58,039
+<font color="white" size=".72c">software to be able to pick up okay and</font>
+
+120
+00:04:54,080 --> 00:05:03,039
+<font color="white" size=".72c">transmit signals in the radio spectrum</font>
+
+121
+00:04:58,039 --> 00:05:05,600
+<font color="white" size=".72c">now you can get a inexpensive device</font>
+
+122
+00:05:03,039 --> 00:05:07,759
+<font color="white" size=".72c">like the rtlsdr which we'll be using</font>
+
+123
+00:05:05,600 --> 00:05:10,639
+<font color="white" size=".72c">here today which is the least one of the</font>
+
+124
+00:05:07,759 --> 00:05:13,280
+<font color="white" size=".72c">least expensive it's about $30 to $40</font>
+
+125
+00:05:10,639 --> 00:05:16,520
+<font color="white" size=".72c">depending upon where you buy it from and</font>
+
+126
+00:05:13,280 --> 00:05:18,919
+<font color="white" size=".72c">it's a good receiver it's not a</font>
+
+127
+00:05:16,520 --> 00:05:22,800
+<font color="white" size=".72c">transceiver it's not a transmitter it</font>
+
+128
+00:05:18,919 --> 00:05:25,960
+<font color="white" size=".72c">just can receive signals but for $35 or</font>
+
+129
+00:05:22,800 --> 00:05:28,479
+<font color="white" size=".72c">so it's it's a powerful little device</font>
+
+130
+00:05:25,960 --> 00:05:31,520
+<font color="white" size=".72c">and then if you team it up with some</font>
+
+131
+00:05:28,479 --> 00:05:35,159
+<font color="white" size=".72c">really powerful software there's a lot</font>
+
+132
+00:05:31,520 --> 00:05:38,720
+<font color="white" size=".72c">of things that you can do with it and so</font>
+
+133
+00:05:35,159 --> 00:05:41,560
+<font color="white" size=".72c">what I'd like to do is to talk about</font>
+
+134
+00:05:38,720 --> 00:05:44,560
+<font color="white" size=".72c">some of the software that we can use to</font>
+
+135
+00:05:41,560 --> 00:05:46,919
+<font color="white" size=".72c">be able to use these devices because in</font>
+
+136
+00:05:44,560 --> 00:05:50,319
+<font color="white" size=".72c">that that's thought I wouldn't say that</font>
+
+137
+00:05:46,919 --> 00:05:53,199
+<font color="white" size=".72c">the Clipper zero is a toy I might say</font>
+
+138
+00:05:50,319 --> 00:05:55,759
+<font color="white" size=".72c">it's a gimmick you know it's but it's</font>
+
+139
+00:05:53,199 --> 00:05:59,479
+<font color="white" size=".72c">I'm really thankful about how much</font>
+
+140
+00:05:55,759 --> 00:06:02,280
+<font color="white" size=".72c">awareness it has raised about radio C</font>
+
+141
+00:05:59,479 --> 00:06:04,600
+<font color="white" size=".72c">hack in so this is in my opinion radio</font>
+
+142
+00:06:02,280 --> 00:06:08,199
+<font color="white" size=".72c">hacking is one of the Leading Edge</font>
+
+143
+00:06:04,600 --> 00:06:10,880
+<font color="white" size=".72c">fields of hacking and cyber security and</font>
+
+144
+00:06:08,199 --> 00:06:13,880
+<font color="white" size=".72c">there's so many things that are run by</font>
+
+145
+00:06:10,880 --> 00:06:17,080
+<font color="white" size=".72c">radio signals including your cell phone</font>
+
+146
+00:06:13,880 --> 00:06:19,319
+<font color="white" size=".72c">your Bluetooth your WiFi satellite</font>
+
+147
+00:06:17,080 --> 00:06:22,400
+<font color="white" size=".72c">signals which we have a class coming up</font>
+
+148
+00:06:19,319 --> 00:06:24,759
+<font color="white" size=".72c">in later this year on satellite hacking</font>
+
+149
+00:06:22,400 --> 00:06:27,120
+<font color="white" size=".72c">we also have an advanced SDR we just ran</font>
+
+150
+00:06:24,759 --> 00:06:29,680
+<font color="white" size=".72c">our SDR class last year we have an</font>
+
+151
+00:06:27,120 --> 00:06:31,960
+<font color="white" size=".72c">advanced SDR class coming up this summer</font>
+
+152
+00:06:29,680 --> 00:06:34,639
+<font color="white" size=".72c">so these are you know these are the</font>
+
+153
+00:06:31,960 --> 00:06:37,880
+<font color="white" size=".72c">areas that I'm very excited and</font>
+
+154
+00:06:34,639 --> 00:06:41,000
+<font color="white" size=".72c">enthusiastic about so hopefully I can</font>
+
+155
+00:06:37,880 --> 00:06:44,080
+<font color="white" size=".72c">convey that kind of enthusiasm to your</font>
+
+156
+00:06:41,000 --> 00:06:47,400
+<font color="white" size=".72c">listeners and they can see the the value</font>
+
+157
+00:06:44,080 --> 00:06:49,639
+<font color="white" size=".72c">in radio hacking because quite honestly</font>
+
+158
+00:06:47,400 --> 00:06:51,440
+<font color="white" size=".72c">there's just everything down near</font>
+
+159
+00:06:49,639 --> 00:06:53,520
+<font color="white" size=".72c">everything not everything but down near</font>
+
+160
+00:06:51,440 --> 00:06:57,280
+<font color="white" size=".72c">everything right has using some kind of</font>
+
+161
+00:06:53,520 --> 00:07:00,240
+<font color="white" size=".72c">radio signal and I think you and I did</font>
+
+162
+00:06:57,280 --> 00:07:02,560
+<font color="white" size=".72c">um an automobile hacking video a while</font>
+
+163
+00:07:00,240 --> 00:07:05,520
+<font color="white" size=".72c">ago yeah and one of the things we did</font>
+
+164
+00:07:02,560 --> 00:07:09,080
+<font color="white" size=".72c">there is that a lot of cars modern cars</font>
+
+165
+00:07:05,520 --> 00:07:11,479
+<font color="white" size=".72c">now have the the key fob that will</font>
+
+166
+00:07:09,080 --> 00:07:14,479
+<font color="white" size=".72c">automatically unlock the door and this</font>
+
+167
+00:07:11,479 --> 00:07:17,400
+<font color="white" size=".72c">is one of the things that you can do in</font>
+
+168
+00:07:14,479 --> 00:07:20,879
+<font color="white" size=".72c">radio hacking among other things which</font>
+
+169
+00:07:17,400 --> 00:07:23,440
+<font color="white" size=".72c">by the way the uh flipper zero I think</font>
+
+170
+00:07:20,879 --> 00:07:25,400
+<font color="white" size=".72c">just got banned in Canada it's going to</font>
+
+171
+00:07:23,440 --> 00:07:27,680
+<font color="white" size=".72c">a about that yeah because it's like can</font>
+
+172
+00:07:25,400 --> 00:07:30,000
+<font color="white" size=".72c">this actually do what they think it can</font>
+
+173
+00:07:27,680 --> 00:07:31,160
+<font color="white" size=".72c">do because from what I have tested it I</font>
+
+174
+00:07:30,000 --> 00:07:32,960
+<font color="white" size=".72c">have to be careful what I say but it</font>
+
+175
+00:07:31,160 --> 00:07:34,800
+<font color="white" size=".72c">doesn't sound like they actually</font>
+
+176
+00:07:32,960 --> 00:07:37,960
+<font color="white" size=".72c">understand what this can and can't</font>
+
+177
+00:07:34,800 --> 00:07:39,879
+<font color="white" size=".72c">do well sometimes the person the people</font>
+
+178
+00:07:37,960 --> 00:07:41,520
+<font color="white" size=".72c">who are making the rules and laws don't</font>
+
+179
+00:07:39,879 --> 00:07:45,520
+<font color="white" size=".72c">necessarily understand the technical</font>
+
+180
+00:07:41,520 --> 00:07:48,479
+<font color="white" size=".72c">side of it but it's uh it can unlock</font>
+
+181
+00:07:45,520 --> 00:07:51,120
+<font color="white" size=".72c">some of the older model vehicles and I</font>
+
+182
+00:07:48,479 --> 00:07:55,280
+<font color="white" size=".72c">think possibly the Canadian officials</font>
+
+183
+00:07:51,120 --> 00:07:57,479
+<font color="white" size=".72c">are making a connection between the car</font>
+
+184
+00:07:55,280 --> 00:07:59,720
+<font color="white" size=".72c">thefts and The Flipper zero that might</font>
+
+185
+00:07:57,479 --> 00:08:01,639
+<font color="white" size=".72c">not actually be there right might just</font>
+
+186
+00:07:59,720 --> 00:08:04,440
+<font color="white" size=".72c">be other reasons that cars are being</font>
+
+187
+00:08:01,639 --> 00:08:06,560
+<font color="white" size=".72c">stolen but in any case it The Flipper</font>
+
+188
+00:08:04,440 --> 00:08:09,479
+<font color="white" size=".72c">zero has been banned in Canada because</font>
+
+189
+00:08:06,560 --> 00:08:11,720
+<font color="white" size=".72c">of car theft but all the other devices</font>
+
+190
+00:08:09,479 --> 00:08:14,440
+<font color="white" size=".72c">which there are you know there's at</font>
+
+191
+00:08:11,720 --> 00:08:17,319
+<font color="white" size=".72c">least a dozen 20 other devices that are</font>
+
+192
+00:08:14,440 --> 00:08:19,280
+<font color="white" size=".72c">out there that can do the same thing and</font>
+
+193
+00:08:17,319 --> 00:08:21,280
+<font color="white" size=".72c">those are not banned so maybe that's</font>
+
+194
+00:08:19,280 --> 00:08:23,479
+<font color="white" size=".72c">what we should be looking at here and</font>
+
+195
+00:08:21,280 --> 00:08:26,199
+<font color="white" size=".72c">we'll talk about that and you know maybe</font>
+
+196
+00:08:23,479 --> 00:08:29,639
+<font color="white" size=".72c">David you and I should put together a</font>
+
+197
+00:08:26,199 --> 00:08:30,879
+<font color="white" size=".72c">series on software defined radio about</font>
+
+198
+00:08:29,639 --> 00:08:34,360
+<font color="white" size=".72c">that yeah that'd be great so if everyone</font>
+
+199
+00:08:30,879 --> 00:08:36,640
+<font color="white" size=".72c">is watching would you like OTW and I to</font>
+
+200
+00:08:34,360 --> 00:08:37,719
+<font color="white" size=".72c">do a series of videos I think hack RF</font>
+
+201
+00:08:36,640 --> 00:08:39,320
+<font color="white" size=".72c">might be one that a lot of people will</font>
+
+202
+00:08:37,719 --> 00:08:40,719
+<font color="white" size=".72c">be interested in so put your comments</font>
+
+203
+00:08:39,320 --> 00:08:42,360
+<font color="white" size=".72c">below but what do you think about hack</font>
+
+204
+00:08:40,719 --> 00:08:43,719
+<font color="white" size=".72c">RF and but I mean I'm assuming there's a</font>
+
+205
+00:08:42,360 --> 00:08:46,320
+<font color="white" size=".72c">whole journey here that you're thinking</font>
+
+206
+00:08:43,719 --> 00:08:48,959
+<font color="white" size=".72c">about um OTW yeah I think think about a</font>
+
+207
+00:08:46,320 --> 00:08:51,519
+<font color="white" size=".72c">whole journey starting from simple to</font>
+
+208
+00:08:48,959 --> 00:08:54,959
+<font color="white" size=".72c">Advanced the simple being just setting</font>
+
+209
+00:08:51,519 --> 00:08:58,600
+<font color="white" size=".72c">up a receiver uh picking up signals from</font>
+
+210
+00:08:54,959 --> 00:09:01,000
+<font color="white" size=".72c">various uh devices and vehicles and what</font>
+
+211
+00:08:58,600 --> 00:09:04,519
+<font color="white" size=".72c">have you and then getting eventually</font>
+
+212
+00:09:01,000 --> 00:09:06,399
+<font color="white" size=".72c">into like hacking satellite signals but</font>
+
+213
+00:09:04,519 --> 00:09:10,000
+<font color="white" size=".72c">but you're not going to hack satellite</font>
+
+214
+00:09:06,399 --> 00:09:11,839
+<font color="white" size=".72c">signals with an RTL SDR so there's at</font>
+
+215
+00:09:10,000 --> 00:09:15,399
+<font color="white" size=".72c">least you know there's there's about</font>
+
+216
+00:09:11,839 --> 00:09:17,399
+<font color="white" size=".72c">four or five very popular SDR devic of</font>
+
+217
+00:09:15,399 --> 00:09:20,800
+<font color="white" size=".72c">the probably the most popular is going</font>
+
+218
+00:09:17,399 --> 00:09:23,399
+<font color="white" size=".72c">to be the RTL SDR because it's so</font>
+
+219
+00:09:20,800 --> 00:09:27,120
+<font color="white" size=".72c">inexpensive it's about</font>
+
+220
+00:09:23,399 --> 00:09:30,040
+<font color="white" size=".72c">$35 then there's the hack</font>
+
+221
+00:09:27,120 --> 00:09:33,320
+<font color="white" size=".72c">rf1 all right that runs a about</font>
+
+222
+00:09:30,040 --> 00:09:37,519
+<font color="white" size=".72c">$350 so it's 10 times more expensive</font>
+
+223
+00:09:33,320 --> 00:09:40,000
+<font color="white" size=".72c">there's also the lime SDR and that's a a</font>
+
+224
+00:09:37,519 --> 00:09:43,440
+<font color="white" size=".72c">device that we recently used we did a a</font>
+
+225
+00:09:40,000 --> 00:09:46,440
+<font color="white" size=".72c">course on developing a a fto cell and</font>
+
+226
+00:09:43,440 --> 00:09:48,640
+<font color="white" size=".72c">setting up your own cell phone network</font>
+
+227
+00:09:46,440 --> 00:09:52,440
+<font color="white" size=".72c">so you can set up your own cell phone</font>
+
+228
+00:09:48,640 --> 00:09:56,399
+<font color="white" size=".72c">network and you can intercept and and</font>
+
+229
+00:09:52,440 --> 00:09:57,880
+<font color="white" size=".72c">manipulate calls on the cell system but</font>
+
+230
+00:09:56,399 --> 00:09:59,800
+<font color="white" size=".72c">you're not going to do that once again</font>
+
+231
+00:09:57,880 --> 00:10:02,120
+<font color="white" size=".72c">with an rtlsdr you're not going to do</font>
+
+232
+00:09:59,800 --> 00:10:05,680
+<font color="white" size=".72c">that with a flipper zero either right</font>
+
+233
+00:10:02,120 --> 00:10:07,720
+<font color="white" size=".72c">and there's the blade RF and there's a a</font>
+
+234
+00:10:05,680 --> 00:10:10,959
+<font color="white" size=".72c">number of them some of them get pretty</font>
+
+235
+00:10:07,720 --> 00:10:13,160
+<font color="white" size=".72c">pricey I mean you can spend thousands of</font>
+
+236
+00:10:10,959 --> 00:10:16,000
+<font color="white" size=".72c">dollars on these devices but still</font>
+
+237
+00:10:13,160 --> 00:10:19,040
+<font color="white" size=".72c">compared to what people used to spend on</font>
+
+238
+00:10:16,000 --> 00:10:22,279
+<font color="white" size=".72c">doing radio signal hacking it's still</font>
+
+239
+00:10:19,040 --> 00:10:25,279
+<font color="white" size=".72c">inexpensive so we we try to keep to the</font>
+
+240
+00:10:22,279 --> 00:10:27,920
+<font color="white" size=".72c">less expensive devices you know we try</font>
+
+241
+00:10:25,279 --> 00:10:31,880
+<font color="white" size=".72c">to keep it under uh we try to keep it</font>
+
+242
+00:10:27,920 --> 00:10:35,200
+<font color="white" size=".72c">under $1,000 of Hardware outside of the</font>
+
+243
+00:10:31,880 --> 00:10:36,440
+<font color="white" size=".72c">computer in in our classes just because</font>
+
+244
+00:10:35,200 --> 00:10:38,320
+<font color="white" size=".72c">you get more than that you're really</font>
+
+245
+00:10:36,440 --> 00:10:42,079
+<font color="white" size=".72c">getting outside of a lot of people's</font>
+
+246
+00:10:38,320 --> 00:10:45,639
+<font color="white" size=".72c">abilities to to buy it included in the</font>
+
+247
+00:10:42,079 --> 00:10:48,519
+<font color="white" size=".72c">whole Hardware is an antenna as well</font>
+
+248
+00:10:45,639 --> 00:10:51,600
+<font color="white" size=".72c">yeah so you should have a good antenna</font>
+
+249
+00:10:48,519 --> 00:10:54,880
+<font color="white" size=".72c">if you buy the rtlsdr you get a simple</font>
+
+250
+00:10:51,600 --> 00:10:56,720
+<font color="white" size=".72c">dipole antenna which is good it does you</font>
+
+251
+00:10:54,880 --> 00:10:59,360
+<font color="white" size=".72c">know it'll pick up like things that that</font>
+
+252
+00:10:56,720 --> 00:11:02,200
+<font color="white" size=".72c">are passing you by or you'll pick up</font>
+
+253
+00:10:59,360 --> 00:11:04,600
+<font color="white" size=".72c">radio signals almost any radio station</font>
+
+254
+00:11:02,200 --> 00:11:07,320
+<font color="white" size=".72c">pick up the signals from the aircraft</font>
+
+255
+00:11:04,600 --> 00:11:10,240
+<font color="white" size=".72c">flying overhead you can listen into the</font>
+
+256
+00:11:07,320 --> 00:11:12,399
+<font color="white" size=".72c">towers communication to airplanes with</font>
+
+257
+00:11:10,240 --> 00:11:14,760
+<font color="white" size=".72c">it you can pick up a lot of things but</font>
+
+258
+00:11:12,399 --> 00:11:17,360
+<font color="white" size=".72c">when you start talking about being able</font>
+
+259
+00:11:14,760 --> 00:11:18,880
+<font color="white" size=".72c">to do some more sophisticated work and</font>
+
+260
+00:11:17,360 --> 00:11:21,360
+<font color="white" size=".72c">when you especially when you're talking</font>
+
+261
+00:11:18,880 --> 00:11:23,200
+<font color="white" size=".72c">about doing things like satellite</font>
+
+262
+00:11:21,360 --> 00:11:26,000
+<font color="white" size=".72c">hacking you're going to need a</font>
+
+263
+00:11:23,200 --> 00:11:28,279
+<font color="white" size=".72c">specialized antenna for that but still</font>
+
+264
+00:11:26,000 --> 00:11:29,560
+<font color="white" size=".72c">these antennas you know they're going to</font>
+
+265
+00:11:28,279 --> 00:11:31,240
+<font color="white" size=".72c">run you</font>
+
+266
+00:11:29,560 --> 00:11:36,320
+<font color="white" size=".72c">from</font>
+
+267
+00:11:31,240 --> 00:11:38,240
+<font color="white" size=".72c">$50 to $500 in that range so but it's a</font>
+
+268
+00:11:36,320 --> 00:11:40,560
+<font color="white" size=".72c">it's amazing what you can do if you're</font>
+
+269
+00:11:38,240 --> 00:11:42,920
+<font color="white" size=".72c">willing to make the investment in the</font>
+
+270
+00:11:40,560 --> 00:11:45,440
+<font color="white" size=".72c">time and the skills and a little bit of</font>
+
+271
+00:11:42,920 --> 00:11:47,560
+<font color="white" size=".72c">hardware and you know the what's</font>
+
+272
+00:11:45,440 --> 00:11:51,360
+<font color="white" size=".72c">happening right now is that the whole</font>
+
+273
+00:11:47,560 --> 00:11:55,120
+<font color="white" size=".72c">world is beginning to see that this this</font>
+
+274
+00:11:51,360 --> 00:11:56,760
+<font color="white" size=".72c">area of hacking is largely unsecured and</font>
+
+275
+00:11:55,120 --> 00:11:58,760
+<font color="white" size=".72c">that's what you know it's probably part</font>
+
+276
+00:11:56,760 --> 00:12:01,320
+<font color="white" size=".72c">of what Canada is doing they go oh my</font>
+
+277
+00:11:58,760 --> 00:12:03,760
+<font color="white" size=".72c">gosh these cars are being stolen because</font>
+
+278
+00:12:01,320 --> 00:12:06,320
+<font color="white" size=".72c">they they're not secure against these</font>
+
+279
+00:12:03,760 --> 00:12:08,480
+<font color="white" size=".72c">type of radio attacks I doubt that</font>
+
+280
+00:12:06,320 --> 00:12:11,160
+<font color="white" size=".72c">there's that many cars being stolen in</font>
+
+281
+00:12:08,480 --> 00:12:14,480
+<font color="white" size=".72c">Canada with a flipper zero but to each</font>
+
+282
+00:12:11,160 --> 00:12:16,720
+<font color="white" size=".72c">their own right um but if you got if you</font>
+
+283
+00:12:14,480 --> 00:12:20,040
+<font color="white" size=".72c">have sophisticated hardware and software</font>
+
+284
+00:12:16,720 --> 00:12:23,040
+<font color="white" size=".72c">you can you can steal these cars and uh</font>
+
+285
+00:12:20,040 --> 00:12:25,560
+<font color="white" size=".72c">and so what I'd like to do is kind of</font>
+
+286
+00:12:23,040 --> 00:12:27,720
+<font color="white" size=".72c">talk about some of the software that's</font>
+
+287
+00:12:25,560 --> 00:12:30,560
+<font color="white" size=".72c">available to you I mean there's one of</font>
+
+288
+00:12:27,720 --> 00:12:32,920
+<font color="white" size=".72c">the things that you know as this field</font>
+
+289
+00:12:30,560 --> 00:12:35,399
+<font color="white" size=".72c">develops we're getting more and more</font>
+
+290
+00:12:32,920 --> 00:12:38,440
+<font color="white" size=".72c">software and each one of them has kind</font>
+
+291
+00:12:35,399 --> 00:12:40,440
+<font color="white" size=".72c">of a specific purpose but recently the</font>
+
+292
+00:12:38,440 --> 00:12:42,920
+<font color="white" size=".72c">last couple of years there's been an</font>
+
+293
+00:12:40,440 --> 00:12:47,480
+<font color="white" size=".72c">operating system that has come out</font>
+
+294
+00:12:42,920 --> 00:12:51,120
+<font color="white" size=".72c">that's specifically full SDR packing and</font>
+
+295
+00:12:47,480 --> 00:12:54,440
+<font color="white" size=".72c">it's called Dragon OS and it's amazing</font>
+
+296
+00:12:51,120 --> 00:12:58,399
+<font color="white" size=".72c">it has hundreds hundred hundreds yeah</font>
+
+297
+00:12:54,440 --> 00:13:00,680
+<font color="white" size=".72c">hundreds of tools for SDR packing and</font>
+
+298
+00:12:58,399 --> 00:13:04,360
+<font color="white" size=".72c">I'd like the kind of introduce your</font>
+
+299
+00:13:00,680 --> 00:13:08,160
+<font color="white" size=".72c">viewers to it today and do a do a simple</font>
+
+300
+00:13:04,360 --> 00:13:10,120
+<font color="white" size=".72c">a simple attack a simple interception</font>
+
+301
+00:13:08,160 --> 00:13:13,360
+<font color="white" size=".72c">let call it that rather call it a we're</font>
+
+302
+00:13:10,120 --> 00:13:15,839
+<font color="white" size=".72c">going to intercept some signals and and</font>
+
+303
+00:13:13,360 --> 00:13:18,959
+<font color="white" size=".72c">show you kind of the power of some of</font>
+
+304
+00:13:15,839 --> 00:13:21,600
+<font color="white" size=".72c">these tools it's interesting in London</font>
+
+305
+00:13:18,959 --> 00:13:23,760
+<font color="white" size=".72c">Land Rovers or or owners of Land Rovers</font>
+
+306
+00:13:21,600 --> 00:13:26,079
+<font color="white" size=".72c">are being refused Insurance because of</font>
+
+307
+00:13:23,760 --> 00:13:29,440
+<font color="white" size=".72c">how many have been</font>
+
+308
+00:13:26,079 --> 00:13:32,120
+<font color="white" size=".72c">stolen really yeah it's um something</font>
+
+309
+00:13:29,440 --> 00:13:35,440
+<font color="white" size=".72c">about one of the CEO one of the CEO or</font>
+
+310
+00:13:32,120 --> 00:13:38,320
+<font color="white" size=".72c">some high ranking person within a Land</font>
+
+311
+00:13:35,440 --> 00:13:42,000
+<font color="white" size=".72c">Rover said um this is not true it's not</font>
+
+312
+00:13:38,320 --> 00:13:44,040
+<font color="white" size=".72c">the most stolen car in the UK but um</font>
+
+313
+00:13:42,000 --> 00:13:45,920
+<font color="white" size=".72c">from you know stuff that you've seen out</font>
+
+314
+00:13:44,040 --> 00:13:48,079
+<font color="white" size=".72c">there like people complaining can't get</font>
+
+315
+00:13:45,920 --> 00:13:51,880
+<font color="white" size=".72c">insurance because it's stolen so often</font>
+
+316
+00:13:48,079 --> 00:13:53,639
+<font color="white" size=".72c">and um it's a it's a problem right um so</font>
+
+317
+00:13:51,880 --> 00:13:54,920
+<font color="white" size=".72c">I'm glad that you're going to do what</font>
+
+318
+00:13:53,639 --> 00:13:56,759
+<font color="white" size=".72c">you often do and just for everyone</font>
+
+319
+00:13:54,920 --> 00:13:59,000
+<font color="white" size=".72c">watching we've done a whole bunch of</font>
+
+320
+00:13:56,759 --> 00:14:01,240
+<font color="white" size=".72c">videos with Mr Robot or about Mr Robot</font>
+
+321
+00:13:59,000 --> 00:14:02,959
+<font color="white" size=".72c">and like you know Truth versus fiction</font>
+
+322
+00:14:01,240 --> 00:14:04,480
+<font color="white" size=".72c">and OTW it's great to have you here</font>
+
+323
+00:14:02,959 --> 00:14:07,399
+<font color="white" size=".72c">talking about you know what's actually</font>
+
+324
+00:14:04,480 --> 00:14:09,199
+<font color="white" size=".72c">real and what's just hype or fantasy or</font>
+
+325
+00:14:07,399 --> 00:14:12,000
+<font color="white" size=".72c">you know the movies and the same you</font>
+
+326
+00:14:09,199 --> 00:14:15,519
+<font color="white" size=".72c">know for cars most the vehicles since</font>
+
+327
+00:14:12,000 --> 00:14:17,759
+<font color="white" size=".72c">2014 have made it more difficult to use</font>
+
+328
+00:14:15,519 --> 00:14:19,839
+<font color="white" size=".72c">a flipper zero or radio hacking it</font>
+
+329
+00:14:17,759 --> 00:14:22,279
+<font color="white" size=".72c">doesn't it still can be done it's just</font>
+
+330
+00:14:19,839 --> 00:14:25,360
+<font color="white" size=".72c">more difficult right that's always the</font>
+
+331
+00:14:22,279 --> 00:14:27,440
+<font color="white" size=".72c">case yeah in information security you</font>
+
+332
+00:14:25,360 --> 00:14:29,399
+<font color="white" size=".72c">you somebody puts in some type of</font>
+
+333
+00:14:27,440 --> 00:14:31,399
+<font color="white" size=".72c">measure or countermeasure</font>
+
+334
+00:14:29,399 --> 00:14:33,079
+<font color="white" size=".72c">against the hack doesn't mean you can't</font>
+
+335
+00:14:31,399 --> 00:14:35,639
+<font color="white" size=".72c">still hack it just means you got to work</font>
+
+336
+00:14:33,079 --> 00:14:37,920
+<font color="white" size=".72c">a little harder which goes to what I've</font>
+
+337
+00:14:35,639 --> 00:14:41,320
+<font color="white" size=".72c">been saying on your show many times is</font>
+
+338
+00:14:37,920 --> 00:14:44,639
+<font color="white" size=".72c">that hacking is not 30 seconds or less</font>
+
+339
+00:14:41,320 --> 00:14:47,240
+<font color="white" size=".72c">like a Tik Tock video real hacking some</font>
+
+340
+00:14:44,639 --> 00:14:49,800
+<font color="white" size=".72c">sometimes can take years like something</font>
+
+341
+00:14:47,240 --> 00:14:53,600
+<font color="white" size=".72c">like stucks net or some of the others</font>
+
+342
+00:14:49,800 --> 00:14:57,440
+<font color="white" size=".72c">where very Advanced individuals spend</font>
+
+343
+00:14:53,600 --> 00:15:00,440
+<font color="white" size=".72c">years developing the hack if the target</font>
+
+344
+00:14:57,440 --> 00:15:03,519
+<font color="white" size=".72c">is insecure like somebody you basically</font>
+
+345
+00:15:00,440 --> 00:15:06,759
+<font color="white" size=".72c">did not do anything to secure the</font>
+
+346
+00:15:03,519 --> 00:15:08,639
+<font color="white" size=".72c">devices to secure the particular</font>
+
+347
+00:15:06,759 --> 00:15:10,320
+<font color="white" size=".72c">resource then yeah you might be able to</font>
+
+348
+00:15:08,639 --> 00:15:12,360
+<font color="white" size=".72c">take it down to 30 seconds or Liv but if</font>
+
+349
+00:15:10,320 --> 00:15:14,480
+<font color="white" size=".72c">you're talking about a very secure</font>
+
+350
+00:15:12,360 --> 00:15:17,079
+<font color="white" size=".72c">environment you might have to spend</font>
+
+351
+00:15:14,480 --> 00:15:19,880
+<font color="white" size=".72c">years of research to be able to do it</font>
+
+352
+00:15:17,079 --> 00:15:22,040
+<font color="white" size=".72c">and that's part of what we try to teach</font>
+
+353
+00:15:19,880 --> 00:15:25,560
+<font color="white" size=".72c">at hackers rise we're not trying to</font>
+
+354
+00:15:22,040 --> 00:15:28,959
+<font color="white" size=".72c">teach the gimmicks that get get all the</font>
+
+355
+00:15:25,560 --> 00:15:32,440
+<font color="white" size=".72c">views on Tik Tok because that's not</font>
+
+356
+00:15:28,959 --> 00:15:36,120
+<font color="white" size=".72c">really that's not real right what's real</font>
+
+357
+00:15:32,440 --> 00:15:39,360
+<font color="white" size=".72c">in at least in a penetration testing</font>
+
+358
+00:15:36,120 --> 00:15:42,160
+<font color="white" size=".72c">intelligence cyber War environment is</font>
+
+359
+00:15:39,360 --> 00:15:45,079
+<font color="white" size=".72c">some of those hacks will take years to</font>
+
+360
+00:15:42,160 --> 00:15:47,680
+<font color="white" size=".72c">actually bear food so we try to we try</font>
+
+361
+00:15:45,079 --> 00:15:50,279
+<font color="white" size=".72c">to raise the level and try to show</font>
+
+362
+00:15:47,680 --> 00:15:52,319
+<font color="white" size=".72c">people you know give them the background</font>
+
+363
+00:15:50,279 --> 00:15:54,440
+<font color="white" size=".72c">knowledge to be able to do that type of</font>
+
+364
+00:15:52,319 --> 00:15:58,360
+<font color="white" size=".72c">hacking but in any case what we what we</font>
+
+365
+00:15:54,440 --> 00:16:01,480
+<font color="white" size=".72c">have here today is we have a a operating</font>
+
+366
+00:15:58,360 --> 00:16:05,440
+<font color="white" size=".72c">system system called Dragon OS and this</font>
+
+367
+00:16:01,480 --> 00:16:08,440
+<font color="white" size=".72c">is Dragon OS and it's been designed just</font>
+
+368
+00:16:05,440 --> 00:16:11,680
+<font color="white" size=".72c">for radio hacking and the beauty of it</font>
+
+369
+00:16:08,440 --> 00:16:13,800
+<font color="white" size=".72c">is that most of the radio hacking tools</font>
+
+370
+00:16:11,680 --> 00:16:16,199
+<font color="white" size=".72c">have a lot of dependencies they have</font>
+
+371
+00:16:13,800 --> 00:16:19,279
+<font color="white" size=".72c">libraries and what have you that need to</font>
+
+372
+00:16:16,199 --> 00:16:21,319
+<font color="white" size=".72c">be installed to be able to function</font>
+
+373
+00:16:19,279 --> 00:16:24,759
+<font color="white" size=".72c">properly and this can take especially</font>
+
+374
+00:16:21,319 --> 00:16:27,880
+<font color="white" size=".72c">somebody who's new to Linux or new to</font>
+
+375
+00:16:24,759 --> 00:16:30,240
+<font color="white" size=".72c">radio hacking sometimes lots of time to</font>
+
+376
+00:16:27,880 --> 00:16:32,360
+<font color="white" size=".72c">be able to all all the dependencies and</font>
+
+377
+00:16:30,240 --> 00:16:34,440
+<font color="white" size=".72c">get it all set up whereas this operating</font>
+
+378
+00:16:32,360 --> 00:16:37,000
+<font color="white" size=".72c">system has not only the tools but there</font>
+
+379
+00:16:34,440 --> 00:16:40,000
+<font color="white" size=".72c">all and all the dependencies set up so</font>
+
+380
+00:16:37,000 --> 00:16:42,360
+<font color="white" size=".72c">you're ready to roll when you download</font>
+
+381
+00:16:40,000 --> 00:16:45,880
+<font color="white" size=".72c">it it's free right so you can f and it's</font>
+
+382
+00:16:42,360 --> 00:16:48,959
+<font color="white" size=".72c">free of course yes I it'sit free so</font>
+
+383
+00:16:45,880 --> 00:16:52,000
+<font color="white" size=".72c">here's Here's the the the source okay</font>
+
+384
+00:16:48,959 --> 00:16:56,199
+<font color="white" size=".72c">it's on Source Forge</font>
+
+385
+00:16:52,000 --> 00:16:59,160
+<font color="white" size=".72c">seut cmax secter cmax secter is the</font>
+
+386
+00:16:56,199 --> 00:17:01,079
+<font color="white" size=".72c">developer of it and uh he's done a</font>
+
+387
+00:16:59,160 --> 00:17:03,160
+<font color="white" size=".72c">really good job all right and it works</font>
+
+388
+00:17:01,079 --> 00:17:07,520
+<font color="white" size=".72c">with a number of different devices RTL</font>
+
+389
+00:17:03,160 --> 00:17:11,919
+<font color="white" size=".72c">SDR hack rf1 lime SDR blade RF and many</font>
+
+390
+00:17:07,520 --> 00:17:15,439
+<font color="white" size=".72c">others in our classes we use RTL SDR the</font>
+
+391
+00:17:11,919 --> 00:17:18,280
+<font color="white" size=".72c">hack rf1 and lime SDR lime being the</font>
+
+392
+00:17:15,439 --> 00:17:20,319
+<font color="white" size=".72c">priciest and maybe the most powerful of</font>
+
+393
+00:17:18,280 --> 00:17:25,039
+<font color="white" size=".72c">these and it runs about</font>
+
+394
+00:17:20,319 --> 00:17:29,039
+<font color="white" size=".72c">$500 okay whereas the rtlsdr costs about</font>
+
+395
+00:17:25,039 --> 00:17:30,720
+<font color="white" size=".72c">I say $35 heck rf1 is a is an excellent</font>
+
+396
+00:17:29,039 --> 00:17:31,480
+<font color="white" size=".72c">device for somebody getting started</font>
+
+397
+00:17:30,720 --> 00:17:35,240
+<font color="white" size=".72c">about</font>
+
+398
+00:17:31,480 --> 00:17:39,160
+<font color="white" size=".72c">$350 the only drawback to the hack rf1</font>
+
+399
+00:17:35,240 --> 00:17:42,440
+<font color="white" size=".72c">is a couple things one is that it's has</font>
+
+400
+00:17:39,160 --> 00:17:45,000
+<font color="white" size=".72c">a has a wide spectrum of radio signals</font>
+
+401
+00:17:42,440 --> 00:17:48,160
+<font color="white" size=".72c">that it can send and receive that so</font>
+
+402
+00:17:45,000 --> 00:17:51,520
+<font color="white" size=".72c">that's a good thing but it's it it's not</font>
+
+403
+00:17:48,160 --> 00:17:54,160
+<font color="white" size=".72c">full duplex it's half duplex means that</font>
+
+404
+00:17:51,520 --> 00:17:56,159
+<font color="white" size=".72c">it can either send or receive but not</font>
+
+405
+00:17:54,160 --> 00:17:59,240
+<font color="white" size=".72c">both at the same time and you can see</font>
+
+406
+00:17:56,159 --> 00:18:00,480
+<font color="white" size=".72c">where that might have some issues where</font>
+
+407
+00:17:59,240 --> 00:18:03,280
+<font color="white" size=".72c">you know if you're trying say for</font>
+
+408
+00:18:00,480 --> 00:18:05,640
+<font color="white" size=".72c">instance to replicate a cellular phone</font>
+
+409
+00:18:03,280 --> 00:18:08,200
+<font color="white" size=".72c">system you got to both be able to send</font>
+
+410
+00:18:05,640 --> 00:18:09,919
+<font color="white" size=".72c">and receive at the same time right y y</font>
+
+411
+00:18:08,200 --> 00:18:12,480
+<font color="white" size=".72c">otherwise otherwise it's going to be</font>
+
+412
+00:18:09,919 --> 00:18:16,559
+<font color="white" size=".72c">it's going to not work smoothly the</font>
+
+413
+00:18:12,480 --> 00:18:18,520
+<font color="white" size=".72c">blade RF will work both full duplex and</font>
+
+414
+00:18:16,559 --> 00:18:21,480
+<font color="white" size=".72c">it's very fast hack RF has another</font>
+
+415
+00:18:18,520 --> 00:18:25,400
+<font color="white" size=".72c">limitation in that it's a USB 2 and not</font>
+
+416
+00:18:21,480 --> 00:18:27,240
+<font color="white" size=".72c">USB 3 so it makes it a slow connection</font>
+
+417
+00:18:25,400 --> 00:18:29,799
+<font color="white" size=".72c">to your system so here's where you can</font>
+
+418
+00:18:27,240 --> 00:18:32,200
+<font color="white" size=".72c">get it at um I would recommend that you</font>
+
+419
+00:18:29,799 --> 00:18:34,600
+<font color="white" size=".72c">download it it's uh I don't know three</font>
+
+420
+00:18:32,200 --> 00:18:36,880
+<font color="white" size=".72c">gigs or something like that of operating</font>
+
+421
+00:18:34,600 --> 00:18:38,880
+<font color="white" size=".72c">system might be more uh but it's pretty</font>
+
+422
+00:18:36,880 --> 00:18:40,679
+<font color="white" size=".72c">big and you know you can create a</font>
+
+423
+00:18:38,880 --> 00:18:43,240
+<font color="white" size=".72c">virtual machine of it or you can put it</font>
+
+424
+00:18:40,679 --> 00:18:45,760
+<font color="white" size=".72c">on barrier metal and get started in</font>
+
+425
+00:18:43,240 --> 00:18:47,720
+<font color="white" size=".72c">radio hacking so with that having been</font>
+
+426
+00:18:45,760 --> 00:18:51,080
+<font color="white" size=".72c">said let's take a look at this operating</font>
+
+427
+00:18:47,720 --> 00:18:53,600
+<font color="white" size=".72c">system and it's actually luntu okay so</font>
+
+428
+00:18:51,080 --> 00:18:56,320
+<font color="white" size=".72c">for those people who are familiar with</font>
+
+429
+00:18:53,600 --> 00:18:59,159
+<font color="white" size=".72c">Ubuntu it's going to look and feel</font>
+
+430
+00:18:56,320 --> 00:19:02,159
+<font color="white" size=".72c">similar but here's the menu system down</font>
+
+431
+00:18:59,159 --> 00:19:05,400
+<font color="white" size=".72c">here and you can see it has a lot of</font>
+
+432
+00:19:02,159 --> 00:19:08,200
+<font color="white" size=".72c">really good pieces of software built</font>
+
+433
+00:19:05,400 --> 00:19:10,520
+<font color="white" size=".72c">into it right so here's the accessories</font>
+
+434
+00:19:08,200 --> 00:19:12,640
+<font color="white" size=".72c">here's the educational here's the</font>
+
+435
+00:19:10,520 --> 00:19:15,360
+<font color="white" size=".72c">graphics some good stuff then we have</font>
+
+436
+00:19:12,640 --> 00:19:18,840
+<font color="white" size=".72c">ham radio and we've got all a bunch of</font>
+
+437
+00:19:15,360 --> 00:19:21,880
+<font color="white" size=".72c">ham radio tools here but most of the</font>
+
+438
+00:19:18,840 --> 00:19:25,320
+<font color="white" size=".72c">tools all right let just go to internet</font>
+
+439
+00:19:21,880 --> 00:19:28,400
+<font color="white" size=".72c">all right office so Libra office is all</font>
+
+440
+00:19:25,320 --> 00:19:31,159
+<font color="white" size=".72c">installed here's the other so in under</font>
+
+441
+00:19:28,400 --> 00:19:35,480
+<font color="white" size=".72c">other we've got a lot of powerful tools</font>
+
+442
+00:19:31,159 --> 00:19:37,440
+<font color="white" size=".72c">all right so GSM evil for the GSM uh</font>
+
+443
+00:19:35,480 --> 00:19:41,080
+<font color="white" size=".72c">networks let me see if I can get all of</font>
+
+444
+00:19:37,440 --> 00:19:45,400
+<font color="white" size=".72c">this on the screen uh let's see we have</font>
+
+445
+00:19:41,080 --> 00:19:47,840
+<font color="white" size=".72c">osmo Network in a box right here yat</font>
+
+446
+00:19:45,400 --> 00:19:51,559
+<font color="white" size=".72c">okay these are all cell they're they're</font>
+
+447
+00:19:47,840 --> 00:19:54,039
+<font color="white" size=".72c">cell network applications like tools for</font>
+
+448
+00:19:51,559 --> 00:19:55,640
+<font color="white" size=".72c">hacking or creating your own cellular</font>
+
+449
+00:19:54,039 --> 00:19:57,520
+<font color="white" size=".72c">network right this is creates your own</font>
+
+450
+00:19:55,640 --> 00:19:59,360
+<font color="white" size=".72c">cellular network y creates your own</font>
+
+451
+00:19:57,520 --> 00:20:01,240
+<font color="white" size=".72c">cellular network work um these are</font>
+
+452
+00:19:59,360 --> 00:20:03,919
+<font color="white" size=".72c">things that we've done in our class</font>
+
+453
+00:20:01,240 --> 00:20:06,240
+<font color="white" size=".72c">here's an imsi catcher right if we're</font>
+
+454
+00:20:03,919 --> 00:20:09,480
+<font color="white" size=".72c">catching the imsis if they come off the</font>
+
+455
+00:20:06,240 --> 00:20:11,520
+<font color="white" size=".72c">cell towers and a number of other things</font>
+
+456
+00:20:09,480 --> 00:20:13,919
+<font color="white" size=".72c">um so lots of interesting tools and</font>
+
+457
+00:20:11,520 --> 00:20:17,039
+<font color="white" size=".72c">there's some system tools here all of</font>
+
+458
+00:20:13,919 --> 00:20:23,000
+<font color="white" size=".72c">the tools you can see them and by going</font>
+
+459
+00:20:17,039 --> 00:20:25,360
+<font color="white" size=".72c">to user okay CD user source and all the</font>
+
+460
+00:20:23,000 --> 00:20:30,159
+<font color="white" size=".72c">tools should be there we still there</font>
+
+461
+00:20:25,360 --> 00:20:30,159
+<font color="white" size=".72c">look at them lots and lots of tools</font>
+
+462
+00:20:30,440 --> 00:20:37,240
+<font color="white" size=".72c">including gnu radio okay uh we have what</font>
+
+463
+00:20:35,600 --> 00:20:40,159
+<font color="white" size=".72c">else do we have here that might be</font>
+
+464
+00:20:37,240 --> 00:20:42,360
+<font color="white" size=".72c">interest gr satellites here there's the</font>
+
+465
+00:20:40,159 --> 00:20:45,960
+<font color="white" size=".72c">GSM evil we were talking about that</font>
+
+466
+00:20:42,360 --> 00:20:47,679
+<font color="white" size=".72c">allows you to hack um GSM signals here's</font>
+
+467
+00:20:45,960 --> 00:20:49,360
+<font color="white" size=".72c">dump 1090 which is what we're going to</font>
+
+468
+00:20:47,679 --> 00:20:52,799
+<font color="white" size=".72c">use today we're going to use dump 1090 a</font>
+
+469
+00:20:49,360 --> 00:20:55,280
+<font color="white" size=".72c">quick display of what we can do with the</font>
+
+470
+00:20:52,799 --> 00:21:00,080
+<font color="white" size=".72c">without a whole lot of skill and uh with</font>
+
+471
+00:20:55,280 --> 00:21:01,960
+<font color="white" size=".72c">just a rtlsdr and the dragon OS and so</font>
+
+472
+00:21:00,080 --> 00:21:04,280
+<font color="white" size=".72c">you get an idea of what's out there</font>
+
+473
+00:21:01,960 --> 00:21:07,679
+<font color="white" size=".72c">there's lots of things out there there</font>
+
+474
+00:21:04,280 --> 00:21:10,840
+<font color="white" size=".72c">is uh some LTE here it is LTE cell</font>
+
+475
+00:21:07,679 --> 00:21:16,240
+<font color="white" size=".72c">scanner okay for scanning cell towers</font>
+
+476
+00:21:10,840 --> 00:21:18,559
+<font color="white" size=".72c">LTE um cell towers we don't have a a 5G</font>
+
+477
+00:21:16,240 --> 00:21:20,360
+<font color="white" size=".72c">scanner yet that I'm aware of if anybody</font>
+
+478
+00:21:18,559 --> 00:21:24,440
+<font color="white" size=".72c">knows of one let me know but I'm not</font>
+
+479
+00:21:20,360 --> 00:21:28,720
+<font color="white" size=".72c">aware of one yet so we can scan for GSM</font>
+
+480
+00:21:24,440 --> 00:21:31,640
+<font color="white" size=".72c">we can scan for LTE fifth generation 5G</font>
+
+481
+00:21:28,720 --> 00:21:35,080
+<font color="white" size=".72c">I don't see it yet in any case if you're</font>
+
+482
+00:21:31,640 --> 00:21:38,279
+<font color="white" size=".72c">going to scan for those kinds of of 5G</font>
+
+483
+00:21:35,080 --> 00:21:41,640
+<font color="white" size=".72c">5G some of the 5G is operating at as</font>
+
+484
+00:21:38,279 --> 00:21:44,279
+<font color="white" size=".72c">high frequency as 5 gigahertz so many of</font>
+
+485
+00:21:41,640 --> 00:21:47,240
+<font color="white" size=".72c">these devices won't operate at that</font>
+
+486
+00:21:44,279 --> 00:21:50,360
+<font color="white" size=".72c">higher frequency like for instance The</font>
+
+487
+00:21:47,240 --> 00:21:54,720
+<font color="white" size=".72c">Flipper zero won't even operate at 1</font>
+
+488
+00:21:50,360 --> 00:21:58,240
+<font color="white" size=".72c">gigz it's all sub1 GHz uh something like</font>
+
+489
+00:21:54,720 --> 00:22:00,600
+<font color="white" size=".72c">hackr up I think goes up to 1.6</font>
+
+490
+00:21:58,240 --> 00:22:03,000
+<font color="white" size=".72c">gigahertz the blade RF will go up to</font>
+
+491
+00:22:00,600 --> 00:22:04,640
+<font color="white" size=".72c">about three and a half gigahertz so none</font>
+
+492
+00:22:03,000 --> 00:22:07,159
+<font color="white" size=".72c">of these devices are going to operate</font>
+
+493
+00:22:04,640 --> 00:22:10,240
+<font color="white" size=".72c">these very high frequencies now that</font>
+
+494
+00:22:07,159 --> 00:22:14,000
+<font color="white" size=".72c">having been said we're not seeing much</font>
+
+495
+00:22:10,240 --> 00:22:16,440
+<font color="white" size=".72c">of the cell signals operating at those</font>
+
+496
+00:22:14,000 --> 00:22:19,080
+<font color="white" size=".72c">high frequencies right now most of the</font>
+
+497
+00:22:16,440 --> 00:22:22,320
+<font color="white" size=".72c">5G is operating at lower frequency</font>
+
+498
+00:22:19,080 --> 00:22:24,440
+<font color="white" size=".72c">similar to LTE but the whole plan to get</font>
+
+499
+00:22:22,320 --> 00:22:26,240
+<font color="white" size=".72c">the speeds up that they promised us</font>
+
+500
+00:22:24,440 --> 00:22:30,600
+<font color="white" size=".72c">they're going to have to move up to the</font>
+
+501
+00:22:26,240 --> 00:22:33,240
+<font color="white" size=".72c">5G 5 gig gz uh area so for right now we</font>
+
+502
+00:22:30,600 --> 00:22:35,400
+<font color="white" size=".72c">don't have something to really hack or</font>
+
+503
+00:22:33,240 --> 00:22:37,760
+<font color="white" size=".72c">to intercept those signals but we</font>
+
+504
+00:22:35,400 --> 00:22:41,320
+<font color="white" size=".72c">probably will very very soon that having</font>
+
+505
+00:22:37,760 --> 00:22:44,039
+<font color="white" size=".72c">been said all right what I have here is</font>
+
+506
+00:22:41,320 --> 00:22:46,120
+<font color="white" size=".72c">I've got an rtlsdr so the least</font>
+
+507
+00:22:44,039 --> 00:22:47,600
+<font color="white" size=".72c">expensive or one of the least expensive</font>
+
+508
+00:22:46,120 --> 00:22:50,600
+<font color="white" size=".72c">I guess there actually are some that are</font>
+
+509
+00:22:47,600 --> 00:22:52,150
+<font color="white" size=".72c">less expensive and I'm going to go ahead</font>
+
+510
+00:22:50,600 --> 00:22:53,320
+<font color="white" size=".72c">and just go</font>
+
+511
+00:22:52,150 --> 00:22:55,919
+<font color="white" size=".72c">[Music]</font>
+
+512
+00:22:53,320 --> 00:22:58,600
+<font color="white" size=".72c">lsusb right and this is will show me</font>
+
+513
+00:22:55,919 --> 00:23:01,000
+<font color="white" size=".72c">what is connected to my system system</font>
+
+514
+00:22:58,600 --> 00:23:03,600
+<font color="white" size=".72c">and you can see it's not connected oh</font>
+
+515
+00:23:01,000 --> 00:23:05,960
+<font color="white" size=".72c">okay so I've got to do something so</font>
+
+516
+00:23:03,600 --> 00:23:08,200
+<font color="white" size=".72c">let's go up here and connect it and</font>
+
+517
+00:23:05,960 --> 00:23:09,640
+<font color="white" size=".72c">let's go removable devices and you can</font>
+
+518
+00:23:08,200 --> 00:23:12,240
+<font color="white" size=".72c">see it right here here's the real Tech</font>
+
+519
+00:23:09,640 --> 00:23:14,360
+<font color="white" size=".72c">rtlsdr and connect it all right so if on</font>
+
+520
+00:23:12,240 --> 00:23:17,320
+<font color="white" size=".72c">a virtual machine I've got to go through</font>
+
+521
+00:23:14,360 --> 00:23:21,080
+<font color="white" size=".72c">this process of connecting it all</font>
+
+522
+00:23:17,320 --> 00:23:23,799
+<font color="white" size=".72c">right I should point out too that doing</font>
+
+523
+00:23:21,080 --> 00:23:27,400
+<font color="white" size=".72c">SDR through a virtual machine has some</font>
+
+524
+00:23:23,799 --> 00:23:30,039
+<font color="white" size=".72c">limitations as we found sometimes that</font>
+
+525
+00:23:27,400 --> 00:23:32,679
+<font color="white" size=".72c">us be connection between the physical</font>
+
+526
+00:23:30,039 --> 00:23:35,480
+<font color="white" size=".72c">machine and and the virtual machine can</font>
+
+527
+00:23:32,679 --> 00:23:36,960
+<font color="white" size=".72c">be problematic so just if you're new in</font>
+
+528
+00:23:35,480 --> 00:23:39,440
+<font color="white" size=".72c">this field and you're starting out and</font>
+
+529
+00:23:36,960 --> 00:23:43,480
+<font color="white" size=".72c">you're having problems it might be your</font>
+
+530
+00:23:39,440 --> 00:23:46,360
+<font color="white" size=".72c">USB right so let's go ahead and try</font>
+
+531
+00:23:43,480 --> 00:23:48,880
+<font color="white" size=".72c">lsusb again and now we see it real Tech</font>
+
+532
+00:23:46,360 --> 00:23:51,840
+<font color="white" size=".72c">semiconductor RTL okay that's it right</font>
+
+533
+00:23:48,880 --> 00:23:55,919
+<font color="white" size=".72c">there so now we're connected and what we</font>
+
+534
+00:23:51,840 --> 00:23:58,360
+<font color="white" size=".72c">can do with this now is to go ahead and</font>
+
+535
+00:23:55,919 --> 00:24:02,320
+<font color="white" size=".72c">well let's introduce a subject here</font>
+
+536
+00:23:58,360 --> 00:24:07,000
+<font color="white" size=".72c">airplanes and ships and other vehicles</font>
+
+537
+00:24:02,320 --> 00:24:12,799
+<font color="white" size=".72c">all send out a signal that gives their</font>
+
+538
+00:24:07,000 --> 00:24:16,520
+<font color="white" size=".72c">location okay and and speed and altitude</font>
+
+539
+00:24:12,799 --> 00:24:16,520
+<font color="white" size=".72c">in case of airplanes certainly not in</font>
+
+540
+00:24:16,760 --> 00:24:22,520
+<font color="white" size=".72c">ships well maybe they maybe on some</font>
+
+541
+00:24:19,200 --> 00:24:26,799
+<font color="white" size=".72c">ships you would have to give them and so</font>
+
+542
+00:24:22,520 --> 00:24:30,480
+<font color="white" size=".72c">this signal can be intercepted by your</font>
+
+543
+00:24:26,799 --> 00:24:31,679
+<font color="white" size=".72c">simple inexpense of RTL SDR and that's</font>
+
+544
+00:24:30,480 --> 00:24:32,840
+<font color="white" size=".72c">what we're going to be doing here so</font>
+
+545
+00:24:31,679 --> 00:24:35,520
+<font color="white" size=".72c">what we're going to do is we're going to</font>
+
+546
+00:24:32,840 --> 00:24:39,320
+<font color="white" size=".72c">say there's a a tool here I showed it to</font>
+
+547
+00:24:35,520 --> 00:24:41,840
+<font color="white" size=".72c">you up above it's called dump 1090</font>
+
+548
+00:24:39,320 --> 00:24:44,559
+<font color="white" size=".72c">because it's called dump 1090 because</font>
+
+549
+00:24:41,840 --> 00:24:47,240
+<font color="white" size=".72c">1090 is the frequency that these signals</font>
+
+550
+00:24:44,559 --> 00:24:49,799
+<font color="white" size=".72c">come this is all the airplanes we're</font>
+
+551
+00:24:47,240 --> 00:24:52,360
+<font color="white" size=".72c">going to look at just airplanes today</font>
+
+552
+00:24:49,799 --> 00:24:56,600
+<font color="white" size=".72c">all the aircraft have to send out this</font>
+
+553
+00:24:52,360 --> 00:24:59,880
+<font color="white" size=".72c">signal that gives the cell towers and</font>
+
+554
+00:24:56,600 --> 00:25:01,919
+<font color="white" size=".72c">others their position and speed and</font>
+
+555
+00:24:59,880 --> 00:25:03,679
+<font color="white" size=".72c">altitude of course you can also pick up</font>
+
+556
+00:25:01,919 --> 00:25:05,559
+<font color="white" size=".72c">their radio communications too but</font>
+
+557
+00:25:03,679 --> 00:25:11,039
+<font color="white" size=".72c">that's a different tool so to go ahead</font>
+
+558
+00:25:05,559 --> 00:25:14,080
+<font color="white" size=".72c">and run this right we go dot forward</font>
+
+559
+00:25:11,039 --> 00:25:16,919
+<font color="white" size=".72c">slash okay DP</font>
+
+560
+00:25:14,080 --> 00:25:19,559
+<font color="white" size=".72c">1090 it says it's a directory so I have</font>
+
+561
+00:25:16,919 --> 00:25:21,559
+<font color="white" size=".72c">to go there first all right so I'm GNA</font>
+
+562
+00:25:19,559 --> 00:25:25,440
+<font color="white" size=".72c">think it's a</font>
+
+563
+00:25:21,559 --> 00:25:27,440
+<font color="white" size=".72c">dump 1090 that there we go let's take a</font>
+
+564
+00:25:25,440 --> 00:25:28,279
+<font color="white" size=".72c">look inside that directory and there's</font>
+
+565
+00:25:27,440 --> 00:25:31,279
+<font color="white" size=".72c">my</font>
+
+566
+00:25:28,279 --> 00:25:34,440
+<font color="white" size=".72c">executable or binary right there all</font>
+
+567
+00:25:31,279 --> 00:25:38,120
+<font color="white" size=".72c">right and it's already set to execute so</font>
+
+568
+00:25:34,440 --> 00:25:41,120
+<font color="white" size=".72c">I can go ahead then and just go</font>
+
+569
+00:25:38,120 --> 00:25:41,120
+<font color="white" size=".72c">dump</font>
+
+570
+00:25:41,320 --> 00:25:48,240
+<font color="white" size=".72c">1090 and it goes and starts what it's</font>
+
+571
+00:25:44,440 --> 00:25:50,480
+<font color="white" size=".72c">doing is it's simply picking up the uh</font>
+
+572
+00:25:48,240 --> 00:25:54,559
+<font color="white" size=".72c">the signals from all the aircraft in the</font>
+
+573
+00:25:50,480 --> 00:25:57,039
+<font color="white" size=".72c">area all right and this is not really</font>
+
+574
+00:25:54,559 --> 00:25:59,640
+<font color="white" size=".72c">very useful information well it's useful</font>
+
+575
+00:25:57,039 --> 00:26:02,120
+<font color="white" size=".72c">but it's not in form that's easy to to</font>
+
+576
+00:25:59,640 --> 00:26:04,559
+<font color="white" size=".72c">use so what we're going to do is we're</font>
+
+577
+00:26:02,120 --> 00:26:08,080
+<font color="white" size=".72c">GNA go ahead and change some switches on</font>
+
+578
+00:26:04,559 --> 00:26:11,399
+<font color="white" size=".72c">it okay and we'll show you how you can</font>
+
+579
+00:26:08,080 --> 00:26:14,399
+<font color="white" size=".72c">actually use this got that more I'm G to</font>
+
+580
+00:26:11,399 --> 00:26:16,679
+<font color="white" size=".72c">stop it with control C all right so I</font>
+
+581
+00:26:14,399 --> 00:26:20,960
+<font color="white" size=".72c">should point out that this these types</font>
+
+582
+00:26:16,679 --> 00:26:23,200
+<font color="white" size=".72c">of signals okay are sent out on by</font>
+
+583
+00:26:20,960 --> 00:26:26,880
+<font color="white" size=".72c">almost every vehicle that's out there in</font>
+
+584
+00:26:23,200 --> 00:26:28,240
+<font color="white" size=".72c">our modern world it's a way for you know</font>
+
+585
+00:26:26,880 --> 00:26:31,360
+<font color="white" size=".72c">regulator</font>
+
+586
+00:26:28,240 --> 00:26:33,080
+<font color="white" size=".72c">and the the people who are in charge of</font>
+
+587
+00:26:31,360 --> 00:26:37,799
+<font color="white" size=".72c">making sure they don't crash into each</font>
+
+588
+00:26:33,080 --> 00:26:40,520
+<font color="white" size=".72c">other yeah to to to track their location</font>
+
+589
+00:26:37,799 --> 00:26:42,880
+<font color="white" size=".72c">and their information so let's go ahead</font>
+
+590
+00:26:40,520 --> 00:26:44,840
+<font color="white" size=".72c">and and try a different switch let's try</font>
+
+591
+00:26:42,880 --> 00:26:49,720
+<font color="white" size=".72c">let's take a look at the help screen</font>
+
+592
+00:26:44,840 --> 00:26:51,679
+<font color="white" size=".72c">first before we go any further go DP 10</font>
+
+593
+00:26:49,720 --> 00:26:55,480
+<font color="white" size=".72c">1090</font>
+
+594
+00:26:51,679 --> 00:26:55,480
+<font color="white" size=".72c">DH all right here we</font>
+
+595
+00:26:55,520 --> 00:27:01,200
+<font color="white" size=".72c">go there's a lot of stuff here okay so</font>
+
+596
+00:26:59,520 --> 00:27:04,480
+<font color="white" size=".72c">we've got a we've got a long series to</font>
+
+597
+00:27:01,200 --> 00:27:06,640
+<font color="white" size=".72c">to cover right go on well yeah but like</font>
+
+598
+00:27:04,480 --> 00:27:09,440
+<font color="white" size=".72c">anything there's lots of options right</font>
+
+599
+00:27:06,640 --> 00:27:11,799
+<font color="white" size=".72c">but in general you can you can reduce</font>
+
+600
+00:27:09,440 --> 00:27:13,799
+<font color="white" size=".72c">these tools to just a few switches to</font>
+
+601
+00:27:11,799 --> 00:27:16,320
+<font color="white" size=".72c">get it to do what you want all right</font>
+
+602
+00:27:13,799 --> 00:27:21,039
+<font color="white" size=".72c">lots of lots of options here so what we</font>
+
+603
+00:27:16,320 --> 00:27:24,279
+<font color="white" size=".72c">want to do is to maybe go ahead and</font>
+
+604
+00:27:21,039 --> 00:27:28,760
+<font color="white" size=".72c">say dump</font>
+
+605
+00:27:24,279 --> 00:27:30,760
+<font color="white" size=".72c">1090 and then go interact active see</font>
+
+606
+00:27:28,760 --> 00:27:32,880
+<font color="white" size=".72c">that was one of the options up above</font>
+
+607
+00:27:30,760 --> 00:27:35,880
+<font color="white" size=".72c">right let's</font>
+
+608
+00:27:32,880 --> 00:27:39,440
+<font color="white" size=".72c">go interactive right there interactive</font>
+
+609
+00:27:35,880 --> 00:27:43,120
+<font color="white" size=".72c">mode refreshing data on screen okay so</font>
+
+610
+00:27:39,440 --> 00:27:45,760
+<font color="white" size=".72c">let's go ahead and do this and here we</font>
+
+611
+00:27:43,120 --> 00:27:48,720
+<font color="white" size=".72c">go whoa look at all those look at all</font>
+
+612
+00:27:45,760 --> 00:27:52,000
+<font color="white" size=".72c">those planes so you can see here this is</font>
+
+613
+00:27:48,720 --> 00:27:55,240
+<font color="white" size=".72c">this is hex okay the mode the the</font>
+
+614
+00:27:52,000 --> 00:27:58,919
+<font color="white" size=".72c">flight the flight number the altitude</font>
+
+615
+00:27:55,240 --> 00:28:01,799
+<font color="white" size=".72c">the speed the heading the latitude the</font>
+
+616
+00:27:58,919 --> 00:28:04,760
+<font color="white" size=".72c">longitude and more all right so we're</font>
+
+617
+00:28:01,799 --> 00:28:07,200
+<font color="white" size=".72c">seeing the signals given off by all of</font>
+
+618
+00:28:04,760 --> 00:28:09,000
+<font color="white" size=".72c">the aircraft in the area and it's</font>
+
+619
+00:28:07,200 --> 00:28:12,880
+<font color="white" size=".72c">refreshed every couple of seconds you</font>
+
+620
+00:28:09,000 --> 00:28:15,480
+<font color="white" size=".72c">can watch these planes take off and land</font>
+
+621
+00:28:12,880 --> 00:28:18,279
+<font color="white" size=".72c">okay um I should point out that I've got</font>
+
+622
+00:28:15,480 --> 00:28:20,640
+<font color="white" size=".72c">a good antenna on this thing so I'm pick</font>
+
+623
+00:28:18,279 --> 00:28:22,600
+<font color="white" size=".72c">yeah I I've got I've got I'm picking up</font>
+
+624
+00:28:20,640 --> 00:28:27,000
+<font color="white" size=".72c">a lot more flights that you might at</font>
+
+625
+00:28:22,600 --> 00:28:28,399
+<font color="white" size=".72c">home I've got a a parabolic antenna so</font>
+
+626
+00:28:27,000 --> 00:28:30,880
+<font color="white" size=".72c">if you're not familiar it's kind of like</font>
+
+627
+00:28:28,399 --> 00:28:34,600
+<font color="white" size=".72c">those dishes if You' seen you've seen</font>
+
+628
+00:28:30,880 --> 00:28:37,240
+<font color="white" size=".72c">kind of like a um a TV DISH similar to</font>
+
+629
+00:28:34,600 --> 00:28:38,960
+<font color="white" size=".72c">that same shape all right and it picks</font>
+
+630
+00:28:37,240 --> 00:28:42,039
+<font color="white" size=".72c">up the signals from a much larger</font>
+
+631
+00:28:38,960 --> 00:28:45,360
+<font color="white" size=".72c">distance it costs I think I paid like</font>
+
+632
+00:28:42,039 --> 00:28:46,960
+<font color="white" size=".72c">under $200 for it and if you're you know</font>
+
+633
+00:28:45,360 --> 00:28:49,960
+<font color="white" size=".72c">if I was doing this with a regular</font>
+
+634
+00:28:46,960 --> 00:28:52,240
+<font color="white" size=".72c">dipole ant I'd see a fraction of these</font>
+
+635
+00:28:49,960 --> 00:28:54,440
+<font color="white" size=".72c">rights but this is picking up all the</font>
+
+636
+00:28:52,240 --> 00:28:58,080
+<font color="white" size=".72c">information so that I can see all of the</font>
+
+637
+00:28:54,440 --> 00:29:00,799
+<font color="white" size=".72c">flights in in the area quite for some</font>
+
+638
+00:28:58,080 --> 00:29:03,360
+<font color="white" size=".72c">miles actually so occupy the web a</font>
+
+639
+00:29:00,799 --> 00:29:04,679
+<font color="white" size=".72c">question a lot of people might have is</font>
+
+640
+00:29:03,360 --> 00:29:06,279
+<font color="white" size=".72c">you know I don't want to go to jail I</font>
+
+641
+00:29:04,679 --> 00:29:08,960
+<font color="white" size=".72c">just want to learn and I want to learn</font>
+
+642
+00:29:06,279 --> 00:29:10,279
+<font color="white" size=".72c">how to protect yeah so what's the I</font>
+
+643
+00:29:08,960 --> 00:29:12,399
+<font color="white" size=".72c">suppose I mean it varies country to</font>
+
+644
+00:29:10,279 --> 00:29:14,080
+<font color="white" size=".72c">Country right but what what's like the</font>
+
+645
+00:29:12,399 --> 00:29:16,919
+<font color="white" size=".72c">legality of what you're doing here well</font>
+
+646
+00:29:14,080 --> 00:29:18,600
+<font color="white" size=".72c">the legality of what I'm doing here is</font>
+
+647
+00:29:16,919 --> 00:29:20,559
+<font color="white" size=".72c">it's there's no problem with I don't</font>
+
+648
+00:29:18,600 --> 00:29:24,320
+<font color="white" size=".72c">want to go to jail either yeah by the</font>
+
+649
+00:29:20,559 --> 00:29:27,399
+<font color="white" size=".72c">way but this is simply you know this is</font>
+
+650
+00:29:24,320 --> 00:29:29,320
+<font color="white" size=".72c">would be similar to just picking up a</font>
+
+651
+00:29:27,399 --> 00:29:33,000
+<font color="white" size=".72c">local radio stations and these signals</font>
+
+652
+00:29:29,320 --> 00:29:35,000
+<font color="white" size=".72c">are given off by the aircraft and it's</font>
+
+653
+00:29:33,000 --> 00:29:37,279
+<font color="white" size=".72c">it's out there it's unencrypted it's</font>
+
+654
+00:29:35,000 --> 00:29:39,720
+<font color="white" size=".72c">anybody can see it there's nothing</font>
+
+655
+00:29:37,279 --> 00:29:41,919
+<font color="white" size=".72c">there's no laws against picking up this</font>
+
+656
+00:29:39,720 --> 00:29:46,080
+<font color="white" size=".72c">information and reading it now if you</font>
+
+657
+00:29:41,919 --> 00:29:50,519
+<font color="white" size=".72c">were to do something to manipulate it</font>
+
+658
+00:29:46,080 --> 00:29:53,720
+<font color="white" size=".72c">okay or to block it or in in sending out</font>
+
+659
+00:29:50,519 --> 00:29:55,320
+<font color="white" size=".72c">your own signal okay now that's when</font>
+
+660
+00:29:53,720 --> 00:29:58,640
+<font color="white" size=".72c">you're starting to get into some legal</font>
+
+661
+00:29:55,320 --> 00:30:01,360
+<font color="white" size=".72c">issues just reading this this similar to</font>
+
+662
+00:29:58,640 --> 00:30:03,600
+<font color="white" size=".72c">just like just turning on your radio and</font>
+
+663
+00:30:01,360 --> 00:30:06,200
+<font color="white" size=".72c">picking up the radio signals you're not</font>
+
+664
+00:30:03,600 --> 00:30:08,960
+<font color="white" size=".72c">manipulating it in many countries</font>
+
+665
+00:30:06,200 --> 00:30:13,000
+<font color="white" size=".72c">sending a signal at certain frequencies</font>
+
+666
+00:30:08,960 --> 00:30:14,840
+<font color="white" size=".72c">or is illegal yeah right but here all</font>
+
+667
+00:30:13,000 --> 00:30:17,120
+<font color="white" size=".72c">we're doing is we're listening in we're</font>
+
+668
+00:30:14,840 --> 00:30:19,799
+<font color="white" size=".72c">just picking up this de this information</font>
+
+669
+00:30:17,120 --> 00:30:21,679
+<font color="white" size=".72c">decoding and displaying it on the screen</font>
+
+670
+00:30:19,799 --> 00:30:24,000
+<font color="white" size=".72c">for us I will say this for everyone</font>
+
+671
+00:30:21,679 --> 00:30:25,360
+<font color="white" size=".72c">watching this is not legal advice this</font>
+
+672
+00:30:24,000 --> 00:30:27,559
+<font color="white" size=".72c">you have to look at your own country's</font>
+
+673
+00:30:25,360 --> 00:30:29,880
+<font color="white" size=".72c">rules and decide for yourself but think</font>
+
+674
+00:30:27,559 --> 00:30:30,960
+<font color="white" size=".72c">OCC the web the the great thing about</font>
+
+675
+00:30:29,880 --> 00:30:32,240
+<font color="white" size=".72c">what you're doing here and the great</font>
+
+676
+00:30:30,960 --> 00:30:34,039
+<font color="white" size=".72c">thing like you said about the little</font>
+
+677
+00:30:32,240 --> 00:30:36,000
+<font color="white" size=".72c">flip of zeros right is it raises</font>
+
+678
+00:30:34,039 --> 00:30:37,600
+<font color="white" size=".72c">awareness because we have all the stuff</font>
+
+679
+00:30:36,000 --> 00:30:39,320
+<font color="white" size=".72c">around us and people aren't aware how</font>
+
+680
+00:30:37,600 --> 00:30:41,000
+<font color="white" size=".72c">vulnerable some of the stuff is and I</font>
+
+681
+00:30:39,320 --> 00:30:43,720
+<font color="white" size=".72c">think the flip of zero is forcing</font>
+
+682
+00:30:41,000 --> 00:30:45,600
+<font color="white" size=".72c">manufacturers and governments to take</font>
+
+683
+00:30:43,720 --> 00:30:47,799
+<font color="white" size=".72c">action and improve the security on stuff</font>
+
+684
+00:30:45,600 --> 00:30:49,320
+<font color="white" size=".72c">because it's it's not the good people</font>
+
+685
+00:30:47,799 --> 00:30:50,600
+<font color="white" size=".72c">that are causing the trouble the bad a</font>
+
+686
+00:30:49,320 --> 00:30:53,519
+<font color="white" size=".72c">lot of bad people know about this stuff</font>
+
+687
+00:30:50,600 --> 00:30:55,720
+<font color="white" size=".72c">already anyway I agree with you 100% so</font>
+
+688
+00:30:53,519 --> 00:30:57,799
+<font color="white" size=".72c">the laws are going to vary by country so</font>
+
+689
+00:30:55,720 --> 00:30:59,840
+<font color="white" size=".72c">make sure that you check your your laws</font>
+
+690
+00:30:57,799 --> 00:31:01,960
+<font color="white" size=".72c">but I think in the case here of just</font>
+
+691
+00:30:59,840 --> 00:31:04,320
+<font color="white" size=".72c">receiving I don't think anybody has any</font>
+
+692
+00:31:01,960 --> 00:31:06,559
+<font color="white" size=".72c">laws against that but when you start</font>
+
+693
+00:31:04,320 --> 00:31:09,320
+<font color="white" size=".72c">manipulating the signals or blocking the</font>
+
+694
+00:31:06,559 --> 00:31:12,600
+<font color="white" size=".72c">signals or transmitting signals and the</font>
+
+695
+00:31:09,320 --> 00:31:15,399
+<font color="white" size=".72c">rtlsdr cannot transmit it can only</font>
+
+696
+00:31:12,600 --> 00:31:17,200
+<font color="white" size=".72c">receive so if you're doing the rtlsdr</font>
+
+697
+00:31:15,399 --> 00:31:19,679
+<font color="white" size=".72c">you're not probably going to get into</font>
+
+698
+00:31:17,200 --> 00:31:21,919
+<font color="white" size=".72c">any legal issues because you're not</font>
+
+699
+00:31:19,679 --> 00:31:25,000
+<font color="white" size=".72c">going ahead and sending any signals once</font>
+
+700
+00:31:21,919 --> 00:31:28,240
+<font color="white" size=".72c">you start sending signals yeah then you</font>
+
+701
+00:31:25,000 --> 00:31:32,760
+<font color="white" size=".72c">can possibly get yourself into some</font>
+
+702
+00:31:28,240 --> 00:31:35,240
+<font color="white" size=".72c">legal Jeopardy um yes the this type of</font>
+
+703
+00:31:32,760 --> 00:31:37,600
+<font color="white" size=".72c">work has been done by military</font>
+
+704
+00:31:35,240 --> 00:31:40,279
+<font color="white" size=".72c">intelligence and intell national</font>
+
+705
+00:31:37,600 --> 00:31:42,120
+<font color="white" size=".72c">security agencies around the world for</font>
+
+706
+00:31:40,279 --> 00:31:46,000
+<font color="white" size=".72c">decades the only thing that's different</font>
+
+707
+00:31:42,120 --> 00:31:49,760
+<font color="white" size=".72c">is that now the average user with a</font>
+
+708
+00:31:46,000 --> 00:31:52,240
+<font color="white" size=".72c">laptop and a few hundred dollars can do</font>
+
+709
+00:31:49,760 --> 00:31:55,200
+<font color="white" size=".72c">something very similar so yes the</font>
+
+710
+00:31:52,240 --> 00:31:57,840
+<font color="white" size=".72c">flipper zero has raised the awareness</font>
+
+711
+00:31:55,200 --> 00:32:00,799
+<font color="white" size=".72c">that hey we need to do something thing</font>
+
+712
+00:31:57,840 --> 00:32:02,399
+<font color="white" size=".72c">about the security of radio signals and</font>
+
+713
+00:32:00,799 --> 00:32:06,240
+<font color="white" size=".72c">one of the things that's happened in a</font>
+
+714
+00:32:02,399 --> 00:32:08,159
+<font color="white" size=".72c">very recent past is that the hacking of</font>
+
+715
+00:32:06,240 --> 00:32:09,679
+<font color="white" size=".72c">these satellites has started to take</font>
+
+716
+00:32:08,159 --> 00:32:12,440
+<font color="white" size=".72c">place as a matter of fact this is kind</font>
+
+717
+00:32:09,679 --> 00:32:16,639
+<font color="white" size=".72c">of in the news right now between nation</font>
+
+718
+00:32:12,440 --> 00:32:18,679
+<font color="white" size=".72c">states yeah and they have discovered</font>
+
+719
+00:32:16,639 --> 00:32:23,080
+<font color="white" size=".72c">surprise surprise that there's no</font>
+
+720
+00:32:18,679 --> 00:32:24,639
+<font color="white" size=".72c">security on the satellites right so and</font>
+
+721
+00:32:23,080 --> 00:32:26,240
+<font color="white" size=".72c">we're so dependent you know you might</font>
+
+722
+00:32:24,639 --> 00:32:28,360
+<font color="white" size=".72c">think well you know that's all you know</font>
+
+723
+00:32:26,240 --> 00:32:30,559
+<font color="white" size=".72c">the national government and Military</font>
+
+724
+00:32:28,360 --> 00:32:32,919
+<font color="white" size=".72c">satellites well you know almost all of</font>
+
+725
+00:32:30,559 --> 00:32:34,919
+<font color="white" size=".72c">us are using signals transmitted by</font>
+
+726
+00:32:32,919 --> 00:32:37,159
+<font color="white" size=".72c">those satellites whether it be starlink</font>
+
+727
+00:32:34,919 --> 00:32:40,279
+<font color="white" size=".72c">of course but also you know your your</font>
+
+728
+00:32:37,159 --> 00:32:42,840
+<font color="white" size=".72c">cell communications GPS um your your</font>
+
+729
+00:32:40,279 --> 00:32:45,279
+<font color="white" size=".72c">your GPS you know these things are all</font>
+
+730
+00:32:42,840 --> 00:32:48,480
+<font color="white" size=".72c">going through satellites and if somebody</font>
+
+731
+00:32:45,279 --> 00:32:50,760
+<font color="white" size=".72c">were to hack them we could all lose that</font>
+
+732
+00:32:48,480 --> 00:32:53,399
+<font color="white" size=".72c">capability and we're all so dependent</font>
+
+733
+00:32:50,760 --> 00:32:56,840
+<font color="white" size=".72c">upon it one of the things that we do in</font>
+
+734
+00:32:53,399 --> 00:32:59,880
+<font color="white" size=".72c">our SDR class is I show people how you</font>
+
+735
+00:32:56,840 --> 00:33:02,799
+<font color="white" size=".72c">can can actually spoof your GPS signal</font>
+
+736
+00:32:59,880 --> 00:33:05,200
+<font color="white" size=".72c">so that you appear to be someplace else</font>
+
+737
+00:33:02,799 --> 00:33:07,799
+<font color="white" size=".72c">than you actually are now as far as I</font>
+
+738
+00:33:05,200 --> 00:33:11,080
+<font color="white" size=".72c">know there's no there's no law against</font>
+
+739
+00:33:07,799 --> 00:33:14,600
+<font color="white" size=".72c">that but you can simply send out a GPS</font>
+
+740
+00:33:11,080 --> 00:33:17,519
+<font color="white" size=".72c">signal up to the satellite and and send</font>
+
+741
+00:33:14,600 --> 00:33:20,440
+<font color="white" size=".72c">inaccurate information so in the class</font>
+
+742
+00:33:17,519 --> 00:33:22,279
+<font color="white" size=".72c">we spoofed that I was actually sitting</font>
+
+743
+00:33:20,440 --> 00:33:25,440
+<font color="white" size=".72c">in the</font>
+
+744
+00:33:22,279 --> 00:33:28,919
+<font color="white" size=".72c">cremin and so my GPS signal said I was</font>
+
+745
+00:33:25,440 --> 00:33:33,000
+<font color="white" size=".72c">in the Kremlin sitting next to Putin and</font>
+
+746
+00:33:28,919 --> 00:33:34,720
+<font color="white" size=".72c">uh so obviously I'm not uh but that's</font>
+
+747
+00:33:33,000 --> 00:33:36,519
+<font color="white" size=".72c">the kind of thing that you can do it</font>
+
+748
+00:33:34,720 --> 00:33:39,919
+<font color="white" size=".72c">well you know we'll what we'll do is you</font>
+
+749
+00:33:36,519 --> 00:33:42,679
+<font color="white" size=".72c">know start off slow here let people get</font>
+
+750
+00:33:39,919 --> 00:33:44,399
+<font color="white" size=".72c">familiar with the SDR go out and buy a</font>
+
+751
+00:33:42,679 --> 00:33:47,600
+<font color="white" size=".72c">little bit of Hardware if you can only</font>
+
+752
+00:33:44,399 --> 00:33:50,559
+<font color="white" size=".72c">afford the rtlsdr we'll do a few cool</font>
+
+753
+00:33:47,600 --> 00:33:54,039
+<font color="white" size=".72c">hops with the rtlsdr and then we'll kind</font>
+
+754
+00:33:50,559 --> 00:33:56,480
+<font color="white" size=".72c">of Advance into the hack RF and some of</font>
+
+755
+00:33:54,039 --> 00:33:59,039
+<font color="white" size=".72c">the other devices that are more</font>
+
+756
+00:33:56,480 --> 00:34:00,600
+<font color="white" size=".72c">sophistic capabilities so occupy the way</font>
+
+757
+00:33:59,039 --> 00:34:02,080
+<font color="white" size=".72c">you're telling me offline and I can't</font>
+
+758
+00:34:00,600 --> 00:34:04,159
+<font color="white" size=".72c">remember the details so just correct me</font>
+
+759
+00:34:02,080 --> 00:34:07,200
+<font color="white" size=".72c">if I'm wrong but people from perhaps</font>
+
+760
+00:34:04,159 --> 00:34:09,079
+<font color="white" size=".72c">threel agencies or some people came to</font>
+
+761
+00:34:07,200 --> 00:34:10,918
+<font color="white" size=".72c">your courses because they were trying to</font>
+
+762
+00:34:09,079 --> 00:34:12,599
+<font color="white" size=".72c">find out what people like you can</font>
+
+763
+00:34:10,918 --> 00:34:15,480
+<font color="white" size=".72c">actually do against satellites right</font>
+
+764
+00:34:12,599 --> 00:34:18,079
+<font color="white" size=".72c">that's that's satellites and other radio</font>
+
+765
+00:34:15,480 --> 00:34:20,359
+<font color="white" size=".72c">communication so yes we have students</font>
+
+766
+00:34:18,079 --> 00:34:22,800
+<font color="white" size=".72c">from around the world from National</font>
+
+767
+00:34:20,359 --> 00:34:25,040
+<font color="white" size=".72c">governments and law enforcement so it's</font>
+
+768
+00:34:22,800 --> 00:34:29,440
+<font color="white" size=".72c">not just penetration testers we have a</font>
+
+769
+00:34:25,040 --> 00:34:33,679
+<font color="white" size=".72c">lot of people now come from agencies</font>
+
+770
+00:34:29,440 --> 00:34:37,760
+<font color="white" size=".72c">that are are have been given the task of</font>
+
+771
+00:34:33,679 --> 00:34:41,399
+<font color="white" size=".72c">securing National Assets and we have law</font>
+
+772
+00:34:37,760 --> 00:34:44,639
+<font color="white" size=".72c">enforcement from US and Canada and</font>
+
+773
+00:34:41,399 --> 00:34:49,520
+<font color="white" size=".72c">Belgium and Ukraine and</font>
+
+774
+00:34:44,639 --> 00:34:51,399
+<font color="white" size=".72c">Germany I think Finland as well um and</font>
+
+775
+00:34:49,520 --> 00:34:54,879
+<font color="white" size=".72c">so they are coming to our courses so</font>
+
+776
+00:34:51,399 --> 00:34:56,520
+<font color="white" size=".72c">they can learn what is possible and so</font>
+
+777
+00:34:54,879 --> 00:34:59,240
+<font color="white" size=".72c">by learning what's possible they can</font>
+
+778
+00:34:56,520 --> 00:35:00,359
+<font color="white" size=".72c">better secure those resources I think</font>
+
+779
+00:34:59,240 --> 00:35:02,200
+<font color="white" size=".72c">that's a really important thing to say</font>
+
+780
+00:35:00,359 --> 00:35:03,800
+<font color="white" size=".72c">because sometimes we get Flack right on</font>
+
+781
+00:35:02,200 --> 00:35:05,359
+<font color="white" size=".72c">YouTube about like how you how come you</font>
+
+782
+00:35:03,800 --> 00:35:07,480
+<font color="white" size=".72c">teaching people this stuff but the thing</font>
+
+783
+00:35:05,359 --> 00:35:09,599
+<font color="white" size=".72c">is it's awareness right if you don't</font>
+
+784
+00:35:07,480 --> 00:35:11,040
+<font color="white" size=".72c">have red teamers or hackers at the time</font>
+
+785
+00:35:09,599 --> 00:35:13,160
+<font color="white" size=".72c">of this recording I mean there's big</font>
+
+786
+00:35:11,040 --> 00:35:14,839
+<font color="white" size=".72c">development in AI where you can generate</font>
+
+787
+00:35:13,160 --> 00:35:16,960
+<font color="white" size=".72c">videos and it was interesting the people</font>
+
+788
+00:35:14,839 --> 00:35:18,359
+<font color="white" size=".72c">that have access to that are red teamers</font>
+
+789
+00:35:16,960 --> 00:35:20,079
+<font color="white" size=".72c">you know if you don't give the red</font>
+
+790
+00:35:18,359 --> 00:35:22,800
+<font color="white" size=".72c">teamers or the good guys who are trying</font>
+
+791
+00:35:20,079 --> 00:35:24,599
+<font color="white" size=".72c">to like test your security you know the</font>
+
+792
+00:35:22,800 --> 00:35:27,160
+<font color="white" size=".72c">bad guys are going to get access anyway</font>
+
+793
+00:35:24,599 --> 00:35:31,839
+<font color="white" size=".72c">exactly so part of you know our red</font>
+
+794
+00:35:27,160 --> 00:35:35,599
+<font color="white" size=".72c">teamer all right is to test the security</font>
+
+795
+00:35:31,839 --> 00:35:38,119
+<font color="white" size=".72c">of the system the network the resources</font>
+
+796
+00:35:35,599 --> 00:35:40,480
+<font color="white" size=".72c">so that they can find the holes and</font>
+
+797
+00:35:38,119 --> 00:35:43,400
+<font color="white" size=".72c">vulnerabilities before the bad guys do</font>
+
+798
+00:35:40,480 --> 00:35:45,359
+<font color="white" size=".72c">if you don't do that then the bad guys</font>
+
+799
+00:35:43,400 --> 00:35:47,480
+<font color="white" size=".72c">are going to get in right I mean the bad</font>
+
+800
+00:35:45,359 --> 00:35:50,880
+<font color="white" size=".72c">guys get in no matter what you know</font>
+
+801
+00:35:47,480 --> 00:35:53,160
+<font color="white" size=".72c">sometimes but they get in a lot more if</font>
+
+802
+00:35:50,880 --> 00:35:55,800
+<font color="white" size=".72c">there wasn't somebody testing the</font>
+
+803
+00:35:53,160 --> 00:35:58,839
+<font color="white" size=".72c">Security First and finding the</font>
+
+804
+00:35:55,800 --> 00:36:01,079
+<font color="white" size=".72c">vulnerabilities and then patching those</font>
+
+805
+00:35:58,839 --> 00:36:03,680
+<font color="white" size=".72c">vulnerabilities that's what we do is</font>
+
+806
+00:36:01,079 --> 00:36:06,119
+<font color="white" size=".72c">that we go ahead and we try to find it</font>
+
+807
+00:36:03,680 --> 00:36:09,000
+<font color="white" size=".72c">inform management here's the problem</font>
+
+808
+00:36:06,119 --> 00:36:11,440
+<font color="white" size=".72c">somebody's going to to get in this way</font>
+
+809
+00:36:09,000 --> 00:36:13,079
+<font color="white" size=".72c">you need to do something e you need to</font>
+
+810
+00:36:11,440 --> 00:36:16,280
+<font color="white" size=".72c">patch it or you need to have some kind</font>
+
+811
+00:36:13,079 --> 00:36:19,000
+<font color="white" size=".72c">of compensating control to keep the bad</font>
+
+812
+00:36:16,280 --> 00:36:21,040
+<font color="white" size=".72c">guys from getting in so yes that's what</font>
+
+813
+00:36:19,000 --> 00:36:23,640
+<font color="white" size=".72c">we're doing here we're not teaching</font>
+
+814
+00:36:21,040 --> 00:36:25,240
+<font color="white" size=".72c">people to steal your life savings out of</font>
+
+815
+00:36:23,640 --> 00:36:26,800
+<font color="white" size=".72c">your bank account occup by the web I</font>
+
+816
+00:36:25,240 --> 00:36:30,119
+<font color="white" size=".72c">really want to thank you for sharing</font>
+
+817
+00:36:26,800 --> 00:36:31,680
+<font color="white" size=".72c">it's fantastic to have someone like you</font>
+
+818
+00:36:30,119 --> 00:36:33,079
+<font color="white" size=".72c">you know sharing this information with</font>
+
+819
+00:36:31,680 --> 00:36:36,680
+<font color="white" size=".72c">all of us especially for the Next</font>
+
+820
+00:36:33,079 --> 00:36:39,200
+<font color="white" size=".72c">Generation you know enabling people to</font>
+
+821
+00:36:36,680 --> 00:36:41,240
+<font color="white" size=".72c">learn about this stuff protect companies</font>
+
+822
+00:36:39,200 --> 00:36:42,720
+<font color="white" size=".72c">protect their governments or whatever</font>
+
+823
+00:36:41,240 --> 00:36:45,200
+<font color="white" size=".72c">they're involved in or wherever they</font>
+
+824
+00:36:42,720 --> 00:36:46,599
+<font color="white" size=".72c">involved but you know also get jobs um</font>
+
+825
+00:36:45,200 --> 00:36:47,680
+<font color="white" size=".72c">this stuff is out there it's great that</font>
+
+826
+00:36:46,599 --> 00:36:49,000
+<font color="white" size=".72c">you're teaching and not keeping the</font>
+
+827
+00:36:47,680 --> 00:36:50,359
+<font color="white" size=".72c">knowledge to yourself so thanks so much</font>
+
+828
+00:36:49,000 --> 00:36:52,720
+<font color="white" size=".72c">for sharing you're welcome I always</font>
+
+829
+00:36:50,359 --> 00:36:54,319
+<font color="white" size=".72c">enjoy you're welcoming me on your show</font>
+
+830
+00:36:52,720 --> 00:36:57,880
+<font color="white" size=".72c">and having me here to discuss these</font>
+
+831
+00:36:54,319 --> 00:37:00,200
+<font color="white" size=".72c">things I I enjoy you know sharing this</font>
+
+832
+00:36:57,880 --> 00:37:02,800
+<font color="white" size=".72c">with the public and what I'd like to do</font>
+
+833
+00:37:00,200 --> 00:37:05,359
+<font color="white" size=".72c">is continue as I said this process of</font>
+
+834
+00:37:02,800 --> 00:37:09,079
+<font color="white" size=".72c">starting off simple and getting people</font>
+
+835
+00:37:05,359 --> 00:37:11,400
+<font color="white" size=".72c">into SDR and we'll we'll continue this</font>
+
+836
+00:37:09,079 --> 00:37:14,880
+<font color="white" size=".72c">process of going through simple to more</font>
+
+837
+00:37:11,400 --> 00:37:17,800
+<font color="white" size=".72c">complex SDR hacks and this is</font>
+
+838
+00:37:14,880 --> 00:37:19,920
+<font color="white" size=".72c">state-ofthe-art folks so you know if you</font>
+
+839
+00:37:17,800 --> 00:37:21,960
+<font color="white" size=".72c">want to make a career or you're already</font>
+
+840
+00:37:19,920 --> 00:37:24,480
+<font color="white" size=".72c">in the field and you want to advance</font>
+
+841
+00:37:21,960 --> 00:37:27,119
+<font color="white" size=".72c">your career this is something that you</font>
+
+842
+00:37:24,480 --> 00:37:29,560
+<font color="white" size=".72c">should be considering to learn how to do</font>
+
+843
+00:37:27,119 --> 00:37:32,760
+<font color="white" size=".72c">because it's going to separate you from</font>
+
+844
+00:37:29,560 --> 00:37:35,200
+<font color="white" size=".72c">all the other people you know who who</font>
+
+845
+00:37:32,760 --> 00:37:37,920
+<font color="white" size=".72c">don't understand what this field is</font>
+
+846
+00:37:35,200 --> 00:37:39,800
+<font color="white" size=".72c">about and how important it is for</font>
+
+847
+00:37:37,920 --> 00:37:41,319
+<font color="white" size=".72c">informational security okay by the way</font>
+
+848
+00:37:39,800 --> 00:37:43,720
+<font color="white" size=".72c">there's a lot of stuff that you and I</font>
+
+849
+00:37:41,319 --> 00:37:45,720
+<font color="white" size=".72c">talk about Offline that I wish we could</font>
+
+850
+00:37:43,720 --> 00:37:48,640
+<font color="white" size=".72c">put on YouTube but just for everyone</font>
+
+851
+00:37:45,720 --> 00:37:50,359
+<font color="white" size=".72c">watching I have to hold occupy the web</font>
+
+852
+00:37:48,640 --> 00:37:51,920
+<font color="white" size=".72c">back sometimes because he has these</font>
+
+853
+00:37:50,359 --> 00:37:53,920
+<font color="white" size=".72c">fantastic ideas and I say look I don't</font>
+
+854
+00:37:51,920 --> 00:37:55,880
+<font color="white" size=".72c">want my Channel stried or get a channel</font>
+
+855
+00:37:53,920 --> 00:37:58,000
+<font color="white" size=".72c">strike against my channel um or my</font>
+
+856
+00:37:55,880 --> 00:38:01,160
+<font color="white" size=".72c">channel just remove right so occupy the</font>
+
+857
+00:37:58,000 --> 00:38:02,560
+<font color="white" size=".72c">web where can people go um to learn a</font>
+
+858
+00:38:01,160 --> 00:38:04,319
+<font color="white" size=".72c">lot more like can they attend your</font>
+
+859
+00:38:02,560 --> 00:38:06,800
+<font color="white" size=".72c">classes stuff like that you know just</font>
+
+860
+00:38:04,319 --> 00:38:10,400
+<font color="white" size=".72c">tell us way people can go well we have a</font>
+
+861
+00:38:06,800 --> 00:38:13,680
+<font color="white" size=".72c">class in our subscriber Pro program</font>
+
+862
+00:38:10,400 --> 00:38:18,119
+<font color="white" size=".72c">which is the advanced classes where we</font>
+
+863
+00:38:13,680 --> 00:38:21,880
+<font color="white" size=".72c">do SDR hacking and then we have a</font>
+
+864
+00:38:18,119 --> 00:38:24,319
+<font color="white" size=".72c">advanced SDR hacking class coming up in</font>
+
+865
+00:38:21,880 --> 00:38:27,040
+<font color="white" size=".72c">uh I think it's in June or July and then</font>
+
+866
+00:38:24,319 --> 00:38:29,920
+<font color="white" size=".72c">we have a satellite hacking class coming</font>
+
+867
+00:38:27,040 --> 00:38:34,160
+<font color="white" size=".72c">up in the fall September I believe</font>
+
+868
+00:38:29,920 --> 00:38:37,760
+<font color="white" size=".72c">Advanced SDR is June 11th through 13th</font>
+
+869
+00:38:34,160 --> 00:38:39,920
+<font color="white" size=".72c">we've done a couple of the SDR hacking</font>
+
+870
+00:38:37,760 --> 00:38:41,800
+<font color="white" size=".72c">classes we're on like the third version</font>
+
+871
+00:38:39,920 --> 00:38:44,319
+<font color="white" size=".72c">of it this will be the first time we've</font>
+
+872
+00:38:41,800 --> 00:38:48,079
+<font color="white" size=".72c">done the advanc S strr June 11th through</font>
+
+873
+00:38:44,319 --> 00:38:51,440
+<font color="white" size=".72c">13th and we have satellite hacking on</font>
+
+874
+00:38:48,079 --> 00:38:55,440
+<font color="white" size=".72c">September 10th through 12th and as we're</font>
+
+875
+00:38:51,440 --> 00:38:58,880
+<font color="white" size=".72c">sitting here right now there is a major</font>
+
+876
+00:38:55,440 --> 00:39:01,640
+<font color="white" size=".72c">issue about satellite hacking going on</font>
+
+877
+00:38:58,880 --> 00:39:03,560
+<font color="white" size=".72c">between National governments right now</font>
+
+878
+00:39:01,640 --> 00:39:05,599
+<font color="white" size=".72c">and it's because people are finally</font>
+
+879
+00:39:03,560 --> 00:39:08,839
+<font color="white" size=".72c">realized that these satellites their</font>
+
+880
+00:39:05,599 --> 00:39:11,200
+<font color="white" size=".72c">communication is not secure and not only</font>
+
+881
+00:39:08,839 --> 00:39:13,920
+<font color="white" size=".72c">can you intercept the signals and but</font>
+
+882
+00:39:11,200 --> 00:39:16,319
+<font color="white" size=".72c">you can also send signals up to these</font>
+
+883
+00:39:13,920 --> 00:39:17,760
+<font color="white" size=".72c">satellites that can manipulate them and</font>
+
+884
+00:39:16,319 --> 00:39:19,280
+<font color="white" size=".72c">control them so just for everyone</font>
+
+885
+00:39:17,760 --> 00:39:20,599
+<font color="white" size=".72c">watching I've put a link below and</font>
+
+886
+00:39:19,280 --> 00:39:22,160
+<font color="white" size=".72c">occupy the way I'm going to let you say</font>
+
+887
+00:39:20,599 --> 00:39:24,400
+<font color="white" size=".72c">this because you've been very kind to</font>
+
+888
+00:39:22,160 --> 00:39:26,520
+<font color="white" size=".72c">share a discount for people that use my</font>
+
+889
+00:39:24,400 --> 00:39:30,240
+<font color="white" size=".72c">link below right we do we uh we're</font>
+
+890
+00:39:26,520 --> 00:39:34,520
+<font color="white" size=".72c">everybody who's watching us here can use</font>
+
+891
+00:39:30,240 --> 00:39:38,119
+<font color="white" size=".72c">the discount code bble b o m b a l</font>
+
+892
+00:39:34,520 --> 00:39:40,359
+<font color="white" size=".72c">David's last name and get 20% off on</font>
+
+893
+00:39:38,119 --> 00:39:42,160
+<font color="white" size=".72c">anything at hackers arrives I really</font>
+
+894
+00:39:40,359 --> 00:39:43,440
+<font color="white" size=".72c">appreciate you doing that and for</font>
+
+895
+00:39:42,160 --> 00:39:44,560
+<font color="white" size=".72c">everyone watching please put your</font>
+
+896
+00:39:43,440 --> 00:39:46,760
+<font color="white" size=".72c">comments below stuff that you want to</font>
+
+897
+00:39:44,560 --> 00:39:49,160
+<font color="white" size=".72c">see that you you know really want us to</font>
+
+898
+00:39:46,760 --> 00:39:51,480
+<font color="white" size=".72c">cover occupy the webs got a whole bunch</font>
+
+899
+00:39:49,160 --> 00:39:52,720
+<font color="white" size=".72c">of content huge amount of knowledge so</font>
+
+900
+00:39:51,480 --> 00:39:55,160
+<font color="white" size=".72c">let us know the kinds of stuff that you</font>
+
+901
+00:39:52,720 --> 00:39:57,320
+<font color="white" size=".72c">want to see OTW as always thanks so much</font>
+
+902
+00:39:55,160 --> 00:40:00,920
+<font color="white" size=".72c">thanks Dave it's always good being being</font>
+
+903
+00:39:57,320 --> 00:40:03,920
+<font color="white" size=".72c">[Music]</font>
+
+904
+00:40:00,920 --> 00:40:03,920
+<font color="white" size=".72c">here</font>
+
