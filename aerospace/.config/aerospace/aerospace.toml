@@ -216,6 +216,10 @@ automatically-unhide-macos-hidden-apps = false
 	run = ["move-node-to-workspace 2"]
 
 [[on-window-detected]]
+	if.app-name-regex-substring = "Safari"
+	run = ["move-node-to-workspace 3"]
+
+[[on-window-detected]]
 	if.app-name-regex-substring = "Discord"
 	run = ["move-node-to-workspace 4"]
 
