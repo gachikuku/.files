@@ -58,6 +58,7 @@
 						aerc
 						pinentry_mac
 						cargo
+						go
 						trezorctl
 						trezord
 						speedtest-cli

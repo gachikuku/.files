@@ -1,3 +1,4 @@
+
 return {
     {
         "L3MON4D3/LuaSnip",
@@ -23,26 +24,6 @@ return {
                     ls.change_choice(1)
                 end
             end, {silent = true})
-
-            --
-
-            local s = ls.snippet
-            local t = ls.text_node
-            local i = ls.insert_node
-
-
-            ls.add_snippets("markdown", {
-                s("lab", {
-                    t({"<details>", "<summary>"}),
-                    t({"", "", "### Practitioner [lab]():<br>"}),
-                    i(0),
-                    t({"", "", "</summary>", "", "******", "", "</details>"})
-                })
-            })
-
-            --
-
         end,
     }
 }
-
