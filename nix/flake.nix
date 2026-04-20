@@ -99,6 +99,7 @@
 						sc-im
 						lynx
 						mblaze
+						python312Packages.pycryptodome
 						mkalias
 						mupdf
 						naabu
@@ -109,7 +110,7 @@
 						nuclei
 						openvpn
 						opencode
-						#claude-code
+						claude-code
 						plan9port
 						ripgrep
 						rustc
@@ -162,7 +163,7 @@
 						"chromium"
 						"ghostty"
 						"hammerspoon"
-						"wireshark"
+						"wireshark-app"
 					];
 					#onActivation.cleanup = "zap";
 					onActivation.autoUpdate = true;
