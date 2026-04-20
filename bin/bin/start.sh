@@ -15,5 +15,5 @@ tmux new-session -d -s main -c ~/Developer/tools/mitmproxy
 tmux send-keys -t main:1 'git pull && uv run mitmproxy' Enter
 tmux new-window -t main
 
-# Attach to main session, window 1 (blank)
+# Attach to main session, window 2 (blank)
 tmux attach-session -t main:2
