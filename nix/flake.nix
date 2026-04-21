@@ -3,6 +3,7 @@
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+		# pinned nixpkgs for neovim 0.11.x (before 0.12 broke treesitter markdown)
 		nix-darwin.url = "github:LnL7/nix-darwin";
 		nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 		nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
@@ -105,6 +106,7 @@
 						mupdf
 						naabu
 						neovim
+						tree-sitter
 						ngrok
 						texliveFull
 						nmap
