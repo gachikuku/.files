@@ -94,6 +94,7 @@
 						httpx
 						icdiff
 						jq
+						pi-coding-agent
 						jsluice
 						libxo
 						lima

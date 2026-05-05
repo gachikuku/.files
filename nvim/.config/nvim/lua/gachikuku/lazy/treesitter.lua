@@ -21,6 +21,7 @@ return {
 				"bash",
 				"python",
 				"markdown",
+				"nix",
 			}
 
 			local group = vim.api.nvim_create_augroup("GachikukuTreesitter", { clear = true })
