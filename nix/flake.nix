@@ -115,6 +115,7 @@
 						openvpn
 						opencode
 						claude-code
+						pi-coding-agent
 						plan9port
 						ripgrep
 						rustc
@@ -122,7 +123,7 @@
 						sfeed
 						binwalk
 						exiftool
-						steghide
+						#steghide
 						zsteg
 						sqlmap
 						stow
