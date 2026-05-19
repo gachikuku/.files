@@ -49,6 +49,7 @@
 						mtr
 						libretls
 						cacert
+						husky
 						radamsa
 						mpv
 						yt-dlp
