@@ -4,7 +4,6 @@
 tmux new-session -d -s apps
 tmux send-keys -t apps:1 'chra' Enter
 tmux new-window -t apps
-tmux send-keys -t apps:2 'discord' Enter
 tmux new-window -t apps
 
 # Open Safari on workspace 3

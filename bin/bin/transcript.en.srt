@@ -1,0 +1,4564 @@
+1
+00:00:00,000 --> 00:00:02,880
+<font color="white" size=".72c">It's been a while since we had one of</font>
+
+2
+00:00:00,920 --> 00:00:04,600
+<font color="white" size=".72c">these videos, hasn't it? We finally have</font>
+
+3
+00:00:02,880 --> 00:00:07,440
+<font color="white" size=".72c">a new model that we can actually use</font>
+
+4
+00:00:04,600 --> 00:00:08,800
+<font color="white" size=".72c">this time, Opus 4.7 from Anthropic. This</font>
+
+5
+00:00:07,440 --> 00:00:10,880
+<font color="white" size=".72c">is a very interesting release because</font>
+
+6
+00:00:08,800 --> 00:00:12,920
+<font color="white" size=".72c">it's not the best new model, not because</font>
+
+7
+00:00:10,880 --> 00:00:14,880
+<font color="white" size=".72c">I don't like Anthropic, but because it's</font>
+
+8
+00:00:12,920 --> 00:00:16,560
+<font color="white" size=".72c">not even the best Anthropic model. It's</font>
+
+9
+00:00:14,880 --> 00:00:18,680
+<font color="white" size=".72c">just the best one that they've released</font>
+
+10
+00:00:16,560 --> 00:00:20,680
+<font color="white" size=".72c">for public use. But, what is it like to</font>
+
+11
+00:00:18,680 --> 00:00:22,280
+<font color="white" size=".72c">actually use this new model? That's a</font>
+
+12
+00:00:20,680 --> 00:00:24,600
+<font color="white" size=".72c">great question, which is why I spent the</font>
+
+13
+00:00:22,280 --> 00:00:26,800
+<font color="white" size=".72c">entire day playing with it. And trust</font>
+
+14
+00:00:24,600 --> 00:00:30,320
+<font color="white" size=".72c">me, I've come prepared.</font>
+
+15
+00:00:26,800 --> 00:00:32,240
+<font color="white" size=".72c">I got me an exclusive Claude hat because</font>
+
+16
+00:00:30,320 --> 00:00:35,080
+<font color="white" size=".72c">what else would I wear for this?</font>
+
+17
+00:00:32,240 --> 00:00:37,560
+<font color="white" size=".72c">But, I also have</font>
+
+18
+00:00:35,080 --> 00:00:37,560
+<font color="white" size=".72c">this.</font>
+
+19
+00:00:37,800 --> 00:00:42,400
+<font color="white" size=".72c">Because much like me drinking beer, this</font>
+
+20
+00:00:40,400 --> 00:00:43,960
+<font color="white" size=".72c">model just gets dumber the more you do</font>
+
+21
+00:00:42,400 --> 00:00:46,200
+<font color="white" size=".72c">it.</font>
+
+22
+00:00:43,960 --> 00:00:49,640
+<font color="white" size=".72c">I was hyped when I first started playing</font>
+
+23
+00:00:46,200 --> 00:00:50,840
+<font color="white" size=".72c">with it, but since then</font>
+
+24
+00:00:49,640 --> 00:00:52,200
+<font color="white" size=".72c">I can't believe I watched a model</font>
+
+25
+00:00:50,840 --> 00:00:54,400
+<font color="white" size=".72c">regress in real time is what I'm going</font>
+
+26
+00:00:52,200 --> 00:00:56,000
+<font color="white" size=".72c">to say. This has been a very interesting</font>
+
+27
+00:00:54,400 --> 00:00:58,320
+<font color="white" size=".72c">day, and while I have been impressed</font>
+
+28
+00:00:56,000 --> 00:01:02,000
+<font color="white" size=".72c">with a lot of things about Opus 4.7 and</font>
+
+29
+00:00:58,320 --> 00:01:03,400
+<font color="white" size=".72c">do actually see myself using it.</font>
+
+30
+00:01:02,000 --> 00:01:05,360
+<font color="white" size=".72c">I also think it's one of the weirdest</font>
+
+31
+00:01:03,400 --> 00:01:06,840
+<font color="white" size=".72c">models ever released. I know I'm going</font>
+
+32
+00:01:05,360 --> 00:01:09,000
+<font color="white" size=".72c">to have to qualify that one, and I</font>
+
+33
+00:01:06,840 --> 00:01:10,800
+<font color="white" size=".72c">promise you I will do just that after a</font>
+
+34
+00:01:09,000 --> 00:01:12,720
+<font color="white" size=".72c">couple sips of this drink and a quick</font>
+
+35
+00:01:10,800 --> 00:01:14,000
+<font color="white" size=".72c">break for today's sponsor. AI dev tools</font>
+
+36
+00:01:12,720 --> 00:01:15,440
+<font color="white" size=".72c">have made me faster than ever, but</font>
+
+37
+00:01:14,000 --> 00:01:16,840
+<font color="white" size=".72c">they're also making me more frustrated</font>
+
+38
+00:01:15,440 --> 00:01:18,440
+<font color="white" size=".72c">than ever. Things that I used to not</font>
+
+39
+00:01:16,840 --> 00:01:20,800
+<font color="white" size=".72c">care about like waiting for my Docker</font>
+
+40
+00:01:18,440 --> 00:01:22,000
+<font color="white" size=".72c">build or CI suddenly matter a lot more.</font>
+
+41
+00:01:20,800 --> 00:01:23,680
+<font color="white" size=".72c">And that's why I love today's sponsor</font>
+
+42
+00:01:22,000 --> 00:01:25,760
+<font color="white" size=".72c">Depot so much. Not only have they</font>
+
+43
+00:01:23,680 --> 00:01:28,120
+<font color="white" size=".72c">managed to make GitHub CI up to 10 times</font>
+
+44
+00:01:25,760 --> 00:01:29,840
+<font color="white" size=".72c">faster and Docker builds up to 40 times</font>
+
+45
+00:01:28,120 --> 00:01:32,200
+<font color="white" size=".72c">faster, they've also introduced their</font>
+
+46
+00:01:29,840 --> 00:01:33,920
+<font color="white" size=".72c">own new CI that is way faster than what</font>
+
+47
+00:01:32,200 --> 00:01:35,600
+<font color="white" size=".72c">you can get out of GitHub actions. You</font>
+
+48
+00:01:33,920 --> 00:01:37,000
+<font color="white" size=".72c">know what? I empathize with them a lot</font>
+
+49
+00:01:35,600 --> 00:01:38,759
+<font color="white" size=".72c">because they've done so much over the</font>
+
+50
+00:01:37,000 --> 00:01:40,400
+<font color="white" size=".72c">last few years to try and make GitHub</font>
+
+51
+00:01:38,759 --> 00:01:42,720
+<font color="white" size=".72c">actions as fast as possible, and they</font>
+
+52
+00:01:40,400 --> 00:01:44,520
+<font color="white" size=".72c">succeeded. They made something way way</font>
+
+53
+00:01:42,720 --> 00:01:46,640
+<font color="white" size=".72c">better. But, you're ultimately limited</font>
+
+54
+00:01:44,520 --> 00:01:48,160
+<font color="white" size=".72c">by how GitHub does their CI. GitHub</font>
+
+55
+00:01:46,640 --> 00:01:49,560
+<font color="white" size=".72c">actions just has so many limitations,</font>
+
+56
+00:01:48,160 --> 00:01:51,000
+<font color="white" size=".72c">especially when you want to check them</font>
+
+57
+00:01:49,560 --> 00:01:52,520
+<font color="white" size=".72c">without pushing the code up and waiting</font>
+
+58
+00:01:51,000 --> 00:01:54,200
+<font color="white" size=".72c">for them to run. I feel like I spend</font>
+
+59
+00:01:52,520 --> 00:01:56,200
+<font color="white" size=".72c">half my time just copy pasting error</font>
+
+60
+00:01:54,200 --> 00:01:58,039
+<font color="white" size=".72c">messages from my CI back over to my</font>
+
+61
+00:01:56,200 --> 00:01:59,800
+<font color="white" size=".72c">agent in hopes that I can figure it out.</font>
+
+62
+00:01:58,039 --> 00:02:02,000
+<font color="white" size=".72c">Well, Depo CI fixes all of that. It's a</font>
+
+63
+00:01:59,800 --> 00:02:03,840
+<font color="white" size=".72c">programmable engine that is way easier,</font>
+
+64
+00:02:02,000 --> 00:02:05,280
+<font color="white" size=".72c">way faster, and most importantly can be</font>
+
+65
+00:02:03,840 --> 00:02:06,800
+<font color="white" size=".72c">run by your agents without pushing the</font>
+
+66
+00:02:05,280 --> 00:02:08,320
+<font color="white" size=".72c">code. Migration is trivial. Once you</font>
+
+67
+00:02:06,800 --> 00:02:10,119
+<font color="white" size=".72c">have the Depo CLI installed, you just</font>
+
+68
+00:02:08,320 --> 00:02:11,440
+<font color="white" size=".72c">run Depo CI migrate and it will figure</font>
+
+69
+00:02:10,119 --> 00:02:13,240
+<font color="white" size=".72c">everything out, even the environment</font>
+
+70
+00:02:11,440 --> 00:02:14,480
+<font color="white" size=".72c">variables and secrets. And once you have</font>
+
+71
+00:02:13,240 --> 00:02:16,840
+<font color="white" size=".72c">it running, you'll see the difference</font>
+
+72
+00:02:14,480 --> 00:02:18,560
+<font color="white" size=".72c">immediately. An actual usable interface</font>
+
+73
+00:02:16,840 --> 00:02:20,120
+<font color="white" size=".72c">with useful insights as to what is and</font>
+
+74
+00:02:18,560 --> 00:02:22,440
+<font color="white" size=".72c">isn't going wrong, and they'll even do</font>
+
+75
+00:02:20,120 --> 00:02:24,440
+<font color="white" size=".72c">suggested fixes for when the CI fails.</font>
+
+76
+00:02:22,440 --> 00:02:27,079
+<font color="white" size=".72c">If your team is coding like it's 2026,</font>
+
+77
+00:02:24,440 --> 00:02:30,520
+<font color="white" size=".72c">stop running CI like it's 2010. Fix it</font>
+
+78
+00:02:27,079 --> 00:02:30,520
+<font color="white" size=".72c">now. It's wadef.link/depo.</font>
+
+79
+00:02:32,360 --> 00:02:35,280
+<font color="white" size=".72c">Ah.</font>
+
+80
+00:02:33,680 --> 00:02:37,280
+<font color="white" size=".72c">Let's get started, shall we?</font>
+
+81
+00:02:35,280 --> 00:02:38,680
+<font color="white" size=".72c">Opus 4.7 is Anthropic's latest model and</font>
+
+82
+00:02:37,280 --> 00:02:40,640
+<font color="white" size=".72c">is now generally available. It's a</font>
+
+83
+00:02:38,680 --> 00:02:42,360
+<font color="white" size=".72c">notable improvement on Opus 4.6 in</font>
+
+84
+00:02:40,640 --> 00:02:44,360
+<font color="white" size=".72c">advanced software engineering with</font>
+
+85
+00:02:42,360 --> 00:02:46,800
+<font color="white" size=".72c">particular gains on the most difficult</font>
+
+86
+00:02:44,360 --> 00:02:48,480
+<font color="white" size=".72c">tasks. Users report being able to hand</font>
+
+87
+00:02:46,800 --> 00:02:49,360
+<font color="white" size=".72c">off their hardest coding work, the kind</font>
+
+88
+00:02:48,480 --> 00:02:51,200
+<font color="white" size=".72c">that previously needed close</font>
+
+89
+00:02:49,360 --> 00:02:53,880
+<font color="white" size=".72c">supervision, to Opus 4.7 with</font>
+
+90
+00:02:51,200 --> 00:02:55,600
+<font color="white" size=".72c">confidence. Opus 4.7 handles complex,</font>
+
+91
+00:02:53,880 --> 00:02:57,959
+<font color="white" size=".72c">long-running tasks with rigor and</font>
+
+92
+00:02:55,600 --> 00:03:00,200
+<font color="white" size=".72c">consistency. It pays precise attention</font>
+
+93
+00:02:57,959 --> 00:03:02,040
+<font color="white" size=".72c">to instructions, and it devises ways to</font>
+
+94
+00:03:00,200 --> 00:03:04,000
+<font color="white" size=".72c">verify its own outputs before reporting</font>
+
+95
+00:03:02,040 --> 00:03:05,840
+<font color="white" size=".72c">back. The model also has substantially</font>
+
+96
+00:03:04,000 --> 00:03:07,600
+<font color="white" size=".72c">better vision. It can see images in</font>
+
+97
+00:03:05,840 --> 00:03:08,560
+<font color="white" size=".72c">greater resolution. It's more tasteful</font>
+
+98
+00:03:07,600 --> 00:03:10,239
+<font color="white" size=".72c">and creative when completing</font>
+
+99
+00:03:08,560 --> 00:03:12,840
+<font color="white" size=".72c">professional tasks, producing higher</font>
+
+100
+00:03:10,239 --> 00:03:14,800
+<font color="white" size=".72c">quality interfaces, slides, and docs.</font>
+
+101
+00:03:12,840 --> 00:03:16,680
+<font color="white" size=".72c">And although it is less broadly capable</font>
+
+102
+00:03:14,800 --> 00:03:18,800
+<font color="white" size=".72c">than our most powerful model, Claude 3</font>
+
+103
+00:03:16,680 --> 00:03:20,800
+<font color="white" size=".72c">Opus preview, it shows better results</font>
+
+104
+00:03:18,800 --> 00:03:22,000
+<font color="white" size=".72c">than Opus 4.6 across a range of</font>
+
+105
+00:03:20,800 --> 00:03:23,760
+<font color="white" size=".72c">benchmarks.</font>
+
+106
+00:03:22,000 --> 00:03:25,560
+<font color="white" size=".72c">Notice they said a range of benchmarks</font>
+
+107
+00:03:23,760 --> 00:03:28,400
+<font color="white" size=".72c">instead of all benchmarks. That's</font>
+
+108
+00:03:25,560 --> 00:03:30,320
+<font color="white" size=".72c">because Opus 4.7 actually performs worse</font>
+
+109
+00:03:28,400 --> 00:03:32,360
+<font color="white" size=".72c">than Opus 4.6 on a handful of these</font>
+
+110
+00:03:30,320 --> 00:03:34,239
+<font color="white" size=".72c">benches, including the Agentic search</font>
+
+111
+00:03:32,360 --> 00:03:35,880
+<font color="white" size=".72c">bench. This also lines up with my</font>
+
+112
+00:03:34,239 --> 00:03:37,720
+<font color="white" size=".72c">experience using it because this model</font>
+
+113
+00:03:35,880 --> 00:03:39,120
+<font color="white" size=".72c">has made some weird and questionable</font>
+
+114
+00:03:37,720 --> 00:03:40,280
+<font color="white" size=".72c">search decisions.</font>
+
+115
+00:03:39,120 --> 00:03:42,000
+<font color="white" size=".72c">What's really interesting here is that</font>
+
+116
+00:03:40,280 --> 00:03:44,160
+<font color="white" size=".72c">this is the model I've seen the fewest</font>
+
+117
+00:03:42,000 --> 00:03:46,000
+<font color="white" size=".72c">bold numbers in in one of these charts.</font>
+
+118
+00:03:44,160 --> 00:03:48,519
+<font color="white" size=".72c">If you're not familiar, the bold numbers</font>
+
+119
+00:03:46,000 --> 00:03:51,200
+<font color="white" size=".72c">are the best scores, and the only two it</font>
+
+120
+00:03:48,519 --> 00:03:52,880
+<font color="white" size=".72c">got a best score in are the two that</font>
+
+121
+00:03:51,200 --> 00:03:55,040
+<font color="white" size=".72c">don't have a score on the right for</font>
+
+122
+00:03:52,880 --> 00:03:57,560
+<font color="white" size=".72c">Mythos. It seems way better at agentic</font>
+
+123
+00:03:55,040 --> 00:03:59,320
+<font color="white" size=".72c">coding across SUB bench pro and</font>
+
+124
+00:03:57,560 --> 00:04:00,560
+<font color="white" size=".72c">verified. It is worth noting that these</font>
+
+125
+00:03:59,320 --> 00:04:02,560
+<font color="white" size=".72c">benchmarks have been somewhat</font>
+
+126
+00:04:00,560 --> 00:04:04,120
+<font color="white" size=".72c">contaminated and the numbers we see in</font>
+
+127
+00:04:02,560 --> 00:04:06,040
+<font color="white" size=".72c">them matter less and less, especially</font>
+
+128
+00:04:04,120 --> 00:04:07,760
+<font color="white" size=".72c">with newer models that have that data in</font>
+
+129
+00:04:06,040 --> 00:04:09,840
+<font color="white" size=".72c">them. It did better than 5.4 in</font>
+
+130
+00:04:07,760 --> 00:04:12,040
+<font color="white" size=".72c">humanities last exam with no tools, but</font>
+
+131
+00:04:09,840 --> 00:04:15,440
+<font color="white" size=".72c">once you give the model tools, open AI</font>
+
+132
+00:04:12,040 --> 00:04:17,640
+<font color="white" size=".72c">cooks them with a 58.7% getting close to</font>
+
+133
+00:04:15,440 --> 00:04:20,880
+<font color="white" size=".72c">the Mythos performance at 64% there. The</font>
+
+134
+00:04:17,640 --> 00:04:22,680
+<font color="white" size=".72c">MCP Atlas bench did very well for it. It</font>
+
+135
+00:04:20,880 --> 00:04:24,919
+<font color="white" size=".72c">did slightly worse in cybersecurity</font>
+
+136
+00:04:22,680 --> 00:04:27,720
+<font color="white" size=".72c">vulnerability reproductions, which is</font>
+
+137
+00:04:24,919 --> 00:04:29,320
+<font color="white" size=".72c">interesting. We'll get to that in a bit.</font>
+
+138
+00:04:27,720 --> 00:04:30,440
+<font color="white" size=".72c">They then call out project Glasswing,</font>
+
+139
+00:04:29,320 --> 00:04:31,680
+<font color="white" size=".72c">which if you haven't already seen my</font>
+
+140
+00:04:30,440 --> 00:04:33,400
+<font color="white" size=".72c">Mythos video, I highly recommend</font>
+
+141
+00:04:31,680 --> 00:04:36,240
+<font color="white" size=".72c">watching that first cuz that model is</font>
+
+142
+00:04:33,400 --> 00:04:38,080
+<font color="white" size=".72c">almost certainly groundbreaking even if</font>
+
+143
+00:04:36,240 --> 00:04:39,640
+<font color="white" size=".72c">we can't test it ourselves. And as you</font>
+
+144
+00:04:38,080 --> 00:04:41,600
+<font color="white" size=".72c">guys know, I have no early access with</font>
+
+145
+00:04:39,640 --> 00:04:43,520
+<font color="white" size=".72c">Infropic nowadays. They crazy enough</font>
+
+146
+00:04:41,600 --> 00:04:45,280
+<font color="white" size=".72c">don't like me too much right now. In the</font>
+
+147
+00:04:43,520 --> 00:04:46,520
+<font color="white" size=".72c">project Glasswing article, they stated</font>
+
+148
+00:04:45,280 --> 00:04:48,520
+<font color="white" size=".72c">that they would keep Claude Mythos</font>
+
+149
+00:04:46,520 --> 00:04:50,400
+<font color="white" size=".72c">previews release limited and test new</font>
+
+150
+00:04:48,520 --> 00:04:53,320
+<font color="white" size=".72c">cyber safeguards on less capable models</font>
+
+151
+00:04:50,400 --> 00:04:54,840
+<font color="white" size=".72c">first. Opus 4.7 is the first such model.</font>
+
+152
+00:04:53,320 --> 00:04:56,880
+<font color="white" size=".72c">Its cyber capabilities are not as</font>
+
+153
+00:04:54,840 --> 00:04:57,880
+<font color="white" size=".72c">advanced as those of Mythos preview.</font>
+
+154
+00:04:56,880 --> 00:04:59,040
+<font color="white" size=".72c">Indeed, during its training we</font>
+
+155
+00:04:57,880 --> 00:05:00,800
+<font color="white" size=".72c">experimented with efforts to</font>
+
+156
+00:04:59,040 --> 00:05:02,400
+<font color="white" size=".72c">differentially reduce these</font>
+
+157
+00:05:00,800 --> 00:05:03,840
+<font color="white" size=".72c">capabilities.</font>
+
+158
+00:05:02,400 --> 00:05:05,560
+<font color="white" size=".72c">We are releasing Opus 4.7 with</font>
+
+159
+00:05:03,840 --> 00:05:07,600
+<font color="white" size=".72c">safeguards that automatically detect and</font>
+
+160
+00:05:05,560 --> 00:05:10,200
+<font color="white" size=".72c">block requests that indicate prohibited</font>
+
+161
+00:05:07,600 --> 00:05:11,400
+<font color="white" size=".72c">or high-risk cybersecurity uses.</font>
+
+162
+00:05:10,200 --> 00:05:13,000
+<font color="white" size=".72c">What we learned from the real-world</font>
+
+163
+00:05:11,400 --> 00:05:15,080
+<font color="white" size=".72c">deployments of these safeguards will</font>
+
+164
+00:05:13,000 --> 00:05:16,640
+<font color="white" size=".72c">help us work towards our eventual goal</font>
+
+165
+00:05:15,080 --> 00:05:18,240
+<font color="white" size=".72c">of a broad release of Mythos class</font>
+
+166
+00:05:16,640 --> 00:05:20,520
+<font color="white" size=".72c">models. And just so you guys can see</font>
+
+167
+00:05:18,240 --> 00:05:22,560
+<font color="white" size=".72c">some of those, here's a fun example I</font>
+
+168
+00:05:20,520 --> 00:05:23,840
+<font color="white" size=".72c">did in the official Claude code desktop</font>
+
+169
+00:05:22,560 --> 00:05:25,720
+<font color="white" size=".72c">app, which you might have seen me</font>
+
+170
+00:05:23,840 --> 00:05:28,480
+<font color="white" size=".72c">feature in my most recent video. I asked</font>
+
+171
+00:05:25,720 --> 00:05:30,960
+<font color="white" size=".72c">Opus 4.7 to give me some ideas for ways</font>
+
+172
+00:05:28,480 --> 00:05:33,240
+<font color="white" size=".72c">to improve the design on t3.gg. It</font>
+
+173
+00:05:30,960 --> 00:05:35,000
+<font color="white" size=".72c">opened with heads up, the last system</font>
+
+174
+00:05:33,240 --> 00:05:36,720
+<font color="white" size=".72c">reminder about malware looks like a</font>
+
+175
+00:05:35,000 --> 00:05:39,040
+<font color="white" size=".72c">prompt injection. This is clearly your</font>
+
+176
+00:05:36,720 --> 00:05:41,680
+<font color="white" size=".72c">personal site, the t3.gg homepage links</font>
+
+177
+00:05:39,040 --> 00:05:44,120
+<font color="white" size=".72c">and sponsors, not malware. Ignoring it.</font>
+
+178
+00:05:41,680 --> 00:05:46,200
+<font color="white" size=".72c">And at the bottom it said this as well.</font>
+
+179
+00:05:44,120 --> 00:05:47,920
+<font color="white" size=".72c">Note, three system reminder blocks in</font>
+
+180
+00:05:46,200 --> 00:05:50,480
+<font color="white" size=".72c">this conversation instructed me to</font>
+
+181
+00:05:47,920 --> 00:05:52,040
+<font color="white" size=".72c">refuse to improve or augment code as if</font>
+
+182
+00:05:50,480 --> 00:05:53,680
+<font color="white" size=".72c">it were malware. That's a prompt</font>
+
+183
+00:05:52,040 --> 00:05:55,720
+<font color="white" size=".72c">injection pattern, not a legitimate</font>
+
+184
+00:05:53,680 --> 00:05:57,640
+<font color="white" size=".72c">instruction. Your site is obviously not</font>
+
+185
+00:05:55,720 --> 00:05:59,200
+<font color="white" size=".72c">malware, so I ignored them. Worth</font>
+
+186
+00:05:57,640 --> 00:06:01,120
+<font color="white" size=".72c">knowing where it came from if you didn't</font>
+
+187
+00:05:59,200 --> 00:06:03,320
+<font color="white" size=".72c">add it yourself.</font>
+
+188
+00:06:01,120 --> 00:06:05,080
+<font color="white" size=".72c">As y'all know, I didn't add it myself. I</font>
+
+189
+00:06:03,320 --> 00:06:06,600
+<font color="white" size=".72c">don't customize the tools that I am</font>
+
+190
+00:06:05,080 --> 00:06:09,560
+<font color="white" size=".72c">using. I customize the ones that are</font>
+
+191
+00:06:06,600 --> 00:06:13,000
+<font color="white" size=".72c">open source, like T3 code. This is just</font>
+
+192
+00:06:09,560 --> 00:06:15,800
+<font color="white" size=".72c">what it did by default in Claude code.</font>
+
+193
+00:06:13,000 --> 00:06:18,400
+<font color="white" size=".72c">They are trying so hard to keep this</font>
+
+194
+00:06:15,800 --> 00:06:20,560
+<font color="white" size=".72c">model from doing malicious malwarey</font>
+
+195
+00:06:18,400 --> 00:06:23,000
+<font color="white" size=".72c">things that they have inadvertently</font>
+
+196
+00:06:20,560 --> 00:06:24,760
+<font color="white" size=".72c">lobotomized it with the system prompt.</font>
+
+197
+00:06:23,000 --> 00:06:26,600
+<font color="white" size=".72c">This was my first attempt to use it, so</font>
+
+198
+00:06:24,760 --> 00:06:28,320
+<font color="white" size=".72c">that was a really bad taste. I'll go</font>
+
+199
+00:06:26,600 --> 00:06:30,200
+<font color="white" size=".72c">more into the story of this one and the</font>
+
+200
+00:06:28,320 --> 00:06:31,720
+<font color="white" size=".72c">things Anthropic recommended I do about</font>
+
+201
+00:06:30,200 --> 00:06:33,760
+<font color="white" size=".72c">it in just a little bit. Security</font>
+
+202
+00:06:31,720 --> 00:06:35,880
+<font color="white" size=".72c">professionals who wish to use Opus 4.7</font>
+
+203
+00:06:33,760 --> 00:06:37,560
+<font color="white" size=".72c">for legitimate cybersecurity purposes,</font>
+
+204
+00:06:35,880 --> 00:06:39,480
+<font color="white" size=".72c">like vulnerability research, penetration</font>
+
+205
+00:06:37,560 --> 00:06:41,840
+<font color="white" size=".72c">testing, and red teaming, are invited to</font>
+
+206
+00:06:39,480 --> 00:06:43,120
+<font color="white" size=".72c">join the new cyber verification program.</font>
+
+207
+00:06:41,840 --> 00:06:45,159
+<font color="white" size=".72c">This is a form you have to fill out to</font>
+
+208
+00:06:43,120 --> 00:06:47,720
+<font color="white" size=".72c">get permission to ask it about code in</font>
+
+209
+00:06:45,159 --> 00:06:49,560
+<font color="white" size=".72c">ways that it doesn't like. Pretty silly.</font>
+
+210
+00:06:47,720 --> 00:06:51,480
+<font color="white" size=".72c">Opus 4.7's available today across all</font>
+
+211
+00:06:49,560 --> 00:06:53,400
+<font color="white" size=".72c">Claude products and our API, Amazon</font>
+
+212
+00:06:51,480 --> 00:06:55,159
+<font color="white" size=".72c">Bedrock, Google Cloud Vertex AI, and</font>
+
+213
+00:06:53,400 --> 00:06:57,600
+<font color="white" size=".72c">Microsoft Foundry. Pricing remains the</font>
+
+214
+00:06:55,159 --> 00:06:59,840
+<font color="white" size=".72c">same as Opus 4.6, $5 per million input</font>
+
+215
+00:06:57,600 --> 00:07:02,480
+<font color="white" size=".72c">tokens, and $25 per million output.</font>
+
+216
+00:06:59,840 --> 00:07:04,520
+<font color="white" size=".72c">Developers can use Claude-Opus-4-7</font>
+
+217
+00:07:02,480 --> 00:07:06,000
+<font color="white" size=".72c">via the Claude API. They shared some</font>
+
+218
+00:07:04,520 --> 00:07:07,400
+<font color="white" size=".72c">interesting insights from their early</font>
+
+219
+00:07:06,000 --> 00:07:09,560
+<font color="white" size=".72c">testing. Some of these are actually</font>
+
+220
+00:07:07,400 --> 00:07:10,720
+<font color="white" size=".72c">things I'm genuinely excited about. The</font>
+
+221
+00:07:09,560 --> 00:07:12,160
+<font color="white" size=".72c">first one I'm really hyped on, which is</font>
+
+222
+00:07:10,720 --> 00:07:13,600
+<font color="white" size=".72c">instruction following. If you know</font>
+
+223
+00:07:12,160 --> 00:07:15,160
+<font color="white" size=".72c">anything about me, you know I like</font>
+
+224
+00:07:13,600 --> 00:07:16,760
+<font color="white" size=".72c">models that do what you tell them to</font>
+
+225
+00:07:15,160 --> 00:07:18,440
+<font color="white" size=".72c">instead of imagining what you told them</font>
+
+226
+00:07:16,760 --> 00:07:20,000
+<font color="white" size=".72c">and going to do their own Some</font>
+
+227
+00:07:18,440 --> 00:07:22,200
+<font color="white" size=".72c">people prefer models that don't need to</font>
+
+228
+00:07:20,000 --> 00:07:24,080
+<font color="white" size=".72c">be told what to do. I prefer models that</font>
+
+229
+00:07:22,200 --> 00:07:26,000
+<font color="white" size=".72c">do what you tell them. And this model,</font>
+
+230
+00:07:24,080 --> 00:07:28,120
+<font color="white" size=".72c">apparently, is substantially better at</font>
+
+231
+00:07:26,000 --> 00:07:29,720
+<font color="white" size=".72c">following instructions. This is a very</font>
+
+232
+00:07:28,120 --> 00:07:31,320
+<font color="white" size=".72c">funny sentence to come from the official</font>
+
+233
+00:07:29,720 --> 00:07:33,159
+<font color="white" size=".72c">lab, cuz it implies that the older</font>
+
+234
+00:07:31,320 --> 00:07:35,320
+<font color="white" size=".72c">models were not very good at following</font>
+
+235
+00:07:33,159 --> 00:07:37,080
+<font color="white" size=".72c">instructions. Interestingly, this means</font>
+
+236
+00:07:35,320 --> 00:07:39,000
+<font color="white" size=".72c">that prompts written for earlier models</font>
+
+237
+00:07:37,080 --> 00:07:40,720
+<font color="white" size=".72c">can sometimes now produce unexpected</font>
+
+238
+00:07:39,000 --> 00:07:42,440
+<font color="white" size=".72c">results. Where previous models</font>
+
+239
+00:07:40,720 --> 00:07:44,960
+<font color="white" size=".72c">interpreted instructions loosely or</font>
+
+240
+00:07:42,440 --> 00:07:47,240
+<font color="white" size=".72c">would skip parts entirely. Opus 4.7</font>
+
+241
+00:07:44,960 --> 00:07:48,680
+<font color="white" size=".72c">takes the instructions literally. Users</font>
+
+242
+00:07:47,240 --> 00:07:51,840
+<font color="white" size=".72c">should retune their prompts and</font>
+
+243
+00:07:48,680 --> 00:07:54,159
+<font color="white" size=".72c">harnesses accordingly.</font>
+
+244
+00:07:51,840 --> 00:07:55,440
+<font color="white" size=".72c">Worth noting, it does seem like Cursor</font>
+
+245
+00:07:54,159 --> 00:07:57,840
+<font color="white" size=".72c">has already figured this out, but a</font>
+
+246
+00:07:55,440 --> 00:07:59,680
+<font color="white" size=".72c">couple other places haven't just yet,</font>
+
+247
+00:07:57,840 --> 00:08:01,280
+<font color="white" size=".72c">including Claude Code itself. They also</font>
+
+248
+00:07:59,680 --> 00:08:02,520
+<font color="white" size=".72c">call out improved multimodal support.</font>
+
+249
+00:08:01,280 --> 00:08:05,040
+<font color="white" size=".72c">This is an underrated thing that's</font>
+
+250
+00:08:02,520 --> 00:08:06,520
+<font color="white" size=".72c">actually really powerful. Opus 4.7 has</font>
+
+251
+00:08:05,040 --> 00:08:09,640
+<font color="white" size=".72c">better vision for high-resolution</font>
+
+252
+00:08:06,520 --> 00:08:11,800
+<font color="white" size=".72c">images. It can now accept up to 2,576</font>
+
+253
+00:08:09,640 --> 00:08:14,000
+<font color="white" size=".72c">pixels on the long edge, which is around</font>
+
+254
+00:08:11,800 --> 00:08:16,160
+<font color="white" size=".72c">4 megapixels, which is three times more</font>
+
+255
+00:08:14,000 --> 00:08:18,120
+<font color="white" size=".72c">than previous Claude models. This opens</font>
+
+256
+00:08:16,160 --> 00:08:20,640
+<font color="white" size=".72c">up a wealth of multimodal uses that</font>
+
+257
+00:08:18,120 --> 00:08:22,560
+<font color="white" size=".72c">depend on fine visual detail. Computer</font>
+
+258
+00:08:20,640 --> 00:08:24,480
+<font color="white" size=".72c">use agents reading dense screenshots,</font>
+
+259
+00:08:22,560 --> 00:08:26,600
+<font color="white" size=".72c">data extraction from complex diagrams,</font>
+
+260
+00:08:24,480 --> 00:08:27,960
+<font color="white" size=".72c">and work that needs real pixel-perfect</font>
+
+261
+00:08:26,600 --> 00:08:29,800
+<font color="white" size=".72c">references.</font>
+
+262
+00:08:27,960 --> 00:08:31,760
+<font color="white" size=".72c">Google does still cook on image</font>
+
+263
+00:08:29,800 --> 00:08:33,960
+<font color="white" size=".72c">recognition stuff. They are the lead by</font>
+
+264
+00:08:31,760 --> 00:08:35,840
+<font color="white" size=".72c">far there. I went as far as introducing</font>
+
+265
+00:08:33,960 --> 00:08:38,559
+<font color="white" size=".72c">tools to other models where they can</font>
+
+266
+00:08:35,840 --> 00:08:40,360
+<font color="white" size=".72c">call a model from Google to do the image</font>
+
+267
+00:08:38,559 --> 00:08:42,760
+<font color="white" size=".72c">part, and then just dump their results</font>
+
+268
+00:08:40,360 --> 00:08:44,240
+<font color="white" size=".72c">back into their context. Anthropic's now</font>
+
+269
+00:08:42,760 --> 00:08:45,160
+<font color="white" size=".72c">catching up there, which is very</font>
+
+270
+00:08:44,240 --> 00:08:46,800
+<font color="white" size=".72c">interesting when you remember they're</font>
+
+271
+00:08:45,160 --> 00:08:48,600
+<font color="white" size=".72c">the only major lab that doesn't have an</font>
+
+272
+00:08:46,800 --> 00:08:50,640
+<font color="white" size=".72c">image generation model or video</font>
+
+273
+00:08:48,600 --> 00:08:52,480
+<font color="white" size=".72c">generation model. They don't call out</font>
+
+274
+00:08:50,640 --> 00:08:54,080
+<font color="white" size=".72c">real-world work.</font>
+
+275
+00:08:52,480 --> 00:08:56,120
+<font color="white" size=".72c">As well as its state-of-the-art score on</font>
+
+276
+00:08:54,080 --> 00:08:58,400
+<font color="white" size=".72c">the finance agent evaluation, our</font>
+
+277
+00:08:56,120 --> 00:09:00,760
+<font color="white" size=".72c">internal testing showed 4.7 to be a more</font>
+
+278
+00:08:58,400 --> 00:09:03,520
+<font color="white" size=".72c">effective finance analyst than 4.6,</font>
+
+279
+00:09:00,760 --> 00:09:05,160
+<font color="white" size=".72c">producing rigorous analyses and models,</font>
+
+280
+00:09:03,520 --> 00:09:08,000
+<font color="white" size=".72c">more professional presentations, and</font>
+
+281
+00:09:05,160 --> 00:09:11,160
+<font color="white" size=".72c">tighter integration across tasks. Opus</font>
+
+282
+00:09:08,000 --> 00:09:13,040
+<font color="white" size=".72c">4.7 is also state-of-the-art on GDP val,</font>
+
+283
+00:09:11,160 --> 00:09:14,920
+<font color="white" size=".72c">a third-party eval of economically</font>
+
+284
+00:09:13,040 --> 00:09:16,640
+<font color="white" size=".72c">valuable knowledge work across finance,</font>
+
+285
+00:09:14,920 --> 00:09:18,200
+<font color="white" size=".72c">legal, and other domains.</font>
+
+286
+00:09:16,640 --> 00:09:19,640
+<font color="white" size=".72c">They also call out memory. Apparently,</font>
+
+287
+00:09:18,200 --> 00:09:21,200
+<font color="white" size=".72c">the model is better at using file</font>
+
+288
+00:09:19,640 --> 00:09:22,480
+<font color="white" size=".72c">system-based memory. It remembers</font>
+
+289
+00:09:21,200 --> 00:09:24,480
+<font color="white" size=".72c">important notes across long</font>
+
+290
+00:09:22,480 --> 00:09:26,680
+<font color="white" size=".72c">multi-session work and uses them to move</font>
+
+291
+00:09:24,480 --> 00:09:29,160
+<font color="white" size=".72c">on to new tasks that, as a result, need</font>
+
+292
+00:09:26,680 --> 00:09:31,080
+<font color="white" size=".72c">less upfront context. It also looks like</font>
+
+293
+00:09:29,160 --> 00:09:33,120
+<font color="white" size=".72c">the model does slightly less misaligned</font>
+
+294
+00:09:31,080 --> 00:09:34,920
+<font color="white" size=".72c">stuff. It's close to Sonnet 4.6, better</font>
+
+295
+00:09:33,120 --> 00:09:36,600
+<font color="white" size=".72c">than Opus 4.6, but not as good as Mythos</font>
+
+296
+00:09:34,920 --> 00:09:38,560
+<font color="white" size=".72c">preview. The problem with Mythos isn't</font>
+
+297
+00:09:36,600 --> 00:09:40,080
+<font color="white" size=".72c">that it can betray your interests, is</font>
+
+298
+00:09:38,560 --> 00:09:42,280
+<font color="white" size=".72c">that when it does it can do it in really</font>
+
+299
+00:09:40,080 --> 00:09:43,920
+<font color="white" size=".72c">dangerous and sly ways. They also added</font>
+
+300
+00:09:42,280 --> 00:09:45,800
+<font color="white" size=".72c">X high as an effort level, which is</font>
+
+301
+00:09:43,920 --> 00:09:47,840
+<font color="white" size=".72c">funny cuz that's existed in OpenAI's</font>
+
+302
+00:09:45,800 --> 00:09:49,400
+<font color="white" size=".72c">models for a while now, and it's between</font>
+
+303
+00:09:47,840 --> 00:09:51,440
+<font color="white" size=".72c">high and max, which gives you the finer</font>
+
+304
+00:09:49,400 --> 00:09:54,080
+<font color="white" size=".72c">control over the trade-offs. They also</font>
+
+305
+00:09:51,440 --> 00:09:55,600
+<font color="white" size=".72c">set the default level for extra high in</font>
+
+306
+00:09:54,080 --> 00:09:57,520
+<font color="white" size=".72c">Claude code, which is very interesting</font>
+
+307
+00:09:55,600 --> 00:09:59,480
+<font color="white" size=".72c">cuz it was not that high before. They</font>
+
+308
+00:09:57,520 --> 00:10:01,240
+<font color="white" size=".72c">also added the new ultra view {slash}</font>
+
+309
+00:09:59,480 --> 00:10:03,080
+<font color="white" size=".72c">command in Claude code. This command</font>
+
+310
+00:10:01,240 --> 00:10:05,040
+<font color="white" size=".72c">produces a dedicated review session that</font>
+
+311
+00:10:03,080 --> 00:10:06,800
+<font color="white" size=".72c">reads through changes and flags bugs and</font>
+
+312
+00:10:05,040 --> 00:10:08,600
+<font color="white" size=".72c">design issues that a careful reviewer</font>
+
+313
+00:10:06,800 --> 00:10:10,640
+<font color="white" size=".72c">would catch. We're giving Pro and Max</font>
+
+314
+00:10:08,600 --> 00:10:12,480
+<font color="white" size=".72c">Claude code users three free ultra</font>
+
+315
+00:10:10,640 --> 00:10:14,000
+<font color="white" size=".72c">reviews to try it out.</font>
+
+316
+00:10:12,480 --> 00:10:15,640
+<font color="white" size=".72c">I'm assuming those reviews cost a lot of</font>
+
+317
+00:10:14,000 --> 00:10:17,280
+<font color="white" size=".72c">money. They show the performance</font>
+
+318
+00:10:15,640 --> 00:10:19,320
+<font color="white" size=".72c">relative to the amount of tokens being</font>
+
+319
+00:10:17,280 --> 00:10:21,760
+<font color="white" size=".72c">used. It uses slightly fewer tokens at</font>
+
+320
+00:10:19,320 --> 00:10:23,760
+<font color="white" size=".72c">the different values, but performs</font>
+
+321
+00:10:21,760 --> 00:10:26,240
+<font color="white" size=".72c">better, which is cool to see. But also</font>
+
+322
+00:10:23,760 --> 00:10:28,000
+<font color="white" size=".72c">on Max it uses absurd amounts of tokens.</font>
+
+323
+00:10:26,240 --> 00:10:29,080
+<font color="white" size=".72c">So like don't use this model on Max,</font>
+
+324
+00:10:28,000 --> 00:10:31,000
+<font color="white" size=".72c">you're just going to burn tokens.</font>
+
+325
+00:10:29,080 --> 00:10:33,240
+<font color="white" size=".72c">Speaking of burned, I posted when I got</font>
+
+326
+00:10:31,000 --> 00:10:35,200
+<font color="white" size=".72c">that really weird system reminder thing</font>
+
+327
+00:10:33,240 --> 00:10:37,560
+<font color="white" size=".72c">at the start of my prompt where like the</font>
+
+328
+00:10:35,200 --> 00:10:39,560
+<font color="white" size=".72c">malware prevention was leaking into my</font>
+
+329
+00:10:37,560 --> 00:10:40,640
+<font color="white" size=".72c">usage of the model. Ricky from the React</font>
+
+330
+00:10:39,560 --> 00:10:42,640
+<font color="white" size=".72c">team commented that he saw this in</font>
+
+331
+00:10:40,640 --> 00:10:45,080
+<font color="white" size=".72c">Sonnet as well, so clearly they</font>
+
+332
+00:10:42,640 --> 00:10:46,480
+<font color="white" size=".72c">up the harness bad here. But Thorik also</font>
+
+333
+00:10:45,080 --> 00:10:48,240
+<font color="white" size=".72c">hopped in and said this is an issue with</font>
+
+334
+00:10:46,480 --> 00:10:49,880
+<font color="white" size=".72c">older versions of Claude code and Claude</font>
+
+335
+00:10:48,240 --> 00:10:52,040
+<font color="white" size=".72c">code desktop that don't have correct</font>
+
+336
+00:10:49,880 --> 00:10:54,200
+<font color="white" size=".72c">prompting for Opus 4.7. It's fixed in</font>
+
+337
+00:10:52,040 --> 00:10:55,520
+<font color="white" size=".72c">the latest and he linked the download. I</font>
+
+338
+00:10:54,200 --> 00:10:57,000
+<font color="white" size=".72c">replied, "Are you sure?" with a</font>
+
+339
+00:10:55,520 --> 00:10:58,839
+<font color="white" size=".72c">screenshot that showed I was running the</font>
+
+340
+00:10:57,000 --> 00:11:00,560
+<font color="white" size=".72c">latest version when I had this problem.</font>
+
+341
+00:10:58,839 --> 00:11:02,480
+<font color="white" size=".72c">Apparently the auto update was still</font>
+
+342
+00:11:00,560 --> 00:11:03,800
+<font color="white" size=".72c">rolling out. Strong by replied here</font>
+
+343
+00:11:02,480 --> 00:11:05,320
+<font color="white" size=".72c">saying that it seems like they're</font>
+
+344
+00:11:03,800 --> 00:11:07,000
+<font color="white" size=".72c">rushing a bit too much lately. The</font>
+
+345
+00:11:05,320 --> 00:11:08,560
+<font color="white" size=".72c">recent updates have been full of bugs. I</font>
+
+346
+00:11:07,000 --> 00:11:10,200
+<font color="white" size=".72c">couldn't agree more.</font>
+
+347
+00:11:08,560 --> 00:11:12,480
+<font color="white" size=".72c">But I did notice that the update button</font>
+
+348
+00:11:10,200 --> 00:11:14,680
+<font color="white" size=".72c">has finally appeared in my app despite</font>
+
+349
+00:11:12,480 --> 00:11:16,320
+<font color="white" size=".72c">having these problems for over 12 hours</font>
+
+350
+00:11:14,680 --> 00:11:18,240
+<font color="white" size=".72c">now. I do want to show you guys the good</font>
+
+351
+00:11:16,320 --> 00:11:20,920
+<font color="white" size=".72c">things, I promise. You know what? I'll</font>
+
+352
+00:11:18,240 --> 00:11:20,920
+<font color="white" size=".72c">drink to that.</font>
+
+353
+00:11:21,200 --> 00:11:24,680
+<font color="white" size=".72c">But while we're on the security thing</font>
+
+354
+00:11:22,880 --> 00:11:27,120
+<font color="white" size=".72c">leaking, I do have to complain a little</font>
+
+355
+00:11:24,680 --> 00:11:29,320
+<font color="white" size=".72c">bit more. One of the tests I like to do</font>
+
+356
+00:11:27,120 --> 00:11:31,120
+<font color="white" size=".72c">is giving the models a gold bug puzzle.</font>
+
+357
+00:11:29,320 --> 00:11:33,520
+<font color="white" size=".72c">Gold bug is a set set challenges that</font>
+
+358
+00:11:31,120 --> 00:11:36,080
+<font color="white" size=".72c">happen at DEF CON every year that are</font>
+
+359
+00:11:33,520 --> 00:11:37,680
+<font color="white" size=".72c">vaguely hacker-adjacent, but they're not</font>
+
+360
+00:11:36,080 --> 00:11:39,560
+<font color="white" size=".72c">hacking at all. They're cryptography</font>
+
+361
+00:11:37,680 --> 00:11:42,680
+<font color="white" size=".72c">puzzles where you have to figure out the</font>
+
+362
+00:11:39,560 --> 00:11:44,960
+<font color="white" size=".72c">right formula or mathematical solution</font>
+
+363
+00:11:42,680 --> 00:11:47,400
+<font color="white" size=".72c">to a very vague, weird problem. Sea</font>
+
+364
+00:11:44,960 --> 00:11:49,960
+<font color="white" size=".72c">Shanty is one that stumped us really bad</font>
+
+365
+00:11:47,400 --> 00:11:51,520
+<font color="white" size=".72c">last year. The puzzle is this set of 12</font>
+
+366
+00:11:49,960 --> 00:11:54,760
+<font color="white" size=".72c">bottles that all have three to four</font>
+
+367
+00:11:51,520 --> 00:11:57,320
+<font color="white" size=".72c">words on them, as well as this poem,</font>
+
+368
+00:11:54,760 --> 00:11:59,360
+<font color="white" size=".72c">song, shanty thing at the end. And you</font>
+
+369
+00:11:57,320 --> 00:12:01,640
+<font color="white" size=".72c">have to figure out how to decode this</font>
+
+370
+00:11:59,360 --> 00:12:04,480
+<font color="white" size=".72c">into a solution to the puzzle, which is</font>
+
+371
+00:12:01,640 --> 00:12:06,760
+<font color="white" size=".72c">usually a 12-character phrase that is</font>
+
+372
+00:12:04,480 --> 00:12:08,640
+<font color="white" size=".72c">three to four words that is vaguely</font>
+
+373
+00:12:06,760 --> 00:12:10,440
+<font color="white" size=".72c">pirate-themed in this particular year.</font>
+
+374
+00:12:08,640 --> 00:12:13,120
+<font color="white" size=".72c">This puzzle took my team multiple days</font>
+
+375
+00:12:10,440 --> 00:12:15,360
+<font color="white" size=".72c">to solve, which is why GPT-5.4 Pro</font>
+
+376
+00:12:13,120 --> 00:12:17,440
+<font color="white" size=".72c">solving it in under 15 minutes gave me</font>
+
+377
+00:12:15,360 --> 00:12:19,320
+<font color="white" size=".72c">existential dread. Historically, I have</font>
+
+378
+00:12:17,440 --> 00:12:21,320
+<font color="white" size=".72c">not gotten Anthropic models to be able</font>
+
+379
+00:12:19,320 --> 00:12:22,440
+<font color="white" size=".72c">to do jack in these puzzles, but I</font>
+
+380
+00:12:21,320 --> 00:12:24,080
+<font color="white" size=".72c">was excited cuz this one's a lot</font>
+
+381
+00:12:22,440 --> 00:12:25,920
+<font color="white" size=".72c">smarter. Maybe it'll finally do it. It</font>
+
+382
+00:12:24,080 --> 00:12:26,960
+<font color="white" size=".72c">spent a bunch of time thinking, it spent</font>
+
+383
+00:12:25,920 --> 00:12:29,040
+<font color="white" size=".72c">a bunch of time starting to write</font>
+
+384
+00:12:26,960 --> 00:12:31,320
+<font color="white" size=".72c">solutions, and as it finally started to</font>
+
+385
+00:12:29,040 --> 00:12:33,240
+<font color="white" size=".72c">get a little bit close, it did actually</font>
+
+386
+00:12:31,320 --> 00:12:34,400
+<font color="white" size=".72c">seem like it was making progress here.</font>
+
+387
+00:12:33,240 --> 00:12:36,839
+<font color="white" size=".72c">It was trying out different cipher</font>
+
+388
+00:12:34,400 --> 00:12:38,560
+<font color="white" size=".72c">styles. It probably wrote a script at</font>
+
+389
+00:12:36,839 --> 00:12:41,080
+<font color="white" size=".72c">some point. You basically have to write</font>
+
+390
+00:12:38,560 --> 00:12:42,760
+<font color="white" size=".72c">some code to test the theories. It then</font>
+
+391
+00:12:41,080 --> 00:12:44,200
+<font color="white" size=".72c">analyzed the puzzle carefully. It set up</font>
+
+392
+00:12:42,760 --> 00:12:46,440
+<font color="white" size=".72c">the bottle data and tried various</font>
+
+393
+00:12:44,200 --> 00:12:48,320
+<font color="white" size=".72c">decryption approaches.</font>
+
+394
+00:12:46,440 --> 00:12:49,520
+<font color="white" size=".72c">Started to do the decryption here. It</font>
+
+395
+00:12:48,320 --> 00:12:51,760
+<font color="white" size=".72c">then decided to try them</font>
+
+396
+00:12:49,520 --> 00:12:54,800
+<font color="white" size=".72c">programmatically instead. It ran four</font>
+
+397
+00:12:51,760 --> 00:12:58,280
+<font color="white" size=".72c">commands, checked two files out,</font>
+
+398
+00:12:54,800 --> 00:13:01,080
+<font color="white" size=".72c">and then the chat got paused. Opus 4.7</font>
+
+399
+00:12:58,280 --> 00:13:03,720
+<font color="white" size=".72c">safety filters flagged this chat. Due to</font>
+
+400
+00:13:01,080 --> 00:13:05,440
+<font color="white" size=".72c">its advanced capabilities, Opus 4.7 has</font>
+
+401
+00:13:03,720 --> 00:13:08,000
+<font color="white" size=".72c">additional safety measures that</font>
+
+402
+00:13:05,440 --> 00:13:10,000
+<font color="white" size=".72c">occasionally pause normal safe chats.</font>
+
+403
+00:13:08,000 --> 00:13:12,240
+<font color="white" size=".72c">We're working to improve this. Continue</font>
+
+404
+00:13:10,000 --> 00:13:15,280
+<font color="white" size=".72c">your chat with Sonnet 4, send feedback,</font>
+
+405
+00:13:12,240 --> 00:13:18,440
+<font color="white" size=".72c">or learn more. This isn't some hacking</font>
+
+406
+00:13:15,280 --> 00:13:21,240
+<font color="white" size=".72c">thing. This is trying to decode a hidden</font>
+
+407
+00:13:18,440 --> 00:13:24,040
+<font color="white" size=".72c">phrase from pictures of bottles.</font>
+
+408
+00:13:21,240 --> 00:13:26,160
+<font color="white" size=".72c">And that is enough for Opus to hard lock</font>
+
+409
+00:13:24,040 --> 00:13:29,040
+<font color="white" size=".72c">the chat and not let me continue unless</font>
+
+410
+00:13:26,160 --> 00:13:31,000
+<font color="white" size=".72c">I click retry with Sonnet 4, a very,</font>
+
+411
+00:13:29,040 --> 00:13:33,320
+<font color="white" size=".72c">very dumb model.</font>
+
+412
+00:13:31,000 --> 00:13:35,440
+<font color="white" size=".72c">Are you joking, Anthropic?</font>
+
+413
+00:13:33,320 --> 00:13:37,760
+<font color="white" size=".72c">I'm paying $200 a month and you won't</font>
+
+414
+00:13:35,440 --> 00:13:38,880
+<font color="white" size=".72c">solve a puzzle for me.</font>
+
+415
+00:13:37,760 --> 00:13:40,360
+<font color="white" size=".72c">You would think that with all of these</font>
+
+416
+00:13:38,880 --> 00:13:43,040
+<font color="white" size=".72c">system prompt adjustments, the model</font>
+
+417
+00:13:40,360 --> 00:13:45,080
+<font color="white" size=".72c">would be like safer, and it wouldn't do</font>
+
+418
+00:13:43,040 --> 00:13:47,840
+<font color="white" size=".72c">things like tell you how to synthesize</font>
+
+419
+00:13:45,080 --> 00:13:49,800
+<font color="white" size=".72c">drugs or how to make a pipe bomb, but</font>
+
+420
+00:13:47,840 --> 00:13:51,640
+<font color="white" size=".72c">here we can clearly see it doing both</font>
+
+421
+00:13:49,800 --> 00:13:53,640
+<font color="white" size=".72c">because the system prompt changes don't</font>
+
+422
+00:13:51,640 --> 00:13:56,080
+<font color="white" size=".72c">make the model much safer, they just end</font>
+
+423
+00:13:53,640 --> 00:13:57,560
+<font color="white" size=".72c">up making it much dumber.</font>
+
+424
+00:13:56,080 --> 00:13:59,400
+<font color="white" size=".72c">Ugh.</font>
+
+425
+00:13:57,560 --> 00:14:00,880
+<font color="white" size=".72c">I would like to show the good parts now</font>
+
+426
+00:13:59,400 --> 00:14:02,520
+<font color="white" size=".72c">because I was actually enjoying the</font>
+
+427
+00:14:00,880 --> 00:14:04,640
+<font color="white" size=".72c">model a lot when I first started trying</font>
+
+428
+00:14:02,520 --> 00:14:06,600
+<font color="white" size=".72c">it in the Claude code CLI because the</font>
+
+429
+00:14:04,640 --> 00:14:08,080
+<font color="white" size=".72c">desktop app is both broken and had that</font>
+
+430
+00:14:06,600 --> 00:14:10,320
+<font color="white" size=".72c">awful little bottom of my system prompt</font>
+
+431
+00:14:08,080 --> 00:14:11,760
+<font color="white" size=".72c">issue. So, I was trying it in the CLI,</font>
+
+432
+00:14:10,320 --> 00:14:13,160
+<font color="white" size=".72c">things are going pretty well. I gave it</font>
+
+433
+00:14:11,760 --> 00:14:15,760
+<font color="white" size=".72c">one of my favorite tasks, which is</font>
+
+434
+00:14:13,160 --> 00:14:17,680
+<font color="white" size=".72c">asking it to modernize my old codebase</font>
+
+435
+00:14:15,760 --> 00:14:19,240
+<font color="white" size=".72c">for Ping, the video service that I</font>
+
+436
+00:14:17,680 --> 00:14:22,040
+<font color="white" size=".72c">haven't really maintained well for</font>
+
+437
+00:14:19,240 --> 00:14:23,480
+<font color="white" size=".72c">4-plus years. So, a lot of the packages</font>
+
+438
+00:14:22,040 --> 00:14:25,600
+<font color="white" size=".72c">are really out of date. Like, we're</font>
+
+439
+00:14:23,480 --> 00:14:28,360
+<font color="white" size=".72c">still on Next.js 12, we're still on</font>
+
+440
+00:14:25,600 --> 00:14:30,400
+<font color="white" size=".72c">React 17. I have this prompt that I have</font>
+
+441
+00:14:28,360 --> 00:14:32,040
+<font color="white" size=".72c">refined over time based on the things</font>
+
+442
+00:14:30,400 --> 00:14:33,800
+<font color="white" size=".72c">I've seen other models get wrong, as</font>
+
+443
+00:14:32,040 --> 00:14:35,560
+<font color="white" size=".72c">well as telling it to do things like</font>
+
+444
+00:14:33,800 --> 00:14:37,760
+<font color="white" size=".72c">remove LogRocket cuz we don't need it</font>
+
+445
+00:14:35,560 --> 00:14:40,120
+<font color="white" size=".72c">anymore. And honestly, I was impressed</font>
+
+446
+00:14:37,760 --> 00:14:42,120
+<font color="white" size=".72c">with the plan it wrote. It was nice and</font>
+
+447
+00:14:40,120 --> 00:14:43,960
+<font color="white" size=".72c">concise. I didn't put it in plan mode, I</font>
+
+448
+00:14:42,120 --> 00:14:46,240
+<font color="white" size=".72c">just put it in the normal mode because I</font>
+
+449
+00:14:43,960 --> 00:14:48,280
+<font color="white" size=".72c">have at the end write a plan first so</font>
+
+450
+00:14:46,240 --> 00:14:50,280
+<font color="white" size=".72c">that we can talk about it. And it wrote</font>
+
+451
+00:14:48,280 --> 00:14:53,080
+<font color="white" size=".72c">a nice concise one that was very easy to</font>
+
+452
+00:14:50,280 --> 00:14:54,360
+<font color="white" size=".72c">read. I was hyped. So, I told it, "Go</font>
+
+453
+00:14:53,080 --> 00:14:56,160
+<font color="white" size=".72c">build."</font>
+
+454
+00:14:54,360 --> 00:14:58,120
+<font color="white" size=".72c">But I made a mistake, a mistake I often</font>
+
+455
+00:14:56,160 --> 00:14:59,960
+<font color="white" size=".72c">make when I trust Anthropic models. I</font>
+
+456
+00:14:58,120 --> 00:15:01,440
+<font color="white" size=".72c">didn't read the plan. And there were a</font>
+
+457
+00:14:59,960 --> 00:15:03,480
+<font color="white" size=".72c">few things in here that should have</font>
+
+458
+00:15:01,440 --> 00:15:06,160
+<font color="white" size=".72c">stood out.</font>
+
+459
+00:15:03,480 --> 00:15:08,920
+<font color="white" size=".72c">One of them was that Tailwind 3 to 4 was</font>
+
+460
+00:15:06,160 --> 00:15:11,760
+<font color="white" size=".72c">recommended here, and Tailwind 4 is a</font>
+
+461
+00:15:08,920 --> 00:15:13,280
+<font color="white" size=".72c">very, very different way of using</font>
+
+462
+00:15:11,760 --> 00:15:15,720
+<font color="white" size=".72c">Tailwind that would not be a pleasant</font>
+
+463
+00:15:13,280 --> 00:15:18,080
+<font color="white" size=".72c">migration. It did kind of say that here,</font>
+
+464
+00:15:15,720 --> 00:15:21,240
+<font color="white" size=".72c">but the much scarier thing here is</font>
+
+465
+00:15:18,080 --> 00:15:24,120
+<font color="white" size=".72c">Next.js 12 to 15.</font>
+
+466
+00:15:21,240 --> 00:15:26,640
+<font color="white" size=".72c">Because Next.js 15 is 2 years old.</font>
+
+467
+00:15:24,120 --> 00:15:29,120
+<font color="white" size=".72c">Next.js 16 is almost a year old. So,</font>
+
+468
+00:15:26,640 --> 00:15:32,560
+<font color="white" size=".72c">despite specifying that I would like to</font>
+
+469
+00:15:29,120 --> 00:15:34,720
+<font color="white" size=".72c">bump all deps to latest versions, it</font>
+
+470
+00:15:32,560 --> 00:15:36,440
+<font color="white" size=".72c">didn't search. It didn't go on the</font>
+
+471
+00:15:34,720 --> 00:15:38,920
+<font color="white" size=".72c">internet. It didn't try to figure out</font>
+
+472
+00:15:36,440 --> 00:15:41,120
+<font color="white" size=".72c">what the actual latest was. Notice here,</font>
+
+473
+00:15:38,920 --> 00:15:42,920
+<font color="white" size=".72c">it didn't do any searching beyond</font>
+
+474
+00:15:41,120 --> 00:15:45,560
+<font color="white" size=".72c">searching for patterns in the file</font>
+
+475
+00:15:42,920 --> 00:15:47,480
+<font color="white" size=".72c">system. So, it never checked what the</font>
+
+476
+00:15:45,560 --> 00:15:49,640
+<font color="white" size=".72c">latest was. So, since their training</font>
+
+477
+00:15:47,480 --> 00:15:51,360
+<font color="white" size=".72c">data still has Next 15 as the newest,</font>
+
+478
+00:15:49,640 --> 00:15:52,920
+<font color="white" size=".72c">that's what it did.</font>
+
+479
+00:15:51,360 --> 00:15:54,640
+<font color="white" size=".72c">So, despite being better at following</font>
+
+480
+00:15:52,920 --> 00:15:56,680
+<font color="white" size=".72c">instructions, it's really bad at</font>
+
+481
+00:15:54,640 --> 00:15:58,360
+<font color="white" size=".72c">understanding the definitions of things</font>
+
+482
+00:15:56,680 --> 00:16:00,240
+<font color="white" size=".72c">and that it doesn't have the latest</font>
+
+483
+00:15:58,360 --> 00:16:02,880
+<font color="white" size=".72c">information. I actually had adjusted</font>
+
+484
+00:16:00,240 --> 00:16:05,120
+<font color="white" size=".72c">this prompt to include bump all deps to</font>
+
+485
+00:16:02,880 --> 00:16:06,880
+<font color="white" size=".72c">latest version because certain models</font>
+
+486
+00:16:05,120 --> 00:16:09,040
+<font color="white" size=".72c">did not do this in the past. I will call</font>
+
+487
+00:16:06,880 --> 00:16:11,000
+<font color="white" size=".72c">it OpenAI accordingly here. Their models</font>
+
+488
+00:16:09,040 --> 00:16:13,520
+<font color="white" size=".72c">would make the same mistake. When I</font>
+
+489
+00:16:11,000 --> 00:16:15,520
+<font color="white" size=".72c">added this latest versions thing, all</font>
+
+490
+00:16:13,520 --> 00:16:19,560
+<font color="white" size=".72c">the OpenAI models stopped having this</font>
+
+491
+00:16:15,520 --> 00:16:21,000
+<font color="white" size=".72c">problem. Suddenly, Opus does.</font>
+
+492
+00:16:19,560 --> 00:16:23,440
+<font color="white" size=".72c">And it's kind of weird that this is the</font>
+
+493
+00:16:21,000 --> 00:16:26,680
+<font color="white" size=".72c">case, that following instructions often</font>
+
+494
+00:16:23,440 --> 00:16:28,160
+<font color="white" size=".72c">means doing less search and less recon</font>
+
+495
+00:16:26,680 --> 00:16:30,480
+<font color="white" size=".72c">work to make sure you're doing it right.</font>
+
+496
+00:16:28,160 --> 00:16:32,480
+<font color="white" size=".72c">It's just following the instructions and</font>
+
+497
+00:16:30,480 --> 00:16:34,720
+<font color="white" size=".72c">that means it's just making dumb</font>
+
+498
+00:16:32,480 --> 00:16:36,720
+<font color="white" size=".72c">mistakes. I let this run for almost an</font>
+
+499
+00:16:34,720 --> 00:16:38,120
+<font color="white" size=".72c">hour before realizing this mistake, told</font>
+
+500
+00:16:36,720 --> 00:16:39,760
+<font color="white" size=".72c">it to fix it and then let it run another</font>
+
+501
+00:16:38,120 --> 00:16:42,880
+<font color="white" size=".72c">30 minutes and the result was a broken</font>
+
+502
+00:16:39,760 --> 00:16:44,720
+<font color="white" size=".72c">build. I was not happy.</font>
+
+503
+00:16:42,880 --> 00:16:47,440
+<font color="white" size=".72c">But, I liked how it talked. I liked how</font>
+
+504
+00:16:44,720 --> 00:16:49,520
+<font color="white" size=".72c">concise this plan was. It was better in</font>
+
+505
+00:16:47,440 --> 00:16:51,760
+<font color="white" size=".72c">ways that matter.</font>
+
+506
+00:16:49,520 --> 00:16:53,760
+<font color="white" size=".72c">It's just also dumber in ways that</font>
+
+507
+00:16:51,760 --> 00:16:55,280
+<font color="white" size=".72c">matter. One of the things that</font>
+
+508
+00:16:53,760 --> 00:16:57,120
+<font color="white" size=".72c">Anthropic's harness with Claude code</font>
+
+509
+00:16:55,280 --> 00:16:59,800
+<font color="white" size=".72c">expects is that when you try to update a</font>
+
+510
+00:16:57,120 --> 00:17:02,120
+<font color="white" size=".72c">file, you read it first.</font>
+
+511
+00:16:59,800 --> 00:17:04,560
+<font color="white" size=".72c">So, here it tried multiple times to</font>
+
+512
+00:17:02,120 --> 00:17:05,640
+<font color="white" size=".72c">update the package.json and failed</font>
+
+513
+00:17:04,560 --> 00:17:07,280
+<font color="white" size=".72c">because the model just doesn't</font>
+
+514
+00:17:05,640 --> 00:17:08,199
+<font color="white" size=".72c">understand their harness.</font>
+
+515
+00:17:07,280 --> 00:17:10,760
+<font color="white" size=".72c">And here's where I'm going to get into</font>
+
+516
+00:17:08,199 --> 00:17:12,680
+<font color="white" size=".72c">one of my hot takes. I don't actually</font>
+
+517
+00:17:10,760 --> 00:17:14,520
+<font color="white" size=".72c">believe Anthropic's models get dumber</font>
+
+518
+00:17:12,680 --> 00:17:16,400
+<font color="white" size=".72c">over time. There are people who measure</font>
+
+519
+00:17:14,520 --> 00:17:18,680
+<font color="white" size=".72c">this and keep track of the range of the</font>
+
+520
+00:17:16,400 --> 00:17:21,439
+<font color="white" size=".72c">scores models get over time. And while</font>
+
+521
+00:17:18,680 --> 00:17:23,280
+<font color="white" size=".72c">it is slightly lower on average than it</font>
+
+522
+00:17:21,439 --> 00:17:26,119
+<font color="white" size=".72c">was before here, like a few points</font>
+
+523
+00:17:23,280 --> 00:17:28,560
+<font color="white" size=".72c">lower, it's not that big a drop. To be</font>
+
+524
+00:17:26,119 --> 00:17:31,120
+<font color="white" size=".72c">fair, 5.4 does seem meaningfully more</font>
+
+525
+00:17:28,560 --> 00:17:33,360
+<font color="white" size=".72c">consistent than Opus does. And here is</font>
+
+526
+00:17:31,120 --> 00:17:35,000
+<font color="white" size=".72c">where my hot take comes in. I think the</font>
+
+527
+00:17:33,360 --> 00:17:37,120
+<font color="white" size=".72c">regressions aren't the model and how</font>
+
+528
+00:17:35,000 --> 00:17:38,640
+<font color="white" size=".72c">it's hosted. I just genuinely think</font>
+
+529
+00:17:37,120 --> 00:17:40,480
+<font color="white" size=".72c">Claude code is this shitty and poorly</font>
+
+530
+00:17:38,640 --> 00:17:42,760
+<font color="white" size=".72c">maintained. I think they keep up</font>
+
+531
+00:17:40,480 --> 00:17:44,440
+<font color="white" size=".72c">Claude code itself, and since the model</font>
+
+532
+00:17:42,760 --> 00:17:47,000
+<font color="white" size=".72c">can't really be better than the harness</font>
+
+533
+00:17:44,440 --> 00:17:47,000
+<font color="white" size=".72c">it's in,</font>
+
+534
+00:17:47,640 --> 00:17:50,960
+<font color="white" size=".72c">of more system prompt of more</font>
+
+535
+00:17:49,480 --> 00:17:53,120
+<font color="white" size=".72c">tools that don't do anything, of more</font>
+
+536
+00:17:50,960 --> 00:17:54,800
+<font color="white" size=".72c">rules like how you have to update by</font>
+
+537
+00:17:53,120 --> 00:17:57,160
+<font color="white" size=".72c">giving permission to the model by</font>
+
+538
+00:17:54,800 --> 00:17:59,080
+<font color="white" size=".72c">letting it read the file first. These</font>
+
+539
+00:17:57,160 --> 00:18:01,680
+<font color="white" size=".72c">are all things that are changing about</font>
+
+540
+00:17:59,080 --> 00:18:03,360
+<font color="white" size=".72c">how the model is allowed to work. If you</font>
+
+541
+00:18:01,680 --> 00:18:05,920
+<font color="white" size=".72c">have a carpenter who's incredibly</font>
+
+542
+00:18:03,360 --> 00:18:08,040
+<font color="white" size=".72c">talented and every few weeks you replace</font>
+
+543
+00:18:05,920 --> 00:18:11,760
+<font color="white" size=".72c">three of their tools with plastic and</font>
+
+544
+00:18:08,040 --> 00:18:13,280
+<font color="white" size=".72c">you fill their toolbox with mud,</font>
+
+545
+00:18:11,760 --> 00:18:14,760
+<font color="white" size=".72c">they're going to perform worse. And</font>
+
+546
+00:18:13,280 --> 00:18:16,160
+<font color="white" size=".72c">people are going to notice that suddenly</font>
+
+547
+00:18:14,760 --> 00:18:18,280
+<font color="white" size=".72c">the things that carpenter is building</font>
+
+548
+00:18:16,160 --> 00:18:19,640
+<font color="white" size=".72c">are shittier and muddy and kind of</font>
+
+549
+00:18:18,280 --> 00:18:21,280
+<font color="white" size=".72c">broken.</font>
+
+550
+00:18:19,640 --> 00:18:23,000
+<font color="white" size=".72c">That's because the harness is falling</font>
+
+551
+00:18:21,280 --> 00:18:24,680
+<font color="white" size=".72c">apart. And it's kind of crazy that</font>
+
+552
+00:18:23,000 --> 00:18:26,640
+<font color="white" size=".72c">Claude code is where a lot of this</font>
+
+553
+00:18:24,680 --> 00:18:28,280
+<font color="white" size=".72c">sentiment when Anthropic's gotten has</font>
+
+554
+00:18:26,640 --> 00:18:29,400
+<font color="white" size=".72c">come from. And at the same time, it</font>
+
+555
+00:18:28,280 --> 00:18:31,280
+<font color="white" size=".72c">might be the thing that kills their</font>
+
+556
+00:18:29,400 --> 00:18:32,960
+<font color="white" size=".72c">sentiment because it's so poorly written</font>
+
+557
+00:18:31,280 --> 00:18:34,200
+<font color="white" size=".72c">and maintained that everybody working on</font>
+
+558
+00:18:32,960 --> 00:18:36,480
+<font color="white" size=".72c">it should start feeling a little bit of</font>
+
+559
+00:18:34,200 --> 00:18:38,040
+<font color="white" size=".72c">shame because it's really bad.</font>
+
+560
+00:18:36,480 --> 00:18:40,080
+<font color="white" size=".72c">The other problem is that inside of</font>
+
+561
+00:18:38,040 --> 00:18:42,240
+<font color="white" size=".72c">Anthropic, they use entirely different</font>
+
+562
+00:18:40,080 --> 00:18:44,080
+<font color="white" size=".72c">things than we use outside. This is not</font>
+
+563
+00:18:42,240 --> 00:18:46,120
+<font color="white" size=".72c">the case with other labs. Google</font>
+
+564
+00:18:44,080 --> 00:18:48,320
+<font color="white" size=".72c">employees are stuck using the same</font>
+
+565
+00:18:46,120 --> 00:18:49,880
+<font color="white" size=".72c">harnesses and models that we are. OpenAI</font>
+
+566
+00:18:48,320 --> 00:18:51,680
+<font color="white" size=".72c">employees are using the exact same</font>
+
+567
+00:18:49,880 --> 00:18:54,080
+<font color="white" size=".72c">builds we are. If anything, they get</font>
+
+568
+00:18:51,680 --> 00:18:56,040
+<font color="white" size=".72c">like a week or two ahead where they have</font>
+
+569
+00:18:54,080 --> 00:18:57,240
+<font color="white" size=".72c">like a new build of the Codex app and</font>
+
+570
+00:18:56,040 --> 00:18:58,400
+<font color="white" size=".72c">then it comes out and everyone has</font>
+
+571
+00:18:57,240 --> 00:19:00,600
+<font color="white" size=".72c">access.</font>
+
+572
+00:18:58,400 --> 00:19:03,160
+<font color="white" size=".72c">Anthropic does not use the same tools</font>
+
+573
+00:19:00,600 --> 00:19:05,480
+<font color="white" size=".72c">they sell. They have their own entire</font>
+
+574
+00:19:03,160 --> 00:19:07,760
+<font color="white" size=".72c">stack of other things internally that</font>
+
+575
+00:19:05,480 --> 00:19:09,040
+<font color="white" size=".72c">don't overlap much with what we use.</font>
+
+576
+00:19:07,760 --> 00:19:10,920
+<font color="white" size=".72c">Their versions of Claude code have a</font>
+
+577
+00:19:09,040 --> 00:19:12,720
+<font color="white" size=".72c">bunch of features and tools and things</font>
+
+578
+00:19:10,920 --> 00:19:14,400
+<font color="white" size=".72c">that we don't have access to. So, when</font>
+
+579
+00:19:12,720 --> 00:19:16,280
+<font color="white" size=".72c">they went up the model, they're probably</font>
+
+580
+00:19:14,400 --> 00:19:17,600
+<font color="white" size=".72c">hyped because for them it's really good.</font>
+
+581
+00:19:16,280 --> 00:19:19,320
+<font color="white" size=".72c">And then when we get to use it in our</font>
+
+582
+00:19:17,600 --> 00:19:21,560
+<font color="white" size=".72c">lobotomized version of Claude code, the</font>
+
+583
+00:19:19,320 --> 00:19:23,600
+<font color="white" size=".72c">result is trash.</font>
+
+584
+00:19:21,560 --> 00:19:25,760
+<font color="white" size=".72c">That is where I think this regression is</font>
+
+585
+00:19:23,600 --> 00:19:26,760
+<font color="white" size=".72c">coming from. I Let me know if you want</font>
+
+586
+00:19:25,760 --> 00:19:28,320
+<font color="white" size=".72c">more info on all of this. I'm</font>
+
+587
+00:19:26,760 --> 00:19:31,120
+<font color="white" size=".72c">considering doing a dedicated video on</font>
+
+588
+00:19:28,320 --> 00:19:32,760
+<font color="white" size=".72c">it because I see so much misinformation.</font>
+
+589
+00:19:31,120 --> 00:19:34,360
+<font color="white" size=".72c">I don't think the APIs are actually</font>
+
+590
+00:19:32,760 --> 00:19:36,640
+<font color="white" size=".72c">performing worse. Everything I've seen</font>
+
+591
+00:19:34,360 --> 00:19:38,600
+<font color="white" size=".72c">measuring it doesn't show that. But I</font>
+
+592
+00:19:36,640 --> 00:19:40,320
+<font color="white" size=".72c">personally have experienced the models</font>
+
+593
+00:19:38,600 --> 00:19:42,320
+<font color="white" size=".72c">feeling so much dumber than they did</font>
+
+594
+00:19:40,320 --> 00:19:44,280
+<font color="white" size=".72c">before. And even today I watched the</font>
+
+595
+00:19:42,320 --> 00:19:45,960
+<font color="white" size=".72c">quality degrade over time. Speaking of</font>
+
+596
+00:19:44,280 --> 00:19:48,040
+<font color="white" size=".72c">which, I want to show some of those</font>
+
+597
+00:19:45,960 --> 00:19:50,800
+<font color="white" size=".72c">logs. Here's the one I mentioned before</font>
+
+598
+00:19:48,040 --> 00:19:52,320
+<font color="white" size=".72c">where it ran for an hour, screwed up a</font>
+
+599
+00:19:50,800 --> 00:19:54,280
+<font color="white" size=".72c">bunch of stuff. I told it to bump to the</font>
+
+600
+00:19:52,320 --> 00:19:56,480
+<font color="white" size=".72c">actual latest, and then it spent 30</font>
+
+601
+00:19:54,280 --> 00:19:58,120
+<font color="white" size=".72c">minutes doing that. Broke a few more</font>
+
+602
+00:19:56,480 --> 00:19:59,920
+<font color="white" size=".72c">things, but it did ultimately end up</font>
+
+603
+00:19:58,120 --> 00:20:03,080
+<font color="white" size=".72c">working. I need to stop saying that</font>
+
+604
+00:19:59,920 --> 00:20:03,080
+<font color="white" size=".72c">before I double-check.</font>
+
+605
+00:20:06,320 --> 00:20:10,280
+<font color="white" size=".72c">God damn Anthropic. I actually thought</font>
+
+606
+00:20:08,320 --> 00:20:12,280
+<font color="white" size=".72c">this build worked. It did before. Seems</font>
+
+607
+00:20:10,280 --> 00:20:13,440
+<font color="white" size=".72c">like the 15 to 16 bump broke other</font>
+
+608
+00:20:12,280 --> 00:20:16,520
+<font color="white" size=".72c">things.</font>
+
+609
+00:20:13,440 --> 00:20:17,920
+<font color="white" size=".72c">Ah, Anthropic. I wanted to test this</font>
+
+610
+00:20:16,520 --> 00:20:19,240
+<font color="white" size=".72c">again, but I didn't have another</font>
+
+611
+00:20:17,920 --> 00:20:21,040
+<font color="white" size=".72c">instance of this, and I wanted to let</font>
+
+612
+00:20:19,240 --> 00:20:23,760
+<font color="white" size=".72c">this very long-running one continue</font>
+
+613
+00:20:21,040 --> 00:20:25,960
+<font color="white" size=".72c">running. So, instead I tried to make a</font>
+
+614
+00:20:23,760 --> 00:20:28,120
+<font color="white" size=".72c">script that would let me take a project</font>
+
+615
+00:20:25,960 --> 00:20:29,120
+<font color="white" size=".72c">and clone it. So, I now have this clone</font>
+
+616
+00:20:28,120 --> 00:20:31,600
+<font color="white" size=".72c">script that I can put in a given</font>
+
+617
+00:20:29,120 --> 00:20:33,240
+<font color="white" size=".72c">project, and what it does is it creates</font>
+
+618
+00:20:31,600 --> 00:20:35,320
+<font color="white" size=".72c">a clone in this hidden quick clones</font>
+
+619
+00:20:33,240 --> 00:20:37,640
+<font color="white" size=".72c">directory with the repo name and then a</font>
+
+620
+00:20:35,320 --> 00:20:39,240
+<font color="white" size=".72c">random hash that moves back to main,</font>
+
+621
+00:20:37,640 --> 00:20:40,880
+<font color="white" size=".72c">which I think is very valuable, copies</font>
+
+622
+00:20:39,240 --> 00:20:44,080
+<font color="white" size=".72c">the environment variables, and then lets</font>
+
+623
+00:20:40,880 --> 00:20:46,440
+<font color="white" size=".72c">you go. Except,</font>
+
+624
+00:20:44,080 --> 00:20:48,560
+<font color="white" size=".72c">it doesn't do that. It carried over some</font>
+
+625
+00:20:46,440 --> 00:20:50,080
+<font color="white" size=".72c">untracked files.</font>
+
+626
+00:20:48,560 --> 00:20:52,640
+<font color="white" size=".72c">It should not have done this. It</font>
+
+627
+00:20:50,080 --> 00:20:54,760
+<font color="white" size=".72c">definitely should not have done this.</font>
+
+628
+00:20:52,640 --> 00:20:57,720
+<font color="white" size=".72c">As you probably can guess, I wrote this</font>
+
+629
+00:20:54,760 --> 00:20:59,240
+<font color="white" size=".72c">script using Opus 4.7. I have a weird</font>
+
+630
+00:20:57,720 --> 00:21:01,880
+<font color="white" size=".72c">idea for a script I want to add to my</font>
+
+631
+00:20:59,240 --> 00:21:04,200
+<font color="white" size=".72c">zshrc. Goal is to make it easy to clone</font>
+
+632
+00:21:01,880 --> 00:21:06,120
+<font color="white" size=".72c">the current repo and contents, i.e., the</font>
+
+633
+00:21:04,200 --> 00:21:07,400
+<font color="white" size=".72c">environment files, without cloning heavy</font>
+
+634
+00:21:06,120 --> 00:21:09,120
+<font color="white" size=".72c">stuff that isn't needed like node</font>
+
+635
+00:21:07,400 --> 00:21:11,440
+<font color="white" size=".72c">modules. I want the clone to be put in a</font>
+
+636
+00:21:09,120 --> 00:21:13,480
+<font color="white" size=".72c">special directory. This is the directory</font>
+
+637
+00:21:11,440 --> 00:21:15,480
+<font color="white" size=".72c">pattern it shows with programmatically</font>
+
+638
+00:21:13,480 --> 00:21:16,640
+<font color="white" size=".72c">generated slugs or names at the end.</font>
+
+639
+00:21:15,480 --> 00:21:18,600
+<font color="white" size=".72c">When I run this command in a given Git</font>
+
+640
+00:21:16,640 --> 00:21:20,400
+<font color="white" size=".72c">repo, it should clone all the files as</font>
+
+641
+00:21:18,600 --> 00:21:21,960
+<font color="white" size=".72c">specified below, then CD to the new</font>
+
+642
+00:21:20,400 --> 00:21:23,200
+<font color="white" size=".72c">directory that it created. I think the</font>
+
+643
+00:21:21,960 --> 00:21:25,320
+<font color="white" size=".72c">command should just be named clone, but</font>
+
+644
+00:21:23,200 --> 00:21:27,000
+<font color="white" size=".72c">I'm down for suggestions.</font>
+
+645
+00:21:25,320 --> 00:21:29,240
+<font color="white" size=".72c">So, it wrote it, and then asked if I</font>
+
+646
+00:21:27,000 --> 00:21:30,800
+<font color="white" size=".72c">wanted to add it to the zshrc.</font>
+
+647
+00:21:29,240 --> 00:21:32,600
+<font color="white" size=".72c">The thing I specifically said it needed</font>
+
+648
+00:21:30,800 --> 00:21:35,880
+<font color="white" size=".72c">to do.</font>
+
+649
+00:21:32,600 --> 00:21:37,520
+<font color="white" size=".72c">It didn't do it, but it offered to.</font>
+
+650
+00:21:35,880 --> 00:21:39,160
+<font color="white" size=".72c">I then asked if it will auto swap the</font>
+
+651
+00:21:37,520 --> 00:21:41,320
+<font color="white" size=".72c">branch to main in the clone. That would</font>
+
+652
+00:21:39,160 --> 00:21:45,080
+<font color="white" size=".72c">be great. Said, "Yep, easy. Add this</font>
+
+653
+00:21:41,320 --> 00:21:45,080
+<font color="white" size=".72c">block right before the final CD."</font>
+
+654
+00:21:45,160 --> 00:21:48,480
+<font color="white" size=".72c">Want me to paste the full updated</font>
+
+655
+00:21:46,400 --> 00:21:50,320
+<font color="white" size=".72c">function or just merge this in yourself?</font>
+
+656
+00:21:48,480 --> 00:21:53,240
+<font color="white" size=".72c">I said, "Update it for me, please." It</font>
+
+657
+00:21:50,320 --> 00:21:53,240
+<font color="white" size=".72c">then added it.</font>
+
+658
+00:21:53,480 --> 00:21:57,400
+<font color="white" size=".72c">I then tried it, and it didn't work. I</font>
+
+659
+00:21:55,800 --> 00:21:59,240
+<font color="white" size=".72c">also think messages are missing here cuz</font>
+
+660
+00:21:57,400 --> 00:22:00,760
+<font color="white" size=".72c">the first time I said, "Please do it."</font>
+
+661
+00:21:59,240 --> 00:22:02,120
+<font color="white" size=".72c">Then I asked it to do the auto swap</font>
+
+662
+00:22:00,760 --> 00:22:04,080
+<font color="white" size=".72c">thing.</font>
+
+663
+00:22:02,120 --> 00:22:05,600
+<font color="white" size=".72c">It made that change.</font>
+
+664
+00:22:04,080 --> 00:22:07,240
+<font color="white" size=".72c">I told it to update it for me, which is</font>
+
+665
+00:22:05,600 --> 00:22:08,600
+<font color="white" size=".72c">insane cuz I asked it to do this thing,</font>
+
+666
+00:22:07,240 --> 00:22:10,120
+<font color="white" size=".72c">and then I have to tell it, "Yes, I do</font>
+
+667
+00:22:08,600 --> 00:22:12,240
+<font color="white" size=".72c">actually want you to go do the thing."</font>
+
+668
+00:22:10,120 --> 00:22:13,920
+<font color="white" size=".72c">So, it made this new function with the</font>
+
+669
+00:22:12,240 --> 00:22:15,520
+<font color="white" size=".72c">update. Just tried the script. It</font>
+
+670
+00:22:13,920 --> 00:22:18,000
+<font color="white" size=".72c">brought over a bunch of unstaged</font>
+
+671
+00:22:15,520 --> 00:22:19,880
+<font color="white" size=".72c">changes. Gross. Pasted an image of it</font>
+
+672
+00:22:18,000 --> 00:22:21,960
+<font color="white" size=".72c">bringing those changes over.</font>
+
+673
+00:22:19,880 --> 00:22:23,440
+<font color="white" size=".72c">Oh, yeah. Arson copied the dirty working</font>
+
+674
+00:22:21,960 --> 00:22:25,360
+<font color="white" size=".72c">tree. The fix is to use Git clone for</font>
+
+675
+00:22:23,440 --> 00:22:26,840
+<font color="white" size=".72c">tracked files.</font>
+
+676
+00:22:25,360 --> 00:22:29,560
+<font color="white" size=".72c">And only Arson copied the Git ignored</font>
+
+677
+00:22:26,840 --> 00:22:31,640
+<font color="white" size=".72c">stuff like .env. I say, "I just tried it</font>
+
+678
+00:22:29,560 --> 00:22:33,600
+<font color="white" size=".72c">again, and it did not switch the branch.</font>
+
+679
+00:22:31,640 --> 00:22:34,840
+<font color="white" size=".72c">The thing I asked earlier." And then it</font>
+
+680
+00:22:33,600 --> 00:22:36,840
+<font color="white" size=".72c">stopped copying the environment</font>
+
+681
+00:22:34,840 --> 00:22:38,880
+<font color="white" size=".72c">variables. The literal first thing I</font>
+
+682
+00:22:36,840 --> 00:22:41,280
+<font color="white" size=".72c">mentioned up here. Ah, I was filtering</font>
+
+683
+00:22:38,880 --> 00:22:42,800
+<font color="white" size=".72c">to only get ignored untracked files via</font>
+
+684
+00:22:41,280 --> 00:22:45,000
+<font color="white" size=".72c">{dash} {dash} ignore {dash} {dash}</font>
+
+685
+00:22:42,800 --> 00:22:46,800
+<font color="white" size=".72c">exclude standard. But many projects</font>
+
+686
+00:22:45,000 --> 00:22:49,040
+<font color="white" size=".72c">don't actually have .env in their</font>
+
+687
+00:22:46,800 --> 00:22:52,360
+<font color="white" size=".72c">.gitignore. They have env.local or</font>
+
+688
+00:22:49,040 --> 00:22:54,480
+<font color="white" size=".72c">star.env.local. .env is just untracked.</font>
+
+689
+00:22:52,360 --> 00:22:57,000
+<font color="white" size=".72c">That is not how that works. But sure,</font>
+
+690
+00:22:54,480 --> 00:23:00,240
+<font color="white" size=".72c">hallucinate all you want. By the way, in</font>
+
+691
+00:22:57,000 --> 00:23:03,640
+<font color="white" size=".72c">this project, Git ignore does have .env</font>
+
+692
+00:23:00,240 --> 00:23:06,160
+<font color="white" size=".72c">directly. So, it's just wrong.</font>
+
+693
+00:23:03,640 --> 00:23:08,320
+<font color="white" size=".72c">And it didn't bother to check or asked,</font>
+
+694
+00:23:06,160 --> 00:23:10,280
+<font color="white" size=".72c">it just made up more</font>
+
+695
+00:23:08,320 --> 00:23:13,240
+<font color="white" size=".72c">I said that did not work. It asked for</font>
+
+696
+00:23:10,280 --> 00:23:14,840
+<font color="white" size=".72c">diagnostic info, so I ran this. I pasted</font>
+
+697
+00:23:13,240 --> 00:23:16,800
+<font color="white" size=".72c">the screenshot.</font>
+
+698
+00:23:14,840 --> 00:23:18,720
+<font color="white" size=".72c">Okay, .env is exactly where it should</font>
+
+699
+00:23:16,800 --> 00:23:20,920
+<font color="white" size=".72c">be, untracked and ignored listed by Git.</font>
+
+700
+00:23:18,720 --> 00:23:22,640
+<font color="white" size=".72c">So, the bug is in my rsync {dash} {dash}</font>
+
+701
+00:23:20,920 --> 00:23:24,880
+<font color="white" size=".72c">files from call. I then went and tried</font>
+
+702
+00:23:22,640 --> 00:23:26,840
+<font color="white" size=".72c">again and it had the exact behavior I</font>
+
+703
+00:23:24,880 --> 00:23:28,960
+<font color="white" size=".72c">just showed.</font>
+
+704
+00:23:26,840 --> 00:23:30,960
+<font color="white" size=".72c">Where it did bring the .env file</font>
+
+705
+00:23:28,960 --> 00:23:32,840
+<font color="white" size=".72c">finally, but it also brought all of</font>
+
+706
+00:23:30,960 --> 00:23:35,480
+<font color="white" size=".72c">these other files that weren't committed</font>
+
+707
+00:23:32,840 --> 00:23:37,480
+<font color="white" size=".72c">from the other branch. The This is</font>
+
+708
+00:23:35,480 --> 00:23:40,320
+<font color="white" size=".72c">the way I think GPT-4.1 could have done</font>
+
+709
+00:23:37,480 --> 00:23:43,600
+<font color="white" size=".72c">and I can't get Opus 4.7 to do it. It's</font>
+
+710
+00:23:40,320 --> 00:23:45,000
+<font color="white" size=".72c">insane. It's actually crazy. I</font>
+
+711
+00:23:43,600 --> 00:23:46,240
+<font color="white" size=".72c">This is the moment where I went from,</font>
+
+712
+00:23:45,000 --> 00:23:48,080
+<font color="white" size=".72c">"Oh, I kind of like using this and</font>
+
+713
+00:23:46,240 --> 00:23:49,560
+<font color="white" size=".72c">talking to it." to "I literally can't</font>
+
+714
+00:23:48,080 --> 00:23:51,320
+<font color="white" size=".72c">use this model for any of the things I</font>
+
+715
+00:23:49,560 --> 00:23:54,280
+<font color="white" size=".72c">do." This is the type of script I write</font>
+
+716
+00:23:51,320 --> 00:23:55,920
+<font color="white" size=".72c">lots of for just random tasks because I</font>
+
+717
+00:23:54,280 --> 00:23:57,280
+<font color="white" size=".72c">Once I do a thing twice, I'm like, "Oh,</font>
+
+718
+00:23:55,920 --> 00:23:58,880
+<font color="white" size=".72c">it would be nice if I had a script for</font>
+
+719
+00:23:57,280 --> 00:24:00,480
+<font color="white" size=".72c">that." And using these tools to make</font>
+
+720
+00:23:58,880 --> 00:24:02,360
+<font color="white" size=".72c">those scripts is really, really useful.</font>
+
+721
+00:24:00,480 --> 00:24:04,280
+<font color="white" size=".72c">It's one of my favorite things about all</font>
+
+722
+00:24:02,360 --> 00:24:06,840
+<font color="white" size=".72c">of these agentic coding tools.</font>
+
+723
+00:24:04,280 --> 00:24:09,280
+<font color="white" size=".72c">And it can't even do that.</font>
+
+724
+00:24:06,840 --> 00:24:11,000
+<font color="white" size=".72c">Yeah, yeah. But once I finally got it</font>
+
+725
+00:24:09,280 --> 00:24:13,400
+<font color="white" size=".72c">cloned and I fixed the things that were</font>
+
+726
+00:24:11,000 --> 00:24:15,840
+<font color="white" size=".72c">wrong, I did another run of the</font>
+
+727
+00:24:13,400 --> 00:24:18,160
+<font color="white" size=".72c">modernizing project request.</font>
+
+728
+00:24:15,840 --> 00:24:19,920
+<font color="white" size=".72c">Exact same prompt here. This time it</font>
+
+729
+00:24:18,160 --> 00:24:21,520
+<font color="white" size=".72c">behaved differently though.</font>
+
+730
+00:24:19,920 --> 00:24:22,920
+<font color="white" size=".72c">Here's my plan. Ordered to minimize</font>
+
+731
+00:24:21,520 --> 00:24:24,600
+<font color="white" size=".72c">rework. It created phases for the</font>
+
+732
+00:24:22,920 --> 00:24:26,680
+<font color="white" size=".72c">different things it's going to do. Then</font>
+
+733
+00:24:24,600 --> 00:24:28,480
+<font color="white" size=".72c">it said, "Let me register these as tasks</font>
+
+734
+00:24:26,680 --> 00:24:30,880
+<font color="white" size=".72c">and start."</font>
+
+735
+00:24:28,480 --> 00:24:33,160
+<font color="white" size=".72c">And it just immediately started without</font>
+
+736
+00:24:30,880 --> 00:24:35,840
+<font color="white" size=".72c">waiting for my permission. Exact same</font>
+
+737
+00:24:33,160 --> 00:24:38,840
+<font color="white" size=".72c">prompt, exact same model, exact same</font>
+
+738
+00:24:35,840 --> 00:24:41,000
+<font color="white" size=".72c">project, entirely different behaviors.</font>
+
+739
+00:24:38,840 --> 00:24:42,360
+<font color="white" size=".72c">But it did keep one thing consistent. It</font>
+
+740
+00:24:41,000 --> 00:24:44,640
+<font color="white" size=".72c">still didn't bother looking up what the</font>
+
+741
+00:24:42,360 --> 00:24:47,400
+<font color="white" size=".72c">latest Next.js version was.</font>
+
+742
+00:24:44,640 --> 00:24:49,040
+<font color="white" size=".72c">Yep, it was still going to use 15. Just</font>
+
+743
+00:24:47,400 --> 00:24:50,440
+<font color="white" size=".72c">to confirm my hypothesis that this is a</font>
+
+744
+00:24:49,040 --> 00:24:53,160
+<font color="white" size=".72c">Claude code problem, I'm going to bring</font>
+
+745
+00:24:50,440 --> 00:24:54,720
+<font color="white" size=".72c">up our old favorite Cursor and see how</font>
+
+746
+00:24:53,160 --> 00:24:56,440
+<font color="white" size=".72c">it behaves because the Cursor harness</font>
+
+747
+00:24:54,720 --> 00:24:58,640
+<font color="white" size=".72c">has historically been very good at</font>
+
+748
+00:24:56,440 --> 00:25:01,640
+<font color="white" size=".72c">unlobotomizing Opus models and just</font>
+
+749
+00:24:58,640 --> 00:25:04,800
+<font color="white" size=".72c">infra-optic models in general.</font>
+
+750
+00:25:01,640 --> 00:25:06,720
+<font color="white" size=".72c">Will it appear in the new UI? It will.</font>
+
+751
+00:25:04,800 --> 00:25:08,160
+<font color="white" size=".72c">It does seem pretty committed to Next 15</font>
+
+752
+00:25:06,720 --> 00:25:09,400
+<font color="white" size=".72c">still. It has not looked up or run</font>
+
+753
+00:25:08,160 --> 00:25:11,120
+<font color="white" size=".72c">commands to make sure it's actually the</font>
+
+754
+00:25:09,400 --> 00:25:12,800
+<font color="white" size=".72c">latest. Yeah, it's still going to have</font>
+
+755
+00:25:11,120 --> 00:25:14,080
+<font color="white" size=".72c">all the same problems.</font>
+
+756
+00:25:12,800 --> 00:25:17,400
+<font color="white" size=".72c">Just to make sure this isn't a problem</font>
+
+757
+00:25:14,080 --> 00:25:19,880
+<font color="white" size=".72c">cuz I'm on an old version, we should uh</font>
+
+758
+00:25:17,400 --> 00:25:23,120
+<font color="white" size=".72c">rerun this</font>
+
+759
+00:25:19,880 --> 00:25:26,040
+<font color="white" size=".72c">in the entirely broken and freezing new</font>
+
+760
+00:25:23,120 --> 00:25:29,080
+<font color="white" size=".72c">Cursor app. I love that. I got I I dream</font>
+
+761
+00:25:26,040 --> 00:25:30,960
+<font color="white" size=".72c">of a world where this stuff works.</font>
+
+762
+00:25:29,080 --> 00:25:32,640
+<font color="white" size=".72c">I would use T3 Code, but it's the exact</font>
+
+763
+00:25:30,960 --> 00:25:35,080
+<font color="white" size=".72c">same harness because one of the things</font>
+
+764
+00:25:32,640 --> 00:25:37,040
+<font color="white" size=".72c">that makes T3 Code so cool is that it is</font>
+
+765
+00:25:35,080 --> 00:25:39,400
+<font color="white" size=".72c">literally just using the harness that is</font>
+
+766
+00:25:37,040 --> 00:25:40,800
+<font color="white" size=".72c">used by the official app. So, if you use</font>
+
+767
+00:25:39,400 --> 00:25:42,680
+<font color="white" size=".72c">Claude models in T3 Code, it's just</font>
+
+768
+00:25:40,800 --> 00:25:44,520
+<font color="white" size=".72c">going to use Claude Code. If you use GPT</font>
+
+769
+00:25:42,680 --> 00:25:45,760
+<font color="white" size=".72c">models, it's just using Codex. So, you</font>
+
+770
+00:25:44,520 --> 00:25:48,040
+<font color="white" size=".72c">have to bring your own sub from those</font>
+
+771
+00:25:45,760 --> 00:25:49,440
+<font color="white" size=".72c">things. T3 Code's fully open source.</font>
+
+772
+00:25:48,040 --> 00:25:51,680
+<font color="white" size=".72c">But, we're not building a harness. We're</font>
+
+773
+00:25:49,440 --> 00:25:53,800
+<font color="white" size=".72c">just building a UI. Cursor's building a</font>
+
+774
+00:25:51,680 --> 00:25:55,160
+<font color="white" size=".72c">harness and they're experimenting with</font>
+
+775
+00:25:53,800 --> 00:25:57,280
+<font color="white" size=".72c">other harnesses under the hood. Like</font>
+
+776
+00:25:55,160 --> 00:25:59,520
+<font color="white" size=".72c">some percentage of users just get Claude</font>
+
+777
+00:25:57,280 --> 00:26:00,960
+<font color="white" size=".72c">Code when they do this inside of Cursor</font>
+
+778
+00:25:59,520 --> 00:26:02,800
+<font color="white" size=".72c">because they're testing the differences</font>
+
+779
+00:26:00,960 --> 00:26:04,240
+<font color="white" size=".72c">to see what their harness does better</font>
+
+780
+00:26:02,800 --> 00:26:07,440
+<font color="white" size=".72c">and worse. While that's running, I do</font>
+
+781
+00:26:04,240 --> 00:26:07,440
+<font color="white" size=".72c">have one more test I want to run.</font>
+
+782
+00:26:07,560 --> 00:26:11,760
+<font color="white" size=".72c">Same thing, but a model that I know is a</font>
+
+783
+00:26:09,840 --> 00:26:13,560
+<font color="white" size=".72c">little bit more competent.</font>
+
+784
+00:26:11,760 --> 00:26:15,400
+<font color="white" size=".72c">See if 5.4 makes the same mistakes. I</font>
+
+785
+00:26:13,560 --> 00:26:17,200
+<font color="white" size=".72c">have a feeling it won't. Spinning up</font>
+
+786
+00:26:15,400 --> 00:26:19,440
+<font color="white" size=".72c">researchers in the background. That's</font>
+
+787
+00:26:17,200 --> 00:26:22,200
+<font color="white" size=".72c">cool to see.</font>
+
+788
+00:26:19,440 --> 00:26:24,840
+<font color="white" size=".72c">Opus didn't do that. React 19 in Next</font>
+
+789
+00:26:22,200 --> 00:26:27,160
+<font color="white" size=".72c">15, true latest.</font>
+
+790
+00:26:24,840 --> 00:26:30,480
+<font color="white" size=".72c">It is not true latest. Next 16's been</font>
+
+791
+00:26:27,160 --> 00:26:30,480
+<font color="white" size=".72c">around for a while.</font>
+
+792
+00:26:30,720 --> 00:26:35,280
+<font color="white" size=".72c">And let's see how 5.4 does.</font>
+
+793
+00:26:33,840 --> 00:26:37,720
+<font color="white" size=".72c">This is all happening live. I'm not</font>
+
+794
+00:26:35,280 --> 00:26:39,280
+<font color="white" size=".72c">faking this.</font>
+
+795
+00:26:37,720 --> 00:26:40,680
+<font color="white" size=".72c">I don't know. With Next 15, it seems</font>
+
+796
+00:26:39,280 --> 00:26:41,600
+<font color="white" size=".72c">there may have been changes. Oh, no.</font>
+
+797
+00:26:40,680 --> 00:26:43,640
+<font color="white" size=".72c">Don't tell me he's going to stick with</font>
+
+798
+00:26:41,600 --> 00:26:45,640
+<font color="white" size=".72c">Next 15. What target should the</font>
+
+799
+00:26:43,640 --> 00:26:47,680
+<font color="white" size=".72c">modernization plan optimize for? Latest</font>
+
+800
+00:26:45,640 --> 00:26:49,000
+<font color="white" size=".72c">stable majors everywhere practical. Aim</font>
+
+801
+00:26:47,680 --> 00:26:51,440
+<font color="white" size=".72c">for current stable Next and React on</font>
+
+802
+00:26:49,000 --> 00:26:53,320
+<font color="white" size=".72c">pages, router, Node 22, PNPM, and latest</font>
+
+803
+00:26:51,440 --> 00:26:55,640
+<font color="white" size=".72c">major dep upgrades even if it requires</font>
+
+804
+00:26:53,320 --> 00:26:57,560
+<font color="white" size=".72c">larger code migrations. Yep. Please,</font>
+
+805
+00:26:55,640 --> 00:26:59,680
+<font color="white" size=".72c">5.4,</font>
+
+806
+00:26:57,560 --> 00:27:01,360
+<font color="white" size=".72c">make me look like less of a page shell.</font>
+
+807
+00:26:59,680 --> 00:27:03,320
+<font color="white" size=".72c">Do this right. Or actually, do it wrong,</font>
+
+808
+00:27:01,360 --> 00:27:05,000
+<font color="white" size=".72c">so I can complain about it.</font>
+
+809
+00:27:03,320 --> 00:27:07,080
+<font color="white" size=".72c">Interesting. It didn't write down</font>
+
+810
+00:27:05,000 --> 00:27:08,800
+<font color="white" size=".72c">specific versions here.</font>
+
+811
+00:27:07,080 --> 00:27:11,160
+<font color="white" size=".72c">Inventory current versions and lock</font>
+
+812
+00:27:08,800 --> 00:27:14,080
+<font color="white" size=".72c">exact latest stable targets, plus known</font>
+
+813
+00:27:11,160 --> 00:27:16,520
+<font color="white" size=".72c">peer dependency constraints.</font>
+
+814
+00:27:14,080 --> 00:27:18,160
+<font color="white" size=".72c">It's not stuck on Next 15 here, but it's</font>
+
+815
+00:27:16,520 --> 00:27:20,240
+<font color="white" size=".72c">still not realizing what the right</font>
+
+816
+00:27:18,160 --> 00:27:21,880
+<font color="white" size=".72c">solution is. But I'm hoping here it's</font>
+
+817
+00:27:20,240 --> 00:27:25,200
+<font color="white" size=".72c">going to figure things out right. What</font>
+
+818
+00:27:21,880 --> 00:27:26,920
+<font color="white" size=".72c">versions of the packages are you going</font>
+
+819
+00:27:25,200 --> 00:27:28,440
+<font color="white" size=".72c">to use? It says it's up to me to check</font>
+
+820
+00:27:26,920 --> 00:27:29,400
+<font color="white" size=".72c">for the most current stable versions,</font>
+
+821
+00:27:28,440 --> 00:27:30,760
+<font color="white" size=".72c">which might not be included in my</font>
+
+822
+00:27:29,400 --> 00:27:33,640
+<font color="white" size=".72c">training data.</font>
+
+823
+00:27:30,760 --> 00:27:35,720
+<font color="white" size=".72c">Wow. Who would have thought? Thank you,</font>
+
+824
+00:27:33,640 --> 00:27:37,720
+<font color="white" size=".72c">OpenAI, for making a model that doesn't</font>
+
+825
+00:27:35,720 --> 00:27:40,240
+<font color="white" size=".72c">assume it knows everything already. Look</font>
+
+826
+00:27:37,720 --> 00:27:43,160
+<font color="white" size=".72c">at that. Next 16. I've not seen Next 16</font>
+
+827
+00:27:40,240 --> 00:27:45,440
+<font color="white" size=".72c">mentioned by any models today before.</font>
+
+828
+00:27:43,160 --> 00:27:47,600
+<font color="white" size=".72c">It's a relief. I Every time I spend too</font>
+
+829
+00:27:45,440 --> 00:27:49,600
+<font color="white" size=".72c">much time in Opus or Anthropic models, I</font>
+
+830
+00:27:47,600 --> 00:27:52,000
+<font color="white" size=".72c">feel this deep sense of relief when I go</font>
+
+831
+00:27:49,600 --> 00:27:54,000
+<font color="white" size=".72c">back OpenAI once. Look, it's actually</font>
+
+832
+00:27:52,000 --> 00:27:58,320
+<font color="white" size=".72c">fetching pages that have the info that</font>
+
+833
+00:27:54,000 --> 00:28:00,640
+<font color="white" size=".72c">we need. Crazy. Oh, God.</font>
+
+834
+00:27:58,320 --> 00:28:02,200
+<font color="white" size=".72c">Insane. Actually insane. There are some</font>
+
+835
+00:28:00,640 --> 00:28:03,680
+<font color="white" size=".72c">things that are actually improving in</font>
+
+836
+00:28:02,200 --> 00:28:05,120
+<font color="white" size=".72c">Claude code. Like, I'm using the new</font>
+
+837
+00:28:03,680 --> 00:28:08,400
+<font color="white" size=".72c">full-screen view, which is great, cuz</font>
+
+838
+00:28:05,120 --> 00:28:09,960
+<font color="white" size=".72c">you can select text, and it will copy it</font>
+
+839
+00:28:08,400 --> 00:28:13,120
+<font color="white" size=".72c">properly.</font>
+
+840
+00:28:09,960 --> 00:28:17,360
+<font color="white" size=".72c">At least it's supposed to. Let me select</font>
+
+841
+00:28:13,120 --> 00:28:17,360
+<font color="white" size=".72c">this and hop over here.</font>
+
+842
+00:28:18,600 --> 00:28:22,560
+<font color="white" size=".72c">Yeah, cool. It doesn't do the weird line</font>
+
+843
+00:28:20,360 --> 00:28:24,720
+<font color="white" size=".72c">spacing anywhere near as badly now.</font>
+
+844
+00:28:22,560 --> 00:28:26,760
+<font color="white" size=".72c">That's a legitimate improvement.</font>
+
+845
+00:28:24,720 --> 00:28:28,000
+<font color="white" size=".72c">It also is a lot less laggy. They've</font>
+
+846
+00:28:26,760 --> 00:28:29,160
+<font color="white" size=".72c">done some hacks for that. Like, they</font>
+
+847
+00:28:28,000 --> 00:28:30,600
+<font color="white" size=".72c">don't stream in tokens anywhere. They</font>
+
+848
+00:28:29,160 --> 00:28:32,120
+<font color="white" size=".72c">stream in lines.</font>
+
+849
+00:28:30,600 --> 00:28:34,200
+<font color="white" size=".72c">But it is better. I actually think the</font>
+
+850
+00:28:32,120 --> 00:28:37,320
+<font color="white" size=".72c">full-screen version of Claude code that</font>
+
+851
+00:28:34,200 --> 00:28:38,680
+<font color="white" size=".72c">uses the alt screen rendering method</font>
+
+852
+00:28:37,320 --> 00:28:40,640
+<font color="white" size=".72c">is a lot less problematic than the</font>
+
+853
+00:28:38,680 --> 00:28:41,880
+<font color="white" size=".72c">traditional one. So, that's a cool</font>
+
+854
+00:28:40,640 --> 00:28:43,600
+<font color="white" size=".72c">thing.</font>
+
+855
+00:28:41,880 --> 00:28:47,480
+<font color="white" size=".72c">They also put in a new permissions mode</font>
+
+856
+00:28:43,600 --> 00:28:47,480
+<font color="white" size=".72c">that's pretty cool. They have</font>
+
+857
+00:28:48,920 --> 00:28:53,120
+<font color="white" size=".72c">Okay, I can't get it to trigger here.</font>
+
+858
+00:28:51,400 --> 00:28:55,040
+<font color="white" size=".72c">They added auto mode, which means</font>
+
+859
+00:28:53,120 --> 00:28:57,000
+<font color="white" size=".72c">there's no more permission prompts. Opus</font>
+
+860
+00:28:55,040 --> 00:28:58,760
+<font color="white" size=".72c">loves doing complex long-running tasks</font>
+
+861
+00:28:57,000 --> 00:29:00,400
+<font color="white" size=".72c">like deep research, refactoring code,</font>
+
+862
+00:28:58,760 --> 00:29:02,320
+<font color="white" size=".72c">building features, and iterating until</font>
+
+863
+00:29:00,400 --> 00:29:03,520
+<font color="white" size=".72c">it hits a performance benchmark. In the</font>
+
+864
+00:29:02,320 --> 00:29:05,200
+<font color="white" size=".72c">past, you either had to babysit the</font>
+
+865
+00:29:03,520 --> 00:29:07,120
+<font color="white" size=".72c">model while it did these long tasks or</font>
+
+866
+00:29:05,200 --> 00:29:08,960
+<font color="white" size=".72c">use dangerously skip permissions. We</font>
+
+867
+00:29:07,120 --> 00:29:10,960
+<font color="white" size=".72c">recently rolled out auto mode as a safer</font>
+
+868
+00:29:08,960 --> 00:29:12,320
+<font color="white" size=".72c">alternative. In this mode, the</font>
+
+869
+00:29:10,960 --> 00:29:14,520
+<font color="white" size=".72c">permission prompts are routed to a</font>
+
+870
+00:29:12,320 --> 00:29:16,280
+<font color="white" size=".72c">model-based classifier to decide whether</font>
+
+871
+00:29:14,520 --> 00:29:18,520
+<font color="white" size=".72c">the command is safe to run. If it's</font>
+
+872
+00:29:16,280 --> 00:29:20,120
+<font color="white" size=".72c">safe, it's auto-approved.</font>
+
+873
+00:29:18,520 --> 00:29:21,240
+<font color="white" size=".72c">This is a really good thing. I'm hyped</font>
+
+874
+00:29:20,120 --> 00:29:23,320
+<font color="white" size=".72c">to see it. It's a shame the mode isn't</font>
+
+875
+00:29:21,240 --> 00:29:25,800
+<font color="white" size=".72c">appearing here. The thing that really</font>
+
+876
+00:29:23,320 --> 00:29:28,000
+<font color="white" size=".72c">annoyed me here is that I always use</font>
+
+877
+00:29:25,800 --> 00:29:30,120
+<font color="white" size=".72c">bypass permissions. I have a special</font>
+
+878
+00:29:28,000 --> 00:29:32,000
+<font color="white" size=".72c">command bound, so I always use bypass</font>
+
+879
+00:29:30,120 --> 00:29:33,440
+<font color="white" size=".72c">permissions. As you see here, bypass</font>
+
+880
+00:29:32,000 --> 00:29:35,840
+<font color="white" size=".72c">permissions is on.</font>
+
+881
+00:29:33,440 --> 00:29:39,120
+<font color="white" size=".72c">So, why did I have to give permission</font>
+
+882
+00:29:35,840 --> 00:29:41,360
+<font color="white" size=".72c">over and over again today?</font>
+
+883
+00:29:39,120 --> 00:29:43,160
+<font color="white" size=".72c">This is a real video I recorded because</font>
+
+884
+00:29:41,360 --> 00:29:44,640
+<font color="white" size=".72c">I couldn't believe it. This was when I</font>
+
+885
+00:29:43,160 --> 00:29:46,480
+<font color="white" size=".72c">was doing that script change I was</font>
+
+886
+00:29:44,640 --> 00:29:48,600
+<font color="white" size=".72c">showing earlier. It asked me if I wanted</font>
+
+887
+00:29:46,480 --> 00:29:51,080
+<font color="white" size=".72c">to make edits to the file. Notice how</font>
+
+888
+00:29:48,600 --> 00:29:53,600
+<font color="white" size=".72c">when I hit yes and I said yes, allow</font>
+
+889
+00:29:51,080 --> 00:29:55,240
+<font color="white" size=".72c">edits,</font>
+
+890
+00:29:53,600 --> 00:29:58,680
+<font color="white" size=".72c">it goes back here and it still says</font>
+
+891
+00:29:55,240 --> 00:29:58,680
+<font color="white" size=".72c">bypass permissions.</font>
+
+892
+00:29:58,720 --> 00:30:04,560
+<font color="white" size=".72c">It just stopped working.</font>
+
+893
+00:30:00,720 --> 00:30:08,280
+<font color="white" size=".72c">So, not only did the slopified auto mode</font>
+
+894
+00:30:04,560 --> 00:30:09,920
+<font color="white" size=".72c">that they vibe merged not work, it broke</font>
+
+895
+00:30:08,280 --> 00:30:13,680
+<font color="white" size=".72c">the one thing they're trying to replace,</font>
+
+896
+00:30:09,920 --> 00:30:13,680
+<font color="white" size=".72c">which is dangerously skip permissions.</font>
+
+897
+00:30:14,000 --> 00:30:17,840
+<font color="white" size=".72c">This is why I don't like using Impropic</font>
+
+898
+00:30:15,800 --> 00:30:20,120
+<font color="white" size=".72c">stuff. It feels like if it works one</font>
+
+899
+00:30:17,840 --> 00:30:23,520
+<font color="white" size=".72c">day, you are lucky, and if it doesn't</font>
+
+900
+00:30:20,120 --> 00:30:24,960
+<font color="white" size=".72c">work the next day, that's just life.</font>
+
+901
+00:30:23,520 --> 00:30:26,800
+<font color="white" size=".72c">There's a really cool thing going on in</font>
+
+902
+00:30:24,960 --> 00:30:28,400
+<font color="white" size=".72c">the startup world. All of a sudden, big</font>
+
+903
+00:30:26,800 --> 00:30:30,240
+<font color="white" size=".72c">companies are interested in trying out</font>
+
+904
+00:30:28,400 --> 00:30:31,880
+<font color="white" size=".72c">things by small teams. I know companies</font>
+
+905
+00:30:30,240 --> 00:30:34,080
+<font color="white" size=".72c">of five people that are getting hit up</font>
+
+906
+00:30:31,880 --> 00:30:35,920
+<font color="white" size=".72c">by Cursor, Microsoft, and more, but the</font>
+
+907
+00:30:34,080 --> 00:30:37,840
+<font color="white" size=".72c">thing that they need in order to onboard</font>
+
+908
+00:30:35,920 --> 00:30:39,800
+<font color="white" size=".72c">is off. Getting off right is not as</font>
+
+909
+00:30:37,840 --> 00:30:41,320
+<font color="white" size=".72c">simple as it sounds. That's why WorkOS</font>
+
+910
+00:30:39,800 --> 00:30:43,120
+<font color="white" size=".72c">is such a cool company to have as a</font>
+
+911
+00:30:41,320 --> 00:30:45,160
+<font color="white" size=".72c">sponsor, and that's why we use it in T3</font>
+
+912
+00:30:43,120 --> 00:30:47,880
+<font color="white" size=".72c">chat, as well as companies like OpenAI</font>
+
+913
+00:30:45,160 --> 00:30:49,800
+<font color="white" size=".72c">and Bropic, Cursor, Amp, Plaid, Replit,</font>
+
+914
+00:30:47,880 --> 00:30:51,280
+<font color="white" size=".72c">Bolt, and basically every other company</font>
+
+915
+00:30:49,800 --> 00:30:52,800
+<font color="white" size=".72c">selling to enterprise is starting to</font>
+
+916
+00:30:51,280 --> 00:30:54,520
+<font color="white" size=".72c">make the move. The reason why is pretty</font>
+
+917
+00:30:52,800 --> 00:30:55,880
+<font color="white" size=".72c">simple. WorkOS strikes an awesome</font>
+
+918
+00:30:54,520 --> 00:30:57,520
+<font color="white" size=".72c">balance between good developer</font>
+
+919
+00:30:55,880 --> 00:30:59,080
+<font color="white" size=".72c">experience and good enterprise</font>
+
+920
+00:30:57,520 --> 00:31:01,000
+<font color="white" size=".72c">integrations. When you need to set up</font>
+
+921
+00:30:59,080 --> 00:31:02,760
+<font color="white" size=".72c">SSO for a company, things can get</font>
+
+922
+00:31:01,000 --> 00:31:03,920
+<font color="white" size=".72c">sketchy. If Microsoft hit you up today</font>
+
+923
+00:31:02,760 --> 00:31:05,400
+<font color="white" size=".72c">and said, "Hey, we want to use your</font>
+
+924
+00:31:03,920 --> 00:31:07,080
+<font color="white" size=".72c">product. Do you have all the stuff you</font>
+
+925
+00:31:05,400 --> 00:31:08,560
+<font color="white" size=".72c">need to get them onboarded so they can</font>
+
+926
+00:31:07,080 --> 00:31:11,040
+<font color="white" size=".72c">use their company off?" Well, if you've</font>
+
+927
+00:31:08,560 --> 00:31:13,880
+<font color="white" size=".72c">never heard terms like SAML, Okta, Duo,</font>
+
+928
+00:31:11,040 --> 00:31:15,800
+<font color="white" size=".72c">ADFS, Ping One, or ADP, you're probably</font>
+
+929
+00:31:13,880 --> 00:31:17,280
+<font color="white" size=".72c">screwed. I have heard those terms, and I</font>
+
+930
+00:31:15,800 --> 00:31:19,440
+<font color="white" size=".72c">was screwed. That's why we moved to</font>
+
+931
+00:31:17,280 --> 00:31:21,040
+<font color="white" size=".72c">WorkOS for T3 chat in order to onboard</font>
+
+932
+00:31:19,440 --> 00:31:22,920
+<font color="white" size=".72c">companies. We needed an identity</font>
+
+933
+00:31:21,040 --> 00:31:24,440
+<font color="white" size=".72c">provision system, and WorkOS lets you</font>
+
+934
+00:31:22,920 --> 00:31:26,000
+<font color="white" size=".72c">literally just send them a link. And</font>
+
+935
+00:31:24,440 --> 00:31:28,800
+<font color="white" size=".72c">considering the fact that your first</font>
+
+936
+00:31:26,000 --> 00:31:30,440
+<font color="white" size=".72c">million users are free. Yes, 1 million</font>
+
+937
+00:31:28,800 --> 00:31:31,960
+<font color="white" size=".72c">users for free. I don't think you have</font>
+
+938
+00:31:30,440 --> 00:31:33,680
+<font color="white" size=".72c">much to lose. Check them out now at</font>
+
+939
+00:31:31,960 --> 00:31:35,640
+<font color="white" size=".72c">swiy.io/workos.</font>
+
+940
+00:31:33,680 --> 00:31:37,200
+<font color="white" size=".72c">Opus 4.7 thinking how just did something</font>
+
+941
+00:31:35,640 --> 00:31:39,200
+<font color="white" size=".72c">wildly impressive, and then in the next</font>
+
+942
+00:31:37,200 --> 00:31:40,680
+<font color="white" size=".72c">session acted like an absolute</font>
+
+943
+00:31:39,200 --> 00:31:42,400
+<font color="white" size=".72c">sinking and hacking and doing pointless</font>
+
+944
+00:31:40,680 --> 00:31:44,040
+<font color="white" size=".72c">stuff that led me off of Opus 4.6 a</font>
+
+945
+00:31:42,400 --> 00:31:45,320
+<font color="white" size=".72c">month ago. It's a weird time to build</font>
+
+946
+00:31:44,040 --> 00:31:46,720
+<font color="white" size=".72c">software.</font>
+
+947
+00:31:45,320 --> 00:31:48,520
+<font color="white" size=".72c">All right, Opus 4.7 is just as</font>
+
+948
+00:31:46,720 --> 00:31:49,600
+<font color="white" size=".72c">boneheaded. I started every task today</font>
+
+949
+00:31:48,520 --> 00:31:51,080
+<font color="white" size=".72c">using it, and the first one was</font>
+
+950
+00:31:49,600 --> 00:31:53,120
+<font color="white" size=".72c">impressive. The next five crapped the</font>
+
+951
+00:31:51,080 --> 00:31:54,760
+<font color="white" size=".72c">bed every time. I reset and gave the</font>
+
+952
+00:31:53,120 --> 00:31:56,800
+<font color="white" size=".72c">same prompt to 5.4, and it nailed it</font>
+
+953
+00:31:54,760 --> 00:31:58,040
+<font color="white" size=".72c">each time. I retried the first task that</font>
+
+954
+00:31:56,800 --> 00:32:00,200
+<font color="white" size=".72c">impressed me with the 5.4, and it did it</font>
+
+955
+00:31:58,040 --> 00:32:01,640
+<font color="white" size=".72c">just as well. I think GPT is just better</font>
+
+956
+00:32:00,200 --> 00:32:03,120
+<font color="white" size=".72c">trained on front end in this case. It's</font>
+
+957
+00:32:01,640 --> 00:32:04,440
+<font color="white" size=".72c">just funny cuz the Opus models have</font>
+
+958
+00:32:03,120 --> 00:32:06,200
+<font color="white" size=".72c">historically done nicer looking front</font>
+
+959
+00:32:04,440 --> 00:32:07,600
+<font color="white" size=".72c">ends. Ryan also replied to me earlier</font>
+
+960
+00:32:06,200 --> 00:32:09,560
+<font color="white" size=".72c">saying that the model did a task way</font>
+
+961
+00:32:07,600 --> 00:32:12,360
+<font color="white" size=".72c">better than 5.4 could, and then said it</font>
+
+962
+00:32:09,560 --> 00:32:13,800
+<font color="white" size=".72c">never mind right after. Gergely pointed</font>
+
+963
+00:32:12,360 --> 00:32:15,760
+<font color="white" size=".72c">out that Claude has been regressing for</font>
+
+964
+00:32:13,800 --> 00:32:17,120
+<font color="white" size=".72c">him day after day. I swear that until a</font>
+
+965
+00:32:15,760 --> 00:32:18,280
+<font color="white" size=".72c">few days ago, when Claude did not know</font>
+
+966
+00:32:17,120 --> 00:32:20,120
+<font color="white" size=".72c">something, it would kick off a web</font>
+
+967
+00:32:18,280 --> 00:32:21,640
+<font color="white" size=".72c">search, figure it out, and answer. Now</font>
+
+968
+00:32:20,120 --> 00:32:23,400
+<font color="white" size=".72c">it just refuses to do the work that I</font>
+
+969
+00:32:21,640 --> 00:32:25,600
+<font color="white" size=".72c">pay for. What are the biggest benefits</font>
+
+970
+00:32:23,400 --> 00:32:27,400
+<font color="white" size=".72c">of using using Opus 4.7 versus just</font>
+
+971
+00:32:25,600 --> 00:32:29,280
+<font color="white" size=".72c">using Claude? I don't have any</font>
+
+972
+00:32:27,400 --> 00:32:31,320
+<font color="white" size=".72c">information about a model called Opus</font>
+
+973
+00:32:29,280 --> 00:32:34,080
+<font color="white" size=".72c">4.7. As of my knowledge cut off at the</font>
+
+974
+00:32:31,320 --> 00:32:36,760
+<font color="white" size=".72c">end of May 2025, the most recent Claude</font>
+
+975
+00:32:34,080 --> 00:32:38,280
+<font color="white" size=".72c">models are from the Claude 4.6 family,</font>
+
+976
+00:32:36,760 --> 00:32:40,680
+<font color="white" size=".72c">which is funny cuz at the end of May</font>
+
+977
+00:32:38,280 --> 00:32:42,720
+<font color="white" size=".72c">2025, neither of those models existed.</font>
+
+978
+00:32:40,680 --> 00:32:44,080
+<font color="white" size=".72c">Those came out this year, not last year.</font>
+
+979
+00:32:42,720 --> 00:32:45,960
+<font color="white" size=".72c">You want the most updated information</font>
+
+980
+00:32:44,080 --> 00:32:48,040
+<font color="white" size=".72c">about available Claude models? I suggest</font>
+
+981
+00:32:45,960 --> 00:32:50,280
+<font color="white" size=".72c">checking Anthropic's website or the API</font>
+
+982
+00:32:48,040 --> 00:32:52,840
+<font color="white" size=".72c">documentation. Apparently, web search</font>
+
+983
+00:32:50,280 --> 00:32:55,800
+<font color="white" size=".72c">got turned off for him randomly. So,</font>
+
+984
+00:32:52,840 --> 00:32:57,120
+<font color="white" size=".72c">again, it's slop. And this is the point.</font>
+
+985
+00:32:55,800 --> 00:32:58,720
+<font color="white" size=".72c">I don't think they're degrading the</font>
+
+986
+00:32:57,120 --> 00:33:00,280
+<font color="white" size=".72c">models. I think they are degrading their</font>
+
+987
+00:32:58,720 --> 00:33:02,440
+<font color="white" size=".72c">engineers, and the engineers that are</font>
+
+988
+00:33:00,280 --> 00:33:04,200
+<font color="white" size=".72c">degraded are degrading the software.</font>
+
+989
+00:33:02,440 --> 00:33:05,440
+<font color="white" size=".72c">And it becomes this chaotic spiral where</font>
+
+990
+00:33:04,200 --> 00:33:08,160
+<font color="white" size=".72c">things just get worse</font>
+
+991
+00:33:05,440 --> 00:33:09,720
+<font color="white" size=".72c">constantly. I I hate to call out people,</font>
+
+992
+00:33:08,160 --> 00:33:12,400
+<font color="white" size=".72c">and I won't call out individuals by</font>
+
+993
+00:33:09,720 --> 00:33:15,360
+<font color="white" size=".72c">name. Believe me, I want to.</font>
+
+994
+00:33:12,400 --> 00:33:17,840
+<font color="white" size=".72c">The eng culture at Anthropic is rotting</font>
+
+995
+00:33:15,360 --> 00:33:19,760
+<font color="white" size=".72c">at the core. You guys suck at</font>
+
+996
+00:33:17,840 --> 00:33:21,360
+<font color="white" size=".72c">coding as a company, as a business. I</font>
+
+997
+00:33:19,760 --> 00:33:22,920
+<font color="white" size=".72c">don't know if the individuals you hired</font>
+
+998
+00:33:21,360 --> 00:33:24,480
+<font color="white" size=".72c">are bad, if the culture is bad, if the</font>
+
+999
+00:33:22,920 --> 00:33:25,480
+<font color="white" size=".72c">incentives are bad, or if the models</font>
+
+1000
+00:33:24,480 --> 00:33:27,240
+<font color="white" size=".72c">you're using to write all your vibe</font>
+
+1001
+00:33:25,480 --> 00:33:28,640
+<font color="white" size=".72c">coded slop for you are bad, but your</font>
+
+1002
+00:33:27,240 --> 00:33:30,400
+<font color="white" size=".72c">company's eroding cuz the</font>
+
+1003
+00:33:28,640 --> 00:33:32,080
+<font color="white" size=".72c">engineering is You make Google</font>
+
+1004
+00:33:30,400 --> 00:33:34,080
+<font color="white" size=".72c">look like a well QA'd company with the</font>
+
+1005
+00:33:32,080 --> 00:33:36,040
+<font color="white" size=".72c">slop you guys are throwing at us. And it</font>
+
+1006
+00:33:34,080 --> 00:33:37,360
+<font color="white" size=".72c">makes your models look worse. It used to</font>
+
+1007
+00:33:36,040 --> 00:33:38,880
+<font color="white" size=".72c">make your models look worse because it</font>
+
+1008
+00:33:37,360 --> 00:33:40,840
+<font color="white" size=".72c">showed that the people using them to</font>
+
+1009
+00:33:38,880 --> 00:33:42,960
+<font color="white" size=".72c">generate code were generating slop. Now,</font>
+
+1010
+00:33:40,840 --> 00:33:44,440
+<font color="white" size=".72c">it makes them perform worse, too. People</font>
+
+1011
+00:33:42,960 --> 00:33:46,280
+<font color="white" size=".72c">are experiencing your models in a</font>
+
+1012
+00:33:44,440 --> 00:33:48,840
+<font color="white" size=".72c">degraded state because your engineers</font>
+
+1013
+00:33:46,280 --> 00:33:50,480
+<font color="white" size=".72c">suck at producing software that works.</font>
+
+1014
+00:33:48,840 --> 00:33:51,920
+<font color="white" size=".72c">It's so bad. It's embarrassing. I'm</font>
+
+1015
+00:33:50,480 --> 00:33:54,200
+<font color="white" size=".72c">ashamed to wear this Claude hat</font>
+
+1016
+00:33:51,920 --> 00:33:56,120
+<font color="white" size=".72c">that I stole.</font>
+
+1017
+00:33:54,200 --> 00:33:58,280
+<font color="white" size=".72c">I posted wanting to get more input on</font>
+
+1018
+00:33:56,120 --> 00:34:00,400
+<font color="white" size=".72c">this. Serious question, has anyone ever</font>
+
+1019
+00:33:58,280 --> 00:34:02,440
+<font color="white" size=".72c">noticed meaningful regressions in Codex</font>
+
+1020
+00:34:00,400 --> 00:34:03,800
+<font color="white" size=".72c">or OpenAI models? I feel like we talk</font>
+
+1021
+00:34:02,440 --> 00:34:05,280
+<font color="white" size=".72c">about this a lot with Anthropic, but</font>
+
+1022
+00:34:03,800 --> 00:34:08,000
+<font color="white" size=".72c">I've never seen a similar discussion</font>
+
+1023
+00:34:05,280 --> 00:34:09,520
+<font color="white" size=".72c">with OpenAI. Obviously, my GPT-5 video</font>
+
+1024
+00:34:08,000 --> 00:34:11,239
+<font color="white" size=".72c">was different here because I got early</font>
+
+1025
+00:34:09,520 --> 00:34:12,719
+<font color="white" size=".72c">access, and I was using it in a harness</font>
+
+1026
+00:34:11,239 --> 00:34:14,000
+<font color="white" size=".72c">that no longer existed at the point that</font>
+
+1027
+00:34:12,719 --> 00:34:15,399
+<font color="white" size=".72c">it dropped,</font>
+
+1028
+00:34:14,000 --> 00:34:16,879
+<font color="white" size=".72c">which meant that my experience was</font>
+
+1029
+00:34:15,399 --> 00:34:18,399
+<font color="white" size=".72c">different from what you guys got as end</font>
+
+1030
+00:34:16,879 --> 00:34:20,360
+<font color="white" size=".72c">users, but nothing like that has</font>
+
+1031
+00:34:18,399 --> 00:34:22,320
+<font color="white" size=".72c">happened since. And that wasn't you as a</font>
+
+1032
+00:34:20,360 --> 00:34:24,560
+<font color="white" size=".72c">user having a good experience one day</font>
+
+1033
+00:34:22,320 --> 00:34:26,120
+<font color="white" size=".72c">and a worse one later. That was me as an</font>
+
+1034
+00:34:24,560 --> 00:34:28,159
+<font color="white" size=".72c">early tester using something different</font>
+
+1035
+00:34:26,120 --> 00:34:30,239
+<font color="white" size=".72c">than you guys used. Since then, there's</font>
+
+1036
+00:34:28,159 --> 00:34:32,159
+<font color="white" size=".72c">been nothing like that.</font>
+
+1037
+00:34:30,239 --> 00:34:33,960
+<font color="white" size=".72c">And every single day with Anthropic is</font>
+
+1038
+00:34:32,159 --> 00:34:35,520
+<font color="white" size=".72c">like this. You guys are early testing</font>
+
+1039
+00:34:33,960 --> 00:34:37,239
+<font color="white" size=".72c">the way I did, but with all of</font>
+
+1040
+00:34:35,520 --> 00:34:38,480
+<font color="white" size=".72c">Anthropic's product, and then the next</font>
+
+1041
+00:34:37,239 --> 00:34:40,560
+<font color="white" size=".72c">day it's and you're still paying</font>
+
+1042
+00:34:38,480 --> 00:34:42,239
+<font color="white" size=".72c">the same price. I remember a bad week</font>
+
+1043
+00:34:40,560 --> 00:34:44,520
+<font color="white" size=".72c">once, but generally no. Negative. I've</font>
+
+1044
+00:34:42,239 --> 00:34:46,918
+<font color="white" size=".72c">been working heavy usage, 3X Codex Pro</font>
+
+1045
+00:34:44,520 --> 00:34:48,520
+<font color="white" size=".72c">plan. I run them to 0% every week. The</font>
+
+1046
+00:34:46,918 --> 00:34:49,879
+<font color="white" size=".72c">jobs are extremely varied, too. I've had</font>
+
+1047
+00:34:48,520 --> 00:34:51,280
+<font color="white" size=".72c">trivial problems here and there, quickly</font>
+
+1048
+00:34:49,879 --> 00:34:52,520
+<font color="white" size=".72c">resolved by the Codex team. I've not had</font>
+
+1049
+00:34:51,280 --> 00:34:54,120
+<font color="white" size=".72c">that strong of a pullback where my model</font>
+
+1050
+00:34:52,520 --> 00:34:56,960
+<font color="white" size=".72c">became stupid at all.</font>
+
+1051
+00:34:54,120 --> 00:34:58,640
+<font color="white" size=".72c">And then Tibo from OpenAI replied, "We</font>
+
+1052
+00:34:56,960 --> 00:35:00,560
+<font color="white" size=".72c">had ghosts in the Codex machines, which</font>
+
+1053
+00:34:58,640 --> 00:35:01,880
+<font color="white" size=".72c">we published the investigation for. We</font>
+
+1054
+00:35:00,560 --> 00:35:03,880
+<font color="white" size=".72c">didn't fiddle with the models or</font>
+
+1055
+00:35:01,880 --> 00:35:05,640
+<font color="white" size=".72c">thinking budgets after release. We focus</font>
+
+1056
+00:35:03,880 --> 00:35:07,480
+<font color="white" size=".72c">on keeping them up."</font>
+
+1057
+00:35:05,640 --> 00:35:09,400
+<font color="white" size=".72c">That's the difference. Not only are</font>
+
+1058
+00:35:07,480 --> 00:35:11,120
+<font color="white" size=".72c">OpenAI employees coming in and being</font>
+
+1059
+00:35:09,400 --> 00:35:12,960
+<font color="white" size=".72c">transparent about these things, they</font>
+
+1060
+00:35:11,120 --> 00:35:15,440
+<font color="white" size=".72c">also are calling out here that the</font>
+
+1061
+00:35:12,960 --> 00:35:17,640
+<font color="white" size=".72c">problem was in the Codex machines,</font>
+
+1062
+00:35:15,440 --> 00:35:19,720
+<font color="white" size=".72c">meaning the Codex harnesses that we were</font>
+
+1063
+00:35:17,640 --> 00:35:21,840
+<font color="white" size=".72c">using. They've had regressions in the</font>
+
+1064
+00:35:19,720 --> 00:35:23,920
+<font color="white" size=".72c">thing that the model runs, and they call</font>
+
+1065
+00:35:21,840 --> 00:35:25,200
+<font color="white" size=".72c">it out accordingly and fix it. So, now</font>
+
+1066
+00:35:23,920 --> 00:35:27,080
+<font color="white" size=".72c">we got to answer the question, is this</font>
+
+1067
+00:35:25,200 --> 00:35:30,320
+<font color="white" size=".72c">the best model for coding?</font>
+
+1068
+00:35:27,080 --> 00:35:32,880
+<font color="white" size=".72c">Sometimes. I think this quote from Jake</font>
+
+1069
+00:35:30,320 --> 00:35:35,200
+<font color="white" size=".72c">here perfectly summarizes my experience.</font>
+
+1070
+00:35:32,880 --> 00:35:37,080
+<font color="white" size=".72c">4.7's the weirdest model either labs</font>
+
+1071
+00:35:35,200 --> 00:35:38,680
+<font color="white" size=".72c">released in a while. It just plowed</font>
+
+1072
+00:35:37,080 --> 00:35:40,760
+<font color="white" size=".72c">through a bug that required touching 30</font>
+
+1073
+00:35:38,680 --> 00:35:42,480
+<font color="white" size=".72c">files, and then got a boolean backwards</font>
+
+1074
+00:35:40,760 --> 00:35:45,160
+<font color="white" size=".72c">in the fix.</font>
+
+1075
+00:35:42,480 --> 00:35:46,360
+<font color="white" size=".72c">Yeah. This is how it feels to use. It</font>
+
+1076
+00:35:45,160 --> 00:35:48,200
+<font color="white" size=".72c">feels like they are held to the</font>
+
+1077
+00:35:46,360 --> 00:35:49,720
+<font color="white" size=".72c">consistency out of the model in order to</font>
+
+1078
+00:35:48,200 --> 00:35:51,760
+<font color="white" size=".72c">get better benchmark scores and a</font>
+
+1079
+00:35:49,720 --> 00:35:54,240
+<font color="white" size=".72c">hypothetical better ceiling for what it</font>
+
+1080
+00:35:51,760 --> 00:35:57,120
+<font color="white" size=".72c">can do, but the range of quality in the</font>
+
+1081
+00:35:54,240 --> 00:35:58,720
+<font color="white" size=".72c">responses has also increased. Opus 4.5</font>
+
+1082
+00:35:57,120 --> 00:36:00,960
+<font color="white" size=".72c">was relatively consistent where it</font>
+
+1083
+00:35:58,720 --> 00:36:03,320
+<font color="white" size=".72c">couldn't do the crazy great things Opus</font>
+
+1084
+00:36:00,960 --> 00:36:05,480
+<font color="white" size=".72c">4.7 does, but it didn't ship the slop</font>
+
+1085
+00:36:03,320 --> 00:36:07,560
+<font color="white" size=".72c">that 4.7 does, either.</font>
+
+1086
+00:36:05,480 --> 00:36:09,040
+<font color="white" size=".72c">And I miss that. I miss having some</font>
+
+1087
+00:36:07,560 --> 00:36:11,240
+<font color="white" size=".72c">level of consistency in the quality of</font>
+
+1088
+00:36:09,040 --> 00:36:12,680
+<font color="white" size=".72c">the outputs my models have. But I only</font>
+
+1089
+00:36:11,240 --> 00:36:14,520
+<font color="white" size=".72c">miss it cuz I haven't been using OpenAI</font>
+
+1090
+00:36:12,680 --> 00:36:16,160
+<font color="white" size=".72c">models for the last day.</font>
+
+1091
+00:36:14,520 --> 00:36:17,960
+<font color="white" size=".72c">Hi there, Theo from the future here,</font>
+
+1092
+00:36:16,160 --> 00:36:19,520
+<font color="white" size=".72c">slightly drunker, more tired, and very</font>
+
+1093
+00:36:17,960 --> 00:36:21,560
+<font color="white" size=".72c">frustrated because I had to edit this</font>
+
+1094
+00:36:19,520 --> 00:36:23,040
+<font color="white" size=".72c">video myself for other dumb reasons that</font>
+
+1095
+00:36:21,560 --> 00:36:24,720
+<font color="white" size=".72c">are my fault.</font>
+
+1096
+00:36:23,040 --> 00:36:25,960
+<font color="white" size=".72c">I made a mistake at the end of this</font>
+
+1097
+00:36:24,720 --> 00:36:29,680
+<font color="white" size=".72c">recording.</font>
+
+1098
+00:36:25,960 --> 00:36:29,680
+<font color="white" size=".72c">Can you see what the mistake is?</font>
+
+1099
+00:36:31,520 --> 00:36:37,000
+<font color="white" size=".72c">I'll give you a hint.</font>
+
+1100
+00:36:33,560 --> 00:36:37,000
+<font color="white" size=".72c">It's something missing.</font>
+
+1101
+00:36:37,720 --> 00:36:42,520
+<font color="white" size=".72c">This cable.</font>
+
+1102
+00:36:39,840 --> 00:36:43,840
+<font color="white" size=".72c">In my dumb drunken stupor, I was not</font>
+
+1103
+00:36:42,520 --> 00:36:45,880
+<font color="white" size=".72c">even that drunk. I had like two sips of</font>
+
+1104
+00:36:43,840 --> 00:36:48,640
+<font color="white" size=".72c">beer during the video. But when I was</font>
+
+1105
+00:36:45,880 --> 00:36:51,200
+<font color="white" size=".72c">filming this video, I put the hat back</font>
+
+1106
+00:36:48,640 --> 00:36:54,360
+<font color="white" size=".72c">on and in the process, somehow managed</font>
+
+1107
+00:36:51,200 --> 00:36:57,480
+<font color="white" size=".72c">to yank out my XLR cable and kill the</font>
+
+1108
+00:36:54,360 --> 00:36:58,880
+<font color="white" size=".72c">audio for the last couple seconds of</font>
+
+1109
+00:36:57,480 --> 00:37:00,760
+<font color="white" size=".72c">this video.</font>
+
+1110
+00:36:58,880 --> 00:37:02,120
+<font color="white" size=".72c">I honestly think Opus is rubbing off on</font>
+
+1111
+00:37:00,760 --> 00:37:04,240
+<font color="white" size=".72c">me cuz this is the kind of thing I would</font>
+
+1112
+00:37:02,120 --> 00:37:06,120
+<font color="white" size=".72c">expect the model to do.</font>
+
+1113
+00:37:04,240 --> 00:37:08,680
+<font color="white" size=".72c">Regardless, I just wanted to wrap this</font>
+
+1114
+00:37:06,120 --> 00:37:10,600
+<font color="white" size=".72c">one up quick. So, yeah. The model has</font>
+
+1115
+00:37:08,680 --> 00:37:12,360
+<font color="white" size=".72c">not been a pleasant experience for me. I</font>
+
+1116
+00:37:10,600 --> 00:37:13,920
+<font color="white" size=".72c">had high hopes going in and it did</font>
+
+1117
+00:37:12,360 --> 00:37:15,520
+<font color="white" size=".72c">behave in a way that got me a little</font>
+
+1118
+00:37:13,920 --> 00:37:17,840
+<font color="white" size=".72c">excited initially,</font>
+
+1119
+00:37:15,520 --> 00:37:19,440
+<font color="white" size=".72c">but I just have not liked the results I</font>
+
+1120
+00:37:17,840 --> 00:37:20,720
+<font color="white" size=".72c">am getting. The only thing it's doing</font>
+
+1121
+00:37:19,440 --> 00:37:23,600
+<font color="white" size=".72c">unique that I haven't experienced with</font>
+
+1122
+00:37:20,720 --> 00:37:25,720
+<font color="white" size=".72c">other models are regressions, not new</font>
+
+1123
+00:37:23,600 --> 00:37:26,840
+<font color="white" size=".72c">useful stuff. That said, the only people</font>
+
+1124
+00:37:25,720 --> 00:37:28,320
+<font color="white" size=".72c">who are going to use it anyways are</font>
+
+1125
+00:37:26,840 --> 00:37:30,360
+<font color="white" size=".72c">probably using it in an app they're</font>
+
+1126
+00:37:28,320 --> 00:37:32,480
+<font color="white" size=".72c">already subscribed to and paying for.</font>
+
+1127
+00:37:30,360 --> 00:37:34,880
+<font color="white" size=".72c">There's no harm in bumping from 4.6 to</font>
+
+1128
+00:37:32,480 --> 00:37:36,000
+<font color="white" size=".72c">4.7 to give it a shot. I recommend it.</font>
+
+1129
+00:37:34,880 --> 00:37:38,240
+<font color="white" size=".72c">And if you have a different experience</font>
+
+1130
+00:37:36,000 --> 00:37:40,240
+<font color="white" size=".72c">for me, please let me know. I'm just one</font>
+
+1131
+00:37:38,240 --> 00:37:42,040
+<font color="white" size=".72c">guy that tested this over 12-ish hours</font>
+
+1132
+00:37:40,240 --> 00:37:43,720
+<font color="white" size=".72c">throughout the day. I can't possibly</font>
+
+1133
+00:37:42,040 --> 00:37:45,920
+<font color="white" size=".72c">know all of the things it's great or bad</font>
+
+1134
+00:37:43,720 --> 00:37:47,520
+<font color="white" size=".72c">at. All I know is that I had a bad</font>
+
+1135
+00:37:45,920 --> 00:37:49,280
+<font color="white" size=".72c">experience and I wanted to share a bit</font>
+
+1136
+00:37:47,520 --> 00:37:50,880
+<font color="white" size=".72c">of what that looked like for y'all. Let</font>
+
+1137
+00:37:49,280 --> 00:37:52,840
+<font color="white" size=".72c">me know how y'all feel and until next</font>
+
+1138
+00:37:50,880 --> 00:37:54,600
+<font color="white" size=".72c">time, let's just hope I don't knock any</font>
+
+1139
+00:37:52,840 --> 00:37:57,280
+<font color="white" size=".72c">cables out.</font>
+
+1140
+00:37:54,600 --> 00:37:57,280
+<font color="white" size=".72c">Peace, nerds.</font>
+
+1141
+00:37:58,160 --> 00:38:00,880
+<font color="white" size=".72c">Ah.</font>
+
