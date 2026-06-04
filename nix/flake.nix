@@ -7,12 +7,22 @@
 		nix-darwin.url = "github:LnL7/nix-darwin";
 		nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 		nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+		# Pinned to the last nixpkgs that builds pi-coding-agent. 0.78.0 breaks on
+		# newer revs (npm prune nukes koffi's native build). Used ONLY for pi below.
+		nixpkgs-pinned.url = "github:NixOS/nixpkgs/4df1b885d76a54e1aa1a318f8d16fd6005b6401f";
 	};
 
-	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }:
+	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, nixpkgs-pinned }:
 		let
 			username = "gachikuku";
-			configuration = { pkgs, config, lib, ... }: {
+			configuration = { pkgs, config, lib, ... }:
+			let
+				# pi-coding-agent only builds on the pinned nixpkgs (see inputs note).
+				pkgs-pinned = import inputs.nixpkgs-pinned {
+					system = pkgs.stdenv.hostPlatform.system;
+					config.allowUnfree = true;
+				};
+			in {
 				system.primaryUser = "gachikuku";  # Replace with your actual username if different
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
@@ -95,7 +105,7 @@
 						httpx
 						icdiff
 						jq
-						pi-coding-agent
+						pkgs-pinned.pi-coding-agent
 						jsluice
 						libxo
 						lima
@@ -116,7 +126,6 @@
 						openvpn
 						opencode
 						claude-code
-						pi-coding-agent
 						plan9port
 						ripgrep
 						rustc
@@ -152,9 +161,11 @@
 				homebrew = {
 					enable = true;
 
+					# monero (monerod + GUI) is managed by ~/.local/bin/monero-update,
+					# which installs the OFFICIAL binaries and verifies them against
+					# binaryFate's PGP-signed hashes.txt. nixpkgs monero-cli is linux-only,
+					# and brew ships its own bottle (can't match the official binary hash).
 					#brews = [
-					#	"llm"
-					#	"llm-gemini"
 					#];
 
 					taps = [
@@ -236,6 +247,10 @@
 				#		StartInterval = 60; # Run every 60 seconds (1 minute)
 				#	};
 				#};
+
+				# OFFICIAL monero (monerod + GUI), verified against binaryFate's
+				# PGP-signed hashes.txt. Updated MANUALLY: run `monero-update`
+				# (or `monero-update -c` to just check). See ~/.files/bin/bin/monero-update.
 
 				nix = {
 					linux-builder.enable = true;

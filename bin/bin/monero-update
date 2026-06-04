@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# monero-update — install/update the OFFICIAL Monero CLI + GUI (macOS arm64),
+# verifying every artifact against binaryFate's PGP-signed hashes.txt.
+#
+# Trust chain:  pinned fingerprint -> binaryfate.asc -> gpg --verify hashes.txt
+#               -> sha256 of each downloaded binary must match the signed list.
+# Nothing is installed unless the signature AND the hashes check out.
+#
+# Layout:  binaries  -> ~/.local/opt/monero/monero-<ver>/  (symlinked into ~/.local/bin)
+#          gui app   -> /Applications/<name>.app
+#          state/key -> ~/.local/share/monero-update/
+#
+# Usage:  monero-update          # update if a newer signed version exists
+#         monero-update -f       # force reinstall current version
+#         monero-update -c       # check only: verify + report, install nothing
+set -euo pipefail
+
+# launchd gives a bare PATH; make sure we can find gpg/curl/hdiutil.
+export PATH="/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+FP="81AC591FE9C4B65C5806AFC3F0AF4D462A0BDF92"          # binaryFate (Monero release-signing key)
+CLI_NAME="monero-mac-armv8"
+GUI_NAME="monero-gui-mac-armv8"
+PREFIX="$HOME/.local/opt/monero"
+BINDIR="$HOME/.local/bin"
+APPDIR="/Applications"
+STATE="$HOME/.local/share/monero-update"
+export GNUPGHOME="$STATE/gnupg"
+KEYURL="https://raw.githubusercontent.com/monero-project/monero/master/utils/gpg_keys/binaryfate.asc"
+HASHURL="https://www.getmonero.org/downloads/hashes.txt"
+CLIBASE="https://downloads.getmonero.org/cli"
+GUIBASE="https://downloads.getmonero.org/gui"
+
+CHECK=0 FORCE=0
+case "${1:-}" in -c) CHECK=1 ;; -f) FORCE=1 ;; "") ;; *) echo "usage: monero-update [-c|-f]" >&2; exit 2 ;; esac
+
+log(){ printf '\033[1;32m==>\033[0m %s\n' "$*"; }
+err(){ printf '\033[1;31mmonero-update: %s\033[0m\n' "$*" >&2; exit 1; }
+
+command -v gpg   >/dev/null || err "gpg not found"
+command -v curl  >/dev/null || err "curl not found"
+mkdir -p "$PREFIX" "$BINDIR" "$STATE"
+mkdir -p "$GNUPGHOME"; chmod 700 "$GNUPGHOME"
+
+# 1) Ensure binaryFate's key is present, pinned to the exact fingerprint.
+if ! gpg --list-keys "$FP" >/dev/null 2>&1; then
+	log "Importing binaryFate key ($FP)"
+	curl -fsSL "$KEYURL" -o "$STATE/binaryfate.asc"
+	gpg --import "$STATE/binaryfate.asc" >/dev/null 2>&1 || true
+fi
+gpg --list-keys "$FP" >/dev/null 2>&1 || err "pinned key $FP not in keyring after import — refusing to continue"
+
+work="$(mktemp -d)"; trap 'rm -rf "$work"' EXIT; cd "$work"
+
+# 2) Fetch hashes.txt and verify it was signed by the pinned key.
+log "Fetching + verifying signed hashes.txt"
+curl -fsSL "$HASHURL" -o hashes.txt
+if ! gpg --status-fd 1 --verify hashes.txt 2>/dev/null | grep -E '^\[GNUPG:\] VALIDSIG' | grep -q "$FP"; then
+	err "hashes.txt did NOT verify against binaryFate ($FP) — possible tampering, aborting"
+fi
+log "Signature OK — hashes.txt is genuinely binaryFate's"
+
+# 3) Discover the latest version straight from the verified file (no hardcoded version).
+cli_file="$(grep -oE "${CLI_NAME}-v[0-9.]+\.tar\.bz2" hashes.txt | head -1)"
+gui_file="$(grep -oE "${GUI_NAME}-v[0-9.]+\.dmg"     hashes.txt | head -1)"
+[ -n "$cli_file" ] && [ -n "$gui_file" ] || err "no mac-armv8 entries found in hashes.txt"
+ver="$(printf '%s' "$cli_file" | sed -E 's/.*-v([0-9.]+)\.tar\.bz2/\1/')"
+installed=""; [ -f "$PREFIX/.version" ] && installed="$(cat "$PREFIX/.version")"
+log "Latest signed: $ver   installed: ${installed:-none}"
+
+if [ "$CHECK" -eq 1 ]; then
+	log "Check-only: signature valid, latest signed version is $ver. Nothing installed."
+	exit 0
+fi
+if [ "$installed" = "$ver" ] && [ "$FORCE" -eq 0 ]; then
+	log "Already on the latest signed version ($ver). Use -f to force."
+	exit 0
+fi
+
+# helper: assert a downloaded file matches its signed sha256
+verify(){
+	local f="$1" want got
+	want="$(awk -v f="$f" '$2==f{print $1}' hashes.txt)"
+	[ -n "$want" ] || err "no signed hash listed for $f"
+	got="$(shasum -a 256 "$f" | awk '{print $1}')"
+	[ "$want" = "$got" ] || err "HASH MISMATCH for $f
+  signed: $want
+  got:    $got"
+	log "verified $f"
+}
+
+# 4) CLI: download, verify, install to versioned prefix, relink into ~/.local/bin
+log "Downloading CLI $cli_file"
+curl -fL# "$CLIBASE/$cli_file" -o "$cli_file"
+verify "$cli_file"
+dest="$PREFIX/monero-$ver"
+rm -rf "$dest"; mkdir -p "$dest"
+tar -xjf "$cli_file" -C "$dest" --strip-components=1
+ln -sfn "$dest" "$PREFIX/current"
+for b in "$dest"/monero*; do
+	[ -f "$b" ] && [ -x "$b" ] && ln -sfn "$b" "$BINDIR/$(basename "$b")"
+done
+log "CLI installed -> $dest (symlinked into $BINDIR)"
+
+# 5) GUI: download, verify, mount dmg, copy .app into /Applications
+log "Downloading GUI $gui_file"
+curl -fL# "$GUIBASE/$gui_file" -o "$gui_file"
+verify "$gui_file"
+mnt="$(hdiutil attach -nobrowse -readonly "$gui_file" | sed -nE 's#.*(/Volumes/.*)$#\1#p' | tail -1)"
+[ -n "$mnt" ] && [ -d "$mnt" ] || err "could not mount $gui_file"
+app="$(find "$mnt" -maxdepth 1 -name '*.app' | head -1)"
+if [ -n "$app" ]; then
+	target="$APPDIR/$(basename "$app")"
+	rm -rf "$target"
+	ditto "$app" "$target" || err "failed to copy GUI into $APPDIR (try: sudo) "
+	log "GUI installed -> $target"
+fi
+hdiutil detach "$mnt" >/dev/null || true
+
+# 6) Record the installed version (gates future runs)
+printf '%s\n' "$ver" > "$PREFIX/.version"
+hash -r 2>/dev/null || true
+log "Done. monero $ver installed and verified against binaryFate's signature."
+log "monerod -> $(command -v monerod 2>/dev/null || echo "$BINDIR/monerod")"
