@@ -1,0 +1,96 @@
+#!/bin/sh
+# agent-notify — cmux-style desktop ping when a coding agent finishes or needs
+# you while you've tabbed away. Clicking the notification jumps you straight to
+# the agent's tmux pane (AeroSpace-aware). Does NOT touch the tmux status bar.
+#
+# Wired from Claude Code hooks (Stop / Notification); hook JSON arrives on stdin.
+# Clickable notifications need `terminal-notifier`; without it, falls back to
+# `osascript` (shows the notification, but it isn't clickable).
+#
+# Usage:
+#   agent-notify stop          # agent finished its turn   (Claude Stop hook)
+#   agent-notify input         # agent is waiting on you    (Claude Notification hook)
+#   agent-notify bell <pane>   # generic bell              (tmux alert-bell hook)
+#   agent-notify focus <pane>  # jump to that pane          (notification click)
+
+# A notification click fires this script under launchd's minimal PATH
+# (/usr/bin:/bin), so ensure tmux/aerospace/terminal-notifier resolve.
+export PATH="/run/current-system/sw/bin:/opt/homebrew/bin:$PATH"
+
+self="$0"
+kind="${1:-stop}"
+term_app="Ghostty"
+term_bundle="com.mitchellh.ghostty"
+
+# ── notification click: jump the tmux client to <pane> and raise the terminal ─
+if [ "$kind" = "focus" ]; then
+	p="$2"
+	if [ -n "$p" ]; then
+		tmux switch-client -t "$p" 2>/dev/null
+		tmux select-window -t "$p" 2>/dev/null
+		tmux select-pane   -t "$p" 2>/dev/null
+	fi
+	# AeroSpace owns focus/workspaces — ask it to focus the Ghostty window so we
+	# cross workspaces correctly; fall back to a plain activate if it's absent.
+	if command -v aerospace >/dev/null 2>&1; then
+		wid=$(aerospace list-windows --monitor all --app-bundle-id "$term_bundle" \
+			--format '%{window-id}' 2>/dev/null | head -1)
+		[ -n "$wid" ] && aerospace focus --window-id "$wid" 2>/dev/null
+	fi
+	osascript -e "tell application \"$term_app\" to activate" 2>/dev/null
+	exit 0
+fi
+
+# ── which pane is the agent in? (bell passes it; Claude hooks inherit it) ─────
+case "$kind" in
+	bell) pane="$2" ;;
+	*)    pane="$TMUX_PANE" ;;
+esac
+
+# ── read cwd / message ───────────────────────────────────────────────────────
+# Only Claude hooks (stop/input) send JSON on stdin and close it; bell has none,
+# so never block on `cat` there. For bell we derive cwd from the pane's path.
+json=""
+case "$kind" in stop|input) [ -t 0 ] || json=$(cat 2>/dev/null) ;; esac
+field() { command -v jq >/dev/null 2>&1 && printf '%s' "$json" | jq -r "(.$1 // empty)" 2>/dev/null; }
+cwd=$(field cwd); msg=$(field message)
+[ -n "$cwd" ] || cwd=$(tmux display-message -p -t "$pane" '#{pane_current_path}' 2>/dev/null)
+[ -n "$cwd" ] || cwd="$PWD"
+dir=$(basename "$cwd")
+
+case "$kind" in
+	input) body="${msg:-Waiting for your input}"; head="needs you" ;;
+	bell)  body="${msg:-Agent rang the bell}";     head="alert" ;;
+	*)     body="${msg:-Finished}";                head="done" ;;
+esac
+title="$dir — $head"
+
+# ── if you're actively watching this pane, do nothing (no ●, no ping) ─────────
+# Otherwise flag the window (orange ●) and fall through to the desktop ping.
+if [ -n "$pane" ] && [ -n "$TMUX" ]; then
+	loc=$(tmux display-message -p -t "$pane" '#S:#I' 2>/dev/null)
+	[ -n "$loc" ] && title="$loc  $title"
+	looking=$(tmux display-message -p -t "$pane" \
+		'#{&&:#{pane_active},#{&&:#{window_active},#{session_attached}}}' 2>/dev/null)
+	if [ "$looking" = "1" ]; then
+		front=$(osascript -e 'tell application "System Events" to name of first application process whose frontmost is true' 2>/dev/null)
+		[ "$front" = "$term_app" ] && exit 0   # genuinely watching it -> nothing to do
+	fi
+	tmux set-option -w -t "$pane" @agent_waiting "$kind" 2>/dev/null
+fi
+
+# ── fire it: terminal-notifier (clickable) if present, else osascript ─────────
+if command -v terminal-notifier >/dev/null 2>&1; then
+	if [ -n "$pane" ]; then
+		terminal-notifier -title "$title" -message "$body" \
+			-group "agent-$pane" -sound default -execute "$self focus $pane" \
+			>/dev/null 2>&1 &
+	else
+		terminal-notifier -title "$title" -message "$body" -sound default >/dev/null 2>&1 &
+	fi
+else
+	t=$(printf '%s' "$title" | sed 's/"/\\"/g')
+	b=$(printf '%s' "$body"  | sed 's/"/\\"/g')
+	osascript -e "display notification \"$b\" with title \"$t\" sound name \"Submarine\"" >/dev/null 2>&1
+fi
+exit 0
