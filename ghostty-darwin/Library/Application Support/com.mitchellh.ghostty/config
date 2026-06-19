@@ -11,9 +11,9 @@ title = " "
 
 theme = Flexoki light
 
-#maximized-by-default
-window-height = 1370000000
-window-width = 440000000
+# NOTE: window-width/window-height are in *cells*, not pixels. Giant values
+# (1370000000 x 440000000) made Ghostty hang ~10-25s on launch. Use maximize instead.
+maximize = true
 window-padding-balance = true
 window-padding-x = 3
 #window-padding-y = 2
@@ -25,10 +25,21 @@ macos-titlebar-style = hidden
 
 mouse-scroll-multiplier = 0
 mouse-hide-while-typing = true
+# Make the mouse fully inert everywhere, including copy mode (cmd+shift+M):
+# never report mouse events to terminal programs (vim/tmux/htop/fzf/etc.),
+# and don't let a click reposition the shell-prompt cursor. Selection and
+# copy mode stay keyboard-driven. Runtime toggle: toggle_mouse_reporting.
+mouse-reporting = false
+cursor-click-to-move = false
 
 shell-integration-features = no-cursor
 cursor-style = block
-cursor-color = ff8080
+# Invert the cell under the cursor so it's always high-contrast,
+# including in copy mode (cmd+shift+M). Was a fixed salmon (#ff8080)
+# which is invisible on the light Flexoki background.
+#cursor-color = ff8080
+cursor-color = cell-foreground
+cursor-text = cell-background
 
 #background-opacity = 0.95
 #background-blur-radius = 20
