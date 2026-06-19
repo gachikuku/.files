@@ -158,6 +158,7 @@
 						syncthing
 						tailscale
 						tealdeer
+						terminal-notifier  # clickable agent-notify desktop pings
 						tmux
 						tree
 						vim
