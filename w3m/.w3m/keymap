@@ -8,3 +8,15 @@ keymap	k	MOVE_UP1
 # Vim-style half-page scrolling
 keymap	C-d	NEXT_HALF_PAGE
 keymap	C-u	PREV_HALF_PAGE
+
+# Vim H/M/L: cursor to top / middle / bottom of the visible screen.
+# Lowercase h/m/l are left unbound here so they keep their w3m defaults
+# (MOVE_LEFT / MOUSE_TOGGLE / MOVE_RIGHT).
+keymap	H	CURSOR_TOP
+keymap	M	CURSOR_MIDDLE
+keymap	L	CURSOR_BOTTOM
+
+# Relocate the functions that H/M/L used to hold
+keymap	f	LIST		# link list (was L)
+keymap	e	EXTERN		# open in external browser (was M)
+keymap	~	HELP		# key-help panel (was H)
