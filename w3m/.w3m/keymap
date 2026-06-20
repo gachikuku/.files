@@ -1,0 +1,10 @@
+# w3m keymap overrides (applied on top of compiled-in defaults)
+
+# Vim-style vertical movement: scroll one line at the screen edge
+# instead of the default half-page jump (MOVE_DOWN/MOVE_UP).
+keymap	j	MOVE_DOWN1
+keymap	k	MOVE_UP1
+
+# Vim-style half-page scrolling
+keymap	C-d	NEXT_HALF_PAGE
+keymap	C-u	PREV_HALF_PAGE
