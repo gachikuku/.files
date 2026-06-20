@@ -73,8 +73,10 @@ if [ -n "$pane" ] && [ -n "$TMUX" ]; then
 	looking=$(tmux display-message -p -t "$pane" \
 		'#{&&:#{pane_active},#{&&:#{window_active},#{session_attached}}}' 2>/dev/null)
 	if [ "$looking" = "1" ]; then
-		front=$(osascript -e 'tell application "System Events" to name of first application process whose frontmost is true' 2>/dev/null)
-		[ "$front" = "$term_app" ] && exit 0   # genuinely watching it -> nothing to do
+		# Compare by bundle id, not display name: Ghostty reports its process
+		# name lowercase ("ghostty"), so a name check never matched.
+		front=$(osascript -e 'tell application "System Events" to bundle identifier of first application process whose frontmost is true' 2>/dev/null)
+		[ "$front" = "$term_bundle" ] && exit 0   # genuinely watching it -> nothing to do
 	fi
 	tmux set-option -w -t "$pane" @agent_waiting "$kind" 2>/dev/null
 fi
