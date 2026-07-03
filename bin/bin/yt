@@ -36,8 +36,8 @@ sed -i '' \
   -e 's/<[^>]*>//g' \
   "$srt_file"
 
-# Remove blank lines and open in nvim
-sed -e 's/<[^>]*>//g' -e '/^[[:space:]]*$/d' "$srt_file" | nvim -
+# Remove tags and blank lines, print to stdout
+sed -e 's/<[^>]*>//g' -e '/^[[:space:]]*$/d' "$srt_file"
 
 # Clean up
 rm "$srt_file"

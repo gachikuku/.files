@@ -1,0 +1,44 @@
+#!/bin/sh
+# opencode-resume — fuzzy-pick ANY past opencode session from anywhere and
+# resume it in its ORIGINAL directory.
+#
+# opencode scopes the TUI session switcher to the current project, so sessions
+# from other directories are invisible. This scans all stored sessions, reads
+# each one's recorded `directory`, and resumes via `opencode run -s <id> -i
+# --dir <dir>` so launch location no longer matters.
+#
+# Deps: jq, fzf, opencode. Bind to a key or alias `ocr=opencode-resume`.
+
+SESS="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/storage/session"
+
+# Hidden mode: render session metadata + a slice of the export for the preview.
+if [ "$1" = "--preview" ]; then
+    find "$SESS" -name "$2.json" -exec cat {} \; 2>/dev/null | jq -r '
+        "title:     \(.title // "-")",
+        "directory: \(.directory // "-")",
+        "updated:   \((.time.updated // 0)/1000|floor|localtime|strftime("%Y-%m-%d %H:%M"))"' 2>/dev/null
+    echo "---"
+    opencode export "$2" 2>/dev/null | head -c 4000
+    exit 0
+fi
+
+[ -d "$SESS" ] || { echo "no opencode session storage at $SESS" >&2; exit 1; }
+
+rows=$(find "$SESS" -name 'ses_*.json' 2>/dev/null -exec jq -r '
+    [(.time.updated // 0),
+     ((.time.updated // 0)/1000|floor|localtime|strftime("%m-%d %H:%M")),
+     .id,
+     (.directory // "-"),
+     ((.title // "")|gsub("[\t\n]";" ")|.[0:70])] | @tsv' {} \; 2>/dev/null | sort -rn)
+
+[ -n "$rows" ] || { echo "no opencode sessions found" >&2; exit 1; }
+
+pick=$(printf '%s\n' "$rows" | fzf \
+    --delimiter='\t' --with-nth=2,4,5 \
+    --no-hscroll --header='opencode-resume — any session, anywhere' \
+    --preview="$0 --preview {3}" --preview-window=right,55%,wrap) || exit 0
+
+sid=$(printf '%s' "$pick" | cut -f3)
+dir=$(printf '%s' "$pick" | cut -f4)
+[ -d "$dir" ] || { echo "dir gone: $dir — resuming in \$PWD" >&2; dir="$PWD"; }
+exec opencode run -s "$sid" -i --dir "$dir"
