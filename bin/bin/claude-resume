@@ -1,0 +1,81 @@
+#!/bin/sh
+# claude-resume — fuzzy-pick ANY past Claude Code session from anywhere and
+# resume it in its ORIGINAL directory.
+#
+# Claude scopes sessions per-cwd under ~/.claude/projects/<encoded-cwd>/, so the
+# built-in /resume only shows sessions started in the current directory. This
+# scans every project, reads the real cwd from each transcript, and cd's back
+# there before resuming — so where you launch from no longer matters.
+#
+# Deps: python3, fzf. Bind to a key or alias `cr=claude-resume`.
+
+PROJ="$HOME/.claude/projects"
+
+# Hidden mode: render a transcript's tail for fzf's preview pane.
+if [ "$1" = "--preview" ]; then
+    exec python3 - "$2" <<'PY'
+import json, sys
+out = []
+for line in open(sys.argv[1], errors="ignore"):
+    try: o = json.loads(line)
+    except Exception: continue
+    m = o.get("message", {})
+    role = m.get("role")
+    if role not in ("user", "assistant"): continue
+    c = m.get("content")
+    if isinstance(c, list):
+        c = " ".join(b.get("text", "") for b in c
+                     if isinstance(b, dict) and b.get("type") == "text")
+    if not isinstance(c, str) or not c.strip(): continue
+    tag = ">>" if role == "user" else "  "
+    out.append(f"{tag} {c.strip()[:300]}")
+print("\n".join(out[-40:]) or "(no text messages)")
+PY
+fi
+
+[ -d "$PROJ" ] || { echo "no ~/.claude/projects" >&2; exit 1; }
+
+rows=$(python3 - "$PROJ" <<'PY'
+import json, os, glob, time, sys
+rows = []
+for f in glob.glob(os.path.join(sys.argv[1], "*", "*.jsonl")):
+    sid = cwd = branch = label = None
+    for line in open(f, errors="ignore"):
+        try: o = json.loads(line)
+        except Exception: continue
+        sid = sid or o.get("sessionId")
+        cwd = cwd or o.get("cwd")
+        branch = branch or o.get("gitBranch")
+        if label is None:
+            m = o.get("message", {})
+            if m.get("role") == "user":
+                c = m.get("content")
+                if isinstance(c, str):
+                    label = c
+                elif isinstance(c, list):
+                    label = next((b.get("text") for b in c
+                                  if isinstance(b, dict) and b.get("type") == "text"), None)
+        if sid and cwd and label: break
+    if not (sid and cwd): continue
+    mt = os.path.getmtime(f)
+    label = (label or "").replace("\t", " ").replace("\n", " ").strip()[:70]
+    rows.append((mt, "\t".join([
+        time.strftime("%m-%d %H:%M", time.localtime(mt)),
+        sid, cwd, branch or "-", label, f,
+    ])))
+rows.sort(reverse=True)
+print("\n".join(r for _, r in rows))
+PY
+)
+
+[ -n "$rows" ] || { echo "no claude sessions found" >&2; exit 1; }
+
+pick=$(printf '%s\n' "$rows" | fzf \
+    --delimiter='\t' --with-nth=1,3,4,5 \
+    --no-hscroll --header='claude-resume — any session, anywhere' \
+    --preview="$0 --preview {6}" --preview-window=right,55%,wrap) || exit 0
+
+sid=$(printf '%s' "$pick" | cut -f2)
+cwd=$(printf '%s' "$pick" | cut -f3)
+[ -d "$cwd" ] || { echo "dir gone: $cwd — resuming in \$PWD" >&2; cwd="$PWD"; }
+cd "$cwd" && exec claude --resume "$sid"
