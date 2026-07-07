@@ -7,9 +7,6 @@
 		nix-darwin.url = "github:LnL7/nix-darwin";
 		nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 		nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-		# Pinned to the last nixpkgs that builds pi-coding-agent. 0.78.0 breaks on
-		# newer revs (npm prune nukes koffi's native build). Used ONLY for pi below.
-		nixpkgs-pinned.url = "github:NixOS/nixpkgs/4df1b885d76a54e1aa1a318f8d16fd6005b6401f";
 	};
 
 	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, nixpkgs-pinned }:
@@ -118,6 +115,7 @@
 						hexedit
 						html-tidy
 						htmlq
+						browsh
 						oksh
 						httpx
 						icdiff
