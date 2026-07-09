@@ -1,0 +1,7 @@
+# w3m config overrides (stowed from ~/.files/w3m/.w3m/config)
+
+# External editor for C-o (edit input line), E (edit source), ESC-e, etc.
+# The compiled-in default on this build is a dead /no-such-path/bin/vi,
+# so it must be set explicitly. Bare "nvim" resolves via PATH (portable
+# across NixOS and macOS, where the store path differs).
+editor	nvim

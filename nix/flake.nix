@@ -3,23 +3,15 @@
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-		# pinned nixpkgs for neovim 0.11.x (before 0.12 broke treesitter markdown)
 		nix-darwin.url = "github:LnL7/nix-darwin";
 		nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 		nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 	};
 
-	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, nixpkgs-pinned }:
+	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }:
 		let
 			username = "gachikuku";
-			configuration = { pkgs, config, lib, ... }:
-			let
-				# pi-coding-agent only builds on the pinned nixpkgs (see inputs note).
-				pkgs-pinned = import inputs.nixpkgs-pinned {
-					system = pkgs.stdenv.hostPlatform.system;
-					config.allowUnfree = true;
-				};
-			in {
+			configuration = { pkgs, config, lib, ... }: {
 				system.primaryUser = "gachikuku";  # Replace with your actual username if different
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
@@ -120,7 +112,6 @@
 						httpx
 						icdiff
 						jq
-						pkgs-pinned.pi-coding-agent
 						jsluice
 						libxo
 						lima
