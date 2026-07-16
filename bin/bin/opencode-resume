@@ -36,7 +36,7 @@ rows=$(find "$SESS" -name 'ses_*.json' 2>/dev/null -exec jq -r '
 pick=$(printf '%s\n' "$rows" | fzf \
     --delimiter='\t' --with-nth=2,4,5 \
     --no-hscroll --header='opencode-resume — any session, anywhere' \
-    --preview="$0 --preview {3}" --preview-window=right,55%,wrap) || exit 0
+    --preview="$0 --preview {3}" --preview-window=up,55%,wrap) || exit 0
 
 sid=$(printf '%s' "$pick" | cut -f3)
 dir=$(printf '%s' "$pick" | cut -f4)
