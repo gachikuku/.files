@@ -61,6 +61,24 @@ alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/chea
 alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less -i"
 alias jwt_dool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
 
+# Claude Code harness backed by GPT-5.6 Sol through the local CLIProxyAPI.
+# ENABLE_TOOL_SEARCH=false disables dynamic MCP schema lookup, not WebSearch.
+#alias claudex='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
+#ANTHROPIC_AUTH_TOKEN=claudex-localhost-only \
+#CLAUDE_CODE_SUBAGENT_MODEL=gpt-5.6-sol \
+#CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
+#CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3 \
+#ENABLE_TOOL_SEARCH=false \
+#claude --model gpt-5.6-sol --effort xhigh'
+
+alias claudex='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
+ANTHROPIC_AUTH_TOKEN=claudex-localhost-only \
+CLAUDE_CODE_SUBAGENT_MODEL=gpt-5.4-mini \
+CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
+CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=1 \
+ENABLE_TOOL_SEARCH=false \
+claude --model gpt-5.4-mini --effort low'
+
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^[e' edit-command-line
@@ -84,4 +102,3 @@ if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users
 #export ANTHROPIC_AUTH_TOKEN=$(gopass show -o api/openrouter)
 #export ANTHROPIC_API_KEY="" # Important: Must be explicitly empty
 #export OPENROUTER_API_KEY=$(gopass show -o api/openrouter)
-
