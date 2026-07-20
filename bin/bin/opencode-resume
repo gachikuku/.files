@@ -3,33 +3,36 @@
 # resume it in its ORIGINAL directory.
 #
 # opencode scopes the TUI session switcher to the current project, so sessions
-# from other directories are invisible. This scans all stored sessions, reads
-# each one's recorded `directory`, and resumes via `opencode run -s <id> -i
-# --dir <dir>` so launch location no longer matters.
+# from other directories are invisible. This queries all stored sessions and
+# resumes the selected one from its recorded directory.
 #
 # Deps: jq, fzf, opencode. Bind to a key or alias `ocr=opencode-resume`.
 
-SESS="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/storage/session"
-
-# Hidden mode: render session metadata + a slice of the export for the preview.
+# Hidden mode: render session metadata and recent messages for the preview.
 if [ "$1" = "--preview" ]; then
-    find "$SESS" -name "$2.json" -exec cat {} \; 2>/dev/null | jq -r '
-        "title:     \(.title // "-")",
-        "directory: \(.directory // "-")",
-        "updated:   \((.time.updated // 0)/1000|floor|localtime|strftime("%Y-%m-%d %H:%M"))"' 2>/dev/null
-    echo "---"
-    opencode export "$2" 2>/dev/null | head -c 4000
+    opencode export "$2" 2>/dev/null | jq -r '
+        .info as $info |
+        "title:     \($info.title // "-")",
+        "directory: \($info.directory // "-")",
+        "updated:   \(($info.time.updated // 0)/1000|floor|localtime|strftime("%Y-%m-%d %H:%M"))",
+        "---",
+        ([.messages[]? | .info.role as $role | .parts[]?
+          | select(.type == "text" and ((.text // "") | length > 0))
+          | (if $role == "user" then ">> " else "   " end)
+            + ((.text // "") | gsub("[\\t\\r\\n]+"; " ") | .[0:500])][-40:][])' 2>/dev/null
     exit 0
 fi
 
-[ -d "$SESS" ] || { echo "no opencode session storage at $SESS" >&2; exit 1; }
-
-rows=$(find "$SESS" -name 'ses_*.json' 2>/dev/null -exec jq -r '
-    [(.time.updated // 0),
-     ((.time.updated // 0)/1000|floor|localtime|strftime("%m-%d %H:%M")),
+rows=$(opencode db --format json '
+    SELECT time_updated AS updated, id, directory, title
+    FROM session
+    ORDER BY time_updated DESC
+' 2>/dev/null | jq -r '.[] |
+    [(.updated // 0),
+     ((.updated // 0)/1000|floor|localtime|strftime("%m-%d %H:%M")),
      .id,
-     (.directory // "-"),
-     ((.title // "")|gsub("[\t\n]";" ")|.[0:70])] | @tsv' {} \; 2>/dev/null | sort -rn)
+     ((.directory // "-")|gsub("[\t\r\n]";" ")),
+     ((.title // "")|gsub("[\t\r\n]";" ")|.[0:70])] | @tsv' 2>/dev/null)
 
 [ -n "$rows" ] || { echo "no opencode sessions found" >&2; exit 1; }
 
@@ -41,4 +44,5 @@ pick=$(printf '%s\n' "$rows" | fzf \
 sid=$(printf '%s' "$pick" | cut -f3)
 dir=$(printf '%s' "$pick" | cut -f4)
 [ -d "$dir" ] || { echo "dir gone: $dir — resuming in \$PWD" >&2; dir="$PWD"; }
-exec opencode run -s "$sid" -i --dir "$dir"
+cd "$dir" || exit 1
+exec opencode --session "$sid"

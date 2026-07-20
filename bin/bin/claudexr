@@ -78,4 +78,5 @@ pick=$(printf '%s\n' "$rows" | fzf \
 sid=$(printf '%s' "$pick" | cut -f2)
 cwd=$(printf '%s' "$pick" | cut -f3)
 [ -d "$cwd" ] || { echo "dir gone: $cwd — resuming in \$PWD" >&2; cwd="$PWD"; }
-cd "$cwd" && exec /bin/zsh -ic 'claude --resume "$1"' _ "$sid"
+cd "$cwd" && exec /bin/zsh -ic 'claudex --resume "$1"' _ "$sid"
+

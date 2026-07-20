@@ -39,6 +39,17 @@
 								hash = "sha256-QB/2emBrAzqkcKaLrVUZanK4qXHSma4CeJM2PwGhmXI=";
 							};
 						});
+						trezorctl = let py = final.python313Packages; in
+							py.toPythonApplication (py.trezor.overridePythonAttrs (old: {
+								dependencies = old.dependencies ++ old.optional-dependencies.full;
+							}));
+						witnessme = (prev.witnessme.override { python3 = final.python313; }).overrideAttrs (old: {
+							postPatch = (old.postPatch or "") + ''
+								substituteInPlace witnessme/signatures.py \
+									--replace-fail "import pkg_resources" "" \
+									--replace-fail 'pkg_resources.resource_filename(__name__, "signatures")' 'pathlib.Path(__file__).parent / "signatures"'
+							'';
+						});
 					})
 				];
 
@@ -80,6 +91,7 @@
 						trezorctl
 						trezord
 						speedtest-cli
+						codex
 						cmake
 						entr
 						cmus
@@ -132,7 +144,7 @@
 						openvpn
 						opencode
 						claude-code
-						plan9port
+						pi-coding-agent
 						ripgrep
 						rustc
 						senpai
@@ -172,8 +184,9 @@
 					# which installs the OFFICIAL binaries and verifies them against
 					# binaryFate's PGP-signed hashes.txt. nixpkgs monero-cli is linux-only,
 					# and brew ships its own bottle (can't match the official binary hash).
-					#brews = [
-					#];
+					brews = [
+						"cliproxyapi"
+					];
 
 					taps = [
 						"chaychoong/tap"
