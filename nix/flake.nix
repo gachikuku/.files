@@ -93,6 +93,8 @@
 						speedtest-cli
 						codex
 						cmake
+						tor 
+						torsocks
 						entr
 						cmus
 						gnuplot
