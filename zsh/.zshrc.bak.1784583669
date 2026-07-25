@@ -1,0 +1,104 @@
+autoload -U colors && colors
+
+# ChatGBT as of generate that for linux and BSD compatability as luke's version didn't work (27/07/23).
+# export PATH="$PATH:$(find ~/.local/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
+# export PATH="$PATH:$(find ~/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
+# Adds `~/.local/bin` to $PATH
+# export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
+export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/opt/tree-sitter/bin:~/go/bin:~/cargo/bin:~/.local/bin:~/Developer/depot_tools:$PATH
+
+# env variables
+export PATH="/Library/TeX/texbin:$PATH"
+export EDITOR="nvim"
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
+export DOTFILES="$HOME/.files"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+export GIT_EDITOR="nvim"
+export BROWSER="chromium"
+export RUBYOPT="rubygems"
+export GOPATH="$HOME/go"
+export CARGO_HOME="$HOME/cargo"
+export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+export GPG_TTY="$(tty)"
+export GOPROXY=direct
+export GOSUMDB=off
+export GOTELEMETRY=off
+export GOTOOLCHAIN=local
+export PIP_NO_SSL_VERIFY=1
+export CLAUDE_DEBUG=1
+#export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
+#export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
+#export AWS_PAGER=""
+
+# let control+w only delete one directory of a path, not the whole word
+export WORDCHARS='*?_[]~=&;!#$%^(){}'
+
+# Emacs keys
+bindkey -e
+
+# prompt
+#PS1="%F{5}%m:%~%(!.%F{2}#.%F{2}$)%f "
+PS1="%F{5}%~%(!.%F{2}#.%F{2}$)%f "
+
+# Use neovim for vim if present.
+[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+
+# Aliases
+alias ls="ls -lG"
+alias lynx="lynx --nocolor"
+alias grep="grep --color=auto"
+alias diff="diff --color=auto"
+alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
+alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
+alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>" --disable-features=AutoupgradeEnabled,HttpsUpgrades,IsSitePerProcess --user-data-dir=/tmp/chromium'
+alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+alias man_openssl="curl -s 'https://man.archlinux.org/man/libressl-openssl.1.en.raw' | mandoc | nvim +Man! -"
+alias man_r2="curl -s 'https://man.archlinux.org/man/radare2.1.en.raw' | mandoc | nvim +Man! -"
+alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/cheat-sheet' | lynx -dump -stdin | sed -n '/^SQL injection cheat sheet$/,\$p' | less -i"
+alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less -i"
+alias jwt_dool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
+
+# Claude Code harness backed by GPT-5.6 Sol through the local CLIProxyAPI.
+# ENABLE_TOOL_SEARCH=false disables dynamic MCP schema lookup, not WebSearch.
+#alias claudex='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
+#ANTHROPIC_AUTH_TOKEN=claudex-localhost-only \
+#CLAUDE_CODE_SUBAGENT_MODEL=gpt-5.6-sol \
+#CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
+#CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3 \
+#ENABLE_TOOL_SEARCH=false \
+#claude --model gpt-5.6-sol --effort xhigh'
+
+alias claudex='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
+ANTHROPIC_AUTH_TOKEN=claudex-localhost-only \
+CLAUDE_CODE_SUBAGENT_MODEL=gpt-5.4-mini \
+CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
+CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=1 \
+ENABLE_TOOL_SEARCH=false \
+claude --model gpt-5.4-mini --effort low'
+
+# Edit line in vim with Meta-e:
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^[e' edit-command-line
+bindkey -M vicmd '^[[P' vi-delete-char
+bindkey -M vicmd '^[e' edit-command-line
+bindkey -M visual '^[[P' vi-delete
+
+# Basic auto/tab complete:
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+_comp_options+=(globdots)		# Include hidden files.
+
+# Created by `pipx` on 2024-05-30 12:37:30
+export PATH="$PATH:/Users/gachikuku/.local/bin"
+if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
+
+# uncomment when using claude-code
+#export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
+#export ANTHROPIC_AUTH_TOKEN=$(gopass show -o api/openrouter)
+#export ANTHROPIC_API_KEY="" # Important: Must be explicitly empty
+#export OPENROUTER_API_KEY=$(gopass show -o api/openrouter)
