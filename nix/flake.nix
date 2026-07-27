@@ -68,6 +68,8 @@
 				#	"python3.13-ecdsa-0.19.1"
 				#];
 
+				environment.variables.PI_OFFLINE = "1";
+
 				environment.systemPackages = with pkgs;
 					[ 
 						ares-cli
