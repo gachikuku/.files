@@ -51,6 +51,7 @@ prayer_minutes()
 
             adjustment = utc_offset - longitude / 15
             print_prayer("Fajr", adjustment)
+            print_prayer("Sunrise", adjustment)
             print_prayer("Dhuhr", adjustment)
             print_prayer("Asr", adjustment)
             print_prayer("Maghrib", adjustment)
@@ -164,6 +165,21 @@ prayer_minutes()
     '
 }
 
+print_upcoming()
+{
+    case $1 in
+        Fajr) symbol='◒' ;;
+        Sunrise) symbol='☼' ;;
+        Dhuhr) symbol='☀︎' ;;
+        Asr) symbol='◕' ;;
+        Maghrib) symbol='◓' ;;
+        Isha) symbol='☾' ;;
+    esac
+    prayer_minute=$2
+    printf '%s %02d:%02d\n' \
+        "$symbol" "$((prayer_minute / 60))" "$((prayer_minute % 60))"
+}
+
 today=$(date '+%Y-%m-%d')
 tomorrow=$(date -v+1d '+%Y-%m-%d')
 current_hour=$(date '+%H')
@@ -176,8 +192,7 @@ schedule=$(prayer_minutes "$today") || exit 1
 while read -r prayer minutes
 do
     if [ "$minutes" -gt "$current_minutes" ]; then
-        printf '%s: %02d:%02d\n' \
-            "$prayer" "$((minutes / 60))" "$((minutes % 60))"
+        print_upcoming "$prayer" "$minutes"
         exit
     fi
 done <<EOF
@@ -187,4 +202,4 @@ EOF
 schedule=$(prayer_minutes "$tomorrow") || exit 1
 set -- $schedule
 minutes=$2
-printf 'Fajr: %02d:%02d\n' "$((minutes / 60))" "$((minutes % 60))"
+print_upcoming Fajr "$minutes"
