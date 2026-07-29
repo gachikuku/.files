@@ -1,7 +1,77 @@
 #!/bin/sh
 
-# Next prayer for Athens, calculated offline with the Muslim World League method.
-export TZ=Europe/Athens
+# Next prayer/event for the Mac's current timezone, calculated offline with the
+# Muslim World League method. Coordinates come from the system timezone database.
+system_timezone()
+{
+    if [ -n "${PRAYER_TIMEZONE-}" ]; then
+        printf '%s\n' "$PRAYER_TIMEZONE"
+        return
+    fi
+
+    timezone_path=$(readlink /etc/localtime) || return 1
+    case $timezone_path in
+        */zoneinfo/*) printf '%s\n' "${timezone_path##*/zoneinfo/}" ;;
+        *) return 1 ;;
+    esac
+}
+
+system_coordinates()
+{
+    selected_timezone=$1
+    for zone_file in \
+        /var/db/timezone/zoneinfo/zone.tab \
+        /usr/share/zoneinfo/zone.tab
+    do
+        [ -r "$zone_file" ] && break
+    done
+    [ -r "$zone_file" ] || return 1
+
+    awk -F '	' -v timezone="$selected_timezone" '
+        $3 == timezone {
+            coordinates = $2
+            latitude_sign = substr(coordinates, 1, 1) == "-" ? -1 : 1
+            remainder = substr(coordinates, 2)
+            match(remainder, /[+-]/)
+            latitude_digits = substr(remainder, 1, RSTART - 1)
+            longitude_sign = substr(remainder, RSTART, 1) == "-" ? -1 : 1
+            longitude_digits = substr(remainder, RSTART + 1)
+            latitude = latitude_sign * decimal_coordinate(latitude_digits)
+            longitude = longitude_sign * decimal_coordinate(longitude_digits)
+            printf "%.6f %.6f\n", latitude, longitude
+            found = 1
+            exit
+        }
+
+        function decimal_coordinate(digits, degree_length, degrees,
+                                    minutes, seconds) {
+            if (length(digits) <= 5) {
+                degree_length = length(digits) - 2
+                degrees = substr(digits, 1, degree_length)
+                minutes = substr(digits, degree_length + 1, 2)
+                seconds = 0
+            } else {
+                degree_length = length(digits) - 4
+                degrees = substr(digits, 1, degree_length)
+                minutes = substr(digits, degree_length + 1, 2)
+                seconds = substr(digits, degree_length + 3, 2)
+            }
+            return degrees + minutes / 60 + seconds / 3600
+        }
+
+        END {
+            if (!found)
+                exit 1
+        }
+    ' "$zone_file"
+}
+
+selected_timezone=$(system_timezone) || exit 1
+export TZ=$selected_timezone
+coordinates=$(system_coordinates "$selected_timezone") || exit 1
+set -- $coordinates
+latitude=$1
+longitude=$2
 
 prayer_minutes()
 {
@@ -11,11 +81,10 @@ prayer_minutes()
             "$prayer_day 12:00:00" '+%z'
     ) || return 1
 
-    awk -v day="$prayer_day" -v zone="$zone" '
+    awk -v day="$prayer_day" -v zone="$zone" \
+        -v latitude="$latitude" -v longitude="$longitude" '
         BEGIN {
             pi = atan2(0, -1)
-            latitude = 37.9838
-            longitude = 23.7275
 
             split(day, date_parts, "-")
             year = date_parts[1] + 0
@@ -167,17 +236,9 @@ prayer_minutes()
 
 print_upcoming()
 {
-    case $1 in
-        Fajr) symbol='◒' ;;
-        Sunrise) symbol='☼' ;;
-        Dhuhr) symbol='☀︎' ;;
-        Asr) symbol='◕' ;;
-        Maghrib) symbol='◓' ;;
-        Isha) symbol='☾' ;;
-    esac
-    prayer_minute=$2
-    printf '%s %02d:%02d\n' \
-        "$symbol" "$((prayer_minute / 60))" "$((prayer_minute % 60))"
+    prayer_minute=$1
+    printf '%02d:%02d\n' \
+        "$((prayer_minute / 60))" "$((prayer_minute % 60))"
 }
 
 today=$(date '+%Y-%m-%d')
@@ -192,7 +253,7 @@ schedule=$(prayer_minutes "$today") || exit 1
 while read -r prayer minutes
 do
     if [ "$minutes" -gt "$current_minutes" ]; then
-        print_upcoming "$prayer" "$minutes"
+        print_upcoming "$minutes"
         exit
     fi
 done <<EOF
@@ -202,4 +263,4 @@ EOF
 schedule=$(prayer_minutes "$tomorrow") || exit 1
 set -- $schedule
 minutes=$2
-print_upcoming Fajr "$minutes"
+print_upcoming "$minutes"
