@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.80.10",
-  "theme": "light",
+  "theme": "flexoki-light",
   "packages": [
     "git:github.com/badlogic/pi-mono"
   ],
