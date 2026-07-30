@@ -41,7 +41,7 @@ bindkey -e
 
 # prompt
 #PS1="%F{5}%m:%~%(!.%F{2}#.%F{2}$)%f "
-PS1='%~%(!.#.$) '
+PS1='%F{#547565}%~%(!.#.$)%f '
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
