@@ -47,6 +47,7 @@ PS1='%F{#547565}%~%(!.#.$)%f '
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
+alias pi='pi --offline'
 alias ls="ls -lG"
 alias lynx="lynx --nocolor"
 alias grep="grep --color=auto"
