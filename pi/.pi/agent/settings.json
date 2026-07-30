@@ -1,0 +1,13 @@
+{
+  "lastChangelogVersion": "0.80.10",
+  "theme": "light",
+  "packages": [
+    "git:github.com/badlogic/pi-mono"
+  ],
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false,
+  "enableInstallTelemetry": false,
+  "defaultProjectTrust": "ask"
+}
