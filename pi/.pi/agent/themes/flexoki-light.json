@@ -5,13 +5,19 @@
     "base300": "#b7b5ac",
     "base500": "#878580",
     "base600": "#6f6e69",
+    "base700": "#575653",
+    "base800": "#403e3c",
+    "base900": "#282726",
+    "black": "#100f0f",
     "ui1": "#e6e4d9",
     "statusBg": "#f2f0e5",
     "red": "#af3029",
+    "orange": "#da702c",
     "yellow": "#ad8301",
     "green": "#66800b",
     "cyan": "#24837b",
     "blue": "#205ea6",
+    "purple": "#5e409d",
     "magenta": "#a02f6f"
   },
   "colors": {
@@ -19,9 +25,9 @@
     "border": "",
     "borderAccent": "",
     "borderMuted": "",
-    "success": "",
-    "error": "",
-    "warning": "",
+    "success": "green",
+    "error": "red",
+    "warning": "yellow",
     "muted": "base600",
     "dim": "base500",
     "text": "",
@@ -39,8 +45,8 @@
     "toolTitle": "base600",
     "toolOutput": "",
 
-    "mdHeading": "",
-    "mdLink": "",
+    "mdHeading": "purple",
+    "mdLink": "blue",
     "mdLinkUrl": "",
     "mdCode": "",
     "mdCodeBlock": "",
@@ -52,7 +58,7 @@
 
     "toolDiffAdded": "green",
     "toolDiffRemoved": "red",
-    "toolDiffContext": "",
+    "toolDiffContext": "base500",
 
     "syntaxComment": "base300",
     "syntaxKeyword": "magenta",
@@ -64,14 +70,14 @@
     "syntaxOperator": "base600",
     "syntaxPunctuation": "base600",
 
-    "thinkingOff": "",
-    "thinkingMinimal": "",
-    "thinkingLow": "",
-    "thinkingMedium": "",
-    "thinkingHigh": "",
-    "thinkingXhigh": "",
-    "thinkingMax": "",
+    "thinkingOff": "base300",
+    "thinkingMinimal": "base500",
+    "thinkingLow": "base600",
+    "thinkingMedium": "base700",
+    "thinkingHigh": "base800",
+    "thinkingXhigh": "base900",
+    "thinkingMax": "black",
 
-    "bashMode": ""
+    "bashMode": "orange"
   }
 }
