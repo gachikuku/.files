@@ -10,7 +10,7 @@
   "hideThinkingBlock": false,
   "showCacheMissNotices": true,
   "enableInstallTelemetry": false,
-  "quietStartup": false,
+  "quietStartup": true,
   "treeFilterMode": "all",
   "branchSummary": {
     "skipPrompt": false
