@@ -9,5 +9,6 @@
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "enableInstallTelemetry": false,
+  "quietStartup": true,
   "defaultProjectTrust": "ask"
 }
