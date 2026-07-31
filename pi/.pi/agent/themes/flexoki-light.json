@@ -3,7 +3,9 @@
   "name": "flexoki-light",
   "vars": {
     "base300": "#b7b5ac",
+    "base500": "#878580",
     "base600": "#6f6e69",
+    "ui1": "#e6e4d9",
     "statusBg": "#f2f0e5",
     "red": "#af3029",
     "yellow": "#ad8301",
@@ -21,11 +23,11 @@
     "error": "",
     "warning": "",
     "muted": "base600",
-    "dim": "",
+    "dim": "base500",
     "text": "",
     "thinkingText": "base600",
 
-    "selectedBg": "",
+    "selectedBg": "ui1",
     "userMessageBg": "statusBg",
     "userMessageText": "",
     "customMessageBg": "",
