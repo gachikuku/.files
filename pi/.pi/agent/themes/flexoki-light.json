@@ -36,9 +36,9 @@
     "selectedBg": "ui1",
     "userMessageBg": "statusBg",
     "userMessageText": "",
-    "customMessageBg": "",
+    "customMessageBg": "statusBg",
     "customMessageText": "",
-    "customMessageLabel": "",
+    "customMessageLabel": "base700",
     "toolPendingBg": "",
     "toolSuccessBg": "",
     "toolErrorBg": "",
@@ -48,13 +48,13 @@
     "mdHeading": "",
     "mdLink": "blue",
     "mdLinkUrl": "base500",
-    "mdCode": "",
+    "mdCode": "base700",
     "mdCodeBlock": "",
     "mdCodeBlockBorder": "base500",
-    "mdQuote": "",
+    "mdQuote": "base600",
     "mdQuoteBorder": "base500",
     "mdHr": "base300",
-    "mdListBullet": "",
+    "mdListBullet": "base600",
 
     "toolDiffAdded": "green",
     "toolDiffRemoved": "red",
@@ -66,7 +66,7 @@
     "syntaxVariable": "cyan",
     "syntaxString": "green",
     "syntaxNumber": "yellow",
-    "syntaxType": "cyan",
+    "syntaxType": "blue",
     "syntaxOperator": "base600",
     "syntaxPunctuation": "base600",
 
@@ -79,5 +79,10 @@
     "thinkingMax": "black",
 
     "bashMode": "orange"
+  },
+  "export": {
+    "pageBg": "#fffcf0",
+    "cardBg": "#f2f0e5",
+    "infoBg": "#faedcc"
   }
 }
