@@ -19,13 +19,11 @@ const PALETTE: Rgb[] = [
 const PI = [
 	" ▄████████████████ ",
 	"██   ███    ███    ",
-	"▀    ███    ███    ",
 	"     ███    ███    ",
 	"    ▄██     ███    ",
 	"    ███     ███  ▄ ",
 	"   ████     ███▄██ ",
 	"   ███       ████▀ ",
-	"   ▀▀▀        ▀▀   ",
 ];
 
 function mix(start: number, end: number, amount: number): number {
