@@ -1,5 +1,6 @@
 {
   "auto_copy_selection": false,
+  "resume_notification": false,
   "keybindings": {
     "cancel": "escape",
     "command_palette": "ctrl+k",
