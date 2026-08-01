@@ -1,0 +1,238 @@
+{
+  "default_provider": "openai-codex",
+  "provider_preferences": {
+    "anthropic": {
+      "default_model": "claude-sonnet-4-6",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "cerebras": {
+      "default_model": "zai-glm-4.7",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "deepseek": {
+      "default_model": "deepseek-v4-pro",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "fireworks": {
+      "default_model": "accounts/fireworks/models/kimi-k2p6",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "github-copilot": {
+      "default_model": "gpt-5.4",
+      "headers": {
+        "Copilot-Integration-Id": "vscode-chat",
+        "Editor-Plugin-Version": "copilot-chat/0.35.0",
+        "Editor-Version": "vscode/1.107.0",
+        "User-Agent": "GitHubCopilotChat/0.35.0"
+      },
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "google": {
+      "default_model": "gemini-flash-latest",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "groq": {
+      "default_model": "openai/gpt-oss-120b",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "huggingface": {
+      "default_model": "moonshotai/Kimi-K2.6",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "kimi-code": {
+      "default_model": "kimi-for-coding",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "minimax": {
+      "default_model": "MiniMax-M3",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "minimax-cn": {
+      "default_model": "MiniMax-M3",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "mistral": {
+      "default_model": "devstral-medium-latest",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "moonshotai": {
+      "default_model": "kimi-k2.7-code",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "moonshotai-cn": {
+      "default_model": "kimi-k2.7-code",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "nvidia": {
+      "default_model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "openai": {
+      "default_model": "gpt-5.4",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "openai-codex": {
+      "default_model": "gpt-5.6-sol",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {
+        "gpt-5.5": "high",
+        "gpt-5.6-sol": "high"
+      },
+      "timeout_seconds": 60.0
+    },
+    "opencode": {
+      "default_model": "kimi-k2.7-code",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "opencode-go": {
+      "default_model": "kimi-k2.7-code",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "openrouter": {
+      "default_model": "qwen/qwen3.7-max",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "together": {
+      "default_model": "moonshotai/Kimi-K2.6",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "vercel-ai-gateway": {
+      "default_model": "zai/glm-5.1",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "xai": {
+      "default_model": "grok-4.20-0309-reasoning",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "xiaomi": {
+      "default_model": "mimo-v2.5-pro",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "xiaomi-token-plan-ams": {
+      "default_model": "mimo-v2.5-pro",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "xiaomi-token-plan-cn": {
+      "default_model": "mimo-v2.5-pro",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "xiaomi-token-plan-sgp": {
+      "default_model": "mimo-v2.5-pro",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    },
+    "zai": {
+      "default_model": "glm-5.1",
+      "headers": {},
+      "max_retries": 2,
+      "max_retry_delay_seconds": 1.0,
+      "thinking_defaults": {},
+      "timeout_seconds": 60.0
+    }
+  },
+  "scoped_models": []
+}
