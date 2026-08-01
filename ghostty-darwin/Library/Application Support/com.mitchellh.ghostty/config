@@ -23,13 +23,12 @@ macos-non-native-fullscreen = visible-menu
 macos-option-as-alt = left
 macos-titlebar-style = hidden
 
-mouse-scroll-multiplier = 0
+# Keep Ghostty's normal trackpad/wheel speed and allow TUI applications such
+# as Tau to receive scrolling events through tmux.
+mouse-scroll-multiplier = precision:1,discrete:3
 mouse-hide-while-typing = true
-# Make the mouse fully inert everywhere, including copy mode (cmd+shift+M):
-# never report mouse events to terminal programs (vim/tmux/htop/fzf/etc.),
-# and don't let a click reposition the shell-prompt cursor. Selection and
-# copy mode stay keyboard-driven. Runtime toggle: toggle_mouse_reporting.
-mouse-reporting = false
+mouse-reporting = true
+# Keep shell-prompt cursor repositioning disabled; this does not block scrolling.
 cursor-click-to-move = false
 
 shell-integration-features = no-cursor
