@@ -12,7 +12,7 @@
     "ui1": "#e6e4d9",
     "statusBg": "#f2f0e5",
     "red": "#af3029",
-    "orange": "#da702c",
+    "orange": "#bc5215",
     "yellow": "#ad8301",
     "green": "#66800b",
     "cyan": "#24837b",
@@ -60,7 +60,7 @@
     "toolDiffRemoved": "red",
     "toolDiffContext": "base500",
 
-    "syntaxComment": "base300",
+    "syntaxComment": "base500",
     "syntaxKeyword": "magenta",
     "syntaxFunction": "purple",
     "syntaxVariable": "cyan",
