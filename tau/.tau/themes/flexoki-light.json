@@ -13,6 +13,7 @@
     "black": "#100f0f",
     "ui1": "#e6e4d9",
     "statusBg": "#f2f0e5",
+    "userBg": "#eeeeee",
     "red": "#af3029",
     "orange": "#bc5215",
     "yellow": "#ad8301",
@@ -21,7 +22,7 @@
     "blue": "#205ea6",
     "purple": "#5e409d",
     "magenta": "#a02f6f",
-    "inlineCode": "#547565"
+    "inlineCode": "#8787f7"
   },
   "syntax": {
     "comment": "base500",
@@ -46,7 +47,7 @@
     "sidebar_background": "statusBg",
     "border": "base500",
     "transcript_background": "paper",
-    "prompt_background": "statusBg",
+    "prompt_background": "userBg",
     "prompt_text": "black",
     "prompt_border": "base600",
     "autocomplete_background": "paper",
@@ -69,7 +70,7 @@
     "completion_description": "base600"
   },
   "roles": {
-    "user": { "border": "base500", "body": "black on statusBg" },
+    "user": { "border": "base500", "body": "black on userBg" },
     "assistant": { "border": "base600", "body": "black on paper" },
     "tool": { "border": "yellow", "body": "black on paper" },
     "error": { "border": "red", "body": "red on paper" },
