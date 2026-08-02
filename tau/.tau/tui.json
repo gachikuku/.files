@@ -1,6 +1,6 @@
 {
   "auto_copy_selection": false,
-  "resume_notification": false,
+  "resume_notification": true,
   "keybindings": {
     "cancel": "escape",
     "command_palette": "ctrl+k",
@@ -13,6 +13,8 @@
     "model_cycle": "ctrl+p",
     "toggle_thinking": "ctrl+t",
     "toggle_tool_results": "ctrl+o",
+    "paste_clipboard": "ctrl+v",
+    "external_editor": "alt+e",
     "copy_message": "ctrl+c",
     "quit": "ctrl+d"
   },
