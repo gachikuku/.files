@@ -5,6 +5,7 @@ Available tools:
 - bash: Execute bash commands
 - edit: Edit files using exact text replacement
 - write: Create or overwrite files
+- If you want to use `python` use `python3`
 
 In addition to the tools above, you may have access to other custom tools depending on the project.
 

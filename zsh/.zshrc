@@ -48,6 +48,7 @@ PS1='%~%(!.#.$) '
 
 # Aliases
 alias pi='pi --offline'
+alias python='python3'
 alias ls="ls -lG"
 alias lynx="lynx --nocolor"
 alias grep="grep --color=auto"
