@@ -124,6 +124,7 @@ const WORKING_MESSAGES = [
 	"Brainfaring...",
 	"Chasing semicolons...",
 	"Chaturbating...",
+	"Climaxxing...",
 	"Cogitating...",
 	"Conjuring...",
 	"Connecting dots...",

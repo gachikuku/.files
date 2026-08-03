@@ -17,6 +17,7 @@
     "red": "#af3029",
     "orange": "#bc5215",
     "claudeOrange": "#d97757",
+    "inlineCode": "#8787f7",
     "yellow": "#ad8301",
     "green": "#66800b",
     "cyan": "#24837b",
@@ -25,7 +26,7 @@
     "magenta": "#a02f6f"
   },
   "colors": {
-    "accent": "claudeOrange",
+    "accent": "inlineCode",
     "border": "base500",
     "borderAccent": "base600",
     "borderMuted": "base300",
@@ -52,7 +53,7 @@
     "mdHeading": "",
     "mdLink": "blue",
     "mdLinkUrl": "base500",
-    "mdCode": "#8787f7",
+    "mdCode": "inlineCode",
     "mdCodeBlock": "",
     "mdCodeBlockBorder": "base500",
     "mdQuote": "base600",
