@@ -5,14 +5,14 @@ type Rgb = [number, number, number];
 
 const RESET = "\x1b[0m";
 
-// A Claude-orange gradient centered on the brand color #d97757.
+// A dark, low-contrast Claude-orange gradient for a subtle transition.
 const PALETTE: Rgb[] = [
-	[139, 67, 44],
-	[181, 85, 56],
-	[217, 119, 87],
-	[226, 139, 112],
-	[217, 119, 87],
-	[181, 85, 56],
+	[151, 70, 48],
+	[158, 75, 51],
+	[165, 80, 55],
+	[172, 86, 60],
+	[165, 80, 55],
+	[158, 75, 51],
 ];
 
 const PI = [
