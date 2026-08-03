@@ -15,15 +15,14 @@ const PALETTE: Rgb[] = [
 	[158, 75, 51],
 ];
 
-const PI = [
-	" ▄████████████████ ",
-	"██   ███    ███    ",
-	"     ███    ███    ",
-	"    ▄██     ███    ",
-	"    ███     ███  ▄ ",
-	"   ████     ███▄██ ",
-	"   ███       ████▀ ",
-	"                   ",
+// Arabic-Indic 1337 in an angular, Kufic-inspired geometric seal.
+const KUFIC_LEET = [
+	"   ┏━━━━━━━━━━━━┓   ",
+	"━━━┫            ┣━━━",
+	"   ┃    ١٣٣٧    ┃   ",
+	"━━━┫            ┣━━━",
+	"   ┗━━━━━━━━━━━━┛   ",
+	"                    ",
 ];
 
 function mix(start: number, end: number, amount: number): number {
@@ -74,7 +73,7 @@ export default function (pi: ExtensionAPI) {
 
 		ctx.ui.setHeader(() => ({
 			render(width: number): string[] {
-				return PI.map((line, row) =>
+				return KUFIC_LEET.map((line, row) =>
 					center(gradient(line, row * 0.045), width),
 				);
 			},

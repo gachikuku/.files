@@ -1,6 +1,11 @@
 import { AssistantMessageComponent, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
-import { Text } from "@earendil-works/pi-tui";
+import {
+	type DefaultTextStyle,
+	Markdown,
+	type MarkdownTheme,
+	Text,
+} from "@earendil-works/pi-tui";
 
 type RGB = readonly [red: number, green: number, blue: number];
 
@@ -24,7 +29,39 @@ type AssistantMessagePrototype = {
 	[ORIGINAL_ASSISTANT_UPDATE_MARK]?: UpdateAssistantContent;
 	updateContent: UpdateAssistantContent;
 };
-type AssistantMessageInternals = { lastMessage?: AssistantMessage };
+type AssistantMessageInternals = {
+	contentContainer?: { children: unknown[] };
+	lastMessage?: AssistantMessage;
+};
+type MarkdownInternals = {
+	defaultTextStyle?: DefaultTextStyle;
+	theme?: MarkdownTheme;
+	invalidate?: () => void;
+};
+
+function useNormalThinkingText(component: AssistantMessageComponent): void {
+	const { contentContainer } = component as unknown as AssistantMessageInternals;
+	for (const child of contentContainer?.children ?? []) {
+		if (!(child instanceof Markdown)) continue;
+
+		const markdown = child as unknown as MarkdownInternals;
+		if (!markdown.defaultTextStyle?.italic) continue;
+
+		markdown.defaultTextStyle = {
+			...markdown.defaultTextStyle,
+			bold: false,
+			italic: false,
+		};
+		if (markdown.theme) {
+			markdown.theme = {
+				...markdown.theme,
+				bold: (text: string) => text,
+				italic: (text: string) => text,
+			};
+		}
+		markdown.invalidate?.();
+	}
+}
 
 function addThinkingPrefix(message: AssistantMessage): AssistantMessage {
 	const content = message.content.map((block) => {
@@ -151,6 +188,7 @@ export default function (pi: ExtensionAPI) {
 	const originalAssistantUpdate = assistantPrototype[ORIGINAL_ASSISTANT_UPDATE_MARK];
 	assistantPrototype.updateContent = function (message) {
 		originalAssistantUpdate.call(this, addThinkingPrefix(message));
+		useNormalThinkingText(this);
 		(this as unknown as AssistantMessageInternals).lastMessage = message;
 	};
 
