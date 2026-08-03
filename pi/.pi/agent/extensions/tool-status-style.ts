@@ -8,6 +8,13 @@ import {
 import { Box, Text } from "@earendil-works/pi-tui";
 
 const ORIGINAL_UPDATE_MARK = "__thinFileToolsOriginalUpdateDisplay";
+const DIFF_ADDED_BG = "\x1b[48;2;223;254;218m";
+const DIFF_ADDED_HIGHLIGHT_BG = "\x1b[48;2;192;253;182m";
+const DIFF_REMOVED_BG = "\x1b[48;2;249;216;216m";
+const DIFF_REMOVED_HIGHLIGHT_BG = "\x1b[48;2;249;184;184m";
+const RESET_BG = "\x1b[49m";
+const INVERSE_START = "\u0001";
+const INVERSE_END = "\u0002";
 const SGR = /\x1b\[[0-9;]*m/g;
 
 type ToolExecutionInternals = {
@@ -30,15 +37,14 @@ type MutableBox = Box & { paddingY: number };
 type MutableText = Text & { text: string };
 type ChildContainer = { children: unknown[] };
 
-function findFirstText(component: unknown): Text | undefined {
-	if (component instanceof Text) return component;
-	if (!component || typeof component !== "object" || !("children" in component)) return undefined;
+function findAllText(component: unknown): Text[] {
+	if (component instanceof Text) return [component];
+	if (!component || typeof component !== "object" || !("children" in component)) return [];
+	return (component as ChildContainer).children.flatMap(findAllText);
+}
 
-	for (const child of (component as ChildContainer).children) {
-		const text = findFirstText(child);
-		if (text) return text;
-	}
-	return undefined;
+function findFirstText(component: unknown): Text | undefined {
+	return findAllText(component)[0];
 }
 
 function recolorKeyword(component: unknown, theme: Theme, color: ThemeColor): void {
@@ -54,6 +60,51 @@ function recolorKeyword(component: unknown, theme: Theme, color: ThemeColor): vo
 	const [, keyword, rest] = match;
 	const recoloredFirstLine = `${theme.fg(color, theme.bold(keyword))}${rest}`;
 	textComponent.setText([recoloredFirstLine, ...remainingLines].join("\n"));
+}
+
+function highlightChangedWords(content: string, baseBackground: string, highlightBackground: string): string {
+	return content
+		.replaceAll(INVERSE_START, highlightBackground)
+		.replaceAll(INVERSE_END, baseBackground);
+}
+
+function styleDiff(component: unknown, theme: Theme): void {
+	for (const textComponent of findAllText(component).slice(1)) {
+		const mutableText = textComponent as MutableText;
+		const lines = mutableText.text.split("\n");
+		const parsed = lines.map((line) => {
+			const plain = line
+				.replaceAll("\x1b[7m", INVERSE_START)
+				.replaceAll("\x1b[27m", INVERSE_END)
+				.replace(SGR, "");
+			const match = plain.match(/^([+\- ])(\s*\d*)\s(.*)$/);
+			return match
+				? { prefix: match[1]!, lineNumber: match[2]!.trim(), content: match[3]! }
+				: undefined;
+		});
+		if (!parsed.some(Boolean)) continue;
+
+		const lineNumberWidth = Math.max(1, ...parsed.map((line) => line?.lineNumber.length ?? 0));
+		const styledLines = lines.map((line, index) => {
+			const diffLine = parsed[index];
+			if (!diffLine) return `${RESET_BG}${line.replace(SGR, "")}`;
+
+			const lineNumber = diffLine.lineNumber.padStart(lineNumberWidth);
+			if (diffLine.prefix === "+") {
+				const gutter = theme.fg("toolDiffAdded", `${lineNumber} +`);
+				const content = highlightChangedWords(diffLine.content, DIFF_ADDED_BG, DIFF_ADDED_HIGHLIGHT_BG);
+				return `${DIFF_ADDED_BG}${gutter}${content}`;
+			}
+			if (diffLine.prefix === "-") {
+				const gutter = theme.fg("toolDiffRemoved", `${lineNumber} -`);
+				const content = highlightChangedWords(diffLine.content, DIFF_REMOVED_BG, DIFF_REMOVED_HIGHLIGHT_BG);
+				return `${DIFF_REMOVED_BG}${gutter}${content}`;
+			}
+
+			return `${RESET_BG}${lineNumber}  ${diffLine.content}`;
+		});
+		textComponent.setText(styledLines.join("\n"));
+	}
 }
 
 export default function (pi: ExtensionAPI) {
@@ -86,6 +137,7 @@ export default function (pi: ExtensionAPI) {
 			const editBox = this.selfRenderContainer.children.find((child) => child instanceof Box);
 			if (editBox instanceof Box) {
 				(editBox as MutableBox).paddingY = 0;
+				if (activeTheme) styleDiff(editBox, activeTheme);
 				editBox.invalidate();
 			}
 		}
