@@ -1,6 +1,9 @@
 import { createBashTool, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
 
+const SUCCESS_COLOR = "\x1b[38;2;104;134;99m";
+const RESET_FG = "\x1b[39m";
+
 /**
  * Render bash commands without a background:
  * - yellow while pending
@@ -14,13 +17,13 @@ export default function bashStatusColors(pi: ExtensionAPI) {
 		...bash,
 		renderShell: "self",
 		renderCall(args, theme, context) {
-			const color = context.isPartial
-				? "warning"
-				: context.isError
-					? "error"
-					: "success";
 			const command = args.command || "...";
-			let content = theme.fg(color, theme.bold(`$ ${command}`));
+			const commandText = theme.bold(`$ ${command}`);
+			let content = context.isPartial
+				? theme.fg("warning", commandText)
+				: context.isError
+					? theme.fg("error", commandText)
+					: `${SUCCESS_COLOR}${commandText}${RESET_FG}`;
 
 			if (args.timeout) {
 				content += theme.fg("dim", ` (timeout ${args.timeout}s)`);
