@@ -101,7 +101,8 @@ function styleDiff(component: unknown, theme: Theme): void {
 				return `${DIFF_REMOVED_BG}${gutter}${content}`;
 			}
 
-			return `${RESET_BG}${lineNumber}  ${diffLine.content}`;
+			const gutter = theme.fg("dim", lineNumber);
+			return `${RESET_BG}${gutter}  ${diffLine.content}`;
 		});
 		textComponent.setText(styledLines.join("\n"));
 	}
