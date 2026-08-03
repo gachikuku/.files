@@ -9,6 +9,7 @@ const BRIGHT: RGB = [255, 218, 213];
 const LIGHT: RGB = [236, 184, 180];
 const RESET_FG = "\x1b[39m";
 const CLAUDE_SPINNER = ["✻", "✽", "✶", "✳", "✢", "·", "✢", "✳", "✶", "✽"];
+const ANIMATION_INTERVAL_MS = 140;
 
 const DURATION_ENTRY_TYPE = "playful-working-duration";
 
@@ -36,23 +37,20 @@ function toCompletedMessage(message: string): string {
 	return [completedVerb, ...rest].join(" ");
 }
 
-function makeClaudeStyleFrames(message: string): string[] {
+function makeClaudeStyleFrame(message: string, frameIndex: number, elapsedSeconds: number): string {
 	const characters = [...message];
-	const frameCount = characters.length + 6;
+	const highlightPosition = (frameIndex % (characters.length + 6)) - 3;
+	const animatedMessage = characters
+		.map((character, characterIndex) => {
+			const distance = Math.abs(characterIndex - highlightPosition);
+			const color = distance === 0 ? BRIGHT : distance <= 2 ? LIGHT : BASE;
+			return colorize(character, color);
+		})
+		.join("");
+	const spinner = CLAUDE_SPINNER[Math.floor(frameIndex / 2) % CLAUDE_SPINNER.length]!;
+	const elapsed = colorize(` (${formatDuration(elapsedSeconds)})`, SUMMARY);
 
-	return Array.from({ length: frameCount }, (_, frameIndex) => {
-		const highlightPosition = frameIndex - 3;
-		const animatedMessage = characters
-			.map((character, characterIndex) => {
-				const distance = Math.abs(characterIndex - highlightPosition);
-				const color = distance === 0 ? BRIGHT : distance <= 2 ? LIGHT : BASE;
-				return colorize(character, color);
-			})
-			.join("");
-		const spinner = CLAUDE_SPINNER[Math.floor(frameIndex / 2) % CLAUDE_SPINNER.length]!;
-
-		return `${colorize(spinner, BASE)} ${animatedMessage}`;
-	});
+	return `${colorize(spinner, BASE)} ${animatedMessage}${elapsed}`;
 }
 
 const WORKING_MESSAGES = [
@@ -117,6 +115,14 @@ export default function (pi: ExtensionAPI) {
 	let previousIndex = -1;
 	let startedAt: number | undefined;
 	let completedMessage: string | undefined;
+	let animationTimer: ReturnType<typeof setInterval> | undefined;
+
+	const stopAnimation = () => {
+		if (animationTimer) {
+			clearInterval(animationTimer);
+			animationTimer = undefined;
+		}
+	};
 
 	pi.registerEntryRenderer(DURATION_ENTRY_TYPE, (entry) => {
 		const data = entry.data as { elapsedSeconds: number; completedMessage?: string };
@@ -125,6 +131,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("before_agent_start", (_event, ctx) => {
+		stopAnimation();
 		startedAt = Date.now();
 		if (ctx.mode !== "tui") return;
 
@@ -134,20 +141,34 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		previousIndex = index;
-		completedMessage = toCompletedMessage(WORKING_MESSAGES[index]);
+		const workingMessage = WORKING_MESSAGES[index];
+		completedMessage = toCompletedMessage(workingMessage);
+		let frameIndex = 0;
+
+		const updateAnimation = () => {
+			const elapsedSeconds = Math.max(1, Math.floor((Date.now() - startedAt!) / 1000));
+			ctx.ui.setWorkingIndicator({
+				frames: [makeClaudeStyleFrame(workingMessage, frameIndex, elapsedSeconds)],
+			});
+			frameIndex++;
+		};
+
 		ctx.ui.setWorkingMessage("");
-		ctx.ui.setWorkingIndicator({
-			frames: makeClaudeStyleFrames(WORKING_MESSAGES[index]),
-			intervalMs: 140,
-		});
+		updateAnimation();
+		animationTimer = setInterval(updateAnimation, ANIMATION_INTERVAL_MS);
 	});
 
 	pi.on("agent_settled", () => {
+		stopAnimation();
 		if (startedAt === undefined || completedMessage === undefined) return;
 
-		const elapsedSeconds = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+		const elapsedSeconds = Math.max(1, Math.floor((Date.now() - startedAt) / 1000));
 		pi.appendEntry(DURATION_ENTRY_TYPE, { elapsedSeconds, completedMessage });
 		startedAt = undefined;
 		completedMessage = undefined;
+	});
+
+	pi.on("session_shutdown", () => {
+		stopAnimation();
 	});
 }
