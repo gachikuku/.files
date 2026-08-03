@@ -57,6 +57,7 @@ function makeClaudeStyleFrames(message: string): string[] {
 
 const WORKING_MESSAGES = [
 
+	"Balling...",
 	"Chasing semicolons...",
 	"Chaturbating...",
 	"Cogitating...",
@@ -66,12 +67,14 @@ const WORKING_MESSAGES = [
 	"Crunching...",
 	"Disco-dusting...",
 	"Doodling...",
+	"Dripping...",
 	"Drooling...",
 	"Dry-humping...",
 	"Edging...",
 	"Fapping...",
 	"Fingering...",
 	"Fipfapping...",
+	"Flinching...",
 	"Fondling...",
 	"Gagging...",
 	"Gooning...",
@@ -95,6 +98,7 @@ const WORKING_MESSAGES = [
 	"Scribbling...",
 	"Sniffing...",
 	"Snowballing...",
+	"Snowman-building...",
 	"Spanking...",
 	"Spitting...",
 	"Stretching...",
@@ -103,6 +107,7 @@ const WORKING_MESSAGES = [
 	"Swallowing...",
 	"Thrusting...",
 	"Tinkering...",
+	"Tweaking...",
 	"Untangling...",
 
 ] as const;
