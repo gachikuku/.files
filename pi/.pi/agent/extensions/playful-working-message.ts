@@ -1,15 +1,39 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
 
 type RGB = readonly [red: number, green: number, blue: number];
 
 const BASE: RGB = [204, 139, 137];
+const SUMMARY: RGB = [98, 98, 98];
 const BRIGHT: RGB = [255, 218, 213];
 const LIGHT: RGB = [236, 184, 180];
 const RESET_FG = "\x1b[39m";
 const CLAUDE_SPINNER = ["✻", "✽", "✶", "✳", "✢", "·", "✢", "✳", "✶", "✽"];
 
+const DURATION_ENTRY_TYPE = "playful-working-duration";
+
 function colorize(text: string, [red, green, blue]: RGB): string {
 	return `\x1b[38;2;${red};${green};${blue}m${text}${RESET_FG}`;
+}
+
+function formatDuration(elapsedSeconds: number): string {
+	const minutes = Math.floor(elapsedSeconds / 60);
+	const seconds = elapsedSeconds % 60;
+	return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+}
+
+function toCompletedMessage(message: string): string {
+	const activeMessage = message.replace(/\.{3}$/, "");
+	if (activeMessage === "Saliva build up") return "Saliva built up";
+
+	const [verb, ...rest] = activeMessage.split(" ");
+	const irregularPast: Record<string, string> = {
+		Grinding: "Ground",
+		Spitting: "Spat",
+		Thrusting: "Thrust",
+	};
+	const completedVerb = irregularPast[verb] ?? (verb.endsWith("ing") ? `${verb.slice(0, -3)}ed` : verb);
+	return [completedVerb, ...rest].join(" ");
 }
 
 function makeClaudeStyleFrames(message: string): string[] {
@@ -25,49 +49,77 @@ function makeClaudeStyleFrames(message: string): string[] {
 				return colorize(character, color);
 			})
 			.join("");
-		const spinner = CLAUDE_SPINNER[frameIndex % CLAUDE_SPINNER.length]!;
+		const spinner = CLAUDE_SPINNER[Math.floor(frameIndex / 2) % CLAUDE_SPINNER.length]!;
 
 		return `${colorize(spinner, BASE)} ${animatedMessage}`;
 	});
 }
 
 const WORKING_MESSAGES = [
-	"Lollygagging...",
-	"Gagging...",
-	"Pondering...",
-	"Fipfapping...",
-	"Fapping...",
-	"Percolating...",
-	"Tinkering...",
-	"Scheming...",
-	"Cogitating...",
-	"Moseying...",
-	"Salivating...",
-	"Saliva build up...",
-	"Stretching...",
-	"Fingering...",
-	"Mansplaying...",
-	"Ruminating...",
-	"Lubricating...",
-	"Noodling...",
-	"Swallowing...",
-	"Conjuring...",
-	"Scribbling...",
-	"Untangling...",
-	"Investigating...",
-	"Crunching...",
-	"Herding bits...",
-	"Consulting the void...",
-	"Polishing pixels...",
+
 	"Chasing semicolons...",
-	"Summoning electrons...",
+	"Chaturbating...",
+	"Cogitating...",
+	"Conjuring...",
 	"Connecting dots...",
+	"Consulting the void...",
+	"Crunching...",
+	"Disco-dusting...",
+	"Doodling...",
+	"Drooling...",
+	"Dry-humping...",
+	"Edging...",
+	"Fapping...",
+	"Fingering...",
+	"Fipfapping...",
+	"Fondling...",
+	"Gagging...",
+	"Gooning...",
+	"Grinding...",
+	"Herding bits...",
+	"Humping...",
+	"Investigating...",
+	"Lollygagging...",
+	"Lubricating...",
+	"Mansplaying...",
+	"Moseying...",
+	"Noodling...",
+	"Percolating...",
+	"Polishing pixels...",
+	"Pondering...",
+	"Ruminating...",
+	"Saliva build up...",
+	"Salivating...",
+	"Scheming...",
+	"Screwing...",
+	"Scribbling...",
+	"Sniffing...",
+	"Snowballing...",
+	"Spanking...",
+	"Spitting...",
+	"Stretching...",
+	"Sucking...",
+	"Summoning electrons...",
+	"Swallowing...",
+	"Thrusting...",
+	"Tinkering...",
+	"Untangling...",
+
 ] as const;
 
 export default function (pi: ExtensionAPI) {
 	let previousIndex = -1;
+	let startedAt: number | undefined;
+	let completedMessage: string | undefined;
+
+	pi.registerEntryRenderer(DURATION_ENTRY_TYPE, (entry) => {
+		const data = entry.data as { elapsedSeconds: number; completedMessage?: string };
+		const summary = `✻ ${data.completedMessage ?? "Sautéed"} for ${formatDuration(data.elapsedSeconds)}`;
+		return new Text(colorize(summary, SUMMARY), 1, 0);
+	});
 
 	pi.on("before_agent_start", (_event, ctx) => {
+		startedAt = Date.now();
 		if (ctx.mode !== "tui") return;
 
 		let index = Math.floor(Math.random() * WORKING_MESSAGES.length);
@@ -76,10 +128,20 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		previousIndex = index;
+		completedMessage = toCompletedMessage(WORKING_MESSAGES[index]);
 		ctx.ui.setWorkingMessage("");
 		ctx.ui.setWorkingIndicator({
 			frames: makeClaudeStyleFrames(WORKING_MESSAGES[index]),
 			intervalMs: 140,
 		});
+	});
+
+	pi.on("agent_settled", () => {
+		if (startedAt === undefined || completedMessage === undefined) return;
+
+		const elapsedSeconds = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+		pi.appendEntry(DURATION_ENTRY_TYPE, { elapsedSeconds, completedMessage });
+		startedAt = undefined;
+		completedMessage = undefined;
 	});
 }
