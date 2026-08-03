@@ -1,4 +1,5 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { AssistantMessageComponent, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { Text } from "@earendil-works/pi-tui";
 
 type RGB = readonly [red: number, green: number, blue: number];
@@ -12,9 +13,36 @@ const CLAUDE_SPINNER = ["✻", "✽", "✶", "✳", "✢", "·", "✢", "✳", "
 const ANIMATION_INTERVAL_MS = 140;
 
 const DURATION_ENTRY_TYPE = "playful-working-duration";
+const ORIGINAL_ASSISTANT_UPDATE_MARK = "__thinkingPrefixOriginalUpdateContent";
 
 function colorize(text: string, [red, green, blue]: RGB): string {
 	return `\x1b[38;2;${red};${green};${blue}m${text}${RESET_FG}`;
+}
+
+type UpdateAssistantContent = (this: AssistantMessageComponent, message: AssistantMessage) => void;
+type AssistantMessagePrototype = {
+	[ORIGINAL_ASSISTANT_UPDATE_MARK]?: UpdateAssistantContent;
+	updateContent: UpdateAssistantContent;
+};
+type AssistantMessageInternals = { lastMessage?: AssistantMessage };
+
+function addThinkingPrefix(message: AssistantMessage): AssistantMessage {
+	const content = message.content.map((block) => {
+		if (block.type !== "thinking" || !block.thinking.trim()) return block;
+
+		const thinking = block.thinking
+			.trim()
+			.split(/\n\n+/)
+			.map((paragraph) => {
+				const trimmed = paragraph.trim();
+				return trimmed.startsWith("∴") ? trimmed : `∴ ${trimmed}`;
+			})
+			.join("\n\n");
+
+		return { ...block, thinking };
+	});
+
+	return { ...message, content };
 }
 
 function formatDuration(elapsedSeconds: number): string {
@@ -118,6 +146,14 @@ const WORKING_MESSAGES = [
 ] as const;
 
 export default function (pi: ExtensionAPI) {
+	const assistantPrototype = AssistantMessageComponent.prototype as unknown as AssistantMessagePrototype;
+	assistantPrototype[ORIGINAL_ASSISTANT_UPDATE_MARK] ??= assistantPrototype.updateContent;
+	const originalAssistantUpdate = assistantPrototype[ORIGINAL_ASSISTANT_UPDATE_MARK];
+	assistantPrototype.updateContent = function (message) {
+		originalAssistantUpdate.call(this, addThinkingPrefix(message));
+		(this as unknown as AssistantMessageInternals).lastMessage = message;
+	};
+
 	let previousIndex = -1;
 	let startedAt: number | undefined;
 	let completedMessage: string | undefined;
