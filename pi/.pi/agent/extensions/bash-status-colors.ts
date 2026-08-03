@@ -2,6 +2,7 @@ import { createBashTool, type ExtensionAPI } from "@earendil-works/pi-coding-age
 import { Text } from "@earendil-works/pi-tui";
 
 const SUCCESS_COLOR = "\x1b[38;2;104;134;99m";
+const ERROR_COLOR = "\x1b[38;2;164;99;97m";
 const RESET_FG = "\x1b[39m";
 
 /**
@@ -22,7 +23,7 @@ export default function bashStatusColors(pi: ExtensionAPI) {
 			let content = context.isPartial
 				? theme.fg("warning", commandText)
 				: context.isError
-					? theme.fg("error", commandText)
+					? `${ERROR_COLOR}${commandText}${RESET_FG}`
 					: `${SUCCESS_COLOR}${commandText}${RESET_FG}`;
 
 			if (args.timeout) {
