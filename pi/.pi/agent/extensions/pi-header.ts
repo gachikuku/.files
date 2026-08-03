@@ -5,15 +5,14 @@ type Rgb = [number, number, number];
 
 const RESET = "\x1b[0m";
 
-// A Flexoki-green version of Davis's blue gradient. The middle shade is the
-// exact #547565 used by this setup for inline code.
+// A Claude-orange gradient centered on the brand color #d97757.
 const PALETTE: Rgb[] = [
-	[52, 74, 64],
-	[70, 97, 84],
-	[84, 117, 101],
-	[105, 132, 121],
-	[127, 151, 139],
-	[105, 132, 121],
+	[139, 67, 44],
+	[181, 85, 56],
+	[217, 119, 87],
+	[226, 139, 112],
+	[217, 119, 87],
+	[181, 85, 56],
 ];
 
 const PI = [

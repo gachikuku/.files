@@ -16,6 +16,7 @@
     "statusRed": "#a46361",
     "red": "#af3029",
     "orange": "#bc5215",
+    "claudeOrange": "#d97757",
     "yellow": "#ad8301",
     "green": "#66800b",
     "cyan": "#24837b",
@@ -24,7 +25,7 @@
     "magenta": "#a02f6f"
   },
   "colors": {
-    "accent": "base600",
+    "accent": "claudeOrange",
     "border": "base500",
     "borderAccent": "base600",
     "borderMuted": "base300",
