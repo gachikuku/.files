@@ -4,8 +4,8 @@
   "packages": [
     "git:github.com/badlogic/pi-mono"
   ],
-  "defaultProvider": "opencode",
-  "defaultModel": "deepseek-v4-flash-free",
+  "defaultProvider": "openrouter",
+  "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b:free",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": true,
   "showCacheMissNotices": true,
