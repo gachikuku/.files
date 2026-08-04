@@ -187,6 +187,7 @@ const WORKING_MESSAGES = [
 	"Sniffing...",
 	"Snowballing...",
 	"Snowman-building...",
+	"Spamming...",
 	"Spanking...",
 	"Spelunking...",
 	"Spitting...",
