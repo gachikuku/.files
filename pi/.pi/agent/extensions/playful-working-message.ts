@@ -120,7 +120,9 @@ function makeClaudeStyleFrame(message: string, frameIndex: number, elapsedSecond
 
 const WORKING_MESSAGES = [
 
+	"Abusing...",
 	"Balling...",
+	"Banging...",
 	"Brainfarting...",
 	"Chasing semicolons...",
 	"Chaturbating...",
@@ -159,6 +161,7 @@ const WORKING_MESSAGES = [
 	"Percolating...",
 	"Polishing pixels...",
 	"Pondering...",
+	"Romanticising...",
 	"Ruminating...",
 	"Saliva build up...",
 	"Salivating...",
