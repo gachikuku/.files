@@ -7,7 +7,7 @@
   "defaultProvider": "opencode",
   "defaultModel": "deepseek-v4-flash-free",
   "defaultThinkingLevel": "high",
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "showCacheMissNotices": true,
   "enableInstallTelemetry": false,
   "quietStartup": true,
