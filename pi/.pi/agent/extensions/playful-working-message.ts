@@ -140,6 +140,7 @@ const WORKING_MESSAGES = [
 	"Dripping...",
 	"Drooling...",
 	"Dry-humping...",
+	"Ecstasising...",
 	"Edging...",
 	"Epanalepsing...",
 	"Fapping...",
