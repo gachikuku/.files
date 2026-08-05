@@ -172,7 +172,9 @@ const WORKING_MESSAGES = [
 	"Moseying...",
 	"Noodling...",
 	"Nose picking...",
+	"Null-pointing...",
 	"Percolating...",
+	"Pointing...",
 	"Polishing pixels...",
 	"Pondering...",
 	"Re-ranking...",
@@ -199,7 +201,9 @@ const WORKING_MESSAGES = [
 	"Spanking...",
 	"Spelunking...",
 	"Spitting...",
+	"Stack-overflowing...",
 	"Stack-smashing...",
+	"Stacking...",
 	"Stalking...",
 	"Stretching...",
 	"Sucking...",
@@ -214,6 +218,7 @@ const WORKING_MESSAGES = [
 	"Untangling...",
 	"Vomiting...",
 	"Yo-yo(ing)...",
+	
 ] as const;
 
 export default function (pi: ExtensionAPI) {

@@ -16,7 +16,6 @@ import {
   Text,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
-import { Cause, Effect, Exit } from "effect";
 import { Type, type Static } from "typebox";
 import {
   ASK_USER_PARAMETER_DESCRIPTIONS,
@@ -143,7 +142,7 @@ export default function askUser(pi: ExtensionAPI) {
         { label: "Write my own answer…", isOther: true },
       ];
 
-      const showQuestion = (uiSignal: AbortSignal) =>
+      const showQuestion = (uiSignal?: AbortSignal) =>
         ctx.ui.custom<SelectionResult>((tui, theme, _kb, done) => {
           let optionIndex = 0;
           let editMode = false;
@@ -154,7 +153,7 @@ export default function askUser(pi: ExtensionAPI) {
           function finish(result: SelectionResult) {
             if (settled) return;
             settled = true;
-            uiSignal.removeEventListener("abort", cancel);
+            uiSignal?.removeEventListener("abort", cancel);
             done(result);
           }
 
@@ -162,8 +161,8 @@ export default function askUser(pi: ExtensionAPI) {
             finish(null);
           }
 
-          uiSignal.addEventListener("abort", cancel, { once: true });
-          if (uiSignal.aborted) queueMicrotask(cancel);
+          uiSignal?.addEventListener("abort", cancel, { once: true });
+          if (uiSignal?.aborted) queueMicrotask(cancel);
 
           const editorTheme: EditorTheme = {
             borderColor: (s) => theme.fg("accent", s),
@@ -324,25 +323,25 @@ export default function askUser(pi: ExtensionAPI) {
             },
             handleInput,
             dispose: () => {
-              uiSignal.removeEventListener("abort", cancel);
+              uiSignal?.removeEventListener("abort", cancel);
             },
           };
         });
 
-      const uiExit = await Effect.runPromiseExit(
-        Effect.tryPromise(showQuestion),
-        signal ? { signal } : undefined,
-      );
-
-      if (Exit.isFailure(uiExit)) {
-        if (Cause.hasInterruptsOnly(uiExit.cause)) {
+      // Await the popup. Abort (e.g. Esc during a tool call) either resolves
+      // the popup to null via the uiSignal listener above, or rejects with an
+      // AbortError - both are reported as cancelled/dismissed to the model.
+      let result: SelectionResult;
+      try {
+        result = await showQuestion(signal);
+      } catch (error) {
+        if (signal?.aborted) {
           return reply(buildAskUserResultMessage({ kind: "cancelled" }));
         }
-        const [first] = Cause.prettyErrors(uiExit.cause);
-        throw new Error(first?.message ?? Cause.pretty(uiExit.cause));
+        const message =
+          error instanceof Error ? error.message : String(error);
+        throw new Error(message);
       }
-
-      const result = uiExit.value;
 
       if (!result) {
         return reply(buildAskUserResultMessage({ kind: "dismissed" }));
