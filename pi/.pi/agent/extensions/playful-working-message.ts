@@ -180,6 +180,7 @@ const WORKING_MESSAGES = [
 	"Salivating...",
 	"Schadenfreude...",
 	"Scheming...",
+	"Scissoring...",
 	"Screwing...",
 	"Scribbling...",
 	"Searching...",

@@ -24,5 +24,7 @@
       "maxRetries": 0
     }
   },
-  "defaultProjectTrust": "ask"
+  "defaultProjectTrust": "ask",
+  "httpIdleTimeoutMs": 300000,
+  "outputPad": 0
 }
