@@ -155,6 +155,7 @@ const WORKING_MESSAGES = [
 	"Guessing...",
 	"Hallucinating...",
 	"Herding bits...",
+	"Hoeing...",
 	"Humping...",
 	"Investigating...",
 	"K00king...",
@@ -212,7 +213,6 @@ const WORKING_MESSAGES = [
 	"Untangling...",
 	"Vomiting...",
 	"Yo-yo(ing)...",
-
 ] as const;
 
 export default function (pi: ExtensionAPI) {
