@@ -7,7 +7,7 @@
   "defaultProvider": "opencode",
   "defaultModel": "deepseek-v4-flash-free",
   "defaultThinkingLevel": "high",
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "showCacheMissNotices": true,
   "enableInstallTelemetry": false,
   "quietStartup": true,
@@ -16,7 +16,7 @@
     "skipPrompt": false
   },
   "compaction": {
-    "enabled": false
+    "enabled": true
   },
   "retry": {
     "enabled": false,
@@ -26,5 +26,6 @@
   },
   "defaultProjectTrust": "ask",
   "httpIdleTimeoutMs": 300000,
-  "outputPad": 0
+  "outputPad": 0,
+  "editorPaddingX": 0
 }
