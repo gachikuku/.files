@@ -134,6 +134,7 @@ const WORKING_MESSAGES = [
 	"Consulting the void...",
 	"Consumating...",
 	"Cracking...",
+	"Cranking...",
 	"Crunching...",
 	"Disco-dusting...",
 	"Doodling...",
