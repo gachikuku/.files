@@ -62,17 +62,14 @@ bind -n WheelUpPane if-shell -F "#{||:#{alternate_on},#{pane_in_mode},#{mouse_an
 bind -n MouseDrag1Pane if -F '#{||:#{pane_in_mode},#{mouse_any_flag}}' { send -M } { copy-mode -MH }
 
 # BEGIN managed status layout
-# Windows remain left, prayer remains at the absolute screen centre,
-# and copy/view-mode information appears at the far right.
+# Windows on the left, next prayer always centred, copy-mode info at far right.
 set -g status-justify left
 
-set -g status-left ''
-set -g status-left-length 0
+set -g status-left-length 100
+set -g status-left '#[align=centre]#[fg=##6f6e69,bg=##f2f0e5]#(~/.files/tmux/.config/tmux/next-prayer.sh) '
 
 set -g status-right-length 40
-set -g status-right '#[fg=##6f6e69,bg=##f2f0e5,bold]#{?#{m/r:^(copy|view)-mode$,#{pane_mode}}, #{t/p:top_line_time} [#{copy_position}/#{copy_position_limit}] ,}'
-
-set -g status-format[0] '#[align=left range=left #{E:status-left-style}]#[push-default]#{T;=/#{status-left-length}:status-left}#[pop-default]#[norange default]#[list=on align=#{status-justify}]#[list=left-marker]<#[list=right-marker]>#[list=on]#{W:#[range=window|#{window_index} #{E:window-status-style}#{?#{&&:#{window_last_flag},#{!=:#{E:window-status-last-style},default}}, #{E:window-status-last-style},}#{?#{&&:#{window_bell_flag},#{!=:#{E:window-status-bell-style},default}}, #{E:window-status-bell-style},#{?#{&&:#{||:#{window_activity_flag},#{window_silence_flag}},#{!=:#{E:window-status-activity-style},default}}, #{E:window-status-activity-style},}}]#[push-default]#{T:window-status-format}#[pop-default]#[norange default]#{?loop_last_flag,,#{E:window-status-separator}},#[range=window|#{window_index} list=focus #{?#{!=:#{E:window-status-current-style},default},#{E:window-status-current-style},#{E:window-status-style}}#{?#{&&:#{window_last_flag},#{!=:#{E:window-status-last-style},default}}, #{E:window-status-last-style},}#{?#{&&:#{window_bell_flag},#{!=:#{E:window-status-bell-style},default}}, #{E:window-status-bell-style},#{?#{&&:#{||:#{window_activity_flag},#{window_silence_flag}},#{!=:#{E:window-status-activity-style},default}}, #{E:window-status-activity-style},}}]#[push-default]#{T:window-status-current-format}#[pop-default]#[norange list=on default]#{?loop_last_flag,,#{E:window-status-separator}}}#[nolist align=absolute-centre]#[fg=##6f6e69,bg=##f2f0e5,nobold]#(~/.files/tmux/.config/tmux/next-prayer.sh) #[align=right range=right #{E:status-right-style}]#[push-default]#{T;=/#{status-right-length}:status-right}#[pop-default]#[norange default]'
+set -g status-right '#[fg=##da702c,bg=##100f0f,bold]#{?#{m/r:^(copy|view)-mode$,#{pane_mode}}, #{t/p:top_line_time} [#{copy_position}/#{copy_position_limit}] ,}'
 # END managed status layout
 #set -g status-position top
 
