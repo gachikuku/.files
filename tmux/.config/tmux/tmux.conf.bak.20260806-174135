@@ -1,0 +1,114 @@
+source-file ~/.files/tmux/.config/tmux/flexoki-light.tmuxtheme
+
+set -ga terminal-overrides ",tmux-256color*:Tc"
+set-option -g default-terminal "tmux-256color"
+set -s escape-time 0
+set-option -g repeat-time 0
+
+unbind C-b
+set-option -g prefix C-s
+bind-key C-s send-prefix
+
+set -g history-limit 50000
+# Forward mouse events to full-screen applications such as Tau.
+set -g mouse on
+
+# Mouse wheel scrolls line by line (tmux defaults to 5 lines per tick).
+bind -T copy-mode    WheelUpPane   select-pane \; send -N1 -X scroll-up
+bind -T copy-mode    WheelDownPane select-pane \; send -N1 -X scroll-down
+bind -T copy-mode-vi WheelUpPane   select-pane \; send -N1 -X scroll-up
+bind -T copy-mode-vi WheelDownPane select-pane \; send -N1 -X scroll-down
+
+bind r source-file ~/.files/tmux/.config/tmux/tmux.conf
+
+set -g base-index 1
+setw -g pane-base-index 1
+
+#set -g status-style 'fg=green'
+
+#set -g status-style 'fg=#879A39, bright'
+#set -g status-style 'fg=#808080, bright'
+set -g status-interval 1
+set -g message-style reverse
+
+# bind -r ^ last-window
+bind -r space last-window
+
+# vim-like pane switching
+bind -r k select-pane -U
+bind -r j select-pane -D
+bind -r h select-pane -L
+bind -r l select-pane -R
+
+bind -r D neww -c "#{pane_current_path}" "[[ -e diary.md ]] && nvim TODO.md || nvim ~/iCloud/diary/diary.md"
+bind -r I neww -c "#{pane_current_path}" "[[ -e index.md ]] && nvim index.md || nvim ~/iCloud/index.md"
+
+bind-key -r b movew -t1:
+bind-key -r B movew -t0:
+
+# Need to copy like in vim
+set-window-option -g mode-keys vi
+bind -T copy-mode-vi v send-keys -X begin-selection
+bind -T copy-mode-vi y send-keys -X copy-pipe 'pbcopy'
+# Copy mouse selections without leaving copy mode, matching the y binding.
+bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe 'pbcopy'
+
+# ── copy-mode indicator on the status bar ─────────────────────────────────
+# Hide tmux's built-in top-right [pos/total] badge on every entry path; the
+# the same info (clock + position) is shown at the far right instead.
+bind '[' copy-mode -H
+bind PPage copy-mode -uH
+bind -n WheelUpPane if-shell -F "#{||:#{alternate_on},#{pane_in_mode},#{mouse_any_flag}}" { send-keys -M } { copy-mode -eH }
+bind -n MouseDrag1Pane if -F '#{||:#{pane_in_mode},#{mouse_any_flag}}' { send -M } { copy-mode -MH }
+
+# BEGIN managed status layout
+# Windows on the left, next prayer always centred, copy-mode info at far right.
+set -g status-justify left
+
+set -g status-left-length 100
+set -g status-left '#[align=centre]#[fg=##6f6e69,bg=##f2f0e5]#(~/.files/tmux/.config/tmux/next-prayer.sh) '
+
+set -g status-right-length 40
+# Two conditionals (comma-free, chained style directives to avoid the
+# conditional comma-split bug): the first applies the badge style only in
+# copy/view mode; the second renders a fixed 24-wide slot (p pads raw
+# length, tmux lays out by rendered width) so the centered prayer never
+# moves when the badge toggles.
+set -g status-right '#{?#{m/r:^(copy|view)-mode$,#{pane_mode}},#[fg=##da702c]#[bg=##100f0f]#[bold],}#{p24:#{?#{m/r:^(copy|view)-mode$,#{pane_mode}}, #{t/p:top_line_time} [#{copy_position}/#{copy_position_limit}] ,}}'
+# END managed status layout
+#set -g status-position top
+
+# nvim's checkhealth
+set-option -g focus-events on
+
+# Preserve modified keys such as Shift+Enter in Tau and other TUIs.
+set -g extended-keys always
+set -g extended-keys-format csi-u
+set -g terminal-features[3] 'xterm-ghostty:extkeys'
+
+#renumber!
+set-option -g renumber-windows on
+
+# New windows/panes keep current path
+bind c new-window -c "#{pane_current_path}"
+bind '"' split-window -v -c "#{pane_current_path}"
+bind % split-window -h -c "#{pane_current_path}"
+
+# ── agent attention (cmux-style notifications) ──────────────────────────────
+# Orange ● on a window when an agent there wants you, plus a clickable desktop
+# ping (~/bin/agent-notify -> jumps you back to the pane). Claude Code drives it
+# via Stop/Notification hooks (@agent_waiting); the bell covers pi/opencode/etc.
+set -g monitor-bell on
+set -g bell-action other
+set -g visual-bell off
+set-hook -g alert-bell 'run-shell -b "~/bin/agent-notify bell #{hook_pane}"'
+
+# Append the ● keeping the flexoki theme's exact format/colours (theme lines 84-85).
+# Hex is inlined (bg_2/tx_2/orange) instead of $color_* so these lines survive
+# being run outside config parsing, where the theme variables are empty.
+setw -g window-status-format         "#[bg=##f2f0e5,fg=##6f6e69] #I:#W#{?#{||:#{!=:#{@agent_waiting},},#{window_bell_flag}}, #[fg=##da702c]●,}"
+setw -g window-status-current-format "#[bold bg=##f2f0e5,fg=##6f6e69] #I:#W#{?#{||:#{!=:#{@agent_waiting},},#{window_bell_flag}}, #[fg=##da702c]●,}"
+
+# Clear the ● once you actually look at the window.
+set-hook -ga after-select-window 'set -uw @agent_waiting'
+set-hook -ga pane-focus-in       'set -uw @agent_waiting'
