@@ -59,7 +59,7 @@ class SinglePacketAttackAddonV1:
         resp = self.h2_conn.read_response_from_socket(_timeout=3)
 
         # Count successful responses
-        success_count = sum(1 for frame in resp if isinstance(frame, (bytes, bytearray)) and frame.startswith(b"\x00\x00\x00\x01"))
+        success_count = sum(1 for frame in resp if frame.startswith(b'\x00\x00\x00\x01'))
 
         ctx.log.info(f"Attack completed for {self.host}{path}. Successful responses: {success_count}/{x_spa_num}")
 

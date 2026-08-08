@@ -158,6 +158,7 @@ const WORKING_MESSAGES = [
 	"Guessing...",
 	"Hallucinating...",
 	"Handholding...",
+	"Headbanging...",
 	"Herding bits...",
 	"Hoeing...",
 	"Humping...",
