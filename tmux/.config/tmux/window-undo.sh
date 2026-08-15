@@ -3,7 +3,7 @@
 set -eu
 
 trash_session='__window_undo'
-keep_windows=10
+keep_windows=25
 
 list_closed_windows()
 {
