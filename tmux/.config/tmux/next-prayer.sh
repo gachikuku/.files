@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/dash
 
 # Next prayer/event for the Mac's current timezone, calculated offline with the
 # Muslim World League method. Coordinates come from the system timezone database.
