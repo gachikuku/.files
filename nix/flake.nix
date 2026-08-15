@@ -142,7 +142,6 @@
 						neovim
 						tree-sitter
 						ngrok
-						texliveFull
 						nmap
 						nuclei
 						openvpn

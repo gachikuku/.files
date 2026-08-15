@@ -39,6 +39,22 @@ export WORDCHARS='*?_[]~=&;!#$%^(){}'
 # Emacs keys
 bindkey -e
 
+# Prevent accidental Ctrl-D from closing tmux panes, windows, or sessions.
+if [[ -n "$TMUX" ]]; then
+  setopt IGNORE_EOF
+
+  tmux-ignore-eof() {
+    if [[ -n "$BUFFER" ]]; then
+      zle delete-char-or-list
+    else
+      zle -M 'Ctrl-D disabled in tmux; type exit to close this shell.'
+    fi
+  }
+
+  zle -N tmux-ignore-eof
+  bindkey '^D' tmux-ignore-eof
+fi
+
 # prompt
 #PS1="%F{5}%m:%~%(!.%F{2}#.%F{2}$)%f "
 PS1='%~%(!.#.$) '

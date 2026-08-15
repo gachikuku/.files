@@ -1,0 +1,10 @@
+^/\.stow-local-ignore$
+^/\.pi/agent/node_modules($|/)
+^/\.pi/agent/\.env$
+^/\.pi/agent/bin($|/)
+^/\.pi/agent/sessions($|/)
+^/\.pi/agent/workflows($|/)
+^/\.pi/agent/auth\.json$
+^/\.pi/agent/models(-store)?\.json$
+^/\.pi/agent/trust\.json$
+^/\.pi/agent/extensions/summaries/config\.private\.json(?:\..*)?$

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["node"],
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "extensions/ask-user/**/*.ts",
+    "extensions/background-terminals/**/*.ts",
+    "extensions/copy-all/**/*.ts",
+    "extensions/file-search/**/*.ts",
+    "extensions/firecrawl-search/**/*.ts",
+    "extensions/git-info/**/*.ts",
+    "extensions/shared/**/*.ts",
+    "extensions/spark-strict-tools/**/*.ts",
+    "extensions/subagents/**/*.ts",
+    "extensions/summaries/**/*.ts",
+    "extensions/workflows/**/*.ts"
+  ]
+}

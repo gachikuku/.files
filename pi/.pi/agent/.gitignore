@@ -1,0 +1,24 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Installed and downloaded dependencies
+node_modules/
+bin/
+
+# Pi private/runtime state (kept in ~/.pi/agent, never in dotfiles)
+auth.json
+models.json
+models-store.json
+sessions/
+trust.json
+workflows/
+extensions/summaries/config.private.json
+extensions/summaries/config.private.json.*.tmp
+
+# Local artifacts
+*.log
+*.tmp
+*.swp
+.DS_Store
