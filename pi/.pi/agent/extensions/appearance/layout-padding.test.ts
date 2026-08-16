@@ -4,11 +4,12 @@ import {
   AssistantMessageComponent,
   getMarkdownTheme,
   initTheme,
+  InteractiveMode,
   ToolExecutionComponent,
   type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
-import { stripTerminalSequences } from "@earendil-works/pi-tui";
+import { Container, stripTerminalSequences } from "@earendil-works/pi-tui";
 import layoutPadding from "./layout-padding.ts";
 import toolStatusStyle from "./tool-status-style.ts";
 
@@ -82,7 +83,7 @@ test("assistant content shares one column while semantic markers hang", () => {
       assistantMessage([
         {
           type: "text",
-          text: "A regular paragraph that wraps onto another line at this narrow width.\n\n- A bullet that also wraps onto another line at this narrow width.",
+          text: "A regular paragraph that wraps onto another line at this narrow width.\n\n- A hyphen list item that also wraps onto another line at this narrow width.\n\n● A semantic bullet that also wraps onto another line at this narrow width.",
         },
         {
           type: "thinking",
@@ -99,20 +100,47 @@ test("assistant content shares one column while semantic markers hang", () => {
   ).filter(Boolean);
 
   const regularIndex = lines.findIndex((line) => line.includes("A regular"));
-  const bulletIndex = lines.findIndex((line) => line.includes("- A bullet"));
+  const hyphenIndex = lines.findIndex((line) => line.includes("- A hyphen"));
+  const bulletIndex = lines.findIndex((line) => line.includes("● A semantic"));
   const thinkingIndex = lines.findIndex((line) =>
     line.includes("∴ A thinking"),
   );
 
   assert.notEqual(regularIndex, -1);
+  assert.notEqual(hyphenIndex, -1);
   assert.notEqual(bulletIndex, -1);
   assert.notEqual(thinkingIndex, -1);
   assert.equal(lines[regularIndex]?.indexOf("A regular"), 2);
   assert.equal(lines[regularIndex + 1]?.search(/\S/), 2);
-  assert.equal(lines[bulletIndex]?.indexOf("- A bullet"), 0);
+  assert.equal(lines[hyphenIndex]?.indexOf("- A hyphen"), 2);
+  assert.equal(lines[hyphenIndex + 1]?.search(/\S/), 4);
+  assert.equal(lines[bulletIndex]?.indexOf("● A semantic"), 0);
   assert.equal(lines[bulletIndex + 1]?.search(/\S/), 2);
   assert.equal(lines[thinkingIndex]?.indexOf("∴ A thinking"), 0);
   assert.equal(lines[thinkingIndex + 1]?.search(/\S/), 2);
+});
+
+test("transcript status notices use the shared content column", () => {
+  const chatContainer = new Container();
+  const interactive = {
+    chatContainer,
+    lastStatusSpacer: undefined,
+    lastStatusText: undefined,
+    ui: { requestRender: () => {} },
+  };
+  const showStatus = (
+    InteractiveMode.prototype as unknown as {
+      showStatus(this: typeof interactive, message: string): void;
+    }
+  ).showStatus;
+
+  showStatus.call(interactive, "Reloaded extensions");
+  showStatus.call(interactive, "Reloaded keybindings and extensions");
+
+  const status = plainLines(chatContainer).find((line) =>
+    line.includes("Reloaded keybindings"),
+  );
+  assert.equal(status?.search(/\S/), 2);
 });
 
 test("default and self-rendered tools use the shared content column", () => {

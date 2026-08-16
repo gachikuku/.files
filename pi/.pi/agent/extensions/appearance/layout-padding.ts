@@ -1,6 +1,7 @@
 import {
   AssistantMessageComponent,
   FooterComponent,
+  InteractiveMode,
   ToolExecutionComponent,
   type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
@@ -20,11 +21,12 @@ export const CONTENT_PADDING_X = 2;
 
 const ASSISTANT_RENDER_MARK = "__layoutPaddingOriginalAssistantRender";
 const FOOTER_RENDER_MARK = "__layoutPaddingOriginalFooterRender";
+const NOTICE_METHOD_MARK = "__layoutPaddingOriginalNoticeMethod";
 const MARKER_RENDER_MARK = Symbol.for("pi.appearance.markerOutdentRender");
 const PLAIN_LINK_THEME_MARK = Symbol.for("pi.appearance.plainLinkTheme");
 const UNDERLINE_SGR = /\x1b\[(?:4|24)m/g;
-const HANGING_MARKER = /^(?:∴|✻|✽|✶|✳|✢|※|⏺|●|•|·|\$|[-+*]|\d+[.)])(?:\s|$)/;
-const LIST_MARKER = /^(?:⏺|●|•|[-+*]|\d+[.)])(?:\s|$)/;
+const HANGING_MARKER = /^(?:∴|✻|✽|✶|✳|✢|※|⏺|●|•|·|\$)(?:\s|$)/;
+const LIST_MARKER = /^(?:⏺|●|•)(?:\s|$)/;
 
 type Render = (this: AssistantMessageComponent, width: number) => string[];
 type AssistantPrototype = {
@@ -67,6 +69,11 @@ type ToolExecutionInternals = {
   resultRendererComponent?: Component;
   selfRenderContainer: Container;
 };
+type InteractiveInternals = {
+  chatContainer: { children: Component[] };
+  lastStatusText?: Component;
+};
+type NoticeMethod = (this: InteractiveInternals, message: string) => void;
 
 function visibleText(line: string): string {
   return stripTerminalSequences(line).replace(/\s+$/, "");
@@ -184,6 +191,33 @@ export function styleToolContentPadding(
   internals.selfRenderContainer.invalidate();
 }
 
+function patchTranscriptNoticePadding(): void {
+  const prototype = InteractiveMode.prototype as unknown as Record<
+    string,
+    NoticeMethod | undefined
+  >;
+
+  for (const methodName of [
+    "showStatus",
+    "showWarning",
+    "showError",
+  ] as const) {
+    const mark = `${NOTICE_METHOD_MARK}:${methodName}`;
+    prototype[mark] ??= prototype[methodName];
+    const originalMethod = prototype[mark];
+    if (!originalMethod) continue;
+
+    prototype[methodName] = function (message) {
+      originalMethod.call(this, message);
+      const candidate =
+        methodName === "showStatus"
+          ? this.lastStatusText
+          : this.chatContainer.children.at(-1);
+      if (candidate && hasPaddingX(candidate)) setPaddingX(candidate);
+    };
+  }
+}
+
 function styleAssistantMarkdown(component: AssistantMessageComponent): void {
   const { contentContainer } = component as unknown as AssistantInternals;
   for (const child of contentContainer?.children ?? []) {
@@ -244,4 +278,5 @@ function patchFooterPadding(): void {
 export default function (_pi: ExtensionAPI) {
   patchAssistantPadding();
   patchFooterPadding();
+  patchTranscriptNoticePadding();
 }
