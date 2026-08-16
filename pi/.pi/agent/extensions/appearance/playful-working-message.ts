@@ -180,7 +180,7 @@ const WORKING_MESSAGES = [
   "Humping...",
   "Investigating...",
   "K00king...",
-  "Klebing...",
+  "Klebbing...",
   "Lollygagging...",
   "Lubricating...",
   "Luftschloss building...",
