@@ -1,14 +1,16 @@
 /** Describes Firecrawl search and its model-context output limits. */
 export const SEARCH_TOOL_DESCRIPTION =
-  "Search the web with Firecrawl. Returns web, news, or image results. Output is limited to 50KB or 2000 lines; complete truncated output is saved to a temporary file.";
+  "Search the web with Firecrawl, automatically falling back to Brave Search when Firecrawl credits or rate limits are exhausted. Returns web, news, or image results. Output is limited to 50KB or 2000 lines; complete truncated output is saved to a temporary file.";
 
 /** Adds Firecrawl's current-information search capability to the model's tool prompt. */
 export const SEARCH_PROMPT_SNIPPET =
-  "Search the web with Firecrawl for current information.";
+  "Search the web with Firecrawl and a quota-aware Brave Search fallback for current information.";
 
 /** Guides the model on when to search and when to follow with scrape or crawl. */
 export const SEARCH_PROMPT_GUIDELINES = [
   "Use search when the user asks for current web information, discovery, or sources beyond the local workspace.",
+  "Search automatically uses Brave when Firecrawl reports exhausted credits or rate limits; do not retry Firecrawl manually in that case.",
+  "The Brave fallback returns search metadata and snippets, not Firecrawl's scraped page markdown.",
   "Use scrape after search when you need the full readable content of a specific page.",
   "Use crawl when the user needs content from multiple pages of the same website.",
 ];

@@ -95,6 +95,38 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error);
 }
 
+function errorRecord(error: unknown): Record<string, unknown> | undefined {
+  return typeof error === "object" && error !== null
+    ? (error as Record<string, unknown>)
+    : undefined;
+}
+
+/** Firecrawl uses 402 for exhausted credits and 429 for rate limits. */
+export function isFirecrawlQuotaError(error: unknown): boolean {
+  const visited = new Set<unknown>();
+  let current: unknown = error;
+
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    const record = errorRecord(current);
+    const status = record?.status ?? record?.statusCode;
+    if (status === 402 || status === 429) return true;
+
+    const message = errorMessage(current);
+    if (
+      /\b(?:quota|credits?|payment required|rate[ -]?limit(?:ed|ing)?)\b/i.test(
+        message,
+      )
+    ) {
+      return true;
+    }
+
+    current = record?.cause;
+  }
+
+  return false;
+}
+
 class FirecrawlError extends Data.TaggedError("FirecrawlError")<{
   readonly message: string;
   readonly cause: unknown;
@@ -231,6 +263,167 @@ async function runFirecrawl<T>(
   throw operationError(operation, Cause.squash(exit.cause));
 }
 
+type SearchSource = "web" | "news" | "images";
+
+export interface SearchParams {
+  readonly query: string;
+  readonly limit?: number;
+  readonly source?: SearchSource;
+  readonly scrapeResults?: boolean;
+}
+
+export interface BraveSearchDetails {
+  readonly provider: "brave";
+  readonly fallbackFrom: "firecrawl";
+  readonly query: string;
+  readonly source: SearchSource;
+  readonly results: readonly unknown[];
+  readonly warning?: string;
+}
+
+type Fetch = typeof fetch;
+
+function braveEndpoint(source: SearchSource) {
+  return `https://api.search.brave.com/res/v1/${source}/search`;
+}
+
+function braveResults(
+  response: Record<string, unknown>,
+  source: SearchSource,
+): readonly unknown[] {
+  const section = errorRecord(response[source]);
+  const nestedResults = section?.results;
+  if (Array.isArray(nestedResults)) return nestedResults;
+  return Array.isArray(response.results) ? response.results : [];
+}
+
+/** Mario Zechner-style Brave Search request, kept dependency-free with fetch. */
+export async function searchBrave(
+  params: SearchParams,
+  apiKey: string,
+  signal?: AbortSignal,
+  fetchImpl: Fetch = fetch,
+): Promise<BraveSearchDetails> {
+  const source = params.source ?? "web";
+  const url = new URL(braveEndpoint(source));
+  url.searchParams.set("q", params.query);
+  url.searchParams.set("count", String(params.limit ?? 5));
+  url.searchParams.set("country", "US");
+
+  const timeoutSignal = AbortSignal.timeout(30_000);
+  const requestSignal = signal
+    ? AbortSignal.any([signal, timeoutSignal])
+    : timeoutSignal;
+  const response = await fetchImpl(url, {
+    headers: {
+      Accept: "application/json",
+      "Accept-Encoding": "gzip",
+      "X-Subscription-Token": apiKey,
+    },
+    signal: requestSignal,
+  });
+  const bodyText = await response.text();
+
+  if (!response.ok) {
+    const detail = bodyText.trim().slice(0, 500);
+    throw new Error(
+      `Brave Search request failed (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`,
+    );
+  }
+
+  let body: unknown;
+  try {
+    body = JSON.parse(bodyText);
+  } catch (cause) {
+    throw new Error("Brave Search returned invalid JSON", { cause });
+  }
+
+  const responseRecord = errorRecord(body);
+  if (!responseRecord)
+    throw new Error("Brave Search returned an empty response");
+
+  return {
+    provider: "brave",
+    fallbackFrom: "firecrawl",
+    query: params.query,
+    source,
+    results: braveResults(responseRecord, source),
+    warning: params.scrapeResults
+      ? "Firecrawl result scraping was unavailable; Brave returned search metadata and snippets only."
+      : undefined,
+  };
+}
+
+async function runBraveFallback(
+  params: SearchParams,
+  signal: AbortSignal | undefined,
+  onUpdate: AgentToolUpdateCallback<BraveSearchDetails | undefined> | undefined,
+) {
+  const apiKey = readEnvValue("BRAVE_API_KEY");
+  if (!apiKey) {
+    throw new Error(
+      "Missing BRAVE_API_KEY in the environment or ~/.pi/agent/.env",
+    );
+  }
+
+  onUpdate?.({
+    content: [
+      {
+        type: "text",
+        text: `Firecrawl quota exhausted; searching Brave for: ${params.query}`,
+      },
+    ],
+    details: undefined,
+  });
+
+  const details = await searchBrave(params, apiKey, signal);
+  const formatted = await Effect.runPromise(formatOutput(details, "search"));
+  return {
+    content: [{ type: "text" as const, text: formatted }],
+    details,
+  } satisfies AgentToolResult<BraveSearchDetails | undefined>;
+}
+
+async function runSearch(
+  params: SearchParams,
+  signal: AbortSignal | undefined,
+  onUpdate: AgentToolUpdateCallback<unknown> | undefined,
+) {
+  try {
+    return await runFirecrawl(
+      "search",
+      `Searching Firecrawl for: ${params.query}`,
+      35_000,
+      signal,
+      onUpdate,
+      (client) =>
+        firecrawlRequest(() =>
+          client.search(params.query, {
+            limit: params.limit ?? 5,
+            sources: [params.source ?? "web"],
+            scrapeOptions: params.scrapeResults
+              ? { formats: ["markdown"], timeout: 30_000 }
+              : undefined,
+            timeout: 30_000,
+          }),
+        ).pipe(Effect.map((result) => ({ details: result, output: result }))),
+    );
+  } catch (firecrawlError) {
+    if (signal?.aborted || !isFirecrawlQuotaError(firecrawlError)) {
+      throw firecrawlError;
+    }
+
+    try {
+      return await runBraveFallback(params, signal, onUpdate);
+    } catch (braveError) {
+      throw new AggregateError(
+        [firecrawlError, braveError],
+        `Firecrawl quota was exhausted and the Brave fallback failed: ${errorMessage(braveError)}`,
+      );
+    }
+  }
+}
+
 export default function firecrawlTools(pi: ExtensionAPI) {
   pi.registerTool({
     name: "search",
@@ -257,24 +450,7 @@ export default function firecrawlTools(pi: ExtensionAPI) {
       ),
     }),
     execute: (_toolCallId, params, signal, onUpdate) =>
-      runFirecrawl(
-        "search",
-        `Searching Firecrawl for: ${params.query}`,
-        35_000,
-        signal,
-        onUpdate,
-        (client) =>
-          firecrawlRequest(() =>
-            client.search(params.query, {
-              limit: params.limit ?? 5,
-              sources: [params.source ?? "web"],
-              scrapeOptions: params.scrapeResults
-                ? { formats: ["markdown"], timeout: 30_000 }
-                : undefined,
-              timeout: 30_000,
-            }),
-          ).pipe(Effect.map((result) => ({ details: result, output: result }))),
-      ),
+      runSearch(params, signal, onUpdate),
   });
 
   pi.registerTool({
