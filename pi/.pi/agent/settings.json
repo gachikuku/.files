@@ -34,5 +34,8 @@
     "opencode/laguna-s-2.1-free",
     "opencode/nemotron-3-ultra-free"
   ],
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "extensions": [
+    "-extensions/summaries/index.ts"
+  ]
 }
