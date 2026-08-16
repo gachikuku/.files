@@ -14,6 +14,7 @@ const SUMMARY: RGB = [98, 98, 98];
 const BRIGHT: RGB = [255, 218, 213];
 const LIGHT: RGB = [236, 184, 180];
 const RESET_FG = "\x1b[39m";
+const FIRST_TERMINAL_COLUMN = "\x1b[1G";
 const CLAUDE_SPINNER = ["✻", "✽", "✶", "✳", "✢", "·", "✢", "✳", "✶", "✽"];
 const ANIMATION_INTERVAL_MS = 140;
 
@@ -115,7 +116,9 @@ function makeClaudeStyleFrame(message: string, frameIndex: number, elapsedSecond
 	const spinner = CLAUDE_SPINNER[Math.floor(frameIndex / 2) % CLAUDE_SPINNER.length]!;
 	const elapsed = colorize(` (${formatDuration(elapsedSeconds)})`, SUMMARY);
 
-	return `${colorize(spinner, BASE)} ${animatedMessage}${elapsed}`;
+	// Pi's built-in loader adds a one-cell margin. Custom frames are rendered
+	// verbatim, so return to column one and let the symbol hang in that gutter.
+	return `${FIRST_TERMINAL_COLUMN}${colorize(spinner, BASE)} ${animatedMessage}${elapsed}`;
 }
 
 const WORKING_MESSAGES = [
@@ -250,7 +253,7 @@ export default function (pi: ExtensionAPI) {
 	pi.registerEntryRenderer(DURATION_ENTRY_TYPE, (entry) => {
 		const data = entry.data as { elapsedSeconds: number; completedMessage?: string };
 		const summary = `✻ ${data.completedMessage ?? "Sautéed"} for ${formatDuration(data.elapsedSeconds)}`;
-		return new Text(colorize(summary, SUMMARY), 2, 0);
+		return new Text(colorize(summary, SUMMARY), 0, 0);
 	});
 
 	pi.on("before_agent_start", (_event, ctx) => {

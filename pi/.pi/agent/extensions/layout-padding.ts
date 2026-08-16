@@ -14,7 +14,13 @@ type AssistantPrototype = {
 	render: Render;
 };
 type AssistantInternals = {
+	contentContainer?: { children: unknown[] };
 	outputPad: number;
+};
+type MarkdownInternals = {
+	invalidate(): void;
+	paddingX: number;
+	text: string;
 };
 
 type FooterRender = (this: FooterComponent, width: number) => string[];
@@ -22,6 +28,25 @@ type FooterPrototype = {
 	[FOOTER_RENDER_MARK]?: FooterRender;
 	render: FooterRender;
 };
+
+function hangThinkingPrefixes(component: AssistantMessageComponent): void {
+	const { contentContainer } = component as unknown as AssistantInternals;
+	for (const child of contentContainer?.children ?? []) {
+		const markdown = child as unknown as MarkdownInternals;
+		if (
+			typeof markdown.text !== "string" ||
+			typeof markdown.paddingX !== "number" ||
+			typeof markdown.invalidate !== "function"
+		) {
+			continue;
+		}
+		if (!markdown.text.trimStart().startsWith("∴")) continue;
+		if (markdown.paddingX === 0) continue;
+
+		markdown.paddingX = 0;
+		markdown.invalidate();
+	}
+}
 
 function patchAssistantPadding(): void {
 	const prototype = AssistantMessageComponent.prototype as unknown as AssistantPrototype;
@@ -33,6 +58,7 @@ function patchAssistantPadding(): void {
 		if (internals.outputPad !== CONTENT_PADDING_X) {
 			this.setOutputPad(CONTENT_PADDING_X);
 		}
+		hangThinkingPrefixes(this);
 		return originalRender.call(this, width);
 	};
 }
