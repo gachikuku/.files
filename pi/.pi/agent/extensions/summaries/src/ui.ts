@@ -33,7 +33,7 @@ class RecapCard {
   }
 
   render(width: number) {
-    const box = new Box(1, 1, (text) => this.theme.bg("customMessageBg", text));
+    const box = new Box(2, 1, (text) => this.theme.bg("customMessageBg", text));
     const title =
       this.theme.fg("accent", "✦ ") +
       this.theme.fg("customMessageLabel", this.theme.bold("Run recap"));
@@ -72,11 +72,34 @@ export function renderRecap(
 
 export async function openModelPicker(
   ctx: ExtensionCommandContext,
-  _config: SummaryConfig,
+  config: SummaryConfig,
 ) {
-  const models = [...ctx.modelRegistry.getAvailable()].sort((a, b) =>
-    `${a.provider}/${a.id}`.localeCompare(`${b.provider}/${b.id}`),
+  const available = [...ctx.modelRegistry.getAvailable()];
+  const configuredKey = `${config.provider}/${config.model}`;
+  const configured = available.find(
+    (model) => `${model.provider}/${model.id}` === configuredKey,
   );
+  const scoped = ctx.scopedModels.map(({ model }) => model);
+  const candidates = scoped.length > 0 ? scoped : available;
+  const models = [...candidates];
+
+  if (
+    configured &&
+    !models.some(
+      (model) =>
+        model.provider === configured.provider && model.id === configured.id,
+    )
+  ) {
+    models.push(configured);
+  }
+
+  models.sort((a, b) => {
+    const aKey = `${a.provider}/${a.id}`;
+    const bKey = `${b.provider}/${b.id}`;
+    if (aKey === configuredKey) return -1;
+    if (bKey === configuredKey) return 1;
+    return aKey.localeCompare(bKey);
+  });
   if (models.length === 0) {
     ctx.ui.notify(
       "No configured models are available for run recaps.",
@@ -112,7 +135,11 @@ export function openReasoningPicker(
         render: (width) => selector.render(width),
         invalidate: () => selector.invalidate(),
         handleInput: (data) => {
-          list.handleInput(data);
+          // ThinkingSelectorComponent uses the configured selection bindings,
+          // unlike Pi's generic selector which also accepts Vim navigation.
+          list.handleInput(
+            data === "j" ? "\x1b[B" : data === "k" ? "\x1b[A" : data,
+          );
           tui.requestRender();
         },
       };

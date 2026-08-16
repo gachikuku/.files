@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+modified_agent_dir="${DOTFILES:-$HOME/.files}/pi/.pi/agent"
+stock_agent_dir="$HOME/.pi/agent"
+stock_pi="/run/current-system/sw/bin/pi"
+
+if [ ! -x "$stock_pi" ]; then
+  printf 'Modified Pi launcher: Nix-managed Pi was not found at %s\n' "$stock_pi" >&2
+  exit 127
+fi
+
+mkdir -p "$modified_agent_dir" "$stock_agent_dir/sessions"
+for state_entry in auth.json models.json models-store.json git; do
+  modified_entry="$modified_agent_dir/$state_entry"
+  stock_entry="$stock_agent_dir/$state_entry"
+  if [ ! -e "$modified_entry" ] && [ ! -L "$modified_entry" ] && [ -e "$stock_entry" ]; then
+    ln -s "$stock_entry" "$modified_entry"
+  fi
+done
+
+export PI_CODING_AGENT_DIR="$modified_agent_dir"
+export PI_CODING_AGENT_SESSION_DIR="$stock_agent_dir/sessions"
+
+exec "$stock_pi" "$@"

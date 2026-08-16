@@ -8,7 +8,7 @@ type UserMessagePrototype = {
 	rebuild(this: UserMessageComponent): void;
 };
 
-type MutableBox = Box & { paddingY: number };
+type MutableBox = Box & { paddingX: number; paddingY: number };
 
 export default function (_pi: ExtensionAPI) {
 	const prototype = UserMessageComponent.prototype as unknown as UserMessagePrototype;
@@ -20,7 +20,9 @@ export default function (_pi: ExtensionAPI) {
 
 		const contentBox = this.children[0];
 		if (contentBox instanceof Box) {
-			(contentBox as MutableBox).paddingY = 0;
+			const mutableBox = contentBox as MutableBox;
+			mutableBox.paddingX = 2;
+			mutableBox.paddingY = 0;
 			contentBox.invalidate();
 		}
 	};

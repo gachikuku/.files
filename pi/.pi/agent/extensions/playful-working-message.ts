@@ -250,7 +250,7 @@ export default function (pi: ExtensionAPI) {
 	pi.registerEntryRenderer(DURATION_ENTRY_TYPE, (entry) => {
 		const data = entry.data as { elapsedSeconds: number; completedMessage?: string };
 		const summary = `✻ ${data.completedMessage ?? "Sautéed"} for ${formatDuration(data.elapsedSeconds)}`;
-		return new Text(colorize(summary, SUMMARY), 1, 0);
+		return new Text(colorize(summary, SUMMARY), 2, 0);
 	});
 
 	pi.on("before_agent_start", (_event, ctx) => {

@@ -6,6 +6,7 @@
 # Installed and downloaded dependencies
 node_modules/
 bin/
+git
 
 # Pi private/runtime state (kept in ~/.pi/agent, never in dotfiles)
 auth.json
