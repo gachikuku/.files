@@ -7,10 +7,10 @@ import {
   type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
-import plainLinks from "./plain-links.ts";
+import layoutPadding from "./layout-padding.ts";
 
 initTheme("dark");
-plainLinks({} as ExtensionAPI);
+layoutPadding({} as ExtensionAPI);
 
 test("assistant links lose their underline while heading styling remains", () => {
   const markdownTheme = getMarkdownTheme();

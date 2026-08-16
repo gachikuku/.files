@@ -3,10 +3,13 @@ import {
   FooterComponent,
   type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
+import type { MarkdownTheme } from "@earendil-works/pi-tui";
 
 const CONTENT_PADDING_X = 2;
 const ASSISTANT_RENDER_MARK = "__layoutPaddingOriginalAssistantRender";
 const FOOTER_RENDER_MARK = "__layoutPaddingOriginalFooterRender";
+const PLAIN_LINK_THEME_MARK = Symbol.for("pi.appearance.plainLinkTheme");
+const UNDERLINE_SGR = /\x1b\[(?:4|24)m/g;
 
 type Render = (this: AssistantMessageComponent, width: number) => string[];
 type AssistantPrototype = {
@@ -21,6 +24,10 @@ type MarkdownInternals = {
   invalidate(): void;
   paddingX: number;
   text: string;
+  theme?: PlainLinkTheme;
+};
+type PlainLinkTheme = MarkdownTheme & {
+  [PLAIN_LINK_THEME_MARK]?: boolean;
 };
 
 type FooterRender = (this: FooterComponent, width: number) => string[];
@@ -29,7 +36,7 @@ type FooterPrototype = {
   render: FooterRender;
 };
 
-function hangThinkingPrefixes(component: AssistantMessageComponent): void {
+function styleAssistantMarkdown(component: AssistantMessageComponent): void {
   const { contentContainer } = component as unknown as AssistantInternals;
   for (const child of contentContainer?.children ?? []) {
     const markdown = child as unknown as MarkdownInternals;
@@ -40,6 +47,16 @@ function hangThinkingPrefixes(component: AssistantMessageComponent): void {
     ) {
       continue;
     }
+
+    const markdownTheme = markdown.theme;
+    if (markdownTheme && !markdownTheme[PLAIN_LINK_THEME_MARK]) {
+      const originalLink = markdownTheme.link;
+      markdownTheme.link = (text) =>
+        originalLink(text.replace(UNDERLINE_SGR, ""));
+      markdownTheme[PLAIN_LINK_THEME_MARK] = true;
+      markdown.invalidate();
+    }
+
     if (!markdown.text.trimStart().startsWith("∴")) continue;
     if (markdown.paddingX === 0) continue;
 
@@ -59,7 +76,7 @@ function patchAssistantPadding(): void {
     if (internals.outputPad !== CONTENT_PADDING_X) {
       this.setOutputPad(CONTENT_PADDING_X);
     }
-    hangThinkingPrefixes(this);
+    styleAssistantMarkdown(this);
     return originalRender.call(this, width);
   };
 }
