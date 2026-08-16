@@ -25,8 +25,8 @@
   "type": "module",
   "scripts": {
     "check": "tsc --noEmit",
-    "format": "prettier --write \"extensions/{ask-user,background-terminals,copy-all,file-search,firecrawl-search,git-info,shared,spark-strict-tools,subagents,summaries,workflows}/**/*.{ts,cjs}\" \"package*.json\" \"tsconfig.json\"",
-    "format:check": "prettier --check \"extensions/{ask-user,background-terminals,copy-all,file-search,firecrawl-search,git-info,shared,spark-strict-tools,subagents,summaries,workflows}/**/*.{ts,cjs}\" \"package*.json\" \"tsconfig.json\"",
+    "format": "prettier --write \"extensions/{appearance,ask-user,background-terminals,copy-all,file-search,firecrawl-search,git-info,shared,spark-strict-tools,subagents,summaries,workflows}/**/*.{ts,cjs}\" \"package*.json\" \"tsconfig.json\"",
+    "format:check": "prettier --check \"extensions/{appearance,ask-user,background-terminals,copy-all,file-search,firecrawl-search,git-info,shared,spark-strict-tools,subagents,summaries,workflows}/**/*.{ts,cjs}\" \"package*.json\" \"tsconfig.json\"",
     "test": "node --test --experimental-strip-types extensions/background-terminals/*.test.ts extensions/firecrawl-search/*.test.ts extensions/git-info/*.test.ts extensions/shared/*.test.ts extensions/subagents/by-the-way.test.ts extensions/subagents/context-usage.test.ts extensions/subagents/manager.test.ts extensions/subagents/result-delivery.test.ts extensions/subagents/takeover.test.ts extensions/summaries/*.test.ts extensions/workflows/*.test.ts && npm --prefix extensions/file-search test",
     "test:live": "npm --prefix extensions/subagents run test:live"
   }
