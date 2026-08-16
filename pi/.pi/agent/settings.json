@@ -32,10 +32,11 @@
     "openai-codex/gpt-5.6-sol",
     "opencode/deepseek-v4-flash-free",
     "opencode/laguna-s-2.1-free",
-    "opencode/nemotron-3-ultra-free"
+    "opencode/nemotron-3-ultra-free",
+    "openai-codex/gpt-5.6-luna"
   ],
   "tuiMode": "regular",
   "extensions": [
-    "-extensions/summaries/index.ts"
+    "+extensions/summaries/index.ts"
   ]
 }
