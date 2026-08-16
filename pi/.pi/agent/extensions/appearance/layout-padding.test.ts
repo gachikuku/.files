@@ -120,7 +120,7 @@ test("assistant content shares one column while semantic markers hang", () => {
   assert.equal(lines[thinkingIndex + 1]?.search(/\S/), 2);
 });
 
-test("transcript status notices use the shared content column", () => {
+test("transcript status and warning notices use the shared content column", () => {
   const chatContainer = new Container();
   const interactive = {
     chatContainer,
@@ -128,19 +128,23 @@ test("transcript status notices use the shared content column", () => {
     lastStatusText: undefined,
     ui: { requestRender: () => {} },
   };
-  const showStatus = (
-    InteractiveMode.prototype as unknown as {
-      showStatus(this: typeof interactive, message: string): void;
-    }
-  ).showStatus;
+  const prototype = InteractiveMode.prototype as unknown as {
+    showStatus(this: typeof interactive, message: string): void;
+    showWarning(this: typeof interactive, message: string): void;
+  };
 
-  showStatus.call(interactive, "Reloaded extensions");
-  showStatus.call(interactive, "Reloaded keybindings and extensions");
-
-  const status = plainLines(chatContainer).find((line) =>
-    line.includes("Reloaded keybindings"),
+  prototype.showStatus.call(interactive, "Reloaded extensions");
+  prototype.showStatus.call(interactive, "Reloaded keybindings and extensions");
+  prototype.showWarning.call(
+    interactive,
+    "Wait for the current response to finish before reloading.",
   );
+
+  const lines = plainLines(chatContainer);
+  const status = lines.find((line) => line.includes("Reloaded keybindings"));
+  const warning = lines.find((line) => line.includes("Warning: Wait"));
   assert.equal(status?.search(/\S/), 2);
+  assert.equal(warning?.search(/\S/), 2);
 });
 
 test("default and self-rendered tools use the shared content column", () => {
