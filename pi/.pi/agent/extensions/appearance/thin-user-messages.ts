@@ -3,6 +3,7 @@ import {
   type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
 import { Box } from "@earendil-works/pi-tui";
+import { CONTENT_PADDING_X } from "./layout-padding.ts";
 
 const PATCH_MARK = "__thinUserMessagesPatched";
 
@@ -25,7 +26,7 @@ export default function (_pi: ExtensionAPI) {
     const contentBox = this.children[0];
     if (contentBox instanceof Box) {
       const mutableBox = contentBox as MutableBox;
-      mutableBox.paddingX = 2;
+      mutableBox.paddingX = CONTENT_PADDING_X;
       mutableBox.paddingY = 0;
       contentBox.invalidate();
     }

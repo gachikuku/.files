@@ -6,6 +6,7 @@ import {
   type ThemeColor,
 } from "@earendil-works/pi-coding-agent";
 import { Box, Text } from "@earendil-works/pi-tui";
+import { styleToolContentPadding } from "./layout-padding.ts";
 
 const ORIGINAL_UPDATE_MARK = "__thinFileToolsOriginalUpdateDisplay";
 const DIFF_ADDED_BG = "\x1b[48;2;223;254;218m";
@@ -146,6 +147,7 @@ export default function (pi: ExtensionAPI) {
 
   prototype.updateDisplay = function () {
     originalUpdateDisplay.call(this);
+    styleToolContentPadding(this as unknown as ToolExecutionComponent);
 
     if (
       this.toolName !== "read" &&
