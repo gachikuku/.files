@@ -63,7 +63,7 @@ PS1='%~%(!.#.$) '
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
-alias pi='rehash; pi --offline'
+alias pi='rehash; PI_OFFLINE=1 pi'
 alias python='python3'
 alias ls="ls -lG"
 alias lynx="lynx --nocolor"
