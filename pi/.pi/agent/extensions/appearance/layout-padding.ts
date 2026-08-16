@@ -23,6 +23,7 @@ const ASSISTANT_RENDER_MARK = "__layoutPaddingOriginalAssistantRender";
 const FOOTER_RENDER_MARK = "__layoutPaddingOriginalFooterRender";
 const NOTICE_METHOD_MARK = "__layoutPaddingOriginalNoticeMethod";
 const MARKER_RENDER_MARK = Symbol.for("pi.appearance.markerOutdentRender");
+const POINT_RENDER_MARK = Symbol.for("pi.appearance.assistantPointRender");
 const PLAIN_LINK_THEME_MARK = Symbol.for("pi.appearance.plainLinkTheme");
 const UNDERLINE_SGR = /\x1b\[(?:4|24)m/g;
 const HANGING_MARKER = /^(?:∴|✻|✽|✶|✳|✢|※|⏺|●|•|·|\$)(?:\s|$)/;
@@ -34,16 +35,19 @@ type AssistantPrototype = {
   render: Render;
 };
 type AssistantInternals = {
-  contentContainer?: { children: unknown[] };
+  contentContainer?: { children: Component[] };
+  lastMessage?: { stopReason?: string };
   outputPad: number;
 };
 type MarkdownInternals = {
+  defaultTextStyle?: { italic?: boolean };
   invalidate(): void;
   paddingX: number;
   render(width: number): string[];
   text: string;
   theme?: PlainLinkTheme;
   [MARKER_RENDER_MARK]?: (width: number) => string[];
+  [POINT_RENDER_MARK]?: (width: number) => string[];
 };
 type PlainLinkTheme = MarkdownTheme & {
   [PLAIN_LINK_THEME_MARK]?: boolean;
@@ -59,6 +63,11 @@ type MutablePadding = {
   invalidate(): void;
   paddingX: number;
 };
+type MutableTextLike = Component &
+  MutablePadding & {
+    setText(text: string): void;
+    text: string;
+  };
 type MarkerRenderable = Component & {
   [MARKER_RENDER_MARK]?: (width: number) => string[];
 };
@@ -71,9 +80,13 @@ type ToolExecutionInternals = {
 };
 type InteractiveInternals = {
   chatContainer: { children: Component[] };
-  lastStatusText?: Component;
+  lastStatusText?: Component & { setText?: (text: string) => void };
 };
 type NoticeMethod = (this: InteractiveInternals, message: string) => void;
+type InteractiveMethod = (
+  this: InteractiveInternals,
+  ...args: unknown[]
+) => unknown;
 
 function visibleText(line: string): string {
   return stripTerminalSequences(line).replace(/\s+$/, "");
@@ -118,6 +131,36 @@ function patchMarkerOutdent(component: MarkerRenderable): void {
   };
 }
 
+function patchAssistantPoint(component: MarkerRenderable): void {
+  const markdown = component as unknown as MarkdownInternals;
+  if (markdown[POINT_RENDER_MARK]) return;
+
+  const originalRender = component.render.bind(component);
+  markdown[POINT_RENDER_MARK] = originalRender;
+  component.render = (width: number) => {
+    // Markdown can return its cached line array. Mutating it would prepend a
+    // fresh marker on every TUI render, including each editor keystroke.
+    const lines = [...originalRender(width)];
+    const firstContentLine = lines.findIndex((line) =>
+      visibleText(line).trim(),
+    );
+    if (firstContentLine < 0) return lines;
+
+    const line = lines[firstContentLine]!;
+    const rawIndent = line.match(/^ */)?.[0] ?? "";
+    lines[firstContentLine] = `${rawIndent}⏺ ${line.slice(rawIndent.length)}`;
+    return lines;
+  };
+}
+
+function prefixInsideAnsi(text: string, prefix: string): string {
+  return text.replace(/^((?:\x1b\[[0-9;]*m)*)/, `$1${prefix}`);
+}
+
+function stripVisibleErrorPrefix(text: string): string {
+  return text.replace(/^((?:\x1b\[[0-9;]*m)*)Error:\s*/, "$1");
+}
+
 function hasPaddingX(
   component: Component,
 ): component is Component & MutablePadding {
@@ -127,16 +170,33 @@ function hasPaddingX(
   );
 }
 
+function hasMutableText(component: Component): component is MutableTextLike {
+  return (
+    hasPaddingX(component) &&
+    "text" in component &&
+    typeof (component as unknown as MutableTextLike).text === "string" &&
+    "setText" in component &&
+    typeof (component as unknown as MutableTextLike).setText === "function"
+  );
+}
+
 function childComponents(component: Component): Component[] | undefined {
   if (!("children" in component)) return undefined;
   const children = (component as { children?: unknown }).children;
   return Array.isArray(children) ? (children as Component[]) : undefined;
 }
 
-function setPaddingX(component: Component & MutablePadding): void {
-  if (component.paddingX === CONTENT_PADDING_X) return;
-  component.paddingX = CONTENT_PADDING_X;
+function setPaddingXTo(
+  component: Component & MutablePadding,
+  paddingX: number,
+): void {
+  if (component.paddingX === paddingX) return;
+  component.paddingX = paddingX;
   component.invalidate();
+}
+
+function setPaddingX(component: Component & MutablePadding): void {
+  setPaddingXTo(component, CONTENT_PADDING_X);
 }
 
 function padSelfRenderedComponent(
@@ -176,8 +236,17 @@ export function styleToolContentPadding(
   component: ToolExecutionComponent,
 ): void {
   const internals = component as unknown as ToolExecutionInternals;
-  setPaddingX(internals.contentBox);
+
+  // The call's semantic status dot hangs at column zero. Its own two-column
+  // inset keeps the call text and wrapped lines aligned with ordinary content.
+  setPaddingXTo(internals.contentBox, 0);
+  internals.contentBox.children = internals.contentBox.children.map((child) =>
+    padSelfRenderedComponent(child, child === internals.callRendererComponent),
+  );
+  internals.contentBox.invalidate();
+
   setPaddingX(internals.contentText);
+  patchMarkerOutdent(internals.contentText);
 
   if (internals.selfRenderContainer.children.length === 0) return;
 
@@ -189,6 +258,20 @@ export function styleToolContentPadding(
       ),
     );
   internals.selfRenderContainer.invalidate();
+}
+
+function styleTranscriptNotice(
+  candidate: Component | undefined,
+  removeErrorPrefix = false,
+): void {
+  if (!candidate || !hasMutableText(candidate)) return;
+
+  const text = removeErrorPrefix
+    ? stripVisibleErrorPrefix(candidate.text)
+    : candidate.text;
+  candidate.setText(prefixInsideAnsi(text, "⏺ "));
+  setPaddingX(candidate);
+  patchMarkerOutdent(candidate);
 }
 
 function patchTranscriptNoticePadding(): void {
@@ -213,9 +296,29 @@ function patchTranscriptNoticePadding(): void {
         methodName === "showStatus"
           ? this.lastStatusText
           : this.chatContainer.children.at(-1);
-      if (candidate && hasPaddingX(candidate)) setPaddingX(candidate);
+      styleTranscriptNotice(candidate, methodName === "showError");
     };
   }
+}
+
+function patchCacheMissNotice(): void {
+  const prototype = InteractiveMode.prototype as unknown as Record<
+    string,
+    InteractiveMethod | undefined
+  >;
+  const methodName = "addCacheMissNotice";
+  const mark = `${NOTICE_METHOD_MARK}:${methodName}`;
+  prototype[mark] ??= prototype[methodName];
+  const originalMethod = prototype[mark];
+  if (!originalMethod) return;
+
+  prototype[methodName] = function (...args) {
+    const previousLast = this.chatContainer.children.at(-1);
+    const result = originalMethod.apply(this, args);
+    const candidate = this.chatContainer.children.at(-1);
+    if (candidate !== previousLast) styleTranscriptNotice(candidate);
+    return result;
+  };
 }
 
 function styleAssistantMarkdown(component: AssistantMessageComponent): void {
@@ -223,6 +326,7 @@ function styleAssistantMarkdown(component: AssistantMessageComponent): void {
   for (const child of contentContainer?.children ?? []) {
     const markdown = child as unknown as MarkdownInternals;
     if (
+      !("theme" in child) ||
       typeof markdown.text !== "string" ||
       typeof markdown.paddingX !== "number" ||
       typeof markdown.render !== "function" ||
@@ -241,8 +345,28 @@ function styleAssistantMarkdown(component: AssistantMessageComponent): void {
     }
 
     setPaddingX(child as Markdown);
+    if (
+      !markdown.defaultTextStyle?.italic &&
+      !HANGING_MARKER.test(markdown.text.trimStart())
+    ) {
+      patchAssistantPoint(child as MarkerRenderable);
+    }
     patchMarkerOutdent(child as MarkerRenderable);
   }
+
+  const { lastMessage } = component as unknown as AssistantInternals;
+  if (!["aborted", "error", "length"].includes(lastMessage?.stopReason ?? ""))
+    return;
+
+  const errorComponent = contentContainer?.children.at(-1);
+  if (!errorComponent || !hasMutableText(errorComponent)) return;
+  if (!HANGING_MARKER.test(visibleText(errorComponent.text).trimStart())) {
+    errorComponent.setText(
+      prefixInsideAnsi(stripVisibleErrorPrefix(errorComponent.text), "⏺ "),
+    );
+  }
+  setPaddingX(errorComponent);
+  patchMarkerOutdent(errorComponent);
 }
 
 function patchAssistantPadding(): void {
@@ -279,4 +403,5 @@ export default function (_pi: ExtensionAPI) {
   patchAssistantPadding();
   patchFooterPadding();
   patchTranscriptNoticePadding();
+  patchCacheMissNotice();
 }

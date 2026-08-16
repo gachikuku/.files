@@ -37,6 +37,6 @@
   ],
   "tuiMode": "regular",
   "extensions": [
-    "+extensions/summaries/index.ts"
+    "-extensions/summaries/index.ts"
   ]
 }

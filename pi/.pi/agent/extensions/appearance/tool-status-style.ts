@@ -37,19 +37,34 @@ type ToolExecutionPrototype = {
 type MutableBox = Box & { paddingY: number };
 type MutableText = Text & { text: string };
 type ChildContainer = { children: unknown[] };
+type TextLike = {
+  setText(text: string): void;
+  text: string;
+};
 
-function findAllText(component: unknown): Text[] {
-  if (component instanceof Text) return [component];
+function isTextLike(component: unknown): component is TextLike {
+  return (
+    !!component &&
+    typeof component === "object" &&
+    "text" in component &&
+    typeof (component as TextLike).text === "string" &&
+    "setText" in component &&
+    typeof (component as TextLike).setText === "function"
+  );
+}
+
+function findAllText(component: unknown): TextLike[] {
+  if (isTextLike(component)) return [component];
   if (!component || typeof component !== "object" || !("children" in component))
     return [];
   return (component as ChildContainer).children.flatMap(findAllText);
 }
 
-function findFirstText(component: unknown): Text | undefined {
+function findFirstText(component: unknown): TextLike | undefined {
   return findAllText(component)[0];
 }
 
-function recolorKeyword(
+function addStatusMarker(
   component: unknown,
   theme: Theme,
   color: ThemeColor,
@@ -57,15 +72,12 @@ function recolorKeyword(
   const textComponent = findFirstText(component);
   if (!textComponent) return;
 
-  const mutableText = textComponent as MutableText;
-  const [firstLine, ...remainingLines] = mutableText.text.split("\n");
-  const plainFirstLine = firstLine.replace(SGR, "");
-  const match = plainFirstLine.match(/^(\S+)(.*)$/);
-  if (!match) return;
+  const [firstLine, ...remainingLines] = textComponent.text.split("\n");
+  if (/^⏺(?:\s|$)/.test(firstLine.replace(SGR, ""))) return;
 
-  const [, keyword, rest] = match;
-  const recoloredFirstLine = `${theme.fg(color, theme.bold(keyword))}${rest}`;
-  textComponent.setText([recoloredFirstLine, ...remainingLines].join("\n"));
+  textComponent.setText(
+    [`${theme.fg(color, "⏺")} ${firstLine}`, ...remainingLines].join("\n"),
+  );
 }
 
 function highlightChangedWords(
@@ -147,6 +159,20 @@ export default function (pi: ExtensionAPI) {
 
   prototype.updateDisplay = function () {
     originalUpdateDisplay.call(this);
+
+    if (activeTheme) {
+      const statusColor: ThemeColor = this.isPartial
+        ? "warning"
+        : this.result?.isError
+          ? "error"
+          : "success";
+      addStatusMarker(
+        this.callRendererComponent ?? this.contentText,
+        activeTheme,
+        statusColor,
+      );
+    }
+
     styleToolContentPadding(this as unknown as ToolExecutionComponent);
 
     if (
@@ -155,15 +181,6 @@ export default function (pi: ExtensionAPI) {
       this.toolName !== "edit"
     )
       return;
-
-    if (activeTheme) {
-      const statusColor: ThemeColor = this.isPartial
-        ? "warning"
-        : this.result?.isError
-          ? "error"
-          : "success";
-      recolorKeyword(this.callRendererComponent, activeTheme, statusColor);
-    }
 
     if (
       (this.toolName === "read" || this.toolName === "write") &&
@@ -196,7 +213,10 @@ export default function (pi: ExtensionAPI) {
           ? "error"
           : "success";
       const command = args.command || "...";
-      let content = theme.fg(color, theme.bold(`$ ${command}`));
+      let content = `${theme.fg(color, "⏺")} ${theme.fg(
+        "text",
+        theme.bold(`$ ${command}`),
+      )}`;
 
       if (args.timeout) {
         content += theme.fg("dim", ` (timeout ${args.timeout}s)`);

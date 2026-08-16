@@ -18,7 +18,21 @@ layoutPadding({} as ExtensionAPI);
 
 let bashDefinition: unknown;
 toolStatusStyle({
-  on: () => {},
+  on: (event: string, handler: (...args: unknown[]) => void) => {
+    if (event === "session_start") {
+      handler(
+        {},
+        {
+          ui: {
+            theme: {
+              bold: (text: string) => text,
+              fg: (_color: string, text: string) => text,
+            },
+          },
+        },
+      );
+    }
+  },
   registerTool: (definition: { name: string }) => {
     if (definition.name === "bash") bashDefinition = definition;
   },
@@ -78,26 +92,28 @@ test("assistant links lose their underline while heading styling remains", () =>
 });
 
 test("assistant content shares one column while semantic markers hang", () => {
-  const lines = plainLines(
-    new AssistantMessageComponent(
-      assistantMessage([
-        {
-          type: "text",
-          text: "A regular paragraph that wraps onto another line at this narrow width.\n\n- A hyphen list item that also wraps onto another line at this narrow width.\n\n● A semantic bullet that also wraps onto another line at this narrow width.",
-        },
-        {
-          type: "thinking",
-          thinking:
-            "∴ A thinking status that wraps onto another line at this narrow width.",
-        },
-      ]),
-      false,
-      getMarkdownTheme(),
-      undefined,
-      2,
-    ),
-    36,
-  ).filter(Boolean);
+  const component = new AssistantMessageComponent(
+    assistantMessage([
+      {
+        type: "text",
+        text: "A regular paragraph that wraps onto another line at this narrow width.\n\n- A hyphen list item that also wraps onto another line at this narrow width.\n\n● A semantic bullet that also wraps onto another line at this narrow width.",
+      },
+      {
+        type: "thinking",
+        thinking:
+          "∴ A thinking status that wraps onto another line at this narrow width.",
+      },
+    ]),
+    false,
+    getMarkdownTheme(),
+    undefined,
+    2,
+  );
+
+  // Editor input requests a full render per keystroke. Repeated renders must
+  // not accumulate markers in Markdown's cached output.
+  for (let render = 0; render < 10; render++) component.render(36);
+  const lines = plainLines(component, 36).filter(Boolean);
 
   const regularIndex = lines.findIndex((line) => line.includes("A regular"));
   const hyphenIndex = lines.findIndex((line) => line.includes("- A hyphen"));
@@ -110,6 +126,8 @@ test("assistant content shares one column while semantic markers hang", () => {
   assert.notEqual(hyphenIndex, -1);
   assert.notEqual(bulletIndex, -1);
   assert.notEqual(thinkingIndex, -1);
+  assert.equal(lines[regularIndex]?.search(/\S/), 0);
+  assert.equal(lines[regularIndex]?.startsWith("⏺ "), true);
   assert.equal(lines[regularIndex]?.indexOf("A regular"), 2);
   assert.equal(lines[regularIndex + 1]?.search(/\S/), 2);
   assert.equal(lines[hyphenIndex]?.indexOf("- A hyphen"), 2);
@@ -143,8 +161,66 @@ test("transcript status and warning notices use the shared content column", () =
   const lines = plainLines(chatContainer);
   const status = lines.find((line) => line.includes("Reloaded keybindings"));
   const warning = lines.find((line) => line.includes("Warning: Wait"));
-  assert.equal(status?.search(/\S/), 2);
-  assert.equal(warning?.search(/\S/), 2);
+  assert.equal(status?.search(/\S/), 0);
+  assert.equal(status?.indexOf("Reloaded"), 2);
+  assert.equal(warning?.search(/\S/), 0);
+  assert.equal(warning?.indexOf("Warning"), 2);
+});
+
+test("cache-miss warnings use a hanging dot in the warning color", () => {
+  const chatContainer = new Container();
+  const interactive = { chatContainer };
+  const addCacheMissNotice = (
+    InteractiveMode.prototype as unknown as {
+      addCacheMissNotice(
+        this: typeof interactive,
+        miss: {
+          idleMs: number;
+          missedCost: number;
+          missedTokens: number;
+          modelChanged: boolean;
+        },
+      ): void;
+    }
+  ).addCacheMissNotice;
+
+  addCacheMissNotice.call(interactive, {
+    idleMs: 241 * 60_000,
+    missedCost: 0.14,
+    missedTokens: 30_000,
+    modelChanged: false,
+  });
+
+  const renderedLine = chatContainer
+    .render(80)
+    .find((line) => line.includes("Cache miss"));
+  const plainLine = renderedLine && stripTerminalSequences(renderedLine);
+  assert.equal(plainLine?.search(/\S/), 0);
+  assert.equal(plainLine?.indexOf("Cache miss"), 2);
+  assert.match(renderedLine ?? "", /\x1b\[[0-9;]*m⏺ Cache miss/);
+});
+
+test("assistant errors use a hanging status dot without a redundant label", () => {
+  const errorMessage = {
+    ...assistantMessage([]),
+    stopReason: "error",
+    errorMessage: "API Error: 400 unsupported model",
+  } as AssistantMessage;
+  const lines = plainLines(
+    new AssistantMessageComponent(
+      errorMessage,
+      false,
+      getMarkdownTheme(),
+      undefined,
+      2,
+    ),
+    32,
+  );
+  const errorLine = lines.find((line) => line.includes("API Error"));
+
+  assert.equal(errorLine?.search(/\S/), 0);
+  assert.equal(errorLine?.indexOf("API Error"), 2);
+  assert.equal(errorLine?.includes("Error: API Error"), false);
 });
 
 test("default and self-rendered tools use the shared content column", () => {
@@ -160,10 +236,9 @@ test("default and self-rendered tools use the shared content column", () => {
     process.cwd(),
   );
   const writeLines = plainLines(write);
-  assert.equal(
-    writeLines.find((line) => line.includes("write"))?.search(/\S/),
-    2,
-  );
+  const writeCall = writeLines.find((line) => line.includes("write"));
+  assert.equal(writeCall?.search(/\S/), 0);
+  assert.equal(writeCall?.indexOf("write"), 2);
   assert.equal(
     writeLines.find((line) => line.includes("const value"))?.search(/\S/),
     2,
@@ -178,12 +253,9 @@ test("default and self-rendered tools use the shared content column", () => {
     ui,
     process.cwd(),
   );
-  assert.equal(
-    plainLines(edit)
-      .find((line) => line.includes("edit"))
-      ?.search(/\S/),
-    2,
-  );
+  const editCall = plainLines(edit).find((line) => line.includes("edit"));
+  assert.equal(editCall?.search(/\S/), 0);
+  assert.equal(editCall?.indexOf("edit"), 2);
 });
 
 test("bash keeps only its prompt marker outside the content column", () => {
@@ -199,10 +271,9 @@ test("bash keeps only its prompt marker outside the content column", () => {
   );
   const lines = plainLines(bash).filter(Boolean);
 
-  assert.equal(
-    lines.find((line) => line.includes("$ echo first"))?.search(/\S/),
-    0,
-  );
+  const bashCall = lines.find((line) => line.includes("$ echo first"));
+  assert.equal(bashCall?.search(/\S/), 0);
+  assert.equal(bashCall?.indexOf("$ echo first"), 2);
   assert.equal(
     lines.find((line) => line.includes("echo second"))?.search(/\S/),
     2,
