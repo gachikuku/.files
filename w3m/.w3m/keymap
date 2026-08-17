@@ -29,6 +29,6 @@ keymap	y	EXTERN	"$HOME/.w3m/copy-url %s &"
 keymap	Y	EXTERN_LINK	"$HOME/.w3m/copy-url %s &"
 
 # Image actions
-# i: show the image URL; I: open the image in the default system viewer.
+# i: show the image URL; I: view only that image in Plan 9 page(1).
 keymap	i	PEEK_IMG
 keymap	I	VIEW_IMAGE

@@ -26,19 +26,8 @@
 
 				};
 
-				# cmux: nixpkgs is stuck on 0.64.10, but the copy-mode cursor-nav fix
-				# and the "vim keys swallowed under non-ASCII input sources" fix both
-				# landed upstream in 0.64.13. Override the prebuilt DMG to 0.64.16 until
-				# nixpkgs catches up (then this block can be removed).
 				nixpkgs.overlays = [
 					(final: prev: {
-						cmux = prev.cmux.overrideAttrs (old: {
-							version = "0.64.16";
-							src = prev.fetchurl {
-								url = "https://github.com/manaflow-ai/cmux/releases/download/v0.64.16/cmux-macos.dmg";
-								hash = "sha256-QB/2emBrAzqkcKaLrVUZanK4qXHSma4CeJM2PwGhmXI=";
-							};
-						});
 						trezorctl = let py = final.python313Packages; in
 							py.toPythonApplication (py.trezor.overridePythonAttrs (old: {
 								dependencies = old.dependencies ++ old.optional-dependencies.full;
@@ -82,7 +71,6 @@
 						mpv
 						yt-dlp
 						gcc-arm-embedded
-						cmux
 						rustup
 						radare2
 						qemu
@@ -176,6 +164,7 @@
 						mksh
 						aerospace
 						w3m
+						plan9port  # Plan 9 page(1) image viewer and user-space tools
 						links2
 					];
 

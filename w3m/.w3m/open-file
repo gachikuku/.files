@@ -5,7 +5,7 @@ set -u
 file=${1:?"usage: open-file FILE"}
 
 if command -v open >/dev/null 2>&1; then
-	exec open "$file"                    # macOS
+	exec open "$file"                    # macOS Preview/default fallback
 elif command -v xdg-open >/dev/null 2>&1; then
 	exec xdg-open "$file"                # Linux/XDG
 elif command -v gio >/dev/null 2>&1; then

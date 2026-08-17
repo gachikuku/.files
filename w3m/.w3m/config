@@ -10,13 +10,13 @@ editor	nvim
 # platform opener. The trailing ampersand prevents w3m from waiting for a GUI.
 extbrowser	$HOME/.w3m/open-url %s &
 
-# Represent images that have no useful ALT text with a clickable placeholder
-# derived from the filename (for example, [Oversecure]). Show a selected
-# link's target in the status line; image targets normally end in .png/.jpg.
-# Capital I opens the image itself through the portable image/* handler.
+# Keep pages text-only, with clickable placeholders for images that have no
+# useful ALT text. Capital I sends only the selected image to Plan 9 page(1);
+# images are never rendered automatically in the w3m pane.
 pseudo_inlines	true
 ignore_null_img_alt	true
 display_link	true
+display_image	false
 ext_image_viewer	true
 
 # Smooth mouse-wheel reading: move exactly one line per wheel tick instead of
