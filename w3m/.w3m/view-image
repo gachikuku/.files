@@ -1,0 +1,28 @@
+#!/bin/sh
+# Detach Plan 9 page(1) from w3m while keeping w3m's temporary image alive.
+set -eu
+
+file=${1:?'usage: view-image FILE'}
+
+if ! command -v 9 >/dev/null 2>&1; then
+	printf '%s\n' 'view-image: install plan9port (the 9 command is missing)' >&2
+	exit 1
+fi
+
+tmpdir=$(mktemp -d "${TMPDIR:-/tmp}/w3m-plan9.XXXXXXXX")
+trap 'rm -rf "$tmpdir"' 0 1 2 15
+image=$tmpdir/${file##*/}
+cp "$file" "$image"
+
+# page needs to outlive w3m's mailcap command. Its output is intentionally
+# disconnected so the browser remains visible and receives no Plan 9 status
+# messages. The detached shell removes our private copy when page exits.
+nohup sh -c '
+	dir=$1
+	image=$2
+	trap '\''rm -rf "$dir"'\'' 0
+	9 page "$image"
+' sh "$tmpdir" "$image" </dev/null >/dev/null 2>&1 &
+
+trap - 0 1 2 15
+exit 0
