@@ -6,6 +6,10 @@
 # across NixOS and macOS, where the store path differs).
 editor	nvim
 
+# Use our portable launcher: it honors $BROWSER, then falls back to the
+# platform opener. The trailing ampersand prevents w3m from waiting for a GUI.
+extbrowser	$HOME/.w3m/open-url %s &
+
 # GitHub currently sends chunked HTTP/1.1 responses even though w3m requests
 # HTTP/1.0. w3m does not remove that chunk framing before invoking gunzip,
 # which causes "gunzip: unknown compression format". Requesting an
