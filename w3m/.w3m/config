@@ -19,6 +19,11 @@ ignore_null_img_alt	true
 display_link	true
 ext_image_viewer	true
 
+# Smooth mouse-wheel reading: move exactly one line per wheel tick instead of
+# w3m's default fixed jump of five lines.
+relative_wheel_scroll	false
+fixed_wheel_scroll_count	1
+
 # Accept self-signed/untrusted certificates without prompting. This disables
 # certificate-chain verification globally; HTTPS traffic can be intercepted.
 ssl_verify_server	false
