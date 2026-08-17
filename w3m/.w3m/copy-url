@@ -1,0 +1,16 @@
+#!/bin/sh
+# Copy the URL passed by w3m to the platform clipboard.
+set -eu
+
+url=${1:?"usage: copy-url URL"}
+
+if command -v pbcopy >/dev/null 2>&1; then
+	printf '%s' "$url" | pbcopy
+elif command -v wl-copy >/dev/null 2>&1; then
+	printf '%s' "$url" | wl-copy
+elif command -v xclip >/dev/null 2>&1; then
+	printf '%s' "$url" | xclip -selection clipboard
+else
+	printf '%s\n' 'copy-url: no supported clipboard command found' >&2
+	exit 1
+fi

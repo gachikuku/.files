@@ -1,0 +1,25 @@
+#!/bin/sh
+# Open a URL with $BROWSER, with portable desktop fallbacks.
+set -u
+
+url=${1:?"usage: open-url URL"}
+
+# BROWSER is conventionally a command and may include arguments, for example:
+#   BROWSER=firefox
+#   BROWSER="open -a Safari"
+if [ -n "${BROWSER:-}" ]; then
+	/bin/sh -c 'exec $BROWSER "$1"' sh "$url"
+	status=$?
+	[ "$status" -eq 0 ] && exit 0
+fi
+
+if command -v open >/dev/null 2>&1; then
+	exec open "$url"                    # macOS
+elif command -v xdg-open >/dev/null 2>&1; then
+	exec xdg-open "$url"                # Linux/XDG
+elif command -v gio >/dev/null 2>&1; then
+	exec gio open "$url"                # GNOME fallback
+else
+	printf '%s\n' 'open-url: set $BROWSER or install open, xdg-open, or gio' >&2
+	exit 1
+fi

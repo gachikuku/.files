@@ -16,7 +16,14 @@ keymap	H	CURSOR_TOP
 keymap	M	CURSOR_MIDDLE
 keymap	L	CURSOR_BOTTOM
 
-# Relocate the functions that H/M/L used to hold
-keymap	f	LIST		# link list (was L)
-keymap	e	EXTERN		# open in external browser (was M)
-keymap	~	HELP		# key-help panel (was H)
+# Relocate the functions that H/M/L used to hold.
+# f: link list (was L); e: external browser (was M); ~: help (was H).
+# Keep comments on separate lines: EXTERN treats trailing text as a command.
+keymap	f	LIST
+keymap	e	EXTERN
+keymap	~	HELP
+
+# URL actions
+# y: copy current page URL; Y: copy the URL of the link under the cursor.
+keymap	y	EXTERN	"$HOME/.w3m/copy-url %s &"
+keymap	Y	EXTERN_LINK	"$HOME/.w3m/copy-url %s &"
