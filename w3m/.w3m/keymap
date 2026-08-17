@@ -27,3 +27,8 @@ keymap	~	HELP
 # y: copy current page URL; Y: copy the URL of the link under the cursor.
 keymap	y	EXTERN	"$HOME/.w3m/copy-url %s &"
 keymap	Y	EXTERN_LINK	"$HOME/.w3m/copy-url %s &"
+
+# Image actions
+# i: show the image URL; I: open the image in the default system viewer.
+keymap	i	PEEK_IMG
+keymap	I	VIEW_IMAGE
