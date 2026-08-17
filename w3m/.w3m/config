@@ -19,6 +19,10 @@ ignore_null_img_alt	true
 display_link	true
 ext_image_viewer	true
 
+# Accept self-signed/untrusted certificates without prompting. This disables
+# certificate-chain verification globally; HTTPS traffic can be intercepted.
+ssl_verify_server	false
+
 # GitHub currently sends chunked HTTP/1.1 responses even though w3m requests
 # HTTP/1.0. w3m does not remove that chunk framing before invoking gunzip,
 # which causes "gunzip: unknown compression format". Requesting an
