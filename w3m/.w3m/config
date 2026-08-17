@@ -5,3 +5,9 @@
 # so it must be set explicitly. Bare "nvim" resolves via PATH (portable
 # across NixOS and macOS, where the store path differs).
 editor	nvim
+
+# GitHub currently sends chunked HTTP/1.1 responses even though w3m requests
+# HTTP/1.0. w3m does not remove that chunk framing before invoking gunzip,
+# which causes "gunzip: unknown compression format". Requesting an
+# uncompressed response avoids the broken gunzip path.
+accept_encoding	identity
