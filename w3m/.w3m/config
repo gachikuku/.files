@@ -10,6 +10,15 @@ editor	nvim
 # platform opener. The trailing ampersand prevents w3m from waiting for a GUI.
 extbrowser	$HOME/.w3m/open-url %s &
 
+# Represent images that have no useful ALT text with a clickable placeholder
+# derived from the filename (for example, [Oversecure]). Show a selected
+# link's target in the status line; image targets normally end in .png/.jpg.
+# Capital I opens the image itself through the portable image/* handler.
+pseudo_inlines	true
+ignore_null_img_alt	true
+display_link	true
+ext_image_viewer	true
+
 # GitHub currently sends chunked HTTP/1.1 responses even though w3m requests
 # HTTP/1.0. w3m does not remove that chunk framing before invoking gunzip,
 # which causes "gunzip: unknown compression format". Requesting an

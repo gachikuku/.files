@@ -1,0 +1,16 @@
+#!/bin/sh
+# Open a downloaded file with the platform's default application.
+set -u
+
+file=${1:?"usage: open-file FILE"}
+
+if command -v open >/dev/null 2>&1; then
+	exec open "$file"                    # macOS
+elif command -v xdg-open >/dev/null 2>&1; then
+	exec xdg-open "$file"                # Linux/XDG
+elif command -v gio >/dev/null 2>&1; then
+	exec gio open "$file"                # GNOME fallback
+else
+	printf '%s\n' 'open-file: install open, xdg-open, or gio' >&2
+	exit 1
+fi

@@ -1,0 +1,2 @@
+# Open images downloaded by w3m with the platform's default application.
+image/*; $HOME/.w3m/open-file %s
