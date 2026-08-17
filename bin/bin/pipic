@@ -1,0 +1,180 @@
+#!/bin/sh
+# pipic — fuzzy-pick any past Pi session and resume it in its original directory.
+#
+# Pi's built-in /resume is scoped to the current working directory. This scans
+# every saved session, reads its real cwd, and resumes the selected JSONL file
+# from there.
+#
+# Deps: python3, fzf, pi.
+
+SESSIONS=${PI_CODING_AGENT_SESSION_DIR:-"$HOME/.pi/agent/sessions"}
+
+# Hidden mode: render session metadata and recent messages for fzf's preview.
+if [ "${1:-}" = "--preview" ]; then
+    exec python3 - "$2" <<'PY'
+from collections import deque
+from datetime import datetime
+import json
+import os
+import sys
+
+path = sys.argv[1]
+header = {}
+name = None
+model = None
+messages = deque(maxlen=40)
+
+try:
+    stream = open(path, errors="ignore")
+except OSError as exc:
+    print(f"could not open session: {exc}")
+    raise SystemExit(1)
+
+with stream:
+    for line in stream:
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+
+        kind = entry.get("type")
+        if kind == "session":
+            header = entry
+            continue
+        if kind == "session_info" and entry.get("name"):
+            name = entry["name"]
+            continue
+        if kind == "model_change":
+            model = f"{entry.get('provider', '-')}/{entry.get('modelId', '-')}"
+            continue
+        if kind != "message":
+            continue
+
+        message = entry.get("message", {})
+        role = message.get("role")
+        if role == "assistant":
+            model = f"{message.get('provider', '-')}/{message.get('model', '-')}"
+        if role not in ("user", "assistant"):
+            continue
+
+        content = message.get("content", "")
+        if isinstance(content, list):
+            content = " ".join(
+                block.get("text", "")
+                for block in content
+                if isinstance(block, dict) and block.get("type") == "text"
+            )
+        if not isinstance(content, str) or not content.strip():
+            continue
+
+        text = " ".join(content.split())[:500]
+        messages.append((">>" if role == "user" else "  ") + " " + text)
+
+stamp = header.get("timestamp", "-")
+try:
+    stamp = datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone().strftime("%Y-%m-%d %H:%M")
+except (AttributeError, ValueError):
+    pass
+
+print(f"name:      {name or '-'}")
+print(f"session:   {header.get('id', '-')}")
+print(f"directory: {header.get('cwd', '-')}")
+print(f"created:   {stamp}")
+print(f"updated:   {datetime.fromtimestamp(os.path.getmtime(path)).strftime('%Y-%m-%d %H:%M')}")
+print(f"model:     {model or '-'}")
+print("---")
+print("\n".join(messages) or "(no text messages)")
+PY
+fi
+
+[ -d "$SESSIONS" ] || { echo "no Pi sessions found at $SESSIONS" >&2; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo "pipic needs python3" >&2; exit 1; }
+command -v fzf >/dev/null 2>&1 || { echo "pipic needs fzf" >&2; exit 1; }
+PI_BIN=$(command -v pi) || { echo "pipic could not find pi" >&2; exit 1; }
+
+rows=$(python3 - "$SESSIONS" <<'PY'
+import json
+import os
+from pathlib import Path
+import sys
+import time
+
+rows = []
+for path in Path(sys.argv[1]).rglob("*.jsonl"):
+    session_id = cwd = label = model = None
+    try:
+        with path.open(errors="ignore") as stream:
+            for line in stream:
+                try:
+                    entry = json.loads(line)
+                except Exception:
+                    continue
+
+                kind = entry.get("type")
+                if kind == "session":
+                    session_id = session_id or entry.get("id")
+                    cwd = cwd or entry.get("cwd")
+                elif kind == "model_change":
+                    model = f"{entry.get('provider', '-')}/{entry.get('modelId', '-')}"
+                elif kind == "message":
+                    message = entry.get("message", {})
+                    if message.get("role") == "assistant" and not model:
+                        model = f"{message.get('provider', '-')}/{message.get('model', '-')}"
+                    elif message.get("role") == "user" and label is None:
+                        content = message.get("content", "")
+                        if isinstance(content, list):
+                            content = next(
+                                (
+                                    block.get("text", "")
+                                    for block in content
+                                    if isinstance(block, dict) and block.get("type") == "text"
+                                ),
+                                "",
+                            )
+                        if isinstance(content, str) and content.strip():
+                            label = content
+
+                if session_id and cwd and label and model:
+                    break
+    except OSError:
+        continue
+
+    if not (session_id and cwd):
+        continue
+
+    modified = path.stat().st_mtime
+    clean = lambda value: " ".join((value or "").replace("\t", " ").split())
+    rows.append(
+        (
+            modified,
+            "\t".join(
+                [
+                    time.strftime("%m-%d %H:%M", time.localtime(modified)),
+                    session_id,
+                    clean(cwd),
+                    clean(model or "-"),
+                    clean(label or "(no user message)")[:100],
+                    str(path),
+                ]
+            ),
+        )
+    )
+
+rows.sort(reverse=True)
+print("\n".join(row for _, row in rows))
+PY
+)
+
+[ -n "$rows" ] || { echo "no Pi sessions found at $SESSIONS" >&2; exit 1; }
+
+pick=$(printf '%s\n' "$rows" | fzf \
+    --delimiter='\t' --with-nth=1,3,4,5 \
+    --no-hscroll --header='pipic — any Pi session, anywhere' \
+    --preview="$0 --preview {6}" --preview-window=up,55%,wrap) || exit 0
+
+cwd=$(printf '%s' "$pick" | cut -f3)
+file=$(printf '%s' "$pick" | cut -f6)
+[ -f "$file" ] || { echo "session gone: $file" >&2; exit 1; }
+[ -d "$cwd" ] || { echo "dir gone: $cwd — resuming in \$PWD" >&2; cwd="$PWD"; }
+cd "$cwd" || exit 1
+exec "$PI_BIN" --session "$file"
