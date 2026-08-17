@@ -7,3 +7,7 @@ sfeed/.sfeed/feeds.txt
 
 # npm install artifacts
 node_modules
+
+# Local outputs created by `nix build`
+/nix/result
+/nix/result-*
