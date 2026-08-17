@@ -11,3 +11,6 @@ node_modules
 # Local outputs created by `nix build`
 /nix/result
 /nix/result-*
+
+# macOS metadata
+.DS_Store
