@@ -29,6 +29,7 @@
 ## Local changes
 
 - Cross-skill instructions support Pi's direct `SKILL.md` loading when a generic `Skill` tool is unavailable.
+- Canonical skills are stowed to `~/.agents/skills`; relative links expose the same files under `~/.codex/skills` because Codex 0.147 did not discover the shared global location.
 - Pi command references use `/skill:<name>`.
 - `implement` adds a pre-commit check for credentials and private research artifacts.
 - `wizard` follows the local gopass policy: secrets are not persisted to plaintext `.env` by default.

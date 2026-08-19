@@ -11,8 +11,20 @@
 	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }:
 		let
 			username = "gachikuku";
-			configuration = { pkgs, config, lib, ... }: {
-				system.primaryUser = "gachikuku";  # Replace with your actual username if different
+			hackMiniUsername = "g4chi";
+
+			sharedConfiguration = { ... }: {
+				services.tailscale.enable = true;
+				environment.variables.PI_OFFLINE = "1";
+				time.timeZone = "Europe/Athens";
+				system.configurationRevision = self.rev or self.dirtyRev or null;
+				system.stateVersion = 5;
+				nixpkgs.hostPlatform = "aarch64-darwin";
+			};
+
+			workstationConfiguration = { pkgs, config, lib, ... }: {
+				system.primaryUser = username;
+
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
 
@@ -42,8 +54,6 @@
 					})
 				];
 
-				services.tailscale.enable = true;
-
 				fonts = {
 					packages = with pkgs; 
 						[
@@ -56,8 +66,6 @@
 				#nixpkgs.config.permittedInsecurePackages = [
 				#	"python3.13-ecdsa-0.19.1"
 				#];
-
-				environment.variables.PI_OFFLINE = "1";
 
 				environment.systemPackages = with pkgs;
 					[ 
@@ -244,8 +252,6 @@
 					hostName = "gachimacos";
 				};
 
-				time.timeZone = "Europe/Athens";
-
 				system.keyboard = {
 					enableKeyMapping = true;
 					remapCapsLockToControl = true;
@@ -300,35 +306,34 @@
 				# Enable alternative shell support in nix-darwin.
 				# programs.fish.enable = true;
 
-				# Set Git commit hash for darwin-version.
-				system.configurationRevision = self.rev or self.dirtyRev or null;
-
-				# Used for backwards compatibility, please read the changelog before changing.
-				# $ darwin-rebuild changelog
-				system.stateVersion = 5;
-
-				# The platform the configuration will be used on.
-				nixpkgs.hostPlatform = "aarch64-darwin";
 			};
 		in
 			{
-			# Build darwin flake using:
-			# $ darwin-rebuild build --flake .#gabbass-MacBook-Pro
 			darwinConfigurations."gachimacos" = nix-darwin.lib.darwinSystem {
-				modules = [ 
-					configuration 
+				specialArgs = { inherit username; };
+				modules = [
+					sharedConfiguration
+					workstationConfiguration
 					nix-homebrew.darwinModules.nix-homebrew
 					{
 						nix-homebrew = {
 							enable = true;
 							enableRosetta = true;
-							user = "gachikuku";
+							user = username;
 						};
 					}
 				];
 			};
 
-			# NOT DEFAULT: Expose the package set, including overlays, for convenience.
+			darwinConfigurations."h4c-mini" = nix-darwin.lib.darwinSystem {
+				specialArgs = { username = hackMiniUsername; };
+				modules = [
+					sharedConfiguration
+					./hosts/h4c-mini.nix
+				];
+			};
+
+			# Expose the workstation package set for convenience and compatibility.
 			darwinPackages = self.darwinConfigurations."gachimacos".pkgs;
 		};
 
