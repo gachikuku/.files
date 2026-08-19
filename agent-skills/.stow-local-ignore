@@ -2,4 +2,5 @@
 ^/UPSTREAM\.md$
 ^/UPSTREAM-SHA256\.md$
 ^/LICENSE\.mattpocock-skills$
+^/verify\.sh$
 ^/\.stow-local-ignore$

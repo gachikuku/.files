@@ -10,7 +10,7 @@ From the dotfiles root:
 stow agent-skills
 ```
 
-This exposes the skills under `~/.agents/skills/`, which Pi discovers natively and Matt Pocock documents as the shared Codex/Agent Skills location.
+This exposes the canonical copies under `~/.agents/skills/` for Pi and creates dotfiles-managed links under `~/.codex/skills/` for Codex 0.147. Codex did not discover the shared global location in a smoke test, so both paths are maintained from one source rather than duplicated.
 
 ## Update policy
 
@@ -20,6 +20,8 @@ This exposes the skills under `~/.agents/skills/`, which Pi discovers natively a
 4. Copy only the selected directories.
 5. Reapply and review the local compatibility/security changes documented in `UPSTREAM.md`.
 6. Run `bash -n` on bundled shell templates and start Pi once to inspect skill diagnostics.
-7. Commit the reviewed update as one isolated dotfiles change.
+7. Run `./verify.sh`.
+8. Explicitly smoke-test one human-only skill in both Pi and Codex.
+9. Commit the reviewed update as one isolated dotfiles change.
 
 Do not use an automatic updater. Skills are executable instructions and must not change behind the operator's back.
