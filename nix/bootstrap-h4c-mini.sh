@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 NIX_DIR="$ROOT/nix"
 DARWIN_REV="15abb8c98f336cd8bd840d71059adebabe60bf04"
 STOW_PACKAGES=(agent-skills bin git nvim pi tmux zsh)
+NIX_FLAGS=(--extra-experimental-features "nix-command flakes")
 
 bold=""; reset=""; green=""; yellow=""
 if [[ -t 1 ]] && command -v tput >/dev/null 2>&1; then
@@ -47,8 +48,8 @@ else
 fi
 
 stage "Evaluate and build the pinned h4c-mini system"
-nix eval --raw "$NIX_DIR#darwinConfigurations.h4c-mini.config.system.build.toplevel.drvPath" >/dev/null
-nix build --no-link "$NIX_DIR#darwinConfigurations.h4c-mini.config.system.build.toplevel"
+nix "${NIX_FLAGS[@]}" eval --raw "$NIX_DIR#darwinConfigurations.h4c-mini.config.system.build.toplevel.drvPath" >/dev/null
+nix "${NIX_FLAGS[@]}" build --no-link "$NIX_DIR#darwinConfigurations.h4c-mini.config.system.build.toplevel"
 pass "h4c-mini system closure builds"
 
 stage "Activate nix-darwin"
