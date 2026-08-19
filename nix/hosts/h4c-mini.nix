@@ -39,6 +39,13 @@
     ../keys/gachikuku-id-ed25519.pub
   ];
 
+  # Explicit owner decision: this dedicated server prioritizes unattended
+  # administration over privilege separation. Any process running as this user
+  # can become root; keep SSH key-only and restrict network reachability.
+  security.sudo.extraConfig = ''
+    ${username} ALL=(ALL) NOPASSWD: ALL
+  '';
+
   power = {
     restartAfterPowerFailure = true;
     restartAfterFreeze = true;

@@ -22,6 +22,10 @@ The `h4c-mini` nix-darwin configuration is for the Apple-silicon Mac mini. It en
 
 The script pauses before the privileged nix-darwin switch and before Stow changes.
 
+## Privileged autonomy
+
+The owner explicitly selected unrestricted passwordless sudo for the dedicated `g4chi` administrator so unattended maintenance can execute arbitrary root commands. This means every process and agent running as `g4chi` can fully control the host. SSH remains key-only and network reachability must stay restricted.
+
 ## What the profile deliberately does not contain
 
 - Private SSH keys, Apple passwords, 2FA codes, app-specific passwords, signing private keys, Tailscale auth keys, gopass private keys, phone identifiers, or target credentials.
