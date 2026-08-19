@@ -67,11 +67,12 @@ fi
 
 stage "GNU Stow dotfiles"
 cd "$ROOT"
+stow_bin="$(command -v stow)"
 for package in "${STOW_PACKAGES[@]}"; do
-  stow --no --verbose "$package" >/dev/null
+  "$stow_bin" --no --verbose "$package" >/dev/null
  done
 if confirm "Stow ${STOW_PACKAGES[*]} into this account?"; then
-  stow "${STOW_PACKAGES[@]}"
+  "$stow_bin" "${STOW_PACKAGES[@]}"
   "$ROOT/agent-skills/verify.sh"
   pass "dotfiles and audited skills linked"
 else
@@ -79,11 +80,12 @@ else
 fi
 
 stage "Tailscale"
-if tailscale status >/dev/null 2>&1; then
+tailscale_bin="$(command -v tailscale)"
+if "$tailscale_bin" status >/dev/null 2>&1; then
   pass "Tailscale is already connected"
 else
   warn "Tailscale needs interactive authorization. Running tailscale up."
-  sudo tailscale up --hostname=h4c-mini
+  sudo "$tailscale_bin" up --hostname=h4c-mini
 fi
 
 stage "Local service checks"
