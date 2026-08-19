@@ -28,7 +28,14 @@ if find -L "$HOME/.agents/skills" "$HOME/.codex/skills" -type l -print -quit | g
 fi
 
 node_root="$HOME/.pi/agent"
-[[ -d "$node_root/node_modules/@earendil-works/pi-coding-agent" ]] || node_root="$HOME/.files/pi/.pi/agent"
+if [[ ! -d "$node_root/node_modules/@earendil-works/pi-coding-agent" ]]; then
+  node_root="$HOME/.files/pi/.pi/agent"
+fi
+if [[ ! -d "$node_root/node_modules/@earendil-works/pi-coding-agent" ]] && [[ -x /run/current-system/sw/bin/pi ]]; then
+  pi_root="$(dirname "$(dirname "$(realpath /run/current-system/sw/bin/pi)")")"
+  nix_node_root="$pi_root/lib/node_modules/pi-monorepo"
+  [[ -f "$nix_node_root/package.json" ]] && node_root="$nix_node_root"
+fi
 cd "$node_root"
 PI_CODING_AGENT_DIR="${PI_CODING_AGENT_DIR:-$HOME/.files/pi/.pi/agent}" \
 EXPECTED_SKILLS="${expected[*]}" \
