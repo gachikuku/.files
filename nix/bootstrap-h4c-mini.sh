@@ -58,6 +58,8 @@ if confirm "Run the privileged nix-darwin switch now?"; then
     run "github:LnL7/nix-darwin/${DARWIN_REV}#darwin-rebuild" -- \
     switch --flake "$NIX_DIR#h4c-mini"
   pass "h4c-mini profile activated"
+  export PATH="/run/current-system/sw/bin:$PATH"
+  hash -r
 else
   warn "Skipped activation"
   exit 0
