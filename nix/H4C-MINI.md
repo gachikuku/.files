@@ -1,6 +1,6 @@
 # Hack Mini Bootstrap
 
-The `h4c-mini` nix-darwin configuration is for the Apple-silicon Mac mini. It enables Tailscale, key-only OpenSSH, firewall stealth mode, no system sleep, restart after power failure/freeze, pinned research CLI tools, and the existing GNU Stow workflow.
+The `h4c-mini` nix-darwin configuration is for the Apple-silicon Mac mini. It enables Tailscale, key-only OpenSSH, firewall stealth mode, no system/display sleep or automatic GUI logout, restart after power failure/freeze, pinned research CLI tools, and the existing GNU Stow workflow.
 
 ## Human prerequisites
 

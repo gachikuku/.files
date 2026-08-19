@@ -44,7 +44,7 @@
     restartAfterFreeze = true;
     sleep = {
       computer = "never";
-      display = 10;
+      display = "never";
       harddisk = "never";
       allowSleepByPowerButton = false;
     };
@@ -53,6 +53,14 @@
   system.defaults = {
     SoftwareUpdate.AutomaticallyInstallMacOSUpdates = false;
     loginwindow.GuestEnabled = false;
+    CustomUserPreferences = {
+      "com.apple.screensaver" = {
+        idleTime = 0;
+        askForPassword = 0;
+        askForPasswordDelay = 2147483647;
+      };
+      NSGlobalDomain."com.apple.autologout.AutoLogOutDelay" = 0;
+    };
     NSGlobalDomain = {
       AppleICUForce24HourTime = true;
       AppleShowAllExtensions = true;
