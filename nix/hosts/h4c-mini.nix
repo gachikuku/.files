@@ -1,4 +1,7 @@
 { username, pkgs, ... }:
+let
+  appium = pkgs.callPackage ../pkgs/appium { };
+in
 {
   system.primaryUser = username;
 
@@ -80,6 +83,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    appium
     cacert
     codex
     coreutils
