@@ -20,6 +20,25 @@ buildNpmPackage {
     cp package.json package-lock.json "$appium_home/"
     cp -R node_modules "$appium_home/"
 
+    # appium-ios-remotexpc defaults to all interfaces for its unauthenticated
+    # registry and ephemeral USB relay listeners. This server only consumes
+    # them locally, so fail the build unless both listeners can be restricted.
+    remotexpc="$appium_home/node_modules/appium-xcuitest-driver/node_modules/appium-ios-remotexpc/build/src/lib"
+    substituteInPlace "$remotexpc/tunnel/tunnel-registry-server.js" \
+      --replace-fail "this.server?.listen(this.port, () => {" \
+                     "this.server?.listen(this.port, '127.0.0.1', () => {"
+    substituteInPlace "$remotexpc/usbmux/index.js" \
+      --replace-fail "this.server.listen(this.relayPort, () => {" \
+                     "this.server.listen(this.relayPort, '127.0.0.1', () => {"
+
+    # The privileged tunnel daemon and unprivileged Appium LaunchAgent have
+    # different home directories, so @appium/strongbox cannot communicate the
+    # registry port between them. Allow the client to consume a fixed,
+    # declaratively supplied loopback port instead.
+    substituteInPlace "$remotexpc/tunnel/tunnel-availability.js" \
+      --replace-fail "const tunnelRegistryPort = await item.read();" \
+                     "const tunnelRegistryPort = process.env.APPIUM_XCUITEST_TUNNEL_REGISTRY_PORT ?? await item.read();"
+
     cat > "$out/bin/appium" <<'EOF'
     #!@bash@
     set -euo pipefail

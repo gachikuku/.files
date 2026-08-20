@@ -1,6 +1,29 @@
-{ username, pkgs, ... }:
+{ username, pkgs, fridaTools, ... }:
 let
   appium = pkgs.callPackage ../pkgs/appium { };
+  home = "/Users/${username}";
+
+  appiumServer = pkgs.writeShellScript "h4c-appium-server" ''
+    set -euo pipefail
+    exec ${appium}/bin/appium server \
+      --address 127.0.0.1 \
+      --port 4723 \
+      --base-path / \
+      --use-drivers xcuitest \
+      --log-level info \
+      --log-no-colors \
+      --log-timestamp
+  '';
+
+  remoteXpcTunnel = pkgs.writeShellScript "h4c-remotexpc-tunnel" ''
+    set -euo pipefail
+    exec ${appium}/bin/appium driver run xcuitest tunnel-creation -- \
+      --tunnel-registry-port 42314 \
+      --disconnect-retry-max-attempts 0 \
+      --disconnect-retry-strategy exponential \
+      --disconnect-retry-interval-ms 1000 \
+      --disconnect-retry-backoff-max-interval-ms 30000
+  '';
 in
 {
   system.primaryUser = username;
@@ -82,6 +105,51 @@ in
     };
   };
 
+  # The Appium server runs as a GUI LaunchAgent so Xcode code signing can use
+  # the logged-in user's unlocked Keychain. RemoteXPC requires root and runs as
+  # a boot LaunchDaemon. Both network listeners are restricted to loopback.
+  launchd.user.agents.h4c-appium = {
+    command = appiumServer;
+    environment = {
+      APPIUM_HOME = "${home}/.local/share/h4c-appium";
+      APPIUM_XCUITEST_TUNNEL_REGISTRY_PORT = "42314";
+      DEVELOPER_DIR = "/Applications/Xcode.app/Contents/Developer";
+      HOME = home;
+      PATH = "/usr/bin:/bin:/usr/sbin:/sbin";
+    };
+    serviceConfig = {
+      RunAtLoad = true;
+      KeepAlive = true;
+      LimitLoadToSessionType = "Aqua";
+      ProcessType = "Background";
+      ThrottleInterval = 10;
+      Umask = 63; # decimal representation of 077
+      WorkingDirectory = home;
+      StandardOutPath = "${home}/Library/Logs/h4c-appium.stdout.log";
+      StandardErrorPath = "${home}/Library/Logs/h4c-appium.stderr.log";
+    };
+  };
+
+  launchd.daemons.h4c-remotexpc = {
+    command = remoteXpcTunnel;
+    environment = {
+      APPIUM_HOME = "/var/root/.local/share/h4c-appium";
+      HOME = "/var/root";
+      PATH = "/usr/bin:/bin:/usr/sbin:/sbin";
+    };
+    serviceConfig = {
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProcessType = "Background";
+      LowPriorityIO = true;
+      ThrottleInterval = 10;
+      Umask = 63; # decimal representation of 077
+      WorkingDirectory = "/var/root";
+      StandardOutPath = "/var/root/Library/Logs/h4c-remotexpc.stdout.log";
+      StandardErrorPath = "/var/root/Library/Logs/h4c-remotexpc.stderr.log";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     appium
     cacert
@@ -89,7 +157,7 @@ in
     coreutils
     fd
     ffmpeg
-    frida-tools
+    fridaTools
     gh
     git
     gnupg
@@ -98,6 +166,7 @@ in
     ideviceinstaller
     jq
     libimobiledevice
+    libusbmuxd
     llvm
     mitmproxy
     neovim

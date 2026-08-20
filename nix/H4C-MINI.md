@@ -62,3 +62,53 @@ The shared Matt Pocock skills then resolve from one canonical copy for Pi and Co
 Sign into the paid researcher Apple Account interactively in Xcode, enable automatic signing, and let Xcode create a development identity on this Mac. Routine WebDriverAgent builds use the signing identity and Xcode account state in Keychain; agents do not receive the Apple Account password or 2FA recovery material.
 
 App-specific passwords are for supported third-party access to iCloud Mail, Contacts, and Calendar. They are not a substitute for Xcode, App Store, or Apple Developer portal authentication.
+
+## Persistent iOS automation services
+
+The host profile declares two launchd jobs:
+
+- `org.nixos.h4c-appium`: GUI LaunchAgent, listening only on `127.0.0.1:4723`.
+- `org.nixos.h4c-remotexpc`: root LaunchDaemon, with its registry only on `127.0.0.1:42314` and automatic tunnel recreation for connected devices.
+
+Appium must run in the logged-in Aqua session because WDA builds need the user's unlocked signing Keychain. After a Mac reboot, Appium therefore remains unavailable until a human logs into the GUI. Phone automation also waits for each phone's human-only first unlock; the Dopamine phone additionally needs a human re-jailbreak before jailbreak-dependent work.
+
+Check service and tunnel health:
+
+```sh
+curl -fsS http://127.0.0.1:4723/status | jq .value.ready
+curl -fsS http://127.0.0.1:42314/remotexpc/tunnels | jq .metadata
+launchctl print gui/$(id -u)/org.nixos.h4c-appium
+sudo launchctl print system/org.nixos.h4c-remotexpc
+sudo lsof -nP -iTCP:4723 -iTCP:42314 -sTCP:LISTEN
+```
+
+Logs are intentionally local:
+
+```text
+~/Library/Logs/h4c-appium.stdout.log
+~/Library/Logs/h4c-appium.stderr.log
+/var/root/Library/Logs/h4c-remotexpc.stdout.log
+/var/root/Library/Logs/h4c-remotexpc.stderr.log
+```
+
+Do not expose either service through router forwarding or bind them to all interfaces. The pinned Appium package patches the RemoteXPC registry and ephemeral USB relay listeners to loopback. It also allows the unprivileged Appium process to consume the fixed registry port because the root daemon and GUI agent use separate state directories.
+
+RemoteXPC tunnel discovery can take about a minute after boot. Wait for `.metadata.activeTunnels` to reach the expected device count before opening Appium sessions. Personal Team WDA startup may take several minutes.
+
+## Deploying a prebuilt system closure
+
+Running a system closure's `activate` script alone changes the live system but does **not** make that closure the next boot generation. When this workstation builds and copies a closure to the mini, set the system profile before activation:
+
+```sh
+system=$(nix build .#darwinConfigurations.h4c-mini.system --no-link --print-out-paths)
+nix copy --to ssh://h4c-mini-breakglass "$system"
+ssh h4c-mini-breakglass \
+  "sudo nix-env -p /nix/var/nix/profiles/system --set '$system' && sudo '$system/activate'"
+```
+
+Verify both links resolve to the intended closure before rebooting:
+
+```sh
+readlink -f /nix/var/nix/profiles/system
+readlink /run/current-system
+```

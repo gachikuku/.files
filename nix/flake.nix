@@ -3,12 +3,13 @@
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+		nixpkgs-frida.url = "github:NixOS/nixpkgs/afe3d8ac4395617bdcdac9f188ac8717a062e014";
 		nix-darwin.url = "github:LnL7/nix-darwin";
 		nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 		nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 	};
 
-	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }:
+	outputs = inputs@{ self, nix-darwin, nixpkgs, nixpkgs-frida, nix-homebrew }:
 		let
 			username = "gachikuku";
 			hackMiniUsername = "g4chi";
@@ -326,7 +327,10 @@
 			};
 
 			darwinConfigurations."h4c-mini" = nix-darwin.lib.darwinSystem {
-				specialArgs = { username = hackMiniUsername; };
+				specialArgs = {
+					username = hackMiniUsername;
+					fridaTools = nixpkgs-frida.legacyPackages.aarch64-darwin.frida-tools;
+				};
 				modules = [
 					sharedConfiguration
 					./hosts/h4c-mini.nix
