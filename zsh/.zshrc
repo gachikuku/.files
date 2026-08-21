@@ -1,17 +1,40 @@
+# Keep PATH readable and duplicate-free. In Zsh, the path array is tied to PATH.
+typeset -U path PATH
+path=(
+  # Personal tools (highest precedence).
+  "$HOME/bin"
+  "$HOME/.local/bin"
+  "$HOME/go/bin"
+  "$HOME/cargo/bin"
+  "$HOME/.foundry/bin"
+  "$HOME/Developer/depot_tools"
+
+  # Homebrew and standalone toolchains.
+  /opt/homebrew/opt/curl/bin
+  /opt/homebrew/opt/coreutils/libexec/gnubin
+  /opt/homebrew/opt/openjdk/bin
+  /opt/homebrew/opt/ruby/bin
+  /opt/homebrew/opt/tree-sitter/bin
+  /opt/homebrew/bin
+  /opt/homebrew/sbin
+  /Library/TeX/texbin
+
+  # Standard paths, followed by paths supplied by macOS, Nix, or the caller.
+  /usr/local/bin
+  /usr/local/sbin
+  /bin
+  /usr/bin
+  /sbin
+  /usr/sbin
+  ${^path}(N-/) # Keep inherited entries only when they are real directories.
+)
+export PATH
+
+# Prompt colors.
 autoload -U colors && colors
 
-# ChatGBT as of generate that for linux and BSD compatability as luke's version didn't work (27/07/23).
-# export PATH="$PATH:$(find ~/.local/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
-# export PATH="$PATH:$(find ~/bin -type d -exec printf '%s:' {} + | sed 's/:$//')"
-# Adds `~/.local/bin` to $PATH
-# export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
-export PATH=~/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/sbin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/opt/tree-sitter/bin:~/go/bin:~/cargo/bin:~/.local/bin:~/Developer/depot_tools:$PATH
-
-# env variables
-export PATH="/Library/TeX/texbin:$PATH"
+# Environment variables
 export EDITOR="nvim"
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"
 export DOTFILES="$HOME/.files"
 export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
 export GIT_EDITOR="nvim"
@@ -21,7 +44,6 @@ export GOPATH="$HOME/go"
 export CARGO_HOME="$HOME/cargo"
 export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
-export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 export GPG_TTY="$(tty)"
 export GOPROXY=direct
 export GOSUMDB=off
@@ -96,18 +118,13 @@ bindkey -M vicmd '^[[P' vi-delete-char
 bindkey -M vicmd '^[e' edit-command-line
 bindkey -M visual '^[[P' vi-delete
 
-# Basic auto/tab completion. Add every completion directory before running
-# compinit once. -C reuses ~/.zcompdump and skips the slow security scan.
-export PATH="$HOME/.grok/bin:$PATH"
-fpath=(~/.grok/completions/zsh $fpath)
-zstyle ':completion:*' menu select
-zmodload zsh/complist
-autoload -Uz compinit
-compinit -C
-_comp_options+=(globdots) # Include hidden files.
+# Joshua Stein's only custom completion: options and files for dd.
+# Normal Tab completion remains Zsh's built-in expand-or-complete widget.
+compctl -k '(if of conv ibs obs bs cbs files skip file seek count)' \
+  -S '=' -x 's[if=], s[of=]' -f - 'C[0,conv=*,*] n[-1,,], s[conv=]' \
+  -k '(ascii ebcdic ibm block unblock lcase ucase swap noerror sync)' \
+  -q -S ',' - 'n[-1,=]' -X '<number>' -- dd
 
-# Created by `pipx` on 2024-05-30 12:37:30
-export PATH="$PATH:/Users/gachikuku/.local/bin"
 if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
 
 # uncomment when using claude-code
