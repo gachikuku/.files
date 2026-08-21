@@ -52,7 +52,7 @@ The bootstrap offers these packages:
 
 ```sh
 cd ~/.files
-stow agent-skills bin git nvim pi zsh
+stow agent-skills astral-tmux bin git nvim pi zsh
 ```
 
 The shared Matt Pocock skills then resolve from one canonical copy for Pi and Codex. Add other Stow packages only when the mini actually needs them.

@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 NIX_DIR="$ROOT/nix"
 DARWIN_REV="15abb8c98f336cd8bd840d71059adebabe60bf04"
-STOW_PACKAGES=(agent-skills bin git nvim pi zsh)
+STOW_PACKAGES=(agent-skills astral-tmux bin git nvim pi zsh)
 NIX_FLAGS=(--extra-experimental-features "nix-command flakes")
 
 bold=""; reset=""; green=""; yellow=""
