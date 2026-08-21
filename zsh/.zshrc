@@ -81,7 +81,7 @@ alias jwt_dool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME
 
 # Claude Code harness backed by GPT-5.6 Sol through the local CLIProxyAPI.
 # ENABLE_TOOL_SEARCH=false disables dynamic MCP schema lookup, not WebSearch.
-alias claudex='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
+alias claude='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
 ANTHROPIC_AUTH_TOKEN=claudex-localhost-only \
 CLAUDE_CODE_SUBAGENT_MODEL=gpt-5.6-sol \
 CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
@@ -96,12 +96,15 @@ bindkey -M vicmd '^[[P' vi-delete-char
 bindkey -M vicmd '^[e' edit-command-line
 bindkey -M visual '^[[P' vi-delete
 
-# Basic auto/tab complete:
-autoload -U compinit
+# Basic auto/tab completion. Add every completion directory before running
+# compinit once. -C reuses ~/.zcompdump and skips the slow security scan.
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
 zstyle ':completion:*' menu select
 zmodload zsh/complist
-compinit
-_comp_options+=(globdots)		# Include hidden files.
+autoload -Uz compinit
+compinit -C
+_comp_options+=(globdots) # Include hidden files.
 
 # Created by `pipx` on 2024-05-30 12:37:30
 export PATH="$PATH:/Users/gachikuku/.local/bin"
@@ -112,9 +115,3 @@ if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users
 #export ANTHROPIC_AUTH_TOKEN=$(gopass show -o api/openrouter)
 #export ANTHROPIC_API_KEY="" # Important: Must be explicitly empty
 #export OPENROUTER_API_KEY=$(gopass show -o api/openrouter)
-
-# >>> grok installer >>>
-export PATH="$HOME/.grok/bin:$PATH"
-fpath=(~/.grok/completions/zsh $fpath)
-autoload -Uz compinit && compinit -C
-# <<< grok installer <<<
