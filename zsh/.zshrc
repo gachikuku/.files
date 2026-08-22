@@ -11,7 +11,6 @@ path=(
 
   # Homebrew and standalone toolchains.
   /opt/homebrew/opt/curl/bin
-  /opt/homebrew/opt/coreutils/libexec/gnubin
   /opt/homebrew/opt/openjdk/bin
   /opt/homebrew/opt/ruby/bin
   /opt/homebrew/opt/tree-sitter/bin
@@ -19,14 +18,19 @@ path=(
   /opt/homebrew/sbin
   /Library/TeX/texbin
 
-  # Standard paths, followed by paths supplied by macOS, Nix, or the caller.
+  # Prefer macOS utilities; scripts here rely on BSD date and related tools.
   /usr/local/bin
   /usr/local/sbin
   /bin
   /usr/bin
   /sbin
   /usr/sbin
-  ${^path}(N-/) # Keep inherited entries only when they are real directories.
+
+  # GNU alternatives remain available without shadowing macOS utilities.
+  /opt/homebrew/opt/coreutils/libexec/gnubin
+
+  # Preserve valid paths supplied by macOS, Nix, or the caller.
+  ${^path}(N-/)
 )
 export PATH
 
