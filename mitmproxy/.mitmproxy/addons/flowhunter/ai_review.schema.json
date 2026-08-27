@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verdict",
+    "severity",
+    "title",
+    "rationale",
+    "evidence_to_verify",
+    "next_test"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["informational", "suspicious", "likely_finding"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "low", "medium", "high", "critical"]
+    },
+    "title": {"type": "string"},
+    "rationale": {"type": "string"},
+    "evidence_to_verify": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "next_test": {"type": "string"}
+  }
+}

@@ -1,0 +1,5 @@
+^/\.stow-local-ignore$
+^/README\.md$
+^/.*__pycache__($|/)
+^/.*\.pytest_cache($|/)
+^/.*\.py[co]$
