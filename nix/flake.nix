@@ -112,9 +112,11 @@
 						httpx
 						husky
 						icdiff
+						ideviceinstaller
 						jq
 						jsluice
 						ledger
+						libimobiledevice
 						libretls
 						libusbmuxd
 						libxo

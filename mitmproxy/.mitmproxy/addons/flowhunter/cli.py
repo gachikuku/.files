@@ -79,7 +79,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     context.add_argument("--limit", type=int, default=25)
 
-    watch = subparsers.add_parser("watch", help="Poll and print new findings")
+    watch = subparsers.add_parser(
+        "watch", help="Poll and print endpoint activity and findings"
+    )
     watch.add_argument("--interval", type=float, default=2.0)
     return parser
 
@@ -124,15 +126,29 @@ def main(argv: list[str] | None = None) -> int:
             True,
         )
     elif args.command == "watch":
-        seen: set[str] = set()
+        seen_endpoints: set[str] = set()
+        seen_findings: set[str] = set()
+        interval = max(0.2, args.interval)
+        print(
+            f"FlowHunter watching {storage.data_dir} every {interval:g}s",
+            flush=True,
+        )
         try:
             while True:
+                for item in reversed(storage.list_endpoints(limit=500)):
+                    marker = (
+                        f"{item['signature']}:{item['last_seen']}:"
+                        f"{item['observation_count']}"
+                    )
+                    if marker not in seen_endpoints:
+                        print(f"[endpoint] {format_row(item)}", flush=True)
+                        seen_endpoints.add(marker)
                 for item in reversed(storage.list_findings(limit=500)):
                     marker = f"{item['id']}:{item['last_seen']}:{item['occurrences']}"
-                    if marker not in seen:
-                        print(format_row(item), flush=True)
-                        seen.add(marker)
-                time.sleep(max(0.2, args.interval))
+                    if marker not in seen_findings:
+                        print(f"[finding]  {format_row(item)}", flush=True)
+                        seen_findings.add(marker)
+                time.sleep(interval)
         except KeyboardInterrupt:
             return 0
     return 0
