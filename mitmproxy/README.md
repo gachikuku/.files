@@ -21,9 +21,10 @@ mitmproxy \
   --set flowhunter_scope=*.example.com
 ```
 
-No requests are replayed by default. FlowHunter only stores redacted endpoint
-summaries; use mitmproxy's `-w` flag separately if an encrypted-at-rest raw
-capture is actually required.
+Automatic replay is enabled by default and runs once for each new endpoint
+signature in the authorized scope. FlowHunter stores redacted endpoint summaries;
+use mitmproxy's `-w` flag separately if an encrypted-at-rest raw capture is
+actually required.
 
 ## TUI commands
 
@@ -34,44 +35,47 @@ Focus a completed flow before replaying it:
 :flowhunter.replay @focus safe
 :flowhunter.replay @focus auth
 :flowhunter.replay @focus json
+:flowhunter.replay @focus all
 :flowhunter.report
 :flowhunter.ai true
 ```
 
 Profiles:
 
-- `safe` changes existing query values and is limited to GET/HEAD/OPTIONS.
+- `safe` changes existing query values.
 - `auth` removes Authorization, Cookie, and X-API-Key headers; verify every
   result manually because a `2xx` response alone does not prove an auth issue.
-- `json` changes one JSON primitive and normally requires an unsafe HTTP method.
+- `json` changes one JSON primitive.
+- `all` combines auth removal, JSON mutation, and every bounded query mutation.
 
-POST/PUT/PATCH/DELETE replay is rejected unless the operator explicitly sets:
+Replay and mutation are allowed for every HTTP method. `DELETE` is allowed only
+when its URL, query, or body contains a `flowhunter-...` ownership marker;
+unknown data remains blocked. State-changing effects still require an authorized
+target and should be understood before enabling automatic replay.
 
-```sh
---set flowhunter_allow_unsafe_methods=true
-```
-
-Only do this for requests whose state-changing effects are understood. Payment,
-messaging, deletion, account, and logout endpoints should remain manual.
-
-Automatic replay is opt-in and only runs once for each new endpoint signature:
+Automatic replay defaults to the `all` profile with up to 20 mutations and runs
+once for each new endpoint signature:
 
 ```sh
 mitmproxy \
-  --set flowhunter_scope=api.example.com \
-  --set flowhunter_auto_replay=true \
-  --set flowhunter_replay_profile=safe
+  --set flowhunter_scope=api.example.com
 ```
+
+Disable it with `--set flowhunter_auto_replay=false`.
 
 ## Codex review
 
-AI review is disabled by default. Enabling it starts one background worker that
-passes only redacted, deduplicated summaries to `codex exec` using an ephemeral,
-read-only run and a strict JSON output schema:
+AI review is enabled by default. It starts one background worker that passes only
+redacted, deduplicated summaries to `codex exec` using an ephemeral, read-only run
+and a strict JSON output schema:
 
 ```text
 :flowhunter.ai true
 ```
+
+Disable it with `:flowhunter.ai false` or `--set flowhunter_ai_enabled=false`.
+The AI reviews evidence; active requests come from the validated `all` mutation
+profile rather than arbitrary model-generated network commands.
 
 Captured content is untrusted and may contain prompt injection. The worker
 instructs Codex not to use tools and runs it read-only, but AI output remains
@@ -84,7 +88,7 @@ flowhunter status
 flowhunter endpoints
 flowhunter findings --unreviewed
 flowhunter show fh-0123456789abcdef
-flowhunter watch --interval 2
+flowhunter watch --interval .5  # live endpoint activity and findings
 flowhunter codex-context
 flowhunter report
 ```

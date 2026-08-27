@@ -36,7 +36,7 @@ ERROR_WORDS = (
     "fatal error",
     "internal server error",
 )
-SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+FLOWHUNTER_MARKER_PREFIX = "flowhunter-"
 
 
 def stable_hash(value: str, length: int = 12) -> str:
@@ -313,35 +313,51 @@ def _mutate_first_json(value: Any, path: str = "$") -> tuple[Any, str, str] | No
     return None
 
 
+def _json_mutation(flow: Any) -> list[tuple[Any, str, str]]:
+    try:
+        body = json.loads(flow.request.get_text(strict=False))
+    except (json.JSONDecodeError, TypeError):
+        return []
+    mutation = _mutate_first_json(body)
+    if not mutation:
+        return []
+    changed, description, marker = mutation
+    clone = flow.copy()
+    clone.response = None
+    clone.request.set_text(json.dumps(changed, separators=(",", ":")))
+    return [(clone, description, marker)]
+
+
 def build_mutations(
     flow: Any,
     profile: str,
     limit: int,
-    allow_unsafe_methods: bool,
 ) -> list[tuple[Any, str, str]]:
     method = flow.request.method.upper()
-    if method not in SAFE_METHODS and not allow_unsafe_methods:
-        raise ValueError(
-            f"{method} replay is disabled; set flowhunter_allow_unsafe_methods=true explicitly"
+    if method == "DELETE":
+        request_text = flow.request.get_text(strict=False) or ""
+        owned_marker_present = FLOWHUNTER_MARKER_PREFIX in (
+            f"{flow.request.pretty_url}\n{request_text}".lower()
         )
+        if not owned_marker_present:
+            raise ValueError(
+                "DELETE replay is blocked unless the URL, query, or body contains "
+                "a flowhunter-owned marker"
+            )
     if profile == "safe":
         return _query_mutations(flow, limit)
     if profile == "auth":
         return _auth_mutation(flow)
     if profile == "json":
-        try:
-            body = json.loads(flow.request.get_text(strict=False))
-        except (json.JSONDecodeError, TypeError):
-            return []
-        mutation = _mutate_first_json(body)
-        if not mutation:
-            return []
-        changed, description, marker = mutation
-        clone = flow.copy()
-        clone.response = None
-        clone.request.set_text(json.dumps(changed, separators=(",", ":")))
-        return [(clone, description, marker)]
-    raise ValueError("unknown profile; use safe, auth, or json")
+        return _json_mutation(flow)
+    if profile == "all":
+        mutations = [
+            *_auth_mutation(flow),
+            *_json_mutation(flow),
+            *_query_mutations(flow, limit),
+        ]
+        return mutations[:limit]
+    raise ValueError("unknown profile; use all, safe, auth, or json")
 
 
 def compare_replay(

@@ -46,31 +46,25 @@ class FlowHunterAddon:
         loader.add_option(
             "flowhunter_auto_replay",
             bool,
-            False,
-            "Replay the safe mutation profile once for each new endpoint.",
+            True,
+            "Replay the selected mutation profile once for each new endpoint.",
         )
         loader.add_option(
             "flowhunter_replay_profile",
             str,
-            "safe",
-            "Automatic replay profile: safe, auth, or json.",
-        )
-        loader.add_option(
-            "flowhunter_allow_unsafe_methods",
-            bool,
-            False,
-            "Allow mutation/replay of methods other than GET, HEAD, and OPTIONS.",
+            "all",
+            "Automatic replay profile: all, safe, auth, or json.",
         )
         loader.add_option(
             "flowhunter_max_mutations",
             int,
-            3,
+            20,
             "Maximum mutations produced for one replay command or endpoint.",
         )
         loader.add_option(
             "flowhunter_ai_enabled",
             bool,
-            False,
+            True,
             "Send redacted, deduplicated summaries to an isolated Codex CLI worker.",
         )
         loader.add_option(
@@ -141,7 +135,7 @@ class FlowHunterAddon:
             "scope": list(ctx.options.flowhunter_scope),
             "auto_replay": ctx.options.flowhunter_auto_replay,
             "replay_profile": ctx.options.flowhunter_replay_profile,
-            "allow_unsafe_methods": ctx.options.flowhunter_allow_unsafe_methods,
+            "delete_policy": "flowhunter-marker-only",
             "ai_enabled": ctx.options.flowhunter_ai_enabled,
             "data_dir": ctx.options.flowhunter_data_dir,
         }
@@ -192,7 +186,6 @@ class FlowHunterAddon:
                     original,
                     profile,
                     max(1, min(ctx.options.flowhunter_max_mutations, 20)),
-                    ctx.options.flowhunter_allow_unsafe_methods,
                 )
             except ValueError as error:
                 errors.append(str(error))

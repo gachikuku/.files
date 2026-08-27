@@ -97,21 +97,50 @@ class SnapshotTests(unittest.TestCase):
 
 class MutationTests(unittest.TestCase):
     def test_safe_query_mutations_are_bounded(self) -> None:
-        mutations = build_mutations(make_flow(), "safe", 2, False)
+        mutations = build_mutations(make_flow(), "safe", 2)
         self.assertEqual(len(mutations), 2)
         self.assertTrue(all(candidate.response is None for candidate, _, _ in mutations))
 
-    def test_unsafe_method_requires_explicit_permission(self) -> None:
-        with self.assertRaisesRegex(ValueError, "disabled"):
-            build_mutations(
-                make_flow(method="POST", request_body='{"name":"x"}', request_type="application/json"),
-                "json",
-                3,
-                False,
-            )
+    def test_post_json_mutation_is_allowed(self) -> None:
+        mutations = build_mutations(
+            make_flow(method="POST", request_body='{"name":"x"}', request_type="application/json"),
+            "json",
+            3,
+        )
+        self.assertEqual(len(mutations), 1)
+
+    def test_all_profile_combines_auth_json_and_query_mutations(self) -> None:
+        mutations = build_mutations(
+            make_flow(
+                method="POST",
+                request_body='{"name":"x"}',
+                request_type="application/json",
+            ),
+            "all",
+            20,
+        )
+        descriptions = [description for _, description, _ in mutations]
+        self.assertTrue(any(item.startswith("remove-auth:") for item in descriptions))
+        self.assertTrue(any(item.startswith("json:") for item in descriptions))
+        self.assertTrue(any(item.startswith("query:") for item in descriptions))
+
+    def test_delete_replay_blocks_unknown_data(self) -> None:
+        with self.assertRaisesRegex(ValueError, "flowhunter-owned marker"):
+            build_mutations(make_flow(method="DELETE"), "safe", 3)
+
+    def test_delete_replay_allows_flowhunter_owned_data(self) -> None:
+        mutations = build_mutations(
+            make_flow(
+                method="DELETE",
+                url="https://api.example.com/items/flowhunter-owned?id=1",
+            ),
+            "safe",
+            3,
+        )
+        self.assertGreaterEqual(len(mutations), 1)
 
     def test_auth_mutation_removes_credentials(self) -> None:
-        candidate, description, _ = build_mutations(make_flow(), "auth", 3, False)[0]
+        candidate, description, _ = build_mutations(make_flow(), "auth", 3)[0]
         self.assertNotIn("authorization", candidate.request.headers)
         self.assertIn("remove-auth", description)
 
