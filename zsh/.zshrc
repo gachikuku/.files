@@ -92,6 +92,7 @@ PS1='%~%(!.#.$) '
 alias pi='rehash; PI_OFFLINE=1 pi'
 alias python='python3'
 alias ls="ls -lG"
+alias less='less -i'
 alias lynx="lynx --nocolor"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"

@@ -70,89 +70,87 @@
 
 				environment.systemPackages = with pkgs;
 					[ 
-						ares-cli
-						amfora #gemini browser
-						mtr
-						libretls
-						cacert
-						husky
-						radamsa
-						mpv
-						yt-dlp
-						gcc-arm-embedded
-						rustup
-						radare2
-						qemu
+
+						dive
+						#steghide
 						aerc
-						pinentry_mac
+						aerospace
+						amfora #gemini browser
+						ares-cli
+						binwalk
+						browsh
+						cacert
 						cargo
-						go
-						trezorctl
-						trezord
-						speedtest-cli
-						codex
+						claude-code
 						cmake
-						tor 
-						torsocks
-						entr
 						cmus
-						gnuplot
-						ledger
+						codex
 						colima
-						gh
-						uv
 						coreutils
 						discord
 						docker
-							dive
-						fabric-ai
+						entr
+						exiftool
 						fd
-						ffmpeg
-						socat
-						ffuf # remember uff and ffufai!
 						feroxbuster
+						ffmpeg
+						ffuf # remember uff and ffufai!
+						frida-tools
 						fzf
+						gcc-arm-embedded
+						gh
 						gnupg
-						hashid
+						gnuplot
+						go
 						gopass
 						gopass-jsonapi
 						hashcat
+						hashid
 						hexedit
 						html-tidy
 						htmlq
-						browsh
-						oksh
 						httpx
+						husky
 						icdiff
 						jq
 						jsluice
+						ledger
+						libretls
 						libxo
 						lima
+						links2
 						llvm
-						sc-im
 						lynx
 						mblaze
-						python312Packages.pycryptodome
 						mkalias
+						mksh
+						mpv
+						mtr
 						mupdf
 						naabu
 						neovim
-						tree-sitter
 						ngrok
 						nmap
+						nodejs_24
 						nuclei
-						openvpn
+						oksh
 						opencode
-						claude-code
+						openvpn
 						pi-coding-agent
+						pinentry_mac
+						plan9port  # Plan 9 page(1) image viewer and user-space tools
+						python312Packages.pycryptodome
+						qemu
+						radamsa
+						radare2
 						ripgrep
 						rustc
+						rustup
+						sc-im
 						senpai
 						sfeed
-						binwalk
-						exiftool
-						#steghide
-						zsteg
+						socat
+						speedtest-cli
 						sqlmap
 						stow
 						subfinder
@@ -161,20 +159,25 @@
 						tealdeer
 						terminal-notifier  # clickable agent-notify desktop pings
 						tmux
+						tor 
+						torsocks
 						tree
+						tree-sitter
+						trezorctl
+						trezord
+						usbfluxd
+						uv
 						vim
+						w3m
+						watch
 						wget
 						witnessme
 						xdg-utils
 						yazi
-						nodejs_24
+						yt-dlp
 						zbar
-						oksh
-						mksh
-						aerospace
-						w3m
-						plan9port  # Plan 9 page(1) image viewer and user-space tools
-						links2
+						zsteg
+
 					];
 
 
