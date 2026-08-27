@@ -10,3 +10,4 @@ console_palette: solarized_light
 #block_global: false
 scripts:
   - ~/.files/mitmproxy/.mitmproxy/addons/chunkcontrol.py
+  - ~/.files/mitmproxy/.mitmproxy/addons/flowhunter_addon.py

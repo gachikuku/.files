@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""Stow-installed CLI entry point for the FlowHunter mitmproxy addon."""
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.home() / ".mitmproxy" / "addons"))
+
+from flowhunter.cli import main
+
+raise SystemExit(main())
