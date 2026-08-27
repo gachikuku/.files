@@ -71,7 +71,6 @@
 				environment.systemPackages = with pkgs;
 					[ 
 
-						dive
 						#steghide
 						aerc
 						aerospace
@@ -88,6 +87,7 @@
 						colima
 						coreutils
 						discord
+						dive
 						docker
 						entr
 						exiftool
@@ -116,12 +116,14 @@
 						jsluice
 						ledger
 						libretls
+						libusbmuxd
 						libxo
 						lima
 						links2
 						llvm
 						lynx
 						mblaze
+						mitmproxy
 						mkalias
 						mksh
 						mpv
