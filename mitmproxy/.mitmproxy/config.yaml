@@ -5,6 +5,13 @@ export_preserve_original_ip: true
 ssl_insecure: true
 validate_inbound_headers: false
 store_streamed_bodies: true
+# Tunnel pinned/non-target Apple and PipoPay TLS traffic without interception.
+ignore_hosts:
+  - '^gateway\.icloud\.com$'
+  - '^fp-sg\.pipopay\.com$'
+# Intercept only the authorized FlowHunter target; tunnel all other hosts and IPs.
+allow_hosts:
+  - '(^|\.)larksuite\.com(?::443)?$'
 console_flowlist_layout: list
 console_palette: solarized_light
 #block_global: false
