@@ -10,13 +10,8 @@ path=(
   "$HOME/Developer/depot_tools"
 
   # Homebrew and standalone toolchains.
-  /opt/homebrew/opt/curl/bin
-  /opt/homebrew/opt/openjdk/bin
-  /opt/homebrew/opt/ruby/bin
-  /opt/homebrew/opt/tree-sitter/bin
   /opt/homebrew/bin
   /opt/homebrew/sbin
-  /Library/TeX/texbin
 
   # Prefer macOS utilities; scripts here rely on BSD date and related tools.
   /usr/local/bin
@@ -34,9 +29,6 @@ path=(
 )
 export PATH
 
-# Prompt colors.
-autoload -U colors && colors
-
 # Environment variables
 export EDITOR="vim"
 export DOTFILES="$HOME/.files"
@@ -48,7 +40,7 @@ export GOPATH="$HOME/go"
 export CARGO_HOME="$HOME/cargo"
 export LDFLAGS="-L/opt/homebrew/opt/curl/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/curl/include"
-export GPG_TTY="$(tty)"
+export GPG_TTY="$TTY"
 export GOPROXY=direct
 export GOSUMDB=off
 export GOTELEMETRY=off
@@ -84,9 +76,6 @@ fi
 # prompt
 #PS1="%F{5}%m:%~%(!.%F{2}#.%F{2}$)%f "
 PS1='%~%(!.#.$) '
-
-# Use neovim for vim if present.
-#[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
 
@@ -125,8 +114,27 @@ bindkey -M vicmd '^[[P' vi-delete-char
 bindkey -M vicmd '^[e' edit-command-line
 bindkey -M visual '^[[P' vi-delete
 
-# Joshua Stein's only custom completion: options and files for dd.
-# Normal Tab completion remains Zsh's built-in expand-or-complete widget.
+# Load command-aware completion on the first Tab press, keeping shell startup fast.
+lazy-compinit() {
+  zmodload zsh/complist
+  zstyle ':completion:*' menu select
+  zstyle ':completion:*' select-prompt ''
+  zstyle ':completion:*' select-scroll 0
+
+  bindkey -M menuselect '^[[Z' reverse-menu-complete
+  bindkey -M menuselect '^[[5~' backward-word
+  bindkey -M menuselect '^[[6~' forward-word
+
+  autoload -Uz compinit
+  compinit -C
+  bindkey '^I' menu-select
+  zle menu-select
+}
+zle -N lazy-compinit
+bindkey '^I' lazy-compinit
+setopt ALWAYS_LAST_PROMPT AUTO_MENU
+
+# Joshua Stein's custom completion: options and files for dd.
 compctl -k '(if of conv ibs obs bs cbs files skip file seek count)' \
   -S '=' -x 's[if=], s[of=]' -f - 'C[0,conv=*,*] n[-1,,], s[conv=]' \
   -k '(ascii ebcdic ibm block unblock lcase ucase swap noerror sync)' \
