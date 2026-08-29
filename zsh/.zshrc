@@ -38,10 +38,10 @@ export PATH
 autoload -U colors && colors
 
 # Environment variables
-export EDITOR="nvim"
+export EDITOR="vim"
 export DOTFILES="$HOME/.files"
 export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
-export GIT_EDITOR="nvim"
+export GIT_EDITOR="vim"
 export BROWSER="open -a Safari"
 export RUBYOPT="rubygems"
 export GOPATH="$HOME/go"
@@ -86,7 +86,7 @@ fi
 PS1='%~%(!.#.$) '
 
 # Use neovim for vim if present.
-[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+#[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
 
