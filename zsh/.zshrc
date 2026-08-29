@@ -89,22 +89,24 @@ PS1='%~%(!.#.$) '
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 # Aliases
-alias pi='rehash; PI_OFFLINE=1 pi'
-alias python='python3'
-alias ls="ls -lG"
-alias less='less -i'
-alias lynx="lynx --nocolor"
-alias grep="grep --color=auto"
-alias diff="diff --color=auto"
-alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
-alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
+
+alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/cheat-sheet' | lynx -dump -stdin | sed -n '/^SQL injection cheat sheet$/,\$p' | less -i"
 alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>" --disable-features=AutoupgradeEnabled,HttpsUpgrades,IsSitePerProcess --user-data-dir=/tmp/chromium'
-alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+alias codex='codex --yolo'
+alias diff="diff --color=auto"
+alias grep="grep --color=auto"
+alias jwt_dool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
+alias less='less -i'
+alias ls="ls -lG"
+alias lynx="lynx --nocolor"
 alias man_openssl="curl -s 'https://man.archlinux.org/man/libressl-openssl.1.en.raw' | mandoc | nvim +Man! -"
 alias man_r2="curl -s 'https://man.archlinux.org/man/radare2.1.en.raw' | mandoc | nvim +Man! -"
-alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/cheat-sheet' | lynx -dump -stdin | sed -n '/^SQL injection cheat sheet$/,\$p' | less -i"
+alias mus='mpv --ytdl-raw-options=yes-playlist=,no-check-certificates= --vid=no --ytdl-format=bestaudio'
+alias pi='rehash; PI_OFFLINE=1 pi'
+alias python='python3'
+alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less -i"
-alias jwt_dool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'
+alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 
 # Claude Code harness backed by GPT-5.6 Sol through the local CLIProxyAPI.
 # ENABLE_TOOL_SEARCH=false disables dynamic MCP schema lookup, not WebSearch.
