@@ -87,6 +87,7 @@
 						discord
 						dive
 						docker
+						dpkg
 						entr
 						exiftool
 						fd
@@ -98,6 +99,7 @@
 						gcc-arm-embedded
 						gh
 						gnupg
+						gnumake
 						gnuplot
 						go
 						gopass
@@ -114,6 +116,7 @@
 						jq
 						jsluice
 						ledger
+						ldid
 						libimobiledevice
 						libretls
 						libusbmuxd
@@ -140,6 +143,7 @@
 						openvpn
 						pi-coding-agent
 						pinentry_mac
+						p7zip
 						plan9port  # Plan 9 page(1) image viewer and user-space tools
 						python312Packages.pycryptodome
 						qemu
