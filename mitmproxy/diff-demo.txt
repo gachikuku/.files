@@ -1,0 +1,2 @@
+Hello from a real file diff.
+This line was added to the workspace.

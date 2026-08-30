@@ -1,0 +1,48 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+check_for_update_on_startup = false
+
+[projects."/Users/gachikuku/.files"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Developer/tau"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Developer/tools/mitmproxy"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Developer"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Downloads/lark"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Documents/hunting"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Downloads"]
+trust_level = "trusted"
+
+[tui]
+theme = "solarized-light"
+show_tooltips = false
+
+[tui.model_availability_nux]
+"gpt-5.6-sol" = 4
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
+[mcp_servers.mitmproxy-mcp]
+command = "uvx"
+args = ["--with", "mcp<2", "mitmproxy-mcp"]
+
+[mcp_servers.frida-mcp]
+command = "uvx"
+args = ["--from", "git+https://github.com/dnakov/frida-mcp.git@f8003c7de69ca8fc13a019f0c9b6abcc61b1717c", "--with", "mcp<2", "frida-mcp"]
+default_tools_approval_mode = "prompt"
+startup_timeout_sec = 30
+tool_timeout_sec = 120
