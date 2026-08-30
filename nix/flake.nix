@@ -50,13 +50,6 @@
 									--replace-fail 'pkg_resources.resource_filename(__name__, "signatures")' 'pathlib.Path(__file__).parent / "signatures"'
 							'';
 						});
-						codex = prev.codex.overrideAttrs (old: {
-							postPatch = (old.postPatch or "") + ''
-								substituteInPlace tui/src/markdown_render.rs \
-									--replace-fail 'code: Style::new().cyan(),' \
-									'code: Style::new().fg(ratatui::style::Color::Rgb(135, 135, 247)),'
-							'';
-						});
 					})
 				];
 
