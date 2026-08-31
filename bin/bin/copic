@@ -1,0 +1,207 @@
+#!/bin/sh
+# copic — fuzzy-pick any past Codex session and resume it in its original directory.
+#
+# Codex's built-in resume picker can show sessions from every directory, but
+# this provides pipi's fzf search and transcript preview across all saved chats.
+#
+# Deps: python3, fzf, codex.
+
+CODEX_ROOT=${CODEX_HOME:-"$HOME/.codex"}
+SESSIONS="$CODEX_ROOT/sessions"
+
+# Hidden mode: render session metadata and recent messages for fzf's preview.
+if [ "${1:-}" = "--preview" ]; then
+    exec python3 - "$2" <<'PY'
+from collections import deque
+from datetime import datetime
+import json
+import os
+import sys
+
+
+def text_content(content):
+    if not isinstance(content, list):
+        return ""
+    return " ".join(
+        block.get("text", "")
+        for block in content
+        if isinstance(block, dict)
+        and block.get("type") in ("input_text", "output_text")
+    )
+
+
+path = sys.argv[1]
+header = {}
+model = None
+messages = deque(maxlen=40)
+
+try:
+    stream = open(path, errors="ignore")
+except OSError as exc:
+    print(f"could not open session: {exc}")
+    raise SystemExit(1)
+
+with stream:
+    for line in stream:
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+
+        kind = entry.get("type")
+        payload = entry.get("payload", {})
+        if kind == "session_meta" and not header:
+            header = payload
+            continue
+        if kind == "turn_context" and payload.get("model"):
+            model = payload["model"]
+            continue
+        if kind != "response_item" or payload.get("type") != "message":
+            continue
+
+        role = payload.get("role")
+        if role not in ("user", "assistant"):
+            continue
+
+        content = text_content(payload.get("content", []))
+        if not content.strip() or content.lstrip().startswith("<environment_context>"):
+            continue
+
+        text = " ".join(content.split())[:500]
+        messages.append((">>" if role == "user" else "  ") + " " + text)
+
+stamp = header.get("timestamp", "-")
+try:
+    stamp = datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone().strftime("%Y-%m-%d %H:%M")
+except (AttributeError, ValueError):
+    pass
+
+print(f"session:   {header.get('id', '-')}")
+print(f"directory: {header.get('cwd', '-')}")
+print(f"created:   {stamp}")
+print(f"updated:   {datetime.fromtimestamp(os.path.getmtime(path)).strftime('%Y-%m-%d %H:%M')}")
+print(f"model:     {model or '-'}")
+print("---")
+print("\n".join(messages) or "(no text messages)")
+PY
+fi
+
+[ -d "$SESSIONS" ] || { echo "no Codex sessions found at $SESSIONS" >&2; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo "copic needs python3" >&2; exit 1; }
+command -v fzf >/dev/null 2>&1 || { echo "copic needs fzf" >&2; exit 1; }
+CODEX_BIN=$(command -v codex) || { echo "copic could not find codex" >&2; exit 1; }
+
+rows=$(python3 - "$SESSIONS" <<'PY'
+import json
+from pathlib import Path
+import sys
+import time
+
+
+def text_content(content):
+    if not isinstance(content, list):
+        return ""
+    return " ".join(
+        block.get("text", "")
+        for block in content
+        if isinstance(block, dict)
+        and block.get("type") in ("input_text", "output_text")
+    )
+
+
+def clean(value):
+    return " ".join((value or "").replace("\t", " ").split())
+
+
+rows = []
+for path in Path(sys.argv[1]).rglob("*.jsonl"):
+    header = None
+    model = None
+    label = None
+    transcript = []
+
+    try:
+        with path.open(errors="ignore") as stream:
+            for line in stream:
+                try:
+                    entry = json.loads(line)
+                except Exception:
+                    continue
+
+                kind = entry.get("type")
+                payload = entry.get("payload", {})
+                if kind == "session_meta" and header is None:
+                    header = payload
+                    continue
+                if kind == "turn_context" and payload.get("model"):
+                    model = payload["model"]
+                    continue
+                if kind != "response_item" or payload.get("type") != "message":
+                    continue
+
+                role = payload.get("role")
+                if role not in ("user", "assistant"):
+                    continue
+
+                text = text_content(payload.get("content", []))
+                if not text.strip() or text.lstrip().startswith("<environment_context>"):
+                    continue
+
+                transcript.append(text)
+                if role == "user" and label is None:
+                    label = text
+    except OSError:
+        continue
+
+    if not header:
+        continue
+
+    # Subagent and codex exec rollouts are not ordinary interactive chats.
+    if header.get("agent_path") or header.get("source") == "exec" or header.get("originator") == "codex_exec":
+        continue
+
+    session_id = header.get("id")
+    cwd = header.get("cwd")
+    if not (session_id and cwd):
+        continue
+
+    try:
+        modified = path.stat().st_mtime
+    except OSError:
+        continue
+
+    rows.append(
+        (
+            modified,
+            "\t".join(
+                [
+                    time.strftime("%m-%d %H:%M", time.localtime(modified)),
+                    clean(cwd),
+                    clean(model or "-"),
+                    clean(label or "(no user message)")[:100],
+                    clean(" ".join(transcript)),
+                    session_id,
+                    str(path),
+                ]
+            ),
+        )
+    )
+
+rows.sort(reverse=True)
+print("\n".join(row for _, row in rows))
+PY
+)
+
+[ -n "$rows" ] || { echo "no Codex sessions found at $SESSIONS" >&2; exit 1; }
+
+pick=$(printf '%s\n' "$rows" | fzf \
+    --delimiter='\t' --nth=1..5 --accept-nth=2,6 \
+    --no-hscroll --header='copic — search all Codex session conversations' \
+    --preview="$0 --preview {7}" --preview-window=up,55%,wrap) || exit 0
+
+cwd=$(printf '%s' "$pick" | cut -f1)
+sid=$(printf '%s' "$pick" | cut -f2)
+[ -n "$sid" ] || { echo "copic could not read the selected session id" >&2; exit 1; }
+[ -d "$cwd" ] || { echo "dir gone: $cwd — resuming in \$PWD" >&2; cwd="$PWD"; }
+cd "$cwd" || exit 1
+exec "$CODEX_BIN" resume "$sid"
