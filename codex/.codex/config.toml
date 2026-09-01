@@ -52,3 +52,9 @@ command = "r2pm"
 args = ["-r", "r2mcp"]
 startup_timeout_sec = 20.0
 tool_timeout_sec = 120.0
+
+[mcp_servers.r2mcp.tools.list_files]
+approval_mode = "approve"
+
+[mcp_servers.r2mcp.tools.open_file]
+approval_mode = "approve"
