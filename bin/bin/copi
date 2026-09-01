@@ -1,5 +1,5 @@
 #!/bin/sh
-# copic — fuzzy-pick any past Codex session and resume it in its original directory.
+# copi — fuzzy-pick any past Codex session and resume it in its original directory.
 #
 # Codex's built-in resume picker can show sessions from every directory, but
 # this provides pipi's fzf search and transcript preview across all saved chats.
@@ -87,9 +87,9 @@ PY
 fi
 
 [ -d "$SESSIONS" ] || { echo "no Codex sessions found at $SESSIONS" >&2; exit 1; }
-command -v python3 >/dev/null 2>&1 || { echo "copic needs python3" >&2; exit 1; }
-command -v fzf >/dev/null 2>&1 || { echo "copic needs fzf" >&2; exit 1; }
-CODEX_BIN=$(command -v codex) || { echo "copic could not find codex" >&2; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo "copi needs python3" >&2; exit 1; }
+command -v fzf >/dev/null 2>&1 || { echo "copi needs fzf" >&2; exit 1; }
+CODEX_BIN=$(command -v codex) || { echo "copi could not find codex" >&2; exit 1; }
 
 rows=$(python3 - "$SESSIONS" <<'PY'
 import json
@@ -196,12 +196,12 @@ PY
 
 pick=$(printf '%s\n' "$rows" | fzf \
     --delimiter='\t' --nth=1..5 --accept-nth=2,6 \
-    --no-hscroll --header='copic — search all Codex session conversations' \
+    --no-hscroll --header='copi — search all Codex session conversations' \
     --preview="$0 --preview {7}" --preview-window=up,55%,wrap) || exit 0
 
 cwd=$(printf '%s' "$pick" | cut -f1)
 sid=$(printf '%s' "$pick" | cut -f2)
-[ -n "$sid" ] || { echo "copic could not read the selected session id" >&2; exit 1; }
+[ -n "$sid" ] || { echo "copi could not read the selected session id" >&2; exit 1; }
 [ -d "$cwd" ] || { echo "dir gone: $cwd — resuming in \$PWD" >&2; cwd="$PWD"; }
 cd "$cwd" || exit 1
-exec "$CODEX_BIN" resume "$sid"
+exec "$CODEX_BIN" --yolo resume "$sid"
