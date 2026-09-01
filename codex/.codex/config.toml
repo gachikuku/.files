@@ -43,6 +43,12 @@ args = ["--with", "mcp<2", "mitmproxy-mcp"]
 [mcp_servers.frida-mcp]
 command = "uvx"
 args = ["--from", "git+https://github.com/dnakov/frida-mcp.git@f8003c7de69ca8fc13a019f0c9b6abcc61b1717c", "--with", "mcp<2", "frida-mcp"]
+startup_timeout_sec = 30.0
+tool_timeout_sec = 120.0
 default_tools_approval_mode = "prompt"
-startup_timeout_sec = 30
-tool_timeout_sec = 120
+
+[mcp_servers.r2mcp]
+command = "r2pm"
+args = ["-r", "r2mcp"]
+startup_timeout_sec = 20.0
+tool_timeout_sec = 120.0
