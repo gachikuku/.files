@@ -4,8 +4,8 @@
   "packages": [
     "git:github.com/badlogic/pi-mono"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
+  "defaultProvider": "openrouter",
+  "defaultModel": "deepseek/deepseek-v4-pro",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "showCacheMissNotices": true,

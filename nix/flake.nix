@@ -146,6 +146,9 @@
 						p7zip
 						plan9port  # Plan 9 page(1) image viewer and user-space tools
 						python312Packages.pycryptodome
+						# Python environment for custom Frida controllers. frida-tools ships
+						# its own wrapped interpreter, which is not importable by /usr/bin/python3.
+						(python3.withPackages (ps: [ ps.frida-python ]))
 						qemu
 						radamsa
 						radare2

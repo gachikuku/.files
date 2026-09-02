@@ -38,7 +38,7 @@ url = "https://developers.openai.com/mcp"
 
 [mcp_servers.mitmproxy-mcp]
 command = "uvx"
-args = ["--with", "mcp<2", "mitmproxy-mcp"]
+args = ["--from", "/Users/gachikuku/Developer/tools/mitmproxy-mcp", "--with", "mcp<2", "mitmproxy-mcp"]
 
 [mcp_servers.frida-mcp]
 command = "uvx"
