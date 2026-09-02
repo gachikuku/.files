@@ -75,6 +75,8 @@
 						amfora #gemini browser
 						ares-cli
 						binwalk
+						vncdotool
+						python313Packages.vncdotool
 						browsh
 						cacert
 						cargo
