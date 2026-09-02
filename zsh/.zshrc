@@ -13,6 +13,9 @@ path=(
   /opt/homebrew/bin
   /opt/homebrew/sbin
 
+  # Nix-managed system tools (including Python environments with modules).
+  /run/current-system/sw/bin
+
   # Prefer macOS utilities; scripts here rely on BSD date and related tools.
   /usr/local/bin
   /usr/local/sbin
