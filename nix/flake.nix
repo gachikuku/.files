@@ -72,7 +72,7 @@
 						#steghide
 						aerc
 						aerospace
-						amfora #gemini browser
+						android-tools
 						ares-cli
 						binwalk
 						vncdotool
