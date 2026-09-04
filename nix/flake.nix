@@ -39,6 +39,27 @@
 
 				nixpkgs.overlays = [
 					(final: prev: {
+						pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+							(pythonFinal: pythonPrev: {
+								asn1_2 = pythonPrev.asn1.overridePythonAttrs (_: rec {
+									version = "2.8.0";
+									src = final.fetchPypi {
+										pname = "asn1";
+										inherit version;
+										hash = "sha256-rfd93CcHz0IMDq47me4w6ROvzwk2Rn1CZpggzmt9FQo=";
+									};
+								});
+
+								# PyIMG4 has not yet been ported to asn1 3.x.
+								pyimg4 = pythonPrev.pyimg4.overridePythonAttrs (old: {
+									dependencies =
+										builtins.filter (dependency: lib.getName dependency != "asn1") old.dependencies
+										++ [ pythonFinal.asn1_2 ];
+									meta = old.meta // { broken = false; };
+								});
+							})
+						];
+
 						trezorctl = let py = final.python313Packages; in
 							py.toPythonApplication (py.trezor.overridePythonAttrs (old: {
 								dependencies = old.dependencies ++ old.optional-dependencies.full;
@@ -76,6 +97,7 @@
 						ares-cli
 						binwalk
 						vncdotool
+						python313Packages.pymobiledevice3
 						python313Packages.vncdotool
 						browsh
 						cacert
