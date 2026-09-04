@@ -225,4 +225,9 @@ automatically-unhide-macos-hidden-apps = false
 
 [[on-window-detected]]
 	if.app-name-regex-substring = "Ghostty"
-	run = ["move-node-to-workspace 1"]
+	run = ["move-node-to-workspace 1", "layout floating"]
+
+# Keep workspace 1 free-floating without affecting the other workspaces.
+[[on-window-detected]]
+	if = "test %{workspace} = 1"
+	run = ["layout floating"]
