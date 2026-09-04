@@ -58,3 +58,9 @@ approval_mode = "approve"
 
 [mcp_servers.r2mcp.tools.open_file]
 approval_mode = "approve"
+
+[mcp_servers.ios-mcp]
+url = "http://ios-a.local:8090/mcp"
+startup_timeout_sec = 10.0
+tool_timeout_sec = 120.0
+default_tools_approval_mode = "auto"
