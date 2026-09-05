@@ -60,10 +60,6 @@
 							})
 						];
 
-						trezorctl = let py = final.python313Packages; in
-							py.toPythonApplication (py.trezor.overridePythonAttrs (old: {
-								dependencies = old.dependencies ++ old.optional-dependencies.full;
-							}));
 						witnessme = (prev.witnessme.override { python3 = final.python313; }).overrideAttrs (old: {
 							postPatch = (old.postPatch or "") + ''
 								substituteInPlace witnessme/signatures.py \
@@ -196,7 +192,6 @@
 						torsocks
 						tree
 						tree-sitter
-						trezorctl
 						trezord
 						usbfluxd
 						uv
