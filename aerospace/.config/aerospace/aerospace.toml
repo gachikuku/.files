@@ -38,8 +38,8 @@ default-root-container-orientation = 'auto'
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
-# Apply workspace 1's selected floating/tiling mode when its windows gain focus.
-on-focus-changed = ['exec-and-forget /Users/gachikuku/.config/aerospace/workspace-1-layout.sh apply-if-workspace-one']
+# Apply each workspace's selected floating/tiling mode when its windows gain focus.
+on-focus-changed = ['exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh apply']
 
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
 # Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
@@ -131,8 +131,8 @@ automatically-unhide-macos-hidden-apps = false
     alt-8 = 'workspace 8'
     alt-9 = 'workspace 9'
 
-    # Toggle every window on workspace 1 between floating and tiling.
-    alt-shift-f = 'exec-and-forget /Users/gachikuku/.config/aerospace/workspace-1-layout.sh toggle'
+    # Toggle every window on the focused workspace between floating and tiling.
+    alt-shift-f = 'exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh toggle'
     #alt-a = 'workspace A' # you can drop workspace bindings that you don't need
     #alt-b = 'workspace B'
     #alt-c = 'workspace C'
@@ -219,21 +219,21 @@ automatically-unhide-macos-hidden-apps = false
 
 [[on-window-detected]]
 	if.app-name-regex-substring = "Chr"
-	run = ["move-node-to-workspace 2"]
+	run = ["move-node-to-workspace 2", "exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh apply"]
 
 [[on-window-detected]]
 	if.app-name-regex-substring = "Safari"
-	run = ["move-node-to-workspace 3"]
+	run = ["move-node-to-workspace 3", "exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh apply"]
 
 [[on-window-detected]]
 	if.app-name-regex-substring = "Discord"
-	run = ["move-node-to-workspace 4"]
+	run = ["move-node-to-workspace 4", "exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh apply"]
 
 [[on-window-detected]]
 	if.app-name-regex-substring = "Ghostty"
-	run = ["move-node-to-workspace 1", "exec-and-forget /Users/gachikuku/.config/aerospace/workspace-1-layout.sh apply"]
+	run = ["move-node-to-workspace 1", "exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh apply"]
 
-# Keep workspace 1 free-floating without affecting the other workspaces.
+# Apply an explicitly selected layout to windows opened on any workspace.
 [[on-window-detected]]
-	if = "test %{workspace} = 1"
-	run = ["exec-and-forget /Users/gachikuku/.config/aerospace/workspace-1-layout.sh apply"]
+	if = "true"
+	run = ["exec-and-forget /Users/gachikuku/.config/aerospace/workspace-layout.sh apply"]
