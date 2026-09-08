@@ -26,6 +26,9 @@ trust_level = "trusted"
 [projects."/Users/gachikuku/Downloads"]
 trust_level = "trusted"
 
+[projects."/Users/gachikuku/Developer/lark-h5-frame-lab"]
+trust_level = "trusted"
+
 [tui]
 theme = "solarized-light"
 show_tooltips = false
