@@ -39,6 +39,27 @@
 
 				nixpkgs.overlays = [
 					(final: prev: {
+						# One-line scrolling, shortcut actions, and a block cursor in senpai.
+						senpai = prev.senpai.overrideAttrs (old: {
+							postPatch = (old.postPatch or "") + ''
+								substituteInPlace app.go \
+									--replace-fail 'ScrollUpBy(4)' 'ScrollUpBy(1)' \
+									--replace-fail 'ScrollDownBy(4)' 'ScrollDownBy(1)' \
+									--replace-fail 'ScrollChannelUpBy(4)' 'ScrollChannelUpBy(1)' \
+									--replace-fail 'ScrollChannelDownBy(4)' 'ScrollChannelDownBy(1)' \
+									--replace-fail 'ScrollMemberUpBy(4)' 'ScrollMemberUpBy(1)' \
+									--replace-fail 'ScrollMemberDownBy(4)' 'ScrollMemberDownBy(1)'
+								substituteInPlace app.go --replace-fail 'case "scroll-up":' 'case "scroll-up-line":
+									app.win.ScrollUpBy(1)
+								case "scroll-down-line":
+									app.win.ScrollDownBy(1)
+								case "scroll-up":'
+								substituteInPlace ui/editor.go ui/ui.go \
+									--replace-fail 'vaxis.CursorBeam' 'vaxis.CursorBlock'
+								gofmt -w app.go
+							'';
+						});
+
 						pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
 							(pythonFinal: pythonPrev: {
 								asn1_2 = pythonPrev.asn1.overridePythonAttrs (_: rec {
@@ -218,6 +239,7 @@
 					# and brew ships its own bottle (can't match the official binary hash).
 					brews = [
 						"cliproxyapi"
+						"duti"  # Register the Gopher URL handler with macOS.
 					];
 
 					taps = [

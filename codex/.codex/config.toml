@@ -1,4 +1,4 @@
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "high"
 check_for_update_on_startup = false
 
@@ -27,6 +27,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/gachikuku/Developer/lark-h5-frame-lab"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Documents/alnoman"]
 trust_level = "trusted"
 
 [tui]

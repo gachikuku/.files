@@ -9,4 +9,12 @@ pane-widths {
 	channels 0
 }
 typings false
-mouse false
+
+# The one-line scroll actions are supplied by the Nix senpai package override.
+shortcuts {
+	Control+k scroll-up-line
+	Control+j scroll-down-line
+	Control+g set-editor "/buffer "
+	Control+b cursor-left
+	Control+f cursor-right
+}
