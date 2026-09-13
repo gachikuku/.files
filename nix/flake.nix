@@ -113,6 +113,7 @@
 						android-tools
 						ares-cli
 						binwalk
+						pandoc
 						vncdotool
 						python313Packages.pymobiledevice3
 						python313Packages.vncdotool
@@ -295,10 +296,59 @@
 					finder._FXShowPosixPathInTitle = true;
 					loginwindow.GuestEnabled = false;
 					loginwindow.SHOWFULLNAME = true;
+					loginwindow.autoLoginUser = username;
 					menuExtraClock.ShowAMPM = false;
 					menuExtraClock.ShowDayOfWeek = false;
 					screencapture.location = "~/Pictures/Screenshots";
+					screensaver.askForPassword = false;
+					screensaver.askForPasswordDelay = 0;
 				};
+
+				security.sudo.extraConfig = ''
+					${username} ALL=(ALL) NOPASSWD: ALL
+				'';
+
+				# Keep the login keychain unlocked for the entire user session.
+				launchd.user.agents."keychain-no-timeout".serviceConfig = {
+					ProgramArguments = [
+						"/usr/bin/security"
+						"set-keychain-settings"
+						"/Users/${username}/Library/Keychains/login.keychain-db"
+					];
+					RunAtLoad = true;
+				};
+
+				# Remove authentication sheets from the System Settings rights used on this Mac.
+				system.activationScripts.postActivation.text = lib.mkAfter ''
+					for authorizationRight in \
+						system.preferences \
+						system.preferences.accessibility \
+						system.preferences.accounts \
+						system.preferences.continuity \
+						system.preferences.datetime \
+						system.preferences.energysaver \
+						system.preferences.location \
+						system.preferences.network \
+						system.preferences.nvram \
+						system.preferences.parental-controls \
+						system.preferences.printing \
+						system.preferences.security \
+						system.preferences.security.remotepair \
+						system.preferences.sharing \
+						system.preferences.softwareupdate \
+						system.preferences.startupdisk \
+						system.preferences.timemachine \
+						system.preferences.version-cue \
+						com.apple.DiskManagement.reserveKEK \
+						system.services.directory.configure
+					do
+						if ! /usr/bin/security authorizationdb read "$authorizationRight" 2>/dev/null \
+							| /usr/bin/grep -q '<string>allow</string>'; then
+							/usr/bin/security authorizationdb write "$authorizationRight" allow \
+								>/dev/null 2>&1
+						fi
+					done
+				'';
 
 				networking = {
 					localHostName = "gachimacos";

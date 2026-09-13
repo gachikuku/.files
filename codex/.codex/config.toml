@@ -1,6 +1,8 @@
-model = "gpt-6-astra"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 check_for_update_on_startup = false
+default_permissions = ":danger-full-access"
+approval_policy = "never"
 
 [projects."/Users/gachikuku/.files"]
 trust_level = "trusted"
@@ -32,6 +34,9 @@ trust_level = "trusted"
 [projects."/Users/gachikuku/Documents/alnoman"]
 trust_level = "trusted"
 
+[projects."/Users/gachikuku/Developer/postmortem"]
+trust_level = "trusted"
+
 [tui]
 theme = "solarized-light"
 show_tooltips = false
@@ -41,29 +46,32 @@ show_tooltips = false
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
+default_tools_approval_mode = "auto"
 
 [mcp_servers.mitmproxy-mcp]
 command = "uvx"
 args = ["--from", "/Users/gachikuku/Developer/tools/mitmproxy-mcp", "--with", "mcp<2", "mitmproxy-mcp"]
+default_tools_approval_mode = "auto"
 
 [mcp_servers.frida-mcp]
 command = "uvx"
 args = ["--from", "git+https://github.com/dnakov/frida-mcp.git@f8003c7de69ca8fc13a019f0c9b6abcc61b1717c", "--with", "mcp<2", "frida-mcp"]
 startup_timeout_sec = 30.0
 tool_timeout_sec = 120.0
-default_tools_approval_mode = "prompt"
+default_tools_approval_mode = "auto"
 
 [mcp_servers.r2mcp]
 command = "r2pm"
 args = ["-r", "r2mcp"]
 startup_timeout_sec = 20.0
 tool_timeout_sec = 120.0
+default_tools_approval_mode = "auto"
 
 [mcp_servers.r2mcp.tools.list_files]
-approval_mode = "approve"
+approval_mode = "auto"
 
 [mcp_servers.r2mcp.tools.open_file]
-approval_mode = "approve"
+approval_mode = "auto"
 
 [mcp_servers.ios-mcp]
 url = "http://ios-a.local:8090/mcp"
