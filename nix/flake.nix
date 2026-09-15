@@ -23,6 +23,13 @@
 
 			workstationConfiguration = { pkgs, config, lib, ... }: {
 				system.primaryUser = username;
+				environment.variables.PKG_CONFIG_PATH = lib.makeSearchPath "lib/pkgconfig" [
+					pkgs.radare2
+					pkgs.libzip
+					pkgs.zlib
+					pkgs.lz4
+					pkgs.xxhash
+				];
 
 				# List packages installed in system profile. To search by name, run:
 				# $ nix-env -qaP | grep wget
@@ -140,6 +147,15 @@
 						fzf
 						gcc-arm-embedded
 						gh
+						ghidra
+						(runCommand "ghidra-cli" { } ''
+							mkdir -p $out/bin
+							ln -s ${ghidra}/lib/ghidra/ghidraRun $out/bin/ghidraRun
+							ln -s ${ghidra}/lib/ghidra/support/analyzeHeadless $out/bin/analyzeHeadless
+						'')
+						(writeShellScriptBin "swift-demangle" ''
+							exec /usr/bin/xcrun swift-demangle "$@"
+						'')
 						gnupg
 						gnumake
 						gnuplot
@@ -155,6 +171,24 @@
 						husky
 						icdiff
 						ideviceinstaller
+						ipsw
+						(let
+							jtool2Archive = fetchurl {
+								url = "https://www.newosxbook.com/tools/jtool2.tgz";
+								hash = "sha256-mZRd60UlimGZh3tXPHhVm4uOdMzEBwpBr7ZdVMvKHKk=";
+							};
+						in runCommand "jtool2-2026-02-14" { nativeBuildInputs = [ gnutar gzip ldid makeWrapper ]; } ''
+							mkdir -p $out/bin $out/libexec $out/share/jtool2
+							tar -xzf ${jtool2Archive}
+							install -m755 jtool2 disarm $out/libexec/
+							ldid -S $out/libexec/jtool2
+							ldid -S $out/libexec/disarm
+							makeWrapper /usr/bin/arch $out/bin/jtool2 \
+								--add-flags -x86_64 --add-flags $out/libexec/jtool2
+							makeWrapper /usr/bin/arch $out/bin/disarm \
+								--add-flags -x86_64 --add-flags $out/libexec/disarm
+							install -m644 matchers.txt WhatsNew.txt $out/share/jtool2/
+						'')
 						jq
 						jsluice
 						ledger
@@ -185,16 +219,41 @@
 						openvpn
 						pi-coding-agent
 						pinentry_mac
+						pkg-config
 						p7zip
 						plan9port  # Plan 9 page(1) image viewer and user-space tools
 						python312Packages.pycryptodome
 						# Python environment for custom Frida controllers. frida-tools ships
 						# its own wrapped interpreter, which is not importable by /usr/bin/python3.
-						(python3.withPackages (ps: [ ps.frida-python ]))
+						(python313.withPackages (ps: [
+							ps.capstone
+							ps.cryptography
+							ps.dkimpy
+							ps.frida-python
+							ps.lief
+							ps.macholib
+							ps.mitmproxy
+							ps.playwright
+							ps.pytest
+							ps.r2pipe
+						]))
+						# nixpkgs' current angr cohort is version-skewed. Keep it isolated
+						# from the shared Python environment and bootstrap one pinned venv.
+						(writeShellScriptBin "angr-python" ''
+							set -eu
+							angr_env="''${XDG_CACHE_HOME:-/Users/gachikuku/.cache}/codex-angr-9.2.154"
+							if ! "$angr_env/bin/python" -c 'import angr; assert angr.__version__ == "9.2.154"' >/dev/null 2>&1; then
+								${uv}/bin/uv venv --clear --python ${python313}/bin/python3 "$angr_env"
+								${uv}/bin/uv pip install --python "$angr_env/bin/python" \
+									'angr==9.2.154' 'pycparser==2.22'
+							fi
+							exec "$angr_env/bin/python" "$@"
+						'')
 						qemu
 						radamsa
 						radare2
 						ripgrep
+						ruff
 						rustc
 						rustup
 						sc-im
