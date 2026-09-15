@@ -193,6 +193,7 @@
 						jsluice
 						ledger
 						ldid
+						libfido2  # fido2-token and lower-level FIDO2 utilities
 						libimobiledevice
 						libretls
 						libusbmuxd
@@ -216,6 +217,8 @@
 						nuclei
 						oksh
 						opencode
+						opensc  # opensc-tool, pkcs11-tool, and smart-card inspection
+						openssh  # FIDO2-capable ssh/ssh-keygen (unlike Apple's build)
 						openvpn
 						pi-coding-agent
 						pinentry_mac
@@ -284,6 +287,8 @@
 						xdg-utils
 						yazi
 						yt-dlp
+						yubico-piv-tool
+						yubikey-manager  # ykman
 						zbar
 						zsteg
 
