@@ -4,6 +4,9 @@ check_for_update_on_startup = false
 default_permissions = ":danger-full-access"
 approval_policy = "never"
 
+[notice]
+hide_rate_limit_model_nudge = true
+
 [projects."/Users/gachikuku/.files"]
 trust_level = "trusted"
 
