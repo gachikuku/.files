@@ -11,7 +11,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import time
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -22,7 +21,6 @@ PUSHOVER_ENDPOINT = "https://api.pushover.net/1/messages.json"
 USER_KEY_ENTRY = "api/pushover-user-key"
 APP_TOKEN_ENTRY = "api/pushover-app-token"
 STATE_ROOT = Path(tempfile.gettempdir()) / f"codex-pushover-{os.getuid()}"
-BREAKTHROUGH_COOLDOWN_SECONDS = 30 * 60
 
 
 def read_event() -> dict[str, Any]:
@@ -164,29 +162,6 @@ def handle_hook(event: dict[str, Any]) -> None:
         )
 
 
-def breakthrough_marker() -> Path:
-    digest = hashlib.sha256(os.getcwd().encode()).hexdigest()
-    return STATE_ROOT / f"breakthrough-{digest}"
-
-
-def send_breakthrough(message: str) -> bool:
-    marker = breakthrough_marker()
-    try:
-        last_sent = marker.stat().st_mtime
-    except FileNotFoundError:
-        last_sent = 0
-    if time.time() - last_sent < BREAKTHROUGH_COOLDOWN_SECONDS:
-        return False
-    send_notification(
-        "Codex breakthrough",
-        f"{project_name()}: {compact(message, 750)}",
-        priority=0,
-    )
-    STATE_ROOT.mkdir(mode=0o700, parents=True, exist_ok=True)
-    marker.touch(mode=0o600)
-    return True
-
-
 def main() -> int:
     try:
         if len(sys.argv) >= 2 and sys.argv[1] == "test":
@@ -198,17 +173,8 @@ def main() -> int:
             print("Pushover test notification sent.")
             return 0
 
-        if len(sys.argv) >= 2 and sys.argv[1] == "breakthrough":
-            message = " ".join(sys.argv[2:]).strip()
-            if not message:
-                print("Usage: pushover_notify.py breakthrough <message>", file=sys.stderr)
-                return 2
-            sent = send_breakthrough(message)
-            print("Pushover breakthrough notification sent." if sent else "Notification suppressed by cooldown.")
-            return 0
-
         if len(sys.argv) > 1:
-            print("Usage: pushover_notify.py [test|breakthrough <message>]", file=sys.stderr)
+            print("Usage: pushover_notify.py [test]", file=sys.stderr)
             return 2
 
         handle_hook(read_event())
