@@ -1,0 +1,57 @@
+#!/bin/sh
+
+# Keep the Mac awake with its lid closed for the lifetime of a command.
+
+usage() {
+  cat <<'EOF'
+Usage: lidcaffeinate [command [argument ...]]
+
+Prevent idle and lid-close sleep until the command exits. With no command,
+stay awake until interrupted. Run this program as your normal user; it uses
+sudo only for the pmset changes.
+EOF
+}
+
+case "${1-}" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+esac
+
+if [ "$(/usr/bin/id -u)" -eq 0 ]; then
+  echo 'lidcaffeinate: run without sudo; pmset is elevated internally' >&2
+  exit 2
+fi
+
+restore_sleep=1
+if /usr/bin/pmset -g | /usr/bin/grep -q 'SleepDisabled[[:space:]]*1'; then
+  restore_sleep=0
+fi
+
+cleanup() {
+  exit_code=$?
+  trap - 0 1 2 15
+
+  if [ "$restore_sleep" -eq 1 ]; then
+    /usr/bin/sudo -n /usr/bin/pmset -a disablesleep 0 ||
+      echo 'lidcaffeinate: could not restore normal sleep' >&2
+  fi
+
+  /usr/bin/pmset -g | /usr/bin/grep SleepDisabled ||
+    echo 'SleepDisabled: 0 (normal lid sleep restored)'
+
+  exit "$exit_code"
+}
+
+trap cleanup 0
+trap 'exit 129' 1
+trap 'exit 130' 2
+trap 'exit 143' 15
+
+if ! /usr/bin/sudo -n /usr/bin/pmset -a disablesleep 1; then
+  echo 'lidcaffeinate: passwordless sudo permission for pmset is required' >&2
+  exit 1
+fi
+
+/usr/bin/caffeinate -i "$@"
