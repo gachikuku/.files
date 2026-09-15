@@ -78,3 +78,17 @@ url = "http://ios-a.local:8090/mcp"
 startup_timeout_sec = 10.0
 tool_timeout_sec = 120.0
 default_tools_approval_mode = "auto"
+
+[hooks.state]
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:session_end:0:0"]
+trusted_hash = "sha256:6ad74b329fecb631249ae4b0f204d741e111b00b9e25349c017bfeaaf03ff3c6"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:e0024313f20b77ef3bf46974e78fdc3c8ef2f3fe7ae7cb5e96c31d6a9164ca8b"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:stop:0:0"]
+trusted_hash = "sha256:e42fc77745d0befd823961202bf2473c79543e1295593f8c86b4d9685487c717"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:interrupt:0:0"]
+trusted_hash = "sha256:bc1921441e96a0a1abfdd27a0266cff558b1ceede61695ba2b81c6dd87748a2e"

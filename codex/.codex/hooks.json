@@ -1,0 +1,49 @@
+{
+  "description": "Keep macOS awake only while a main Codex turn is active.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/caffeinate_control.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/caffeinate_control.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Interrupt": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/caffeinate_control.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/caffeinate_control.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}
