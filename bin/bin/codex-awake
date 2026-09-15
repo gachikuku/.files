@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec /run/current-system/sw/bin/python3 \
+  "$HOME/.codex/hooks/caffeinate_control.py" "$@"

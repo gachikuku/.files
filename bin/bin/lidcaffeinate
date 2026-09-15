@@ -33,6 +33,12 @@ cleanup() {
   exit_code=$?
   trap - 0 1 2 15
 
+  if [ -n "${caffeinate_pid-}" ]; then
+    /bin/kill -TERM "$caffeinate_pid" 2>/dev/null || true
+    wait "$caffeinate_pid" 2>/dev/null || true
+    caffeinate_pid=
+  fi
+
   if [ "$restore_sleep" -eq 1 ]; then
     /usr/bin/sudo -n /usr/bin/pmset -a disablesleep 0 ||
       echo 'lidcaffeinate: could not restore normal sleep' >&2
@@ -54,4 +60,9 @@ if ! /usr/bin/sudo -n /usr/bin/pmset -a disablesleep 1; then
   exit 1
 fi
 
-/usr/bin/caffeinate -i "$@"
+/usr/bin/caffeinate -i "$@" &
+caffeinate_pid=$!
+wait "$caffeinate_pid"
+exit_code=$?
+caffeinate_pid=
+exit "$exit_code"
