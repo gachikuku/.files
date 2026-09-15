@@ -1,5 +1,5 @@
 {
-  "description": "Keep macOS awake only while a main Codex turn is active.",
+  "description": "Keep macOS awake during main turns and send sparse Pushover alerts.",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -19,6 +19,49 @@
             "type": "command",
             "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/caffeinate_control.py",
             "timeout": 3
+          },
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/pushover_notify.py",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/pushover_notify.py",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "^request_user_input$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/pushover_notify.py",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "^update_goal$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/run/current-system/sw/bin/python3 ~/.codex/hooks/pushover_notify.py",
+            "timeout": 10
           }
         ]
       }
