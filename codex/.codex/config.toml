@@ -95,3 +95,15 @@ trusted_hash = "sha256:e42fc77745d0befd823961202bf2473c79543e1295593f8c86b4d9685
 
 [hooks.state."/Users/gachikuku/.codex/hooks.json:interrupt:0:0"]
 trusted_hash = "sha256:bc1921441e96a0a1abfdd27a0266cff558b1ceede61695ba2b81c6dd87748a2e"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:a08aae4cbe8b3ac8ea720de2ea425b957d7968435c40dc0adf29aa83d0571e7b"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:fcbeba306b6dbe706fbcc9618f4205dd2e592358a2ecd8f27f8f9271f091b093"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:7358ef1afc194197819058fcbb498ae42173e378c4889a1d8649999ecc8cb2c7"
+
+[hooks.state."/Users/gachikuku/.codex/hooks.json:stop:0:1"]
+trusted_hash = "sha256:fe5bc05662cb7e68111783dab0f3162e773312751c04c123d8e0b51b053e633b"
