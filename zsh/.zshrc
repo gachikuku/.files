@@ -100,6 +100,34 @@ alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less -i"
 alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 
+# Keep the Mac awake with its lid closed for the lifetime of a command.
+lidcaffeinate() (
+  local restore_sleep=1
+
+  sudo -v || return 1
+
+  # Preserve an existing disablesleep setting.
+  pmset -g | grep -q 'SleepDisabled[[:space:]]*1' &&
+    restore_sleep=0
+
+  cleanup() {
+    if (( restore_sleep )); then
+      sudo pmset -a disablesleep 0
+    fi
+
+    pmset -g | grep SleepDisabled ||
+      echo 'SleepDisabled: 0 (normal lid sleep restored)'
+  }
+
+  trap cleanup EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+  trap 'exit 129' HUP
+
+  sudo pmset -a disablesleep 1 || return 1
+  caffeinate -i "$@"
+)
+
 # Claude Code harness backed by GPT-5.6 Sol through the local CLIProxyAPI.
 # ENABLE_TOOL_SEARCH=false disables dynamic MCP schema lookup, not WebSearch.
 alias claude='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
