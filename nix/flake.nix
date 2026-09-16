@@ -15,6 +15,15 @@
 			sharedConfiguration = { ... }: {
 				services.tailscale.enable = true;
 				environment.variables.PI_OFFLINE = "1";
+				environment.etc."codex/requirements.toml".text = ''
+					# Keep Codex in full-access mode even when selecting a Daybreak model.
+					# Cyber models otherwise switch the active thread to Auto-review.
+					allowed_approval_policies = [ "never" ]
+					default_permissions = ":danger-full-access"
+
+					[allowed_permission_profiles]
+					":danger-full-access" = true
+				'';
 				time.timeZone = "Europe/Athens";
 				system.configurationRevision = self.rev or self.dirtyRev or null;
 				system.stateVersion = 5;
@@ -68,7 +77,23 @@
 						});
 
 						pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-							(pythonFinal: pythonPrev: {
+							(pythonFinal: pythonPrev:
+							let
+								qh3_1 = pythonPrev.qh3.overridePythonAttrs (_: rec {
+									version = "1.9.4";
+									src = final.fetchFromGitHub {
+										owner = "jawah";
+										repo = "qh3";
+										tag = "v${version}";
+										hash = "sha256-Mu9wvwHHn5wZfE+TdMu/nr2B7+WbFhFHDoItDs6rRPM=";
+									};
+									cargoDeps = final.rustPlatform.fetchCargoVendor {
+										pname = "qh3";
+										inherit version src;
+										hash = "sha256-bwdaM+DdXm5YpzVlyYdDqnR+QQ0dY199DYN2g33RvCs=";
+									};
+								});
+							in {
 								asn1_2 = pythonPrev.asn1.overridePythonAttrs (_: rec {
 									version = "2.8.0";
 									src = final.fetchPypi {
@@ -84,6 +109,12 @@
 										builtins.filter (dependency: lib.getName dependency != "asn1") old.dependencies
 										++ [ pythonFinal.asn1_2 ];
 									meta = old.meta // { broken = false; };
+								});
+
+								pymobiledevice3 = pythonPrev.pymobiledevice3.overridePythonAttrs (old: {
+									dependencies = map
+										(dependency: if lib.getName dependency == "qh3" then qh3_1 else dependency)
+										old.dependencies;
 								});
 							})
 						];
@@ -439,7 +470,10 @@
 				# (or `monero-update -c` to just check). See ~/.files/bin/bin/monero-update.
 
 				nix = {
-					linux-builder.enable = true;
+					linux-builder = {
+						enable = true;
+						package = pkgs.darwin.linux-builder-vz;
+					};
 
 					# This line is a prerequisite
 					settings.trusted-users = [ "@admin" ];
