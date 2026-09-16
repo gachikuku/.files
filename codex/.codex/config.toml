@@ -47,6 +47,9 @@ trust_level = "trusted"
 [projects."/Users/gachikuku/Developer/postmortem"]
 trust_level = "trusted"
 
+[projects."/Users/gachikuku/Developer/hey-ios-research"]
+trust_level = "trusted"
+
 [tui]
 theme = "solarized-light"
 show_tooltips = false

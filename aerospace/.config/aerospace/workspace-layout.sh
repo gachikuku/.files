@@ -2,6 +2,10 @@
 
 set -eu
 
+# AeroSpace's exec environment omits Nix's system profile, where the CLI lives.
+PATH="/run/current-system/sw/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH
+
 user_id="$(id -u)"
 state_dir="/tmp/aerospace-workspace-layout-$user_id"
 /bin/mkdir -p "$state_dir"
