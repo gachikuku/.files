@@ -60,6 +60,14 @@ export WORDCHARS='*?_[]~=&;!#$%^(){}'
 # Emacs keys
 bindkey -e
 
+# Insert a line break without executing the command. Ghostty and tmux encode
+# Shift+Enter using the CSI-u extended-key sequence below.
+insert-line-break() {
+  LBUFFER+=$'\n'
+}
+zle -N insert-line-break
+bindkey $'\e[13;2u' insert-line-break
+
 # Prevent accidental Ctrl-D from closing tmux panes, windows, or sessions.
 if [[ -n "$TMUX" ]]; then
   setopt IGNORE_EOF
