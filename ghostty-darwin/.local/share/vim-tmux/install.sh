@@ -13,7 +13,7 @@ plist="$app/Contents/Info.plist"
 /usr/bin/plutil -replace CFBundleName -string 'Vim in tmux' "$plist"
 /usr/bin/plutil -replace LSUIElement -bool YES "$plist"
 /usr/bin/plutil -replace CFBundleURLTypes -json '[{"CFBundleURLName":"Vim in tmux","CFBundleURLSchemes":["cursor"],"CFBundleTypeRole":"Viewer"}]' "$plist"
-/usr/bin/plutil -replace CFBundleDocumentTypes -json '[{"CFBundleTypeName":"Markdown document","CFBundleTypeRole":"Editor","LSHandlerRank":"Owner","CFBundleTypeExtensions":["md","markdown"],"LSItemContentTypes":["net.daringfireball.markdown"]},{"CFBundleTypeName":"Unix executable","CFBundleTypeRole":"Shell","LSHandlerRank":"Owner","LSItemContentTypes":["public.unix-executable"]}]' "$plist"
+/usr/bin/plutil -replace CFBundleDocumentTypes -json '[{"CFBundleTypeName":"Markdown document","CFBundleTypeRole":"Editor","LSHandlerRank":"Owner","CFBundleTypeExtensions":["md","markdown"],"LSItemContentTypes":["net.daringfireball.markdown"]},{"CFBundleTypeName":"Unix executable","CFBundleTypeRole":"Shell","LSHandlerRank":"Owner","LSItemContentTypes":["public.unix-executable"]},{"CFBundleTypeName":"Script","CFBundleTypeRole":"Shell","LSHandlerRank":"Owner","CFBundleTypeExtensions":["sh","bash","zsh","fish","py","rb","pl","php","lua","js","mjs","cjs","ts"],"LSItemContentTypes":["public.script","public.shell-script","public.python-script"]}]' "$plist"
 /usr/bin/codesign --force --sign - "$app"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app"
 duti -s local.gachikuku.vim-tmux cursor
@@ -21,3 +21,9 @@ duti -s local.gachikuku.vim-tmux md all
 duti -s local.gachikuku.vim-tmux markdown all
 duti -s local.gachikuku.vim-tmux public.unix-executable all
 duti -s local.gachikuku.vim-tmux public.unix-executable shell
+duti -s local.gachikuku.vim-tmux public.script all
+duti -s local.gachikuku.vim-tmux public.script shell
+for extension in sh bash zsh fish py rb pl php lua js mjs cjs ts; do
+    duti -s local.gachikuku.vim-tmux "$extension" all
+    duti -s local.gachikuku.vim-tmux "$extension" shell
+done

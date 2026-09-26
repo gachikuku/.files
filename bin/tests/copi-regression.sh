@@ -13,8 +13,8 @@ trap cleanup 0 1 2 15
 mkdir -p "$tmpdir/sessions"
 state_db="$tmpdir/state.sqlite"
 history_db="$tmpdir/history.sqlite"
-printf '%s\n' '{"payload":"ordinary old content"}' >"$tmpdir/sessions/old.jsonl"
-printf '%s\n' '{"payload":"needle only in the raw rollout"}' >"$tmpdir/sessions/new.jsonl"
+printf '%s\n' '{"payload":"tmux only"}' >"$tmpdir/sessions/old.jsonl"
+printf '%s\n' '{"payload":"needle and tmux"}' '{"payload":"vim elsewhere"}' >"$tmpdir/sessions/new.jsonl"
 
 sqlite3 "$state_db" <<'SQL'
 CREATE TABLE threads (
@@ -37,7 +37,7 @@ CREATE TABLE threads (
   originator TEXT
 );
 INSERT INTO threads VALUES
-  ('older', '/does/not/exist-old', 100, 200, 'cli', '/tmp/old', 'Older session', 0,
+  ('older', '/does/not/exist-old', 100, 200, 'cli', '/tmp/old', 'titleonlytoken', 0,
    'old question', NULL, 100000, 200000, 'old preview', 200000, NULL, 'model-old', NULL),
   ('newest', '/does/not/exist-new', 300, 400, 'cli', '/tmp/new', 'Newest session', 0,
    'new question', NULL, 300000, 400000, 'new preview', 400000, NULL, 'model-new', NULL),
@@ -59,8 +59,9 @@ CREATE TABLE thread_items (
 );
 CREATE INDEX thread_items_page ON thread_items(thread_id, rollout_ordinal);
 INSERT INTO thread_items VALUES
-  ('newest', 1, '{"type":"userMessage","content":[{"type":"text","text":"first message"}]}', 'userMessage'),
-  ('newest', 2, '{"type":"agentMessage","text":"latest answer"}', 'agentMessage');
+  ('older', 1, '{"type":"userMessage","content":[{"type":"text","text":"tmux only"}]}', 'userMessage'),
+  ('newest', 1, '{"type":"userMessage","content":[{"type":"text","text":"first message about tmux"}]}', 'userMessage'),
+  ('newest', 2, '{"type":"agentMessage","text":"latest answer mentions vim"}', 'agentMessage');
 SQL
 
 rows=$(CODEX_HOME="$tmpdir" COPI_STATE_DB="$state_db" COPI_HISTORY_DB="$history_db" "$copi" --list)
@@ -87,7 +88,23 @@ printf '%s\n' "$preview" | grep -F '   latest answer' >/dev/null || {
   exit 1
 }
 
-deep_rows=$(CODEX_HOME="$tmpdir" COPI_STATE_DB="$state_db" COPI_HISTORY_DB="$history_db" "$copi" --grep-rows needle)
+session_matches=$(printf '%s\n' "$rows" | fzf --filter='tmux vim' --exact --delimiter='\t' --nth=5)
+[ "$(printf '%s\n' "$session_matches" | awk -F '\t' 'NR == 1 { print $6 }')" = newest ] || {
+  echo "FAIL: literal AND search did not match words across the session transcript" >&2
+  exit 1
+}
+[ "$(printf '%s\n' "$session_matches" | awk 'NF { count++ } END { print count + 0 }')" -eq 1 ] || {
+  echo "FAIL: literal AND search matched a session missing one term" >&2
+  exit 1
+}
+
+title_matches=$(printf '%s\n' "$rows" | fzf --filter=titleonlytoken --exact --delimiter='\t' --nth=5 || true)
+[ -z "$title_matches" ] || {
+  echo "FAIL: transcript search matched a title-only word" >&2
+  exit 1
+}
+
+deep_rows=$(CODEX_HOME="$tmpdir" COPI_STATE_DB="$state_db" COPI_HISTORY_DB="$history_db" "$copi" --grep-rows 'tmux vim')
 deep_id=$(printf '%s\n' "$deep_rows" | awk -F '\t' 'NR == 1 { print $6 }')
 [ "$deep_id" = newest ] || {
   echo "FAIL: deep grep did not map the rollout match back to its session (got $deep_id)" >&2

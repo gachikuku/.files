@@ -123,11 +123,12 @@ case "${1:-}" in
         ;;
 esac
 
-rows=$(python3 - "$STATE_DB" "$SESSIONS" "$deep_query" <<'PY'
+rows=$(python3 - "$STATE_DB" "$HISTORY_DB" "$SESSIONS" "$deep_query" <<'PY'
 from datetime import datetime
 import json
 from pathlib import Path
 import shutil
+import shlex
 import sqlite3
 import subprocess
 import sys
@@ -146,7 +147,7 @@ def output_row(session_id, cwd, model, label, search_text, path, recent_ms):
                 clean(cwd),
                 clean(model or "-"),
                 clean(label or "(no user message)")[:160],
-                clean(search_text)[:16000],
+                clean(search_text),
                 session_id,
                 str(path),
             ]
@@ -154,7 +155,68 @@ def output_row(session_id, cwd, model, label, search_text, path, recent_ms):
     )
 
 
-state_path, sessions_path, deep_query = sys.argv[1:]
+def deep_match_paths(query, paths):
+    try:
+        terms = shlex.split(query)
+    except ValueError:
+        terms = query.split()
+    terms = [term.strip("'\"") for term in terms if term.strip("'\"")]
+    remaining = list(dict.fromkeys(str(path) for path in paths if Path(path).is_file()))
+    if not terms:
+        return set(remaining)
+
+    rg = shutil.which("rg")
+    if rg is None:
+        print("copi deep search needs rg (ripgrep)", file=sys.stderr)
+        raise SystemExit(2)
+
+    # Search one literal term at a time and narrow the candidate files after
+    # each pass. The final set therefore contains every term (AND semantics).
+    for term in terms:
+        if not remaining:
+            break
+        search = subprocess.run(
+            [
+                rg,
+                "--files-with-matches",
+                "--fixed-strings",
+                "--ignore-case",
+                "--no-messages",
+                "--null",
+                "--threads=2",
+                "--",
+                term,
+                *remaining,
+            ],
+            stdout=subprocess.PIPE,
+            check=False,
+        )
+        if search.returncode not in (0, 1):
+            raise SystemExit(search.returncode)
+        hits = {
+            value.decode(errors="surrogateescape")
+            for value in search.stdout.split(b"\0")
+            if value
+        }
+        remaining = [path for path in remaining if path in hits]
+    return set(remaining)
+
+
+def item_text(item_type, raw):
+    try:
+        item = json.loads(raw)
+    except (TypeError, json.JSONDecodeError):
+        return ""
+    if item_type == "userMessage":
+        return " ".join(
+            block.get("text", "")
+            for block in item.get("content", [])
+            if isinstance(block, dict) and block.get("type") == "text"
+        )
+    return item.get("text", "") if item_type == "agentMessage" else ""
+
+
+state_path, history_path, sessions_path, deep_query = sys.argv[1:]
 try:
     state = sqlite3.connect(f"file:{state_path}?mode=ro", uri=True, timeout=1)
     threads = state.execute(
@@ -162,8 +224,7 @@ try:
         SELECT id, cwd, model,
                COALESCE(NULLIF(name, ''), NULLIF(title, ''), NULLIF(first_user_message, ''),
                         '(no user message)') AS label,
-               trim(COALESCE(title, '') || ' ' || COALESCE(first_user_message, '') || ' ' ||
-                    COALESCE(preview, '')) AS search_text,
+               COALESCE(first_user_message, '') AS search_text,
                rollout_path,
                COALESCE(NULLIF(recency_at_ms, 0), updated_at_ms, updated_at * 1000) AS recent_ms
           FROM threads
@@ -175,40 +236,41 @@ try:
         """
     ).fetchall()
     if deep_query:
-        rg = shutil.which("rg")
-        if rg is None:
-            print("copi deep search needs rg (ripgrep)", file=sys.stderr)
-            raise SystemExit(2)
-        search = subprocess.run(
-            [
-                rg,
-                "--files-with-matches",
-                "--fixed-strings",
-                "--ignore-case",
-                "--hidden",
-                "--no-messages",
-                "--null",
-                "--threads=2",
-                "--glob=*.jsonl",
-                "--",
-                deep_query,
-                sessions_path,
-            ],
-            stdout=subprocess.PIPE,
-            check=False,
-        )
-        if search.returncode not in (0, 1):
-            raise SystemExit(search.returncode)
-        matches = {
-            value.decode(errors="surrogateescape")
-            for value in search.stdout.split(b"\0")
-            if value
-        }
+        matches = deep_match_paths(deep_query, (row[5] for row in threads))
         threads = [
             (*row[:4], f"{row[4]} {deep_query}", *row[5:])
             for row in threads
             if row[5] in matches
         ]
+    else:
+        transcript = {row[0]: [] for row in threads}
+        try:
+            history = sqlite3.connect(f"file:{history_path}?mode=ro", uri=True, timeout=1)
+            history.execute("ATTACH DATABASE ? AS state_index", (state_path,))
+            messages = history.execute(
+                """
+                SELECT item.thread_id, item.item_type, item.item_json
+                  FROM thread_items AS item
+                  JOIN state_index.threads AS thread ON thread.id = item.thread_id
+                 WHERE thread.archived = 0
+                   AND thread.agent_path IS NULL
+                   AND thread.source != 'exec'
+                   AND COALESCE(thread.originator, '') != 'codex_exec'
+                   AND item.item_type IN ('userMessage', 'agentMessage')
+                 ORDER BY item.thread_id, item.rollout_ordinal
+                """
+            )
+            for session_id, item_type, raw in messages:
+                text = item_text(item_type, raw)
+                if text.strip() and not text.lstrip().startswith("<environment_context>"):
+                    transcript[session_id].append(text)
+            threads = [
+                (*row[:4], " ".join(transcript.get(row[0], [])) or row[4], *row[5:])
+                for row in threads
+            ]
+        except (OSError, sqlite3.Error):
+            # first_user_message remains as the transcript-search fallback.
+            pass
     for row in threads:
         output_row(*row)
     raise SystemExit(0)
@@ -220,20 +282,7 @@ except (OSError, sqlite3.Error):
 rows = []
 candidate_paths = Path(sessions_path).rglob("*.jsonl")
 if deep_query:
-    rg = shutil.which("rg")
-    if rg is None:
-        print("copi deep search needs rg (ripgrep)", file=sys.stderr)
-        raise SystemExit(2)
-    search = subprocess.run(
-        [rg, "-l", "-F", "-i", "--hidden", "--no-messages", "--threads=2",
-         "--glob=*.jsonl", "--", deep_query, sessions_path],
-        stdout=subprocess.PIPE,
-        text=True,
-        check=False,
-    )
-    if search.returncode not in (0, 1):
-        raise SystemExit(search.returncode)
-    candidate_paths = (Path(value) for value in search.stdout.splitlines() if value)
+    candidate_paths = (Path(value) for value in deep_match_paths(deep_query, candidate_paths))
 
 for path in candidate_paths:
     header = None
@@ -304,10 +353,13 @@ command -v fzf >/dev/null 2>&1 || { echo "copi needs fzf" >&2; exit 1; }
 CODEX_BIN=$(command -v codex) || { echo "copi could not find codex" >&2; exit 1; }
 
 pick=$(printf '%s\n' "$rows" | fzf \
-    --delimiter='\t' --nth=1..5 --accept-nth=2,6 \
-    --no-sort --bind='ctrl-r:toggle-sort' \
-    --bind="ctrl-g:reload($0 --grep-rows {q})" --no-hscroll \
-    --header='copi — newest first; Ctrl-G deep grep; Ctrl-R toggles relevance sorting' \
+    --delimiter='\t' --nth=5 --accept-nth=2,6 \
+    --exact --ignore-case --no-sort --bind='ctrl-r:toggle-sort' \
+    --prompt='INDEXED TRANSCRIPT › ' \
+    --bind="ctrl-g:reload($0 --grep-rows {q})+change-prompt(⚠ RAW JSONL GREP ACTIVE › )+change-header(⚠ RAW GREP ACTIVE — complete JSONL scan — Ctrl-L returns to indexed mode)" \
+    --bind="ctrl-l:reload($0 --list)+change-prompt(INDEXED TRANSCRIPT › )+change-header(INDEXED TRANSCRIPT SEARCH — literal terms use AND — Ctrl-G scans raw JSONL)" \
+    --no-hscroll \
+    --header='INDEXED TRANSCRIPT SEARCH — literal terms use AND — Ctrl-G scans raw JSONL' \
     --preview="$0 --preview {6}" --preview-window=up,55%,wrap) || exit 0
 
 cwd=$(printf '%s' "$pick" | cut -f1)
