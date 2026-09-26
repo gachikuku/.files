@@ -60,6 +60,55 @@ def process_command(pid: int) -> str | None:
     return command if result.returncode == 0 and command else None
 
 
+def process_parent(pid: int) -> int | None:
+    result = subprocess.run(
+        [PS, "-p", str(pid), "-o", "ppid="],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    try:
+        parent = int(result.stdout.strip())
+    except ValueError:
+        return None
+    return parent if result.returncode == 0 and parent > 0 else None
+
+
+def codex_owner() -> tuple[int, str] | None:
+    """Find the Codex process above the hook's short-lived shell process."""
+    pid = os.getppid()
+    for _ in range(8):
+        command = process_command(pid)
+        if command is None:
+            return None
+        executable = Path(command.split(maxsplit=1)[0]).name
+        if executable in {"codex", ".codex-wrapped"}:
+            return pid, command
+        parent = process_parent(pid)
+        if parent is None or parent == pid:
+            return None
+        pid = parent
+    return None
+
+
+def prune_dead_sessions() -> None:
+    """Remove state owned by Codex processes that no longer exist."""
+    for candidate in STATE_ROOT.glob("session-*.json"):
+        state = read_state(candidate)
+        if state is None:
+            candidate.unlink(missing_ok=True)
+            continue
+        try:
+            owner_pid = int(state["owner_pid"])
+            owner_command = str(state["owner_command"])
+        except (KeyError, TypeError, ValueError):
+            # Legacy state has no owner metadata. Keep it until its normal Stop
+            # hook runs; current writes always include owner metadata.
+            continue
+        if process_command(owner_pid) != owner_command:
+            candidate.unlink(missing_ok=True)
+
+
 def write_state(path: Path, state: dict[str, Any]) -> None:
     temporary = path.with_suffix(f".{os.getpid()}.tmp")
     temporary.write_text(json.dumps(state), encoding="utf-8")
@@ -126,6 +175,7 @@ def start_lid_controller() -> int | None:
 
 
 def stop_lid_controller_if_unused() -> None:
+    prune_dead_sessions()
     for candidate in STATE_ROOT.glob("session-*.json"):
         state = read_state(candidate)
         if state is not None and state.get("mode") == "lid":
@@ -166,6 +216,7 @@ def stop_existing(path: Path) -> None:
 
 
 def start(path: Path, event: dict[str, Any]) -> str | None:
+    prune_dead_sessions()
     stop_existing(path)
     mode = selected_mode()
 
@@ -174,6 +225,9 @@ def start(path: Path, event: dict[str, Any]) -> str | None:
         "turn_id": event.get("turn_id"),
         "mode": mode,
     }
+    owner = codex_owner()
+    if owner is not None:
+        state["owner_pid"], state["owner_command"] = owner
 
     if mode == "off":
         return None
@@ -225,6 +279,7 @@ def set_mode(mode: str) -> int:
 
 def show_status() -> int:
     with state_lock():
+        prune_dead_sessions()
         sessions = []
         for candidate in STATE_ROOT.glob("session-*.json"):
             state = read_state(candidate)
@@ -232,10 +287,33 @@ def show_status() -> int:
                 sessions.append(state)
         lid_state = read_state(LID_STATE_PATH)
 
+    lid_controller_running = False
+    if lid_state is not None:
+        try:
+            lid_pid = int(lid_state["pid"])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            lid_controller_running = (
+                process_command(lid_pid) == f"/bin/sh {LIDCAFFEINATE}"
+            )
+
+    pmset = subprocess.run(
+        ["/usr/bin/pmset", "-g"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    sleep_disabled = any(
+        line.split() == ["SleepDisabled", "1"]
+        for line in pmset.stdout.splitlines()
+    )
+
     print(f"Selected mode: {selected_mode()}")
     print(f"Active normal sessions: {sum(s.get('mode') == 'normal' for s in sessions)}")
     print(f"Active lid sessions: {sum(s.get('mode') == 'lid' for s in sessions)}")
-    print(f"Lid controller: {'running' if lid_state is not None else 'stopped'}")
+    print(f"Lid controller: {'running' if lid_controller_running else 'stopped'}")
+    print(f"Lid sleep protection: {'active' if sleep_disabled else 'inactive'}")
     return 0
 
 

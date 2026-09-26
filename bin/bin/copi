@@ -1,203 +1,314 @@
 #!/bin/sh
-# copi — fuzzy-pick any past Codex session and resume it in its original directory.
+# copi — fuzzy-pick a Codex session and resume it in its original directory.
 #
-# Codex's built-in resume picker can show sessions from every directory, but
-# this provides pipi's fzf search and transcript preview across all saved chats.
+# Session metadata and previews come from Codex's SQLite projections.  Reading
+# those indexes keeps startup and cursor movement fast even when JSONL rollout
+# files have grown to many gigabytes.
 #
 # Deps: python3, fzf, codex.
 
 CODEX_ROOT=${CODEX_HOME:-"$HOME/.codex"}
 SESSIONS="$CODEX_ROOT/sessions"
+STATE_DB=${COPI_STATE_DB:-"$CODEX_ROOT/state_5.sqlite"}
+HISTORY_DB=${COPI_HISTORY_DB:-"$CODEX_ROOT/thread_history_1.sqlite"}
 
-# Hidden mode: render session metadata and recent messages for fzf's preview.
+command -v python3 >/dev/null 2>&1 || { echo "copi needs python3" >&2; exit 1; }
+
+# Hidden mode: render metadata and the latest messages without touching the
+# potentially huge rollout JSONL.
 if [ "${1:-}" = "--preview" ]; then
-    exec python3 - "$2" <<'PY'
-from collections import deque
+    exec python3 - "$STATE_DB" "$HISTORY_DB" "$2" <<'PY'
 from datetime import datetime
 import json
-import os
+import sqlite3
 import sys
 
 
-def text_content(content):
-    if not isinstance(content, list):
-        return ""
-    return " ".join(
-        block.get("text", "")
-        for block in content
-        if isinstance(block, dict)
-        and block.get("type") in ("input_text", "output_text")
-    )
+def connect_readonly(path):
+    return sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=1)
 
 
-path = sys.argv[1]
-header = {}
-model = None
-messages = deque(maxlen=40)
+def clean(value, limit=500):
+    return " ".join((value or "").split())[:limit]
 
+
+def stamp(milliseconds):
+    if not milliseconds:
+        return "-"
+    return datetime.fromtimestamp(milliseconds / 1000).astimezone().strftime("%Y-%m-%d %H:%M")
+
+
+state_path, history_path, session_id = sys.argv[1:]
 try:
-    stream = open(path, errors="ignore")
-except OSError as exc:
-    print(f"could not open session: {exc}")
+    state = connect_readonly(state_path)
+    thread = state.execute(
+        """
+        SELECT cwd, COALESCE(name, title, first_user_message, ''), model,
+               COALESCE(created_at_ms, created_at * 1000),
+               COALESCE(NULLIF(recency_at_ms, 0), updated_at_ms, updated_at * 1000),
+               preview
+          FROM threads
+         WHERE id = ?
+        """,
+        (session_id,),
+    ).fetchone()
+except (OSError, sqlite3.Error) as exc:
+    print(f"could not read Codex session index: {exc}")
     raise SystemExit(1)
 
-with stream:
-    for line in stream:
-        try:
-            entry = json.loads(line)
-        except Exception:
-            continue
+if thread is None:
+    print(f"session not found: {session_id}")
+    raise SystemExit(1)
 
-        kind = entry.get("type")
-        payload = entry.get("payload", {})
-        if kind == "session_meta" and not header:
-            header = payload
-            continue
-        if kind == "turn_context" and payload.get("model"):
-            model = payload["model"]
-            continue
-        if kind != "response_item" or payload.get("type") != "message":
-            continue
-
-        role = payload.get("role")
-        if role not in ("user", "assistant"):
-            continue
-
-        content = text_content(payload.get("content", []))
-        if not content.strip() or content.lstrip().startswith("<environment_context>"):
-            continue
-
-        text = " ".join(content.split())[:500]
-        messages.append((">>" if role == "user" else "  ") + " " + text)
-
-stamp = header.get("timestamp", "-")
+cwd, title, model, created_ms, updated_ms, fallback_preview = thread
+messages = []
 try:
-    stamp = datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone().strftime("%Y-%m-%d %H:%M")
-except (AttributeError, ValueError):
+    history = connect_readonly(history_path)
+    recent = history.execute(
+        """
+        SELECT item_type, item_json
+          FROM thread_items
+         WHERE thread_id = ?
+           AND item_type IN ('userMessage', 'agentMessage')
+         ORDER BY rollout_ordinal DESC
+         LIMIT 40
+        """,
+        (session_id,),
+    ).fetchall()
+    for item_type, raw in reversed(recent):
+        try:
+            item = json.loads(raw)
+        except (TypeError, json.JSONDecodeError):
+            continue
+        if item_type == "userMessage":
+            content = item.get("content", [])
+            text = " ".join(
+                block.get("text", "")
+                for block in content
+                if isinstance(block, dict) and block.get("type") == "text"
+            )
+            prefix = ">> "
+        else:
+            text = item.get("text", "")
+            prefix = "   "
+        text = clean(text)
+        if text and not text.startswith("<environment_context>"):
+            messages.append(prefix + text)
+except (OSError, sqlite3.Error):
     pass
 
-print(f"session:   {header.get('id', '-')}")
-print(f"directory: {header.get('cwd', '-')}")
-print(f"created:   {stamp}")
-print(f"updated:   {datetime.fromtimestamp(os.path.getmtime(path)).strftime('%Y-%m-%d %H:%M')}")
+print(f"session:   {session_id}")
+print(f"directory: {cwd or '-'}")
+print(f"title:     {clean(title) or '-'}")
+print(f"created:   {stamp(created_ms)}")
+print(f"updated:   {stamp(updated_ms)}")
 print(f"model:     {model or '-'}")
 print("---")
-print("\n".join(messages) or "(no text messages)")
+print("\n".join(messages) or clean(fallback_preview, 4000) or "(no text messages)")
 PY
 fi
 
-[ -d "$SESSIONS" ] || { echo "no Codex sessions found at $SESSIONS" >&2; exit 1; }
-command -v python3 >/dev/null 2>&1 || { echo "copi needs python3" >&2; exit 1; }
-command -v fzf >/dev/null 2>&1 || { echo "copi needs fzf" >&2; exit 1; }
-CODEX_BIN=$(command -v codex) || { echo "copi could not find codex" >&2; exit 1; }
+# --list is useful for scripting. --grep opens an interactively filtered picker;
+# --grep-rows is its hidden, fzf-reload-friendly form.
+list_only=false
+deep_query=
+case "${1:-}" in
+    --list)
+        list_only=true
+        ;;
+    --grep|--grep-rows)
+        [ "$#" -ge 2 ] || { echo "usage: copi --grep TEXT" >&2; exit 2; }
+        deep_query=$2
+        [ "$1" = "--grep-rows" ] && list_only=true
+        ;;
+esac
 
-rows=$(python3 - "$SESSIONS" <<'PY'
+rows=$(python3 - "$STATE_DB" "$SESSIONS" "$deep_query" <<'PY'
+from datetime import datetime
 import json
 from pathlib import Path
+import shutil
+import sqlite3
+import subprocess
 import sys
-import time
-
-
-def text_content(content):
-    if not isinstance(content, list):
-        return ""
-    return " ".join(
-        block.get("text", "")
-        for block in content
-        if isinstance(block, dict)
-        and block.get("type") in ("input_text", "output_text")
-    )
 
 
 def clean(value):
     return " ".join((value or "").replace("\t", " ").split())
 
 
+def output_row(session_id, cwd, model, label, search_text, path, recent_ms):
+    stamp = datetime.fromtimestamp(recent_ms / 1000).astimezone().strftime("%m-%d %H:%M")
+    print(
+        "\t".join(
+            [
+                stamp,
+                clean(cwd),
+                clean(model or "-"),
+                clean(label or "(no user message)")[:160],
+                clean(search_text)[:16000],
+                session_id,
+                str(path),
+            ]
+        )
+    )
+
+
+state_path, sessions_path, deep_query = sys.argv[1:]
+try:
+    state = sqlite3.connect(f"file:{state_path}?mode=ro", uri=True, timeout=1)
+    threads = state.execute(
+        """
+        SELECT id, cwd, model,
+               COALESCE(NULLIF(name, ''), NULLIF(title, ''), NULLIF(first_user_message, ''),
+                        '(no user message)') AS label,
+               trim(COALESCE(title, '') || ' ' || COALESCE(first_user_message, '') || ' ' ||
+                    COALESCE(preview, '')) AS search_text,
+               rollout_path,
+               COALESCE(NULLIF(recency_at_ms, 0), updated_at_ms, updated_at * 1000) AS recent_ms
+          FROM threads
+         WHERE archived = 0
+           AND agent_path IS NULL
+           AND source != 'exec'
+           AND COALESCE(originator, '') != 'codex_exec'
+         ORDER BY recent_ms DESC, id DESC
+        """
+    ).fetchall()
+    if deep_query:
+        rg = shutil.which("rg")
+        if rg is None:
+            print("copi deep search needs rg (ripgrep)", file=sys.stderr)
+            raise SystemExit(2)
+        search = subprocess.run(
+            [
+                rg,
+                "--files-with-matches",
+                "--fixed-strings",
+                "--ignore-case",
+                "--hidden",
+                "--no-messages",
+                "--null",
+                "--threads=2",
+                "--glob=*.jsonl",
+                "--",
+                deep_query,
+                sessions_path,
+            ],
+            stdout=subprocess.PIPE,
+            check=False,
+        )
+        if search.returncode not in (0, 1):
+            raise SystemExit(search.returncode)
+        matches = {
+            value.decode(errors="surrogateescape")
+            for value in search.stdout.split(b"\0")
+            if value
+        }
+        threads = [
+            (*row[:4], f"{row[4]} {deep_query}", *row[5:])
+            for row in threads
+            if row[5] in matches
+        ]
+    for row in threads:
+        output_row(*row)
+    raise SystemExit(0)
+except (OSError, sqlite3.Error):
+    # Compatibility fallback for older Codex installations without the thread
+    # projection.  Read only the beginning of each rollout, never the full log.
+    pass
+
 rows = []
-for path in Path(sys.argv[1]).rglob("*.jsonl"):
+candidate_paths = Path(sessions_path).rglob("*.jsonl")
+if deep_query:
+    rg = shutil.which("rg")
+    if rg is None:
+        print("copi deep search needs rg (ripgrep)", file=sys.stderr)
+        raise SystemExit(2)
+    search = subprocess.run(
+        [rg, "-l", "-F", "-i", "--hidden", "--no-messages", "--threads=2",
+         "--glob=*.jsonl", "--", deep_query, sessions_path],
+        stdout=subprocess.PIPE,
+        text=True,
+        check=False,
+    )
+    if search.returncode not in (0, 1):
+        raise SystemExit(search.returncode)
+    candidate_paths = (Path(value) for value in search.stdout.splitlines() if value)
+
+for path in candidate_paths:
     header = None
     model = None
     label = None
-    transcript = []
-
+    consumed = 0
     try:
         with path.open(errors="ignore") as stream:
-            for line in stream:
+            for _ in range(200):
+                line = stream.readline(1_048_576)
+                if not line:
+                    break
+                consumed += len(line)
+                if consumed > 4_194_304:
+                    break
                 try:
                     entry = json.loads(line)
-                except Exception:
+                except (TypeError, json.JSONDecodeError):
                     continue
-
                 kind = entry.get("type")
                 payload = entry.get("payload", {})
                 if kind == "session_meta" and header is None:
                     header = payload
-                    continue
-                if kind == "turn_context" and payload.get("model"):
+                elif kind == "turn_context" and payload.get("model"):
                     model = payload["model"]
-                    continue
-                if kind != "response_item" or payload.get("type") != "message":
-                    continue
-
-                role = payload.get("role")
-                if role not in ("user", "assistant"):
-                    continue
-
-                text = text_content(payload.get("content", []))
-                if not text.strip() or text.lstrip().startswith("<environment_context>"):
-                    continue
-
-                transcript.append(text)
-                if role == "user" and label is None:
-                    label = text
+                elif kind == "response_item" and payload.get("type") == "message" and payload.get("role") == "user":
+                    text = " ".join(
+                        block.get("text", "")
+                        for block in payload.get("content", [])
+                        if isinstance(block, dict) and block.get("type") in ("input_text", "output_text")
+                    )
+                    if text.strip() and not text.lstrip().startswith("<environment_context>"):
+                        label = text
+                if header and model and label:
+                    break
     except OSError:
         continue
-
-    if not header:
+    if not header or header.get("agent_path") or header.get("source") == "exec" or header.get("originator") == "codex_exec":
         continue
-
-    # Subagent and codex exec rollouts are not ordinary interactive chats.
-    if header.get("agent_path") or header.get("source") == "exec" or header.get("originator") == "codex_exec":
-        continue
-
     session_id = header.get("id")
     cwd = header.get("cwd")
-    if not (session_id and cwd):
+    if not session_id or not cwd:
         continue
-
     try:
-        modified = path.stat().st_mtime
+        recent_ms = path.stat().st_mtime_ns // 1_000_000
     except OSError:
         continue
+    rows.append((recent_ms, session_id, cwd, model, label, path))
 
-    rows.append(
-        (
-            modified,
-            "\t".join(
-                [
-                    time.strftime("%m-%d %H:%M", time.localtime(modified)),
-                    clean(cwd),
-                    clean(model or "-"),
-                    clean(label or "(no user message)")[:100],
-                    clean(" ".join(transcript)),
-                    session_id,
-                    str(path),
-                ]
-            ),
-        )
-    )
-
-rows.sort(reverse=True)
-print("\n".join(row for _, row in rows))
+for recent_ms, session_id, cwd, model, label, path in sorted(rows, reverse=True):
+    output_row(session_id, cwd, model, label, f"{label or ''} {deep_query}", path, recent_ms)
 PY
 )
 
-[ -n "$rows" ] || { echo "no Codex sessions found at $SESSIONS" >&2; exit 1; }
+if [ -z "$rows" ]; then
+    # fzf reload actions treat an empty, successful result as "show no rows".
+    [ "$list_only" = true ] && [ -n "$deep_query" ] && exit 0
+    echo "no Codex sessions found" >&2
+    exit 1
+fi
+
+if [ "$list_only" = true ]; then
+    printf '%s\n' "$rows"
+    exit 0
+fi
+
+command -v fzf >/dev/null 2>&1 || { echo "copi needs fzf" >&2; exit 1; }
+CODEX_BIN=$(command -v codex) || { echo "copi could not find codex" >&2; exit 1; }
 
 pick=$(printf '%s\n' "$rows" | fzf \
     --delimiter='\t' --nth=1..5 --accept-nth=2,6 \
-    --no-hscroll --header='copi — search all Codex session conversations' \
-    --preview="$0 --preview {7}" --preview-window=up,55%,wrap) || exit 0
+    --no-sort --bind='ctrl-r:toggle-sort' \
+    --bind="ctrl-g:reload($0 --grep-rows {q})" --no-hscroll \
+    --header='copi — newest first; Ctrl-G deep grep; Ctrl-R toggles relevance sorting' \
+    --preview="$0 --preview {6}" --preview-window=up,55%,wrap) || exit 0
 
 cwd=$(printf '%s' "$pick" | cut -f1)
 sid=$(printf '%s' "$pick" | cut -f2)

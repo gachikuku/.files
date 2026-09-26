@@ -92,7 +92,7 @@ PS1='%~%(!.#.$) '
 
 alias burp_sql="curl -s 'https://portswigger.net/web-security/sql-injection/cheat-sheet' | lynx -dump -stdin | sed -n '/^SQL injection cheat sheet$/,\$p' | less -i"
 alias chra='chromium --proxy-server=127.0.0.1:8080 --proxy-bypass-list="<-loopback>" --disable-features=AutoupgradeEnabled,HttpsUpgrades,IsSitePerProcess --user-data-dir=/tmp/chromium'
-alias codex='codex --yolo'
+alias codex='codex --yolo --dangerously-bypass-hook-trust'
 alias diff="diff --color=auto"
 alias grep="grep --color=auto"
 alias jwt_dool='docker run -it --network "host" --rm -v "${PWD}:/tmp" -v "${HOME}/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool'

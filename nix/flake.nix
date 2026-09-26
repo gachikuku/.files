@@ -55,6 +55,17 @@
 
 				nixpkgs.overlays = [
 					(final: prev: {
+						# waymore 8.9 caches Common Crawl's index beside its Python module.
+						# Nix store paths are immutable, so move that cache to XDG_CACHE_HOME.
+						waymore = prev.waymore.overrideAttrs (old: {
+							postPatch = (old.postPatch or "") + ''
+								substituteInPlace waymore/waymore.py \
+									--replace-fail \
+									'        collinfoPath = str(Path(__file__).parent.resolve()) + "/collinfo.json"' \
+									'        cache_root = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "waymore"; cache_root.mkdir(parents=True, exist_ok=True); collinfoPath = str(cache_root / "collinfo.json")'
+							'';
+						});
+
 						# One-line scrolling, shortcut actions, and a block cursor in senpai.
 						senpai = prev.senpai.overrideAttrs (old: {
 							postPatch = (old.postPatch or "") + ''
@@ -150,6 +161,7 @@
 						aerospace
 						android-tools
 						ares-cli
+						awscli2
 						binwalk
 						pandoc
 						vncdotool
@@ -193,6 +205,7 @@
 						go
 						gopass
 						gopass-jsonapi
+						gungnir
 						hashcat
 						hashid
 						hexedit
@@ -220,6 +233,25 @@
 								--add-flags -x86_64 --add-flags $out/libexec/disarm
 							install -m644 matchers.txt WhatsNew.txt $out/share/jtool2/
 						'')
+						(let
+							version = "2.0.8";
+							coreArchive = fetchurl {
+								url = "https://github.com/Lakr233/vphone-cli/releases/download/${version}/VPhone-${version}.zip";
+								hash = "sha256-Xtwta2jczQXV7nZSVWySueUSVV9/TYmuRh08MQb7hKk=";
+							};
+							launchpadArchive = fetchurl {
+								url = "https://github.com/Lakr233/vphone-cli/releases/download/${version}/vphone-launchpad-${version}-notarized.zip";
+								hash = "sha256-fTJmr+GIMrV2mvpnHzaSMgvADbhUeYZm8FZJ5KOjomM=";
+							};
+						in runCommand "vphone-${version}" { nativeBuildInputs = [ unzip ]; } ''
+							mkdir -p $out/bin $out/libexec $out/Applications
+							unzip -q ${coreArchive} -d $out/libexec
+							unzip -q ${launchpadArchive} -d $out/Applications
+							mv "$out/Applications/vphone-launchpad-${version}.app" \
+								"$out/Applications/VPhone Launchpad.app"
+							ln -s $out/libexec/VPhone.bundle/Contents/MacOS/vphone-cli $out/bin/vphone-cli
+							ln -s $out/libexec/VPhone.bundle/Contents/MacOS/vphone-vm $out/bin/vphone-vm
+						'')
 						jq
 						jsluice
 						ledger
@@ -240,6 +272,7 @@
 						mpv
 						mtr
 						mupdf
+						mullvad
 						naabu
 						neovim
 						ngrok
@@ -260,9 +293,11 @@
 						# Python environment for custom Frida controllers. frida-tools ships
 						# its own wrapped interpreter, which is not importable by /usr/bin/python3.
 						(python313.withPackages (ps: [
+							ps.beautifulsoup4
 							ps.capstone
 							ps.cryptography
 							ps.dkimpy
+							ps.faker
 							ps.frida-python
 							ps.lief
 							ps.macholib
@@ -270,6 +305,7 @@
 							ps.playwright
 							ps.pytest
 							ps.r2pipe
+							ps.requests
 						]))
 						# nixpkgs' current angr cohort is version-skewed. Keep it isolated
 						# from the shared Python environment and bootstrap one pinned venv.
@@ -313,6 +349,7 @@
 						vim
 						w3m
 						watch
+						waymore
 						wget
 						witnessme
 						xdg-utils
