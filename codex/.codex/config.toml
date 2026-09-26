@@ -1,8 +1,14 @@
 model = "gpt-5.6-sol"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 check_for_update_on_startup = false
 default_permissions = ":danger-full-access"
 approval_policy = "never"
+web_search = "live"
+file_opener = "cursor"
+
+service_tier = "default"
+
+notify = ["/Users/gachikuku/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"turn-ended\"]"]
 
 [notice]
 hide_full_access_warning = true
@@ -13,6 +19,11 @@ enabled = true
 destructive_enabled = true
 open_world_enabled = true
 default_tools_approval_mode = "approve"
+
+[computer_use]
+# Allow Computer Use to request access to any native app that is not subject to
+# a product or organization safety restriction.
+default_app_access = "allow"
 
 [projects."/Users/gachikuku/.files"]
 trust_level = "trusted"
@@ -53,13 +64,30 @@ trust_level = "trusted"
 [projects."/Users/gachikuku/Developer/hey-ios-research/findings/hey-existing-user-impersonation"]
 trust_level = "trusted"
 
+[projects."/Users/gachikuku/Developer/feeld-research"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Documents/bb/timologia"]
+trust_level = "trusted"
+
+[projects."/Users/gachikuku/Documents/alnoman/fiber"]
+trust_level = "trusted"
+
 [tui]
 theme = "solarized-light"
 show_tooltips = false
+status_line = ["weekly-limit", "context-remaining", "reasoning"]
+status_line_use_colors = true
+screen_reader_detection_done = true
+session_picker_view = "dense"
 
 [tui.keymap.composer]
 # Keep a plain Tab from queueing/submitting the current prompt.
 queue = []
+
+[tui.keymap.chat]
+# Disable the configurable interrupt shortcut; Ctrl-C remains the terminal interrupt.
+interrupt_turn = []
 
 [tui.model_availability_nux]
 "gpt-5.6-sol" = 4
@@ -74,8 +102,8 @@ args = ["--from", "/Users/gachikuku/Developer/tools/mitmproxy-mcp", "--with", "m
 default_tools_approval_mode = "approve"
 
 [mcp_servers.frida-mcp]
-command = "uvx"
-args = ["--from", "git+https://github.com/dnakov/frida-mcp.git@f8003c7de69ca8fc13a019f0c9b6abcc61b1717c", "--with", "mcp<2", "frida-mcp"]
+command = "/usr/bin/sudo"
+args = ["-n", "--", "/Users/gachikuku/.local/bin/frida-mcp"]
 startup_timeout_sec = 30.0
 tool_timeout_sec = 120.0
 default_tools_approval_mode = "approve"
@@ -98,6 +126,28 @@ url = "http://ios-a.local:8090/mcp"
 startup_timeout_sec = 10.0
 tool_timeout_sec = 120.0
 default_tools_approval_mode = "approve"
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/gachikuku/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+CODEX_HOME = "/Users/gachikuku/.codex"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_TINYSKY_ENABLED = "1"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.924.20706"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/gachikuku/.codex/plugins/cache/openai-bundled/browser/26.924.20706/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+SKY_CUA_SERVICE_PATH = "/Users/gachikuku/.codex/computer-use/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
 
 [hooks.state]
 
@@ -124,3 +174,44 @@ trusted_hash = "sha256:7358ef1afc194197819058fcbb498ae42173e378c4889a1d8649999ec
 
 [hooks.state."/Users/gachikuku/.codex/hooks.json:stop:0:1"]
 trusted_hash = "sha256:fe5bc05662cb7e68111783dab0f3162e773312751c04c123d8e0b51b053e633b"
+
+[marketplaces.openai-bundled]
+source_type = "local"
+source = "/Users/gachikuku/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+source_type = "local"
+source = "/Users/gachikuku/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[desktop]
+followUpQueueMode = "steer"

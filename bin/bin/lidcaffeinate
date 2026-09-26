@@ -29,9 +29,19 @@ if /usr/bin/pmset -g | /usr/bin/grep -q 'SleepDisabled[[:space:]]*1'; then
   restore_sleep=0
 fi
 
+runtime_dir=$(/usr/bin/mktemp -d "${TMPDIR:-/tmp}/lidcaffeinate.XXXXXX")
+/bin/chmod 700 "$runtime_dir"
+restore_marker="$runtime_dir/restore-sleep"
+
 cleanup() {
   exit_code=$?
   trap - 0 1 2 15
+
+  if [ -n "${watchdog_pid-}" ]; then
+    /bin/kill -TERM "$watchdog_pid" 2>/dev/null || true
+    wait "$watchdog_pid" 2>/dev/null || true
+    watchdog_pid=
+  fi
 
   if [ -n "${caffeinate_pid-}" ]; then
     /bin/kill -TERM "$caffeinate_pid" 2>/dev/null || true
@@ -39,10 +49,16 @@ cleanup() {
     caffeinate_pid=
   fi
 
-  if [ "$restore_sleep" -eq 1 ]; then
-    /usr/bin/sudo -n /usr/bin/pmset -a disablesleep 0 ||
+  # If another lidcaffeinate instance was stopped while this one remained
+  # active, its cleanup may have reset the global flag. The watchdog records
+  # that transition so the final surviving controller restores normal sleep.
+  if [ "$restore_sleep" -eq 1 ] || [ -e "$restore_marker" ]; then
+    /usr/bin/sudo -n -- /usr/bin/pmset -a disablesleep 0 ||
       echo 'lidcaffeinate: could not restore normal sleep' >&2
   fi
+
+  /bin/rm -f -- "$restore_marker"
+  /bin/rmdir "$runtime_dir" 2>/dev/null || true
 
   /usr/bin/pmset -g | /usr/bin/grep SleepDisabled ||
     echo 'SleepDisabled: 0 (normal lid sleep restored)'
@@ -55,13 +71,35 @@ trap 'exit 129' 1
 trap 'exit 130' 2
 trap 'exit 143' 15
 
-if ! /usr/bin/sudo -n /usr/bin/pmset -a disablesleep 1; then
+if ! /usr/bin/sudo -n -- /usr/bin/pmset -a disablesleep 1; then
   echo 'lidcaffeinate: passwordless sudo permission for pmset is required' >&2
   exit 1
 fi
 
 /usr/bin/caffeinate -i "$@" &
 caffeinate_pid=$!
+
+# `pmset disablesleep` is global and can be reset by another lidcaffeinate
+# cleanup or by a later power-configuration update. Keep the assertion healthy
+# for this controller's entire lifetime. If we have to recover it, remember to
+# restore normal lid sleep when the final controller exits.
+controller_pid=$$
+(
+  while /bin/kill -0 "$caffeinate_pid" 2>/dev/null; do
+    current=$(/usr/bin/pmset -g | /usr/bin/awk '/SleepDisabled/{print $2; exit}')
+    if [ "${current:-0}" != 1 ]; then
+      : > "$restore_marker"
+      if ! /usr/bin/sudo -n -- /usr/bin/pmset -a disablesleep 1; then
+        echo 'lidcaffeinate: could not restore lid-sleep protection' >&2
+        /bin/kill -TERM "$controller_pid" 2>/dev/null || true
+        exit 1
+      fi
+    fi
+    /bin/sleep 1
+  done
+) &
+watchdog_pid=$!
+
 wait "$caffeinate_pid"
 exit_code=$?
 caffeinate_pid=

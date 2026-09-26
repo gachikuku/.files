@@ -1,0 +1,2 @@
+#!/bin/sh
+printf 'executed\n' > /tmp/vim-tmux-executable-was-run
