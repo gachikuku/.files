@@ -46,6 +46,11 @@ if [ ! -e "$path" ]; then
 fi
 [ -e "$path" ] || fail "File does not exist: $path"
 
+# Directories belong to Finder. This helper only redirects files to Vim.
+if [ -d "$path" ]; then
+    exec /usr/bin/open "$path"
+fi
+
 tmux=$(command -v tmux) || fail 'tmux must be installed'
 vim=$(command -v vim) || fail 'vim must be installed'
 
@@ -73,12 +78,8 @@ IFS="$tab" read -r activity session socket <<EOF
 $target
 EOF
 
-if [ -d "$path" ]; then
-    cwd=$path
-else
-    cwd=${path%/*}
-    [ -n "$cwd" ] || cwd=/
-fi
+cwd=${path%/*}
+[ -n "$cwd" ] || cwd=/
 
 if [ -n "$column" ]; then
     exec "$tmux" -S "$socket" new-window -t "$session:" -n vim -c "$cwd" \
@@ -90,4 +91,3 @@ else
     exec "$tmux" -S "$socket" new-window -t "$session:" -n vim -c "$cwd" \
         "$vim" -- "$path"
 fi
-
