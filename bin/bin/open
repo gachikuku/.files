@@ -1,0 +1,74 @@
+#!/bin/sh
+set -eu
+
+system_open=/usr/bin/open
+parent_command=$(/bin/ps -p "$PPID" -o comm= 2>/dev/null || true)
+case "$parent_command:${VIM_TMUX_GHOSTTY_OPEN_TEST:-}" in
+    */Ghostty.app/Contents/MacOS/ghostty:*|*:1) ;;
+    *) exec "$system_open" "$@" ;;
+esac
+
+# Ghostty 1.3.1 invokes `open TARGET` for detected terminal links.
+[ "$#" -eq 1 ] || exec "$system_open" "$@"
+target=$1
+case "$target" in
+    /*|./*|../*|'~/'*)
+        candidate=$(printf '%s' "$target" | sed -E 's/^(([^[:space:]\\]|\\.)*).*/\1/; s/\\ / /g')
+        case "$candidate" in '~/'*) candidate="$HOME/${candidate#\~/}" ;; esac
+        [ -e "$candidate" ] || candidate=
+        ;;
+    *) candidate= ;;
+esac
+
+route_target=${candidate:-$target}
+lower_target=$(printf '%s' "$route_target" | tr '[:upper:]' '[:lower:]')
+media_path=${lower_target%%\?*}
+media_path=${media_path%%\#*}
+media_extension=${media_path##*.}
+case "$lower_target" in
+    http://youtube.com/*|https://youtube.com/*|http://*.youtube.com/*|https://*.youtube.com/*|http://youtu.be/*|https://youtu.be/*|http://*.youtube-nocookie.com/*|https://*.youtube-nocookie.com/*)
+        exec /bin/sh "$HOME/.local/share/vim-tmux/open-media.sh" "$route_target"
+        ;;
+esac
+case "$media_extension" in
+    mp4|m4v|mkv|mov|avi|webm|ogv|mpeg|mpg|ts|vob|wmv|asf|3gp|gif|gifv|mp3|m4a|aac|flac|wav|ogg|opus|m3u|m3u8|pls)
+        exec /bin/sh "$HOME/.local/share/vim-tmux/open-media.sh" "$route_target"
+        ;;
+esac
+
+[ -n "$candidate" ] || exec "$system_open" "$@"
+
+helper="$HOME/.local/share/vim-tmux/open-file.sh"
+if [ -d "$candidate" ]; then
+    exec "$system_open" "$candidate"
+fi
+if [ -x "$candidate" ]; then
+    exec /bin/sh "$helper" "$candidate"
+fi
+
+PATH="/run/current-system/sw/bin:$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+export PATH
+uti=$(/usr/bin/mdls -raw -name kMDItemContentType "$candidate" 2>/dev/null || true)
+case "$uti" in
+    public.unix-executable|public.script|public.*-script)
+        exec /bin/sh "$helper" "$candidate"
+        ;;
+esac
+
+handler=$(duti -d "$uti" 2>/dev/null || true)
+case "$handler" in
+    com.apple.TextEdit|local.gachikuku.vim-tmux)
+        exec /bin/sh "$helper" "$candidate"
+        ;;
+esac
+
+if [ -z "$handler" ] || [ "$uti" = '(null)' ]; then
+    mime=$(/usr/bin/file -b --mime-type "$candidate" 2>/dev/null || true)
+    case "$mime" in
+        text/*|application/json|application/*xml|application/x-empty)
+            exec /bin/sh "$helper" "$candidate"
+            ;;
+    esac
+fi
+
+exec "$system_open" "$@"

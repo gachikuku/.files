@@ -73,10 +73,13 @@ trust_level = "trusted"
 [projects."/Users/gachikuku/Documents/alnoman/fiber"]
 trust_level = "trusted"
 
+[projects."/Users/gachikuku/Developer/tradingview-ios-research"]
+trust_level = "trusted"
+
 [tui]
 theme = "solarized-light"
 show_tooltips = false
-status_line = ["weekly-limit", "context-remaining", "reasoning"]
+status_line = ["weekly-limit", "context-remaining", "reasoning", "fast-mode"]
 status_line_use_colors = true
 screen_reader_detection_done = true
 session_picker_view = "dense"

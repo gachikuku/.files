@@ -90,6 +90,21 @@
 						pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
 							(pythonFinal: pythonPrev:
 							let
+								# Match the Frida server installed on ios-a.
+								fridaPython_17_19 = pythonPrev.frida-python.overridePythonAttrs (_: rec {
+									version = "17.19.0";
+									src = final.fetchPypi {
+										pname = "frida";
+										inherit version;
+										format = "wheel";
+										platform = "macosx_11_0_arm64";
+										abi = "abi3";
+										python = "cp37";
+										dist = "cp37";
+										hash = "sha256-nNmLnZx98FEBcVibRFtorpiElvY9ws54R0nfZcYHO34=";
+									};
+								});
+
 								qh3_1 = pythonPrev.qh3.overridePythonAttrs (_: rec {
 									version = "1.9.4";
 									src = final.fetchFromGitHub {
@@ -105,6 +120,8 @@
 									};
 								});
 							in {
+								frida-python = fridaPython_17_19;
+
 								asn1_2 = pythonPrev.asn1.overridePythonAttrs (_: rec {
 									version = "2.8.0";
 									src = final.fetchPypi {

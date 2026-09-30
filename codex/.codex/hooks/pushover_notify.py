@@ -116,20 +116,22 @@ def handle_hook(event: dict[str, Any]) -> None:
     event_name = event.get("hook_event_name")
     tool_name = event.get("tool_name")
     project = project_name(event.get("cwd"))
+    session_id = compact(event.get("session_id"), 100)
+    title_suffix = f" · {session_id}" if session_id else ""
 
     if event_name == "PostToolUse" and tool_name == "update_goal":
         tool_input = event.get("tool_input")
         status = tool_input.get("status") if isinstance(tool_input, dict) else None
         if status == "complete":
             send_notification(
-                "Codex goal achieved",
+                f"Codex goal achieved{title_suffix}",
                 f"The goal in {project} is complete.",
                 priority=0,
             )
             mark_terminal_notification(event)
         elif status == "blocked":
             send_notification(
-                "Codex goal blocked",
+                f"Codex goal blocked{title_suffix}",
                 f"The goal in {project} cannot continue without attention.",
                 priority=1,
             )
@@ -140,12 +142,16 @@ def handle_hook(event: dict[str, Any]) -> None:
         tool_input = event.get("tool_input")
         description = tool_input.get("description") if isinstance(tool_input, dict) else None
         detail = compact(description, 500) or f"Approval is required for {tool_name or 'an action'}."
-        send_notification("Codex needs approval", f"{project}: {detail}", priority=1)
+        send_notification(
+            f"Codex needs approval{title_suffix}",
+            f"{project}: {detail}",
+            priority=1,
+        )
         return
 
     if event_name == "PreToolUse" and tool_name == "request_user_input":
         send_notification(
-            "Codex needs your input",
+            f"Codex needs your input{title_suffix}",
             f"Open the {project} session to answer a question.",
             priority=1,
         )
@@ -156,7 +162,7 @@ def handle_hook(event: dict[str, Any]) -> None:
             return
         last_message = compact(event.get("last_assistant_message"), 750)
         send_notification(
-            "Codex stopped",
+            f"Codex stopped{title_suffix}",
             f"{project}: {last_message or 'The root turn is no longer running.'}",
             priority=1,
         )
