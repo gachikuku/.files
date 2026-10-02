@@ -388,7 +388,6 @@
 					# binaryFate's PGP-signed hashes.txt. nixpkgs monero-cli is linux-only,
 					# and brew ships its own bottle (can't match the official binary hash).
 					brews = [
-						"cliproxyapi"
 						"duti"  # Register the Gopher URL handler with macOS.
 					];
 
