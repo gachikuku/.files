@@ -49,7 +49,6 @@ export GOSUMDB=off
 export GOTELEMETRY=off
 export GOTOOLCHAIN=local
 export PIP_NO_SSL_VERIFY=1
-export CLAUDE_DEBUG=1
 #export MANPAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
 #export PAGER="sh -c 'if [ -t 1 ]; then exec nvim +Man! -; else exec less -sR; fi'"
 #export AWS_PAGER=""
@@ -108,16 +107,6 @@ alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 alias shazzer="curl -s 'https://shazzer.co.uk/vectors/cheat-sheets' | lynx -dump -stdin | sed -n '/^Cheat sheets$/,\$p' | less -i"
 alias vid='mpv --autofit=100%x100% --ytdl-raw-options=yes-playlist=,no-check-certificates=,write-automatic-subs=,sub-langs=en'
 
-# Claude Code harness backed by GPT-5.6 Sol through the local CLIProxyAPI.
-# ENABLE_TOOL_SEARCH=false disables dynamic MCP schema lookup, not WebSearch.
-alias claude='ANTHROPIC_BASE_URL=http://127.0.0.1:8317 \
-ANTHROPIC_AUTH_TOKEN=claudex-localhost-only \
-CLAUDE_CODE_SUBAGENT_MODEL=gpt-5.6-sol \
-CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
-CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3 \
-ENABLE_TOOL_SEARCH=false \
-claude --model gpt-5.6-sol --effort high'
-
 # Edit line in vim with Meta-e:
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^[e' edit-command-line
@@ -152,9 +141,3 @@ compctl -k '(if of conv ibs obs bs cbs files skip file seek count)' \
   -q -S ',' - 'n[-1,=]' -X '<number>' -- dd
 
 if [ -f "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/gachikuku/.config/fabric/fabric-bootstrap.inc"; fi
-
-# uncomment when using claude-code
-#export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
-#export ANTHROPIC_AUTH_TOKEN=$(gopass show -o api/openrouter)
-#export ANTHROPIC_API_KEY="" # Important: Must be explicitly empty
-#export OPENROUTER_API_KEY=$(gopass show -o api/openrouter)

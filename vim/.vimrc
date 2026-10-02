@@ -19,18 +19,27 @@ set showmatch
 set hlsearch
 set mouse=a
 set noswapfile
+set undofile
+set undodir=~/.vim/undodir
 set nofoldenable
 set lazyredraw
 set spc=
 set wrap
 
 let mapleader = "\<space>"
+let g:highlightedyank_highlight_duration = 40
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR> " Trim trailing spaces
 nnoremap Y y$
 nnoremap cc :center<cr>
 inoremap <C-c> <ESC>
 set listchars=tab:▸\ ,eol:¬,space:.
 nnoremap <leader>l :set list!<CR>
+
+" Match Neovim's system clipboard and undo-tree mappings.
+nnoremap <leader>y "+y
+xnoremap <leader>y "+y
+nnoremap <leader>Y "+Y
+nnoremap <leader>u :UndotreeToggle<CR>
 
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
@@ -41,6 +50,7 @@ highlight NonText ctermfg=none ctermbg=none
 highlight EndOfBuffer ctermfg=none ctermbg=none
 highlight TabLineFill ctermfg=none ctermbg=none
 highlight Search ctermbg=12
+highlight link HighlightedyankRegion IncSearch
 highlight NonText ctermfg=darkgrey
 highlight SpecialKey ctermfg=darkgrey
 highlight clear SignColumn
