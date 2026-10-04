@@ -279,7 +279,6 @@
 						libusbmuxd
 						libxo
 						lima
-						links2
 						llvm
 						lynx
 						mblaze
