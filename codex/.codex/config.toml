@@ -80,6 +80,7 @@ trust_level = "trusted"
 theme = "solarized-light"
 show_tooltips = false
 fullscreen_transcript = true
+mouse_scroll_speed = 1.0
 status_line = ["weekly-limit", "context-remaining", "reasoning", "fast-mode"]
 status_line_use_colors = true
 screen_reader_detection_done = true
