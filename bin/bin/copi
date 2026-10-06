@@ -109,9 +109,12 @@ PY
 fi
 
 # --list is useful for scripting. --grep opens an interactively filtered picker;
-# --grep-rows is its hidden, fzf-reload-friendly form.
+# --grep-rows is its hidden, fzf-reload-friendly form. --id narrows the picker
+# to session IDs and accepts an optional initial ID fragment.
 list_only=false
 deep_query=
+id_mode=false
+id_query=
 case "${1:-}" in
     --list)
         list_only=true
@@ -121,9 +124,25 @@ case "${1:-}" in
         deep_query=$2
         [ "$1" = "--grep-rows" ] && list_only=true
         ;;
+    --id)
+        [ "$#" -le 2 ] || { echo "usage: copi --id [SESSION_ID]" >&2; exit 2; }
+        id_mode=true
+        id_query=${2:-}
+        ;;
+    -h|--help)
+        cat <<'EOF'
+usage: copi [--id [SESSION_ID] | --grep TEXT | --list]
+
+  (no args)          search indexed transcript text or a session ID
+  --id [SESSION_ID]  search only session IDs, optionally starting with a fragment
+  --grep TEXT        scan complete rollout JSONL files for transcript text
+  --list             print indexed picker rows for scripting
+EOF
+        exit 0
+        ;;
 esac
 
-rows=$(python3 - "$STATE_DB" "$HISTORY_DB" "$SESSIONS" "$deep_query" <<'PY'
+rows=$(python3 - "$STATE_DB" "$HISTORY_DB" "$SESSIONS" "$deep_query" "$id_query" <<'PY'
 from datetime import datetime
 import json
 from pathlib import Path
@@ -216,7 +235,7 @@ def item_text(item_type, raw):
     return item.get("text", "") if item_type == "agentMessage" else ""
 
 
-state_path, history_path, sessions_path, deep_query = sys.argv[1:]
+state_path, history_path, sessions_path, deep_query, id_query = sys.argv[1:]
 try:
     state = sqlite3.connect(f"file:{state_path}?mode=ro", uri=True, timeout=1)
     threads = state.execute(
@@ -235,6 +254,9 @@ try:
          ORDER BY recent_ms DESC, id DESC
         """
     ).fetchall()
+    if id_query:
+        folded_id_query = id_query.casefold()
+        threads = [row for row in threads if folded_id_query in row[0].casefold()]
     if deep_query:
         matches = deep_match_paths(deep_query, (row[5] for row in threads))
         threads = [
@@ -261,6 +283,8 @@ try:
                 """
             )
             for session_id, item_type, raw in messages:
+                if session_id not in transcript:
+                    continue
                 text = item_text(item_type, raw)
                 if text.strip() and not text.lstrip().startswith("<environment_context>"):
                     transcript[session_id].append(text)
@@ -326,6 +350,8 @@ for path in candidate_paths:
     cwd = header.get("cwd")
     if not session_id or not cwd:
         continue
+    if id_query and id_query.casefold() not in session_id.casefold():
+        continue
     try:
         recent_ms = path.stat().st_mtime_ns // 1_000_000
     except OSError:
@@ -340,6 +366,10 @@ PY
 if [ -z "$rows" ]; then
     # fzf reload actions treat an empty, successful result as "show no rows".
     [ "$list_only" = true ] && [ -n "$deep_query" ] && exit 0
+    if [ "$id_mode" = true ] && [ -n "$id_query" ]; then
+        echo "no Codex session ID matching: $id_query" >&2
+        exit 1
+    fi
     echo "no Codex sessions found" >&2
     exit 1
 fi
@@ -352,15 +382,26 @@ fi
 command -v fzf >/dev/null 2>&1 || { echo "copi needs fzf" >&2; exit 1; }
 CODEX_BIN=$(command -v codex) || { echo "copi could not find codex" >&2; exit 1; }
 
-pick=$(printf '%s\n' "$rows" | fzf \
-    --delimiter='\t' --nth=5 --accept-nth=2,6 \
-    --exact --ignore-case --no-sort --bind='ctrl-r:toggle-sort' \
-    --prompt='INDEXED TRANSCRIPT › ' \
-    --bind="ctrl-g:reload($0 --grep-rows {q})+change-prompt(⚠ RAW JSONL GREP ACTIVE › )+change-header(⚠ RAW GREP ACTIVE — complete JSONL scan — Ctrl-L returns to indexed mode)" \
-    --bind="ctrl-l:reload($0 --list)+change-prompt(INDEXED TRANSCRIPT › )+change-header(INDEXED TRANSCRIPT SEARCH — literal terms use AND — Ctrl-G scans raw JSONL)" \
-    --no-hscroll \
-    --header='INDEXED TRANSCRIPT SEARCH — literal terms use AND — Ctrl-G scans raw JSONL' \
-    --preview="$0 --preview {6}" --preview-window=up,55%,wrap) || exit 0
+if [ "$id_mode" = true ]; then
+    pick=$(printf '%s\n' "$rows" | fzf \
+        --delimiter='\t' --nth=6 --accept-nth=2,6 \
+        --exact --ignore-case --no-sort --bind='ctrl-r:toggle-sort' \
+        --query="$id_query" \
+        --prompt='SESSION ID › ' \
+        --no-hscroll \
+        --header='SESSION ID SEARCH — full UUIDs and fragments both work' \
+        --preview="$0 --preview {6}" --preview-window=up,55%,wrap) || exit 0
+else
+    pick=$(printf '%s\n' "$rows" | fzf \
+        --delimiter='\t' --nth=5,6 --accept-nth=2,6 \
+        --exact --ignore-case --no-sort --bind='ctrl-r:toggle-sort' \
+        --prompt='INDEXED TRANSCRIPT / ID › ' \
+        --bind="ctrl-g:reload($0 --grep-rows {q})+change-prompt(⚠ RAW JSONL GREP ACTIVE › )+change-header(⚠ RAW GREP ACTIVE — complete JSONL scan — Ctrl-L returns to indexed mode)" \
+        --bind="ctrl-l:reload($0 --list)+change-prompt(INDEXED TRANSCRIPT / ID › )+change-header(INDEXED SEARCH — transcript text and session IDs — Ctrl-G scans raw JSONL)" \
+        --no-hscroll \
+        --header='INDEXED SEARCH — transcript text and session IDs — Ctrl-G scans raw JSONL' \
+        --preview="$0 --preview {6}" --preview-window=up,55%,wrap) || exit 0
+fi
 
 cwd=$(printf '%s' "$pick" | cut -f1)
 sid=$(printf '%s' "$pick" | cut -f2)
