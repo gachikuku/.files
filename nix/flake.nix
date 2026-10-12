@@ -403,6 +403,7 @@
 				w3m
 				watch
 				waymore
+				webdump
 				wget
 				witnessme
 				xdg-utils
