@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Pin GitHub's latest stable Codex release; optionally rebuild this Mac."""
+
+import argparse
+import base64
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import tempfile
+import urllib.request
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--switch", action="store_true", help="also run nix-darwin switch after updating"
+    )
+    args = parser.parse_args()
+    directory = Path(__file__).resolve().parent
+    flake = directory / "flake.nix"
+    request = urllib.request.Request(
+        "https://api.github.com/repos/openai/codex/releases/latest",
+        headers={"Accept": "application/vnd.github+json", "User-Agent": "codex-nix-updater"},
+    )
+    with urllib.request.urlopen(request, timeout=60) as response:
+        release = json.load(response)
+    tag = release["tag_name"]
+    if release["draft"] or release["prerelease"] or not re.fullmatch(r"rust-v\d+\.\d+\.\d+", tag):
+        raise ValueError(f"Expected a stable Codex release, got {tag!r}")
+    asset_name = "codex-package-aarch64-apple-darwin.tar.gz"
+    assets = [asset for asset in release["assets"] if asset["name"] == asset_name]
+    if len(assets) != 1:
+        raise ValueError(f"Expected exactly one {asset_name} asset")
+    asset = assets[0]
+    expected_url = f"https://github.com/openai/codex/releases/download/{tag}/{asset_name}"
+    if asset["browser_download_url"] != expected_url:
+        raise ValueError("Unexpected release asset URL")
+    digest = asset.get("digest") or ""
+    if not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+        raise ValueError("GitHub did not publish a valid SHA-256 checksum")
+    sri = "sha256-" + base64.b64encode(bytes.fromhex(digest.removeprefix("sha256:"))).decode()
+    version = tag.removeprefix("rust-v")
+    original = flake.read_text()
+    updated, count = re.subn(
+        r'(?m)^\t\tcodexRelease = \{\n\t\t\tversion = "[^"]+";\n\t\t\thash = "[^"]+";\n\t\t\};',
+        f'\t\tcodexRelease = {{\n\t\t\tversion = "{version}";\n\t\t\thash = "{sri}";\n\t\t}};',
+        original,
+    )
+    if count != 1:
+        raise ValueError("Could not locate exactly one codexRelease block in flake.nix")
+    if updated != original:
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", dir=directory, delete=False) as output:
+                temporary = Path(output.name)
+                output.write(updated)
+            shutil.copymode(flake, temporary)
+            os.replace(temporary, flake)
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+    print(f"Codex {version} pinned in {flake}", flush=True)
+    if args.switch:
+        rebuild = shutil.which("darwin-rebuild")
+        if rebuild is None:
+            raise RuntimeError("darwin-rebuild is not on PATH")
+        subprocess.run(
+            ["/usr/bin/sudo", "-n", "--", rebuild, "switch", "--flake", f"{directory}#gachimacos"],
+            check=True,
+        )
+    else:
+        print("Run this script with --switch to update and install the latest release.")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (OSError, ValueError, KeyError, RuntimeError, subprocess.CalledProcessError) as error:
+        raise SystemExit(f"update-codex: {error}")

@@ -11,6 +11,13 @@
 	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }: let
 		username = "gachikuku";
 
+		# Run ./update-codex --switch to pin GitHub's Latest release and rebuild.
+		# Keep immutable release URLs and checksums so rebuilds stay reproducible.
+		codexRelease = {
+			version = "0.162.1";
+			hash = "sha256-iON8zd9aD06p3BvhPGaiqU+cLRoE86zpBT1xs5OeiF0=";
+		};
+
 		sharedConfiguration = { ... }: {
 			services.tailscale.enable = true;
 			environment.variables.PI_OFFLINE = "1";
@@ -57,6 +64,43 @@
 
 			nixpkgs.overlays = [
 				(final: prev: {
+					crunchyroll-tui = final.callPackage ./packages/crunchyroll-tui { };
+
+					codex = final.stdenvNoCC.mkDerivation {
+						pname = "codex";
+						inherit (codexRelease) version;
+						src = final.fetchurl {
+							url = "https://github.com/openai/codex/releases/download/rust-v${codexRelease.version}/codex-package-aarch64-apple-darwin.tar.gz";
+							inherit (codexRelease) hash;
+						};
+						sourceRoot = ".";
+						dontBuild = true;
+						# Preserve upstream signatures and the bundled runtime layout.
+						dontFixup = true;
+						nativeBuildInputs = [ final.installShellFiles ];
+						installPhase = ''
+                  runHook preInstall
+                  export CODEX_HOME="$TMPDIR/codex-home"
+                  mkdir -p "$CODEX_HOME"
+                  mkdir -p "$out"
+                  cp -R bin codex-package.json codex-path codex-resources "$out/"
+                  installShellCompletion --cmd codex \
+                    --bash <("$out/bin/codex" completion bash) \
+                    --fish <("$out/bin/codex" completion fish) \
+                    --zsh <("$out/bin/codex" completion zsh)
+                  runHook postInstall
+                '';
+						doInstallCheck = true;
+						nativeInstallCheckInputs = [ final.versionCheckHook ];
+						meta = {
+							description = "Codex CLI from the official GitHub release";
+							homepage = "https://github.com/openai/codex";
+							license = lib.licenses.asl20;
+							mainProgram = "codex";
+							platforms = [ "aarch64-darwin" ];
+						};
+					};
+
 					frida-tools = prev.frida-tools.overridePythonAttrs (_: rec {
 						version = "14.11.0";
 						src = final.fetchPypi {
@@ -214,6 +258,7 @@
 				codex
 				colima
 				coreutils
+				crunchyroll-tui
 				discord
 				dive
 				docker
@@ -559,6 +604,12 @@
 			# (or `monero-update -c` to just check). See ~/.files/bin/bin/monero-update.
 
 			nix = {
+				gc = {
+					automatic = true;
+					interval = [{ Hour = 3; Minute = 15; }];
+					options = "--delete-older-than 30d";
+				};
+
 				linux-builder = {
 					enable = true;
 					package = pkgs.darwin.linux-builder-vz;

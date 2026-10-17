@@ -1,0 +1,121 @@
+diff --git a/README.md b/README.md
+index 186ee38..4e0e24e 100644
+--- a/README.md
++++ b/README.md
+@@ -627,0 +628 @@ Notes:
++- On macOS, FFmpeg feeds mpv through standard input to avoid a named-pipe playback stall. Use the mpv window for playback keys; terminal stdin carries the video.
+diff --git a/src/play.rs b/src/play.rs
+index e6dd4f2..7e80bfc 100644
+--- a/src/play.rs
++++ b/src/play.rs
+@@ -25,0 +26 @@ pub struct LivePipes {
++    #[cfg(not(target_os = "macos"))]
+@@ -108,2 +109,6 @@ impl LivePipes {
+-        let stream = directory.path().join("stream.mkv");
+-        make_fifo(&stream)?;
++        #[cfg(not(target_os = "macos"))]
++        let stream = {
++            let stream = directory.path().join("stream.mkv");
++            make_fifo(&stream)?;
++            stream
++        };
+@@ -111,0 +117 @@ impl LivePipes {
++            #[cfg(not(target_os = "macos"))]
+@@ -378,2 +384,2 @@ pub struct Playback<'a> {
+-/// ffmpeg writes into a pipe rather than mpv's stdin so that mpv keeps the terminal and
+-/// its keyboard bindings still work.
++/// On macOS, use an anonymous pipe: mpv's polling of a named FIFO can stall while
++/// ffmpeg blocks writing to it. Other systems retain terminal input through a FIFO.
+@@ -395 +400,0 @@ pub fn play(
+-        .arg(&pipes.stream)
+@@ -397,0 +403,4 @@ pub fn play(
++    #[cfg(target_os = "macos")]
++    ffmpeg.arg("pipe:1").stdout(Stdio::piped());
++    #[cfg(not(target_os = "macos"))]
++    ffmpeg.arg(&pipes.stream);
+@@ -433 +442,13 @@ pub fn play(
+-    mpv.args(playback.mpv_args).arg(&pipes.stream);
++    mpv.args(playback.mpv_args);
++    #[cfg(target_os = "macos")]
++    {
++        let stream = ffmpeg
++            .lock()
++            .expect("ffmpeg poisoned")
++            .stdout
++            .take()
++            .context("open ffmpeg output pipe")?;
++        mpv.stdin(Stdio::from(stream)).arg("-");
++    }
++    #[cfg(not(target_os = "macos"))]
++    mpv.arg(&pipes.stream);
+@@ -485,0 +507,70 @@ mod tests {
++    /// Exercises the real ffmpeg -> mpv handoff without an account or DRM device.
++    /// Run with: cargo test --release plays_a_generated_video -- --ignored
++    #[test]
++    #[ignore = "requires ffmpeg and mpv in PATH"]
++    fn plays_a_generated_video() {
++        let directory = tempfile::tempdir().unwrap();
++        let video = directory.path().join("video.mkv");
++        let status = Command::new("ffmpeg")
++            .args([
++                "-nostdin",
++                "-hide_banner",
++                "-loglevel",
++                "error",
++                "-y",
++                "-f",
++                "lavfi",
++                "-i",
++                "testsrc2=size=320x240:rate=25",
++                "-t",
++                "2",
++                "-c:v",
++                "ffv1",
++            ])
++            .arg(&video)
++            .status()
++            .expect("run ffmpeg");
++        assert!(status.success());
++
++        // A timer also fires if opening the media stalls, so a broken handoff
++        // fails instead of hanging the test. Require a decoded frame, not merely
++        // a successful mpv exit. No window or sound is needed.
++        let script = directory.path().join("check.lua");
++        std::fs::write(
++            &script,
++            r#"
++local passed = false
++mp.observe_property("time-pos", "number", function(_, position)
++    if position and position > 0 then
++        passed = true
++        mp.commandv("quit", "0")
++    end
++end)
++mp.add_timeout(5, function()
++    if not passed then mp.commandv("quit", "1") end
++end)
++"#,
++        )
++        .unwrap();
++        let args = vec![
++            "--no-config".into(),
++            "--vo=null".into(),
++            "--ao=null".into(),
++            format!("--script={}", script.display()),
++        ];
++        let pipes = LivePipes::new(0).unwrap();
++        play(
++            &pipes,
++            &track(video),
++            &[],
++            &[],
++            &EpisodeInfo::default(),
++            &Playback {
++                mpv_args: &args,
++                start_at: None,
++                playhead: None,
++            },
++        )
++        .expect("mpv must decode the generated video before the timeout");
++    }
++
