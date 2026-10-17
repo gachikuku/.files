@@ -65,6 +65,7 @@
 			nixpkgs.overlays = [
 				(final: prev: {
 					crunchyroll-tui = final.callPackage ./packages/crunchyroll-tui { };
+					kino = final.callPackage ./packages/kino { };
 
 					codex = final.stdenvNoCC.mkDerivation {
 						pname = "codex";
@@ -259,6 +260,7 @@
 				colima
 				coreutils
 				crunchyroll-tui
+				kino
 				discord
 				dive
 				docker

@@ -1,0 +1,190 @@
+diff --git a/README.md b/README.md
+index 4e0e24e..0476e1e 100644
+--- a/README.md
++++ b/README.md
+@@ -614,6 +614,5 @@ whatever its position says.
+-Resuming is not instant. The stream is a named pipe and cannot be seeked, so `--start=` is
+-a forward seek mpv serves by reading through its demuxer cache. It lands in the right
+-place, but a long jump has the whole of the episode up to that point to read through
+-first, at the speed the segments come down. Dropping those segments at the source is what
+-would make it instant, and that is a larger change than this one - it reaches into the
+-DASH segment loop and the decryption path either side of it.
++Resuming is not instant. The live stream cannot be seeked: FFmpeg reads and discards
++its prefix before handing the remaining audio and video to mpv. This still transfers
++the earlier portion, without saving an episode file. The original timestamps are kept,
++so the player clock and subsequent progress reports stay on the episode's timeline.
++Playback starts at the next available video keyframe near the saved position.
+diff --git a/src/play.rs b/src/play.rs
+index 7e80bfc..a9738d6 100644
+--- a/src/play.rs
++++ b/src/play.rs
+@@ -394,0 +395,11 @@ pub fn play(
++    if let Some(seconds) = playback.start_at {
++        // Output-side seeking reads and discards the prefix even when the inputs
++        // are pipes. Keep episode timestamps so mpv reports the absolute position
++        // and audio/subtitles stay on the same timeline after resuming.
++        ffmpeg.args([
++            "-ss",
++            &seconds.to_string(),
++            "-output_ts_offset",
++            &seconds.to_string(),
++        ]);
++    }
+@@ -426,8 +437,4 @@ pub fn play(
+-    if let Some(seconds) = playback.start_at {
+-        // Not a seek, whatever it looks like: the stream is a named pipe and cannot be
+-        // seeked, so mpv serves this by reading forward through its demuxer cache until
+-        // it arrives. It lands in the right place, but a long jump into an episode is not
+-        // instant. Dropping the leading segments at the source is what would make it
+-        // instant, and that reaches into the DASH segment loop and the decryption path
+-        // either side of it - a larger change than this one.
+-        mpv.arg(format!("--start={seconds}"));
++    if playback.start_at.is_some() {
++        // ffmpeg already skipped to the saved point. mpv cannot seek its input pipe;
++        // rebasing this stream to zero would also overwrite the next saved position.
++        mpv.arg("--rebase-start-time=no");
+@@ -576,0 +584,144 @@ end)
++    /// Closing a streamed episode must save its position and reopening must start there.
++    #[test]
++    #[ignore = "requires ffmpeg and mpv in PATH"]
++    fn streamed_episode_saves_and_resumes() {
++        let directory = tempfile::tempdir().unwrap();
++        let video = directory.path().join("episode.mkv");
++        assert!(
++            Command::new("ffmpeg")
++                .args([
++                    "-nostdin",
++                    "-hide_banner",
++                    "-loglevel",
++                    "error",
++                    "-y",
++                    "-f",
++                    "lavfi",
++                    "-i",
++                    "testsrc2=size=160x90:rate=10",
++                    "-f",
++                    "lavfi",
++                    "-i",
++                    "sine=frequency=440:sample_rate=48000",
++                    "-t",
++                    "120",
++                    "-c:v",
++                    "ffv1",
++                    "-c:a",
++                    "pcm_s16le"
++                ])
++                .arg(&video)
++                .status()
++                .unwrap()
++                .success()
++        );
++        let saved = Mutex::new(None);
++        let report = |seconds| *saved.lock().unwrap() = Some(seconds);
++        let script = directory.path().join("stop.lua");
++        std::fs::write(
++            &script,
++            r#"
++local stopping = false
++mp.observe_property("time-pos", "number", function(_, position)
++    if position and position >= 45 and not stopping then
++        stopping = true
++        mp.set_property_native("pause", true)
++        mp.add_timeout(2, function() mp.commandv("quit", "0") end)
++    end
++end)
++mp.add_timeout(8, function() mp.commandv("quit", "1") end)
++"#,
++        )
++        .unwrap();
++        let mut args = vec![
++            "--no-config".into(),
++            "--vo=null".into(),
++            "--ao=null".into(),
++            "--speed=50".into(),
++            "--demuxer-max-bytes=256KiB".into(),
++            "--demuxer-max-back-bytes=0".into(),
++            format!("--script={}", script.display()),
++        ];
++        play(
++            &LivePipes::new(0).unwrap(),
++            &track(video.clone()),
++            &[track(video.clone())],
++            &[],
++            &EpisodeInfo::default(),
++            &Playback {
++                mpv_args: &args,
++                start_at: None,
++                playhead: Some(&report),
++            },
++        )
++        .expect("first playback must close normally");
++        let saved = saved
++            .into_inner()
++            .unwrap()
++            .expect("closing mpv must report a position");
++        assert!(
++            saved >= 45,
++            "saved {saved}, expected the point where playback stopped"
++        );
++        let start_at = resume_at(saved, 120_000, false);
++        assert_eq!(start_at, Some(saved));
++        let resumed = directory.path().join("resumed.txt");
++        std::fs::write(
++            &script,
++            format!(
++                r#"
++local recorded = false
++local stopping = false
++mp.observe_property("time-pos", "number", function(_, position)
++    if position and position > 0 and not recorded then
++        recorded = true
++        local f = assert(io.open({path:?}, "w"))
++        f:write(tostring(position))
++        f:close()
++    end
++    if position and position >= {stop_at} and not stopping then
++        stopping = true
++        mp.set_property_native("pause", true)
++        mp.add_timeout(2, function() mp.commandv("quit", "0") end)
++    end
++end)
++mp.add_timeout(8, function() mp.commandv("quit", "1") end)
++"#,
++                path = resumed.to_str().unwrap(),
++                stop_at = saved + 5
++            ),
++        )
++        .unwrap();
++        args.retain(|arg| !arg.starts_with("--speed="));
++        args.push("--speed=10".into());
++        let saved_again = Mutex::new(None);
++        let report_again = |seconds| *saved_again.lock().unwrap() = Some(seconds);
++        play(
++            &LivePipes::new(0).unwrap(),
++            &track(video.clone()),
++            &[track(video)],
++            &[],
++            &EpisodeInfo::default(),
++            &Playback {
++                mpv_args: &args,
++                start_at,
++                playhead: Some(&report_again),
++            },
++        )
++        .expect("resumed playback must open normally");
++        let actual: f64 = std::fs::read_to_string(resumed).unwrap().parse().unwrap();
++        assert!(
++            (f64::from(saved) - 1.0..=f64::from(saved) + 2.0).contains(&actual),
++            "reopened at {actual}s instead of the saved {saved}s"
++        );
++        let saved_again = saved_again
++            .into_inner()
++            .unwrap()
++            .expect("resumed playback reports progress");
++        assert!(
++            (saved + 5..=saved + 8).contains(&saved_again),
++            "resumed position {saved_again} must stay on the original episode timeline"
++        );
++        eprintln!("saved {saved}s; reopened at {actual}s; saved again at {saved_again}s");
++    }
++

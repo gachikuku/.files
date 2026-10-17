@@ -2,7 +2,7 @@
 
 rustPlatform.buildRustPackage {
   pname = "crunchyroll-tui";
-  version = "0.1.0-unstable-2026-09-24";
+  version = "0.1.0-unstable-2026-10-18";
 
   src = fetchFromGitHub {
     owner = "xhaiwa";
@@ -12,7 +12,7 @@ rustPlatform.buildRustPackage {
   };
 
   cargoLock.lockFile = ./Cargo.lock;
-  patches = [ ./macos-mpv-pipe.patch ];
+  patches = [ ./macos-mpv-pipe.patch ./resume-stream.patch ];
   nativeBuildInputs = [ makeWrapper ];
 
   postInstall = ''
