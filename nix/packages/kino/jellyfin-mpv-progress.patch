@@ -1,0 +1,536 @@
+diff --git a/README.md b/README.md
+index c8c41ce..080bb1b 100644
+--- a/README.md
++++ b/README.md
+@@ -62,0 +63,8 @@ You'll be prompted to enter your server URL. Kino automatically detects whether
++### Jellyfin playback progress
++
++With native mpv on macOS or Linux, Kino saves playback progress to Jellyfin every
++five seconds, when pausing, and when mpv closes. Keep Kino running while watching.
++Enter fetches the latest saved position before playing, even if the library view
++has older data; `p` starts from the beginning. Jellyfin's configured minimum and
++maximum resume percentages still apply.
++
+diff --git a/internal/domain/playback.go b/internal/domain/playback.go
+new file mode 100644
+index 0000000..ebb589c
+--- /dev/null
++++ b/internal/domain/playback.go
+@@ -0,0 +1,18 @@
++package domain
++
++import "time"
++
++// PlaybackEvent reports the player's observed state on the media timeline.
++type PlaybackEvent struct {
++	Kind     PlaybackEventKind
++	Position time.Duration
++	Paused   bool
++}
++
++type PlaybackEventKind int
++
++const (
++	PlaybackStarted PlaybackEventKind = iota
++	PlaybackProgress
++	PlaybackStopped
++)
+diff --git a/internal/mediaserver/jellyfin/playback.go b/internal/mediaserver/jellyfin/playback.go
+new file mode 100644
+index 0000000..4688f0e
+--- /dev/null
++++ b/internal/mediaserver/jellyfin/playback.go
+@@ -0,0 +1,47 @@
++package jellyfin
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"net/http"
++	"net/url"
++	"time"
++
++	"github.com/mmcdole/kino/internal/domain"
++)
++
++// PlaybackPosition bypasses the catalog cache so reopening an episode uses the
++// position the last player saved, including playback on another device.
++func (c *Client) PlaybackPosition(ctx context.Context, id string) (time.Duration, error) {
++	body, err := c.get(ctx, fmt.Sprintf("/Users/%s/Items/%s", url.PathEscape(c.userID), url.PathEscape(id)), nil)
++	if err != nil {
++		return 0, err
++	}
++	var item Item
++	if err := json.Unmarshal(body, &item); err != nil {
++		return 0, err
++	}
++	if item.UserData == nil || item.UserData.Played {
++		return 0, nil
++	}
++	return ticksToDuration(item.UserData.PlaybackPositionTicks), nil
++}
++
++func (c *Client) ReportPlayback(ctx context.Context, id string, event domain.PlaybackEvent) error {
++	endpoint := "/Sessions/Playing"
++	switch event.Kind {
++	case domain.PlaybackStarted:
++	case domain.PlaybackProgress:
++		endpoint += "/Progress"
++	case domain.PlaybackStopped:
++		endpoint += "/Stopped"
++	default:
++		return fmt.Errorf("unknown playback event: %d", event.Kind)
++	}
++	_, err := c.send(ctx, http.MethodPost, endpoint, nil, map[string]any{
++		"ItemId": id, "PositionTicks": int64(event.Position / (100 * time.Nanosecond)),
++		"IsPaused": event.Paused, "CanSeek": true, "PlayMethod": "DirectPlay",
++	})
++	return err
++}
+diff --git a/internal/player/mpv.go b/internal/player/mpv.go
+new file mode 100644
+index 0000000..80df767
+--- /dev/null
++++ b/internal/player/mpv.go
+@@ -0,0 +1,140 @@
++package player
++
++import (
++	"bufio"
++	"context"
++	"encoding/json"
++	"math"
++	"net"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"time"
++
++	"github.com/mmcdole/kino/internal/domain"
++)
++
++// launchTracked handles native mpv; other players keep their existing launcher.
++// Tracking belongs to the player process, not the short-lived TUI launch request.
++func (l *Launcher) launchTracked(ctx context.Context, url string, offset time.Duration, report func(domain.PlaybackEvent)) (bool, error) {
++	if runtime.GOOS == "windows" {
++		return false, nil
++	}
++	binary := l.command
++	if binary == "" {
++		found, ok := l.detectPlayer(ctx)
++		if !ok {
++			return false, nil
++		}
++		binary = found.Executable
++	}
++	if !strings.EqualFold(executableName(binary), "mpv") {
++		return false, nil
++	}
++	if err := ctx.Err(); err != nil {
++		return true, err
++	}
++	dir, err := os.MkdirTemp("", "kino-mpv-")
++	if err != nil {
++		return true, err
++	}
++	socket := filepath.Join(dir, "ipc")
++	args := append([]string{}, l.args...)
++	seek := l.seekFlag
++	if seek == "" {
++		seek = "--start=%d"
++	}
++	args = append(args, formatSeekArgs(seek, int(offset.Seconds()))...)
++	args = append(args, "--input-ipc-server="+socket, url)
++	cmd := exec.Command(binary, args...)
++	if err := cmd.Start(); err != nil {
++		os.RemoveAll(dir)
++		return true, err
++	}
++	done := make(chan struct{})
++	go func() { _ = cmd.Wait(); close(done) }()
++	go func() {
++		defer os.RemoveAll(dir)
++		followMPV(socket, done, report)
++	}()
++	return true, nil
++}
++
++// followMPV retains the last observed time when mpv closes its IPC socket. No
++// position is written when opening fails, and invalid/null samples are ignored.
++func followMPV(socket string, done <-chan struct{}, report func(domain.PlaybackEvent)) {
++	var conn net.Conn
++	deadline := time.Now().Add(10 * time.Second)
++	for time.Now().Before(deadline) {
++		var err error
++		conn, err = net.DialTimeout("unix", socket, 100*time.Millisecond)
++		if err == nil {
++			break
++		}
++		select {
++		case <-done:
++			return
++		case <-time.After(50 * time.Millisecond):
++		}
++	}
++	if conn == nil {
++		return
++	}
++	defer conn.Close()
++	commands := []string{`{"command":["observe_property",1,"time-pos"]}`, `{"command":["observe_property",2,"pause"]}`}
++	for _, command := range commands {
++		if _, err := conn.Write([]byte(command + "\n")); err != nil {
++			return
++		}
++	}
++	scanner := bufio.NewScanner(conn)
++	var latest domain.PlaybackEvent
++	observed := false
++	lastReport := time.Now()
++	for scanner.Scan() {
++		var event struct {
++			Event, Name string
++			Data        json.RawMessage
++		}
++		if json.Unmarshal(scanner.Bytes(), &event) != nil || event.Event != "property-change" {
++			continue
++		}
++		pauseChanged := false
++		switch event.Name {
++		case "time-pos":
++			var seconds *float64
++			if json.Unmarshal(event.Data, &seconds) != nil || seconds == nil || math.IsNaN(*seconds) || math.IsInf(*seconds, 0) || *seconds < 0 || *seconds > float64(math.MaxInt64)/float64(time.Second) {
++				continue
++			}
++			latest.Position = time.Duration(*seconds * float64(time.Second))
++		case "pause":
++			var paused *bool
++			if json.Unmarshal(event.Data, &paused) != nil || paused == nil {
++				continue
++			}
++			pauseChanged = latest.Paused != *paused
++			latest.Paused = *paused
++			if !observed {
++				continue
++			}
++		default:
++			continue
++		}
++		if !observed {
++			observed = true
++			latest.Kind = domain.PlaybackStarted
++			report(latest)
++			lastReport = time.Now()
++		} else if pauseChanged || time.Since(lastReport) >= 5*time.Second {
++			latest.Kind = domain.PlaybackProgress
++			report(latest)
++			lastReport = time.Now()
++		}
++	}
++	if observed {
++		latest.Kind = domain.PlaybackStopped
++		report(latest)
++	}
++}
+diff --git a/internal/player/mpv_test.go b/internal/player/mpv_test.go
+new file mode 100644
+index 0000000..8345c40
+--- /dev/null
++++ b/internal/player/mpv_test.go
+@@ -0,0 +1,97 @@
++package player
++
++import (
++	"bufio"
++	"net"
++	"os"
++	"path/filepath"
++	"runtime"
++	"testing"
++	"time"
++
++	"github.com/mmcdole/kino/internal/domain"
++)
++
++func TestMPVDoesNotReplaceBookmarkWithoutValidPosition(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("Unix IPC")
++	}
++	// macOS limits Unix socket paths; t.TempDir includes the long test name.
++	dir, err := os.MkdirTemp("", "kino-ipc-test-")
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { os.RemoveAll(dir) })
++	socket := filepath.Join(dir, "ipc")
++	listener, err := net.Listen("unix", socket)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer listener.Close()
++	go func() {
++		c, err := listener.Accept()
++		if err != nil {
++			return
++		}
++		defer c.Close()
++		reader := bufio.NewReader(c)
++		for range 2 {
++			if _, err := reader.ReadString('\n'); err != nil {
++				return
++			}
++		}
++		c.Write([]byte("{\"event\":\"property-change\",\"name\":\"pause\",\"data\":false}\n" +
++			"{\"event\":\"property-change\",\"name\":\"time-pos\",\"data\":null}\n" +
++			"{\"event\":\"property-change\",\"name\":\"time-pos\",\"data\":-1}\n"))
++	}()
++	called := false
++	followMPV(socket, make(chan struct{}), func(domain.PlaybackEvent) { called = true })
++	if called {
++		t.Fatal("failed playback must not overwrite the bookmark")
++	}
++}
++
++func TestMPVReportsBackwardSeekAndPauseBeforeClose(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("Unix IPC")
++	}
++	// macOS limits Unix socket paths; t.TempDir includes the long test name.
++	dir, err := os.MkdirTemp("", "kino-ipc-test-")
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { os.RemoveAll(dir) })
++	socket := filepath.Join(dir, "ipc")
++	listener, err := net.Listen("unix", socket)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer listener.Close()
++	go func() {
++		c, err := listener.Accept()
++		if err != nil {
++			return
++		}
++		defer c.Close()
++		reader := bufio.NewReader(c)
++		for range 2 {
++			if _, err := reader.ReadString('\n'); err != nil {
++				return
++			}
++		}
++		c.Write([]byte("{\"event\":\"property-change\",\"name\":\"time-pos\",\"data\":90}\n" +
++			"{\"event\":\"property-change\",\"name\":\"time-pos\",\"data\":60}\n" +
++			"{\"event\":\"property-change\",\"name\":\"pause\",\"data\":true}\n"))
++	}()
++	var events []domain.PlaybackEvent
++	followMPV(socket, make(chan struct{}), func(e domain.PlaybackEvent) { events = append(events, e) })
++	if len(events) != 3 {
++		t.Fatalf("expected start, pause and stop; got %v", events)
++	}
++	if events[1].Kind != domain.PlaybackProgress || !events[1].Paused || events[1].Position != 60*time.Second {
++		t.Fatalf("pause did not save backward seek: %+v", events[1])
++	}
++	if events[2].Kind != domain.PlaybackStopped || events[2].Position != 60*time.Second {
++		t.Fatalf("close did not save latest position: %+v", events[2])
++	}
++}
+diff --git a/internal/player/resume_integration_test.go b/internal/player/resume_integration_test.go
+new file mode 100644
+index 0000000..f87f22d
+--- /dev/null
++++ b/internal/player/resume_integration_test.go
+@@ -0,0 +1,132 @@
++package player_test
++
++import (
++	"context"
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
++	"strconv"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/mmcdole/kino/internal/domain"
++	"github.com/mmcdole/kino/internal/mediaserver/jellyfin"
++	"github.com/mmcdole/kino/internal/player"
++)
++
++// Exercises the actual service, Jellyfin HTTP client and mpv process together.
++func TestMPVCloseSavesAndReopensJellyfinEpisode(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("native Unix mpv tracking")
++	}
++	for _, binary := range []string{"ffmpeg", "mpv"} {
++		if _, err := exec.LookPath(binary); err != nil {
++			t.Skip(binary + " required")
++		}
++	}
++	dir := t.TempDir()
++	video := filepath.Join(dir, "episode.mkv")
++	if out, err := exec.Command("ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc2=size=160x90:rate=10", "-t", "90", "-c:v", "ffv1", video).CombinedOutput(); err != nil {
++		t.Fatalf("fixture: %v %s", err, out)
++	}
++	var mu sync.Mutex
++	saved := int64(45 * time.Second / (100 * time.Nanosecond))
++	stopped := make(chan int64, 4)
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case strings.HasSuffix(r.URL.Path, "PlaybackInfo"):
++			w.Write([]byte(`{"MediaSources":[{"Container":"mkv"}]}`))
++		case strings.HasPrefix(r.URL.Path, "/Videos/"):
++			http.ServeFile(w, r, video)
++		case r.URL.Path == "/Users/user1/Items/ep":
++			mu.Lock()
++			defer mu.Unlock()
++			json.NewEncoder(w).Encode(map[string]any{"Id": "ep", "UserData": map[string]any{"PlaybackPositionTicks": saved, "Played": false}})
++		case strings.HasPrefix(r.URL.Path, "/Sessions/Playing"):
++			var data struct {
++				PositionTicks int64
++				ItemID        string
++			}
++			if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
++				t.Error(err)
++			}
++			if data.ItemID != "ep" {
++				t.Errorf("wrong item: %s", data.ItemID)
++			}
++			mu.Lock()
++			saved = data.PositionTicks
++			mu.Unlock()
++			if strings.HasSuffix(r.URL.Path, "Stopped") {
++				stopped <- data.PositionTicks
++			}
++			w.WriteHeader(http.StatusNoContent)
++		default:
++			t.Errorf("unexpected route: %s", r.URL.Path)
++			w.WriteHeader(404)
++		}
++	}))
++	defer srv.Close()
++	script := filepath.Join(dir, "stop.lua")
++	first := filepath.Join(dir, "first.txt")
++	lua := `local first = true
++local stopping = false
++mp.observe_property("time-pos", "number", function(_,p)
++ if p and p>0 and first then
++  first=false
++  local f=assert(io.open(` + strconv.Quote(first) + `,"w")); f:write(tostring(p)); f:close()
++ end
++ if p and p>=48 and not stopping then
++  stopping=true; mp.set_property_native("pause",true)
++  mp.add_timeout(1,function() mp.commandv("quit") end)
++ end
++end)
++mp.add_timeout(5,function() mp.commandv("quit") end)
++`
++	if err := os.WriteFile(script, []byte(lua), 0600); err != nil {
++		t.Fatal(err)
++	}
++	launcher := player.NewLauncher("mpv", []string{"--no-config", "--vo=null", "--ao=null", "--speed=10", "--script=" + script}, "", nil)
++	client := jellyfin.NewClient(srv.URL, "token", "user1", "device", nil)
++	svc := player.NewService(launcher, client, nil)
++	item := domain.MediaItem{ID: "ep", ViewOffset: 45 * time.Second}
++	if err := svc.Resume(context.Background(), item); err != nil {
++		t.Fatal(err)
++	}
++	var checkpoint int64
++	select {
++	case checkpoint = <-stopped:
++	case <-time.After(7 * time.Second):
++		t.Fatal("closing mpv never saved the episode position to Jellyfin")
++	}
++	if checkpoint < int64(48*time.Second/(100*time.Nanosecond)) {
++		t.Fatalf("saved wrong position: %d", checkpoint)
++	}
++	// Reuse a stale catalog row: Enter must ask Jellyfin for the new position.
++	if err := svc.Resume(context.Background(), item); err != nil {
++		t.Fatal(err)
++	}
++	select {
++	case <-stopped:
++	case <-time.After(7 * time.Second):
++		t.Fatal("second playback did not save")
++	}
++	data, err := os.ReadFile(first)
++	if err != nil {
++		t.Fatal(err)
++	}
++	actual, err := strconv.ParseFloat(string(data), 64)
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := float64(checkpoint) / 1e7
++	if actual < want-0.2 || actual > want+1 {
++		t.Fatalf("reopened at %.2fs, saved %.2fs", actual, want)
++	}
++	t.Logf("saved %.2fs; reopened %.2fs", want, actual)
++}
+diff --git a/internal/player/service.go b/internal/player/service.go
+index 684088e..a0a9a28 100644
+--- a/internal/player/service.go
++++ b/internal/player/service.go
+@@ -15,0 +16,6 @@ type URLResolver interface {
++// PlaybackReporter is optional; backends without it retain launch-only playback.
++type PlaybackReporter interface {
++	PlaybackPosition(context.Context, string) (time.Duration, error)
++	ReportPlayback(context.Context, string, domain.PlaybackEvent) error
++}
++
+@@ -37 +43 @@ func (s *Service) Play(ctx context.Context, item domain.MediaItem) error {
+-	return s.playItem(ctx, item, 0)
++	return s.playItem(ctx, item, false)
+@@ -42 +48 @@ func (s *Service) Resume(ctx context.Context, item domain.MediaItem) error {
+-	return s.playItem(ctx, item, item.ViewOffset)
++	return s.playItem(ctx, item, true)
+@@ -46 +52 @@ func (s *Service) Resume(ctx context.Context, item domain.MediaItem) error {
+-func (s *Service) playItem(ctx context.Context, item domain.MediaItem, offset time.Duration) error {
++func (s *Service) playItem(ctx context.Context, item domain.MediaItem, resume bool) error {
+@@ -48,0 +55,15 @@ func (s *Service) playItem(ctx context.Context, item domain.MediaItem, offset ti
++	var offset time.Duration
++	reporter, tracks := s.playback.(PlaybackReporter)
++	if resume {
++		if item.ShouldResume() {
++			offset = item.ViewOffset
++		}
++		if tracks {
++			current, err := reporter.PlaybackPosition(ctx, item.ID)
++			if err != nil {
++				s.logger.Warn("could not refresh playback position", "itemID", item.ID, "error", err)
++			} else {
++				offset = current
++			}
++		}
++	}
+@@ -59,0 +81,12 @@ func (s *Service) playItem(ctx context.Context, item domain.MediaItem, offset ti
++	if tracks {
++		handled, err := s.launcher.launchTracked(ctx, url, offset, func(event domain.PlaybackEvent) {
++			reportCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++			defer cancel()
++			if err := reporter.ReportPlayback(reportCtx, item.ID, event); err != nil {
++				s.logger.Warn("could not save playback progress", "itemID", item.ID, "error", err)
++			}
++		})
++		if handled {
++			return err
++		}
++	}
+diff --git a/internal/tui/input.go b/internal/tui/input.go
+index 0ca4bcd..228665d 100644
+--- a/internal/tui/input.go
++++ b/internal/tui/input.go
+@@ -168 +168 @@ func (m *Model) handleDrillIn() tea.Cmd {
+-				m.beginPlayback(*item, item.ShouldResume()),
++				m.beginPlayback(*item, true),
+@@ -189 +189 @@ func (m *Model) handleEnter() tea.Cmd {
+-			m.beginPlayback(*item, item.ShouldResume()),
++			m.beginPlayback(*item, true),

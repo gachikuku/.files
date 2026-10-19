@@ -2,7 +2,7 @@
 
 buildGoModule rec {
   pname = "kino";
-  version = "0-unstable-2026-09-24";
+  version = "0-unstable-2026-10-18";
 
   src = fetchFromGitHub {
     owner = "mmcdole";
@@ -12,6 +12,7 @@ buildGoModule rec {
   };
 
   vendorHash = "sha256-XNuGyFn1NEfffKA19NhMeXWRpSnoWp17NTlL2m1xqW0=";
+  patches = [ ./jellyfin-mpv-progress.patch ];
   subPackages = [ "cmd/kino" ];
   ldflags = [ "-s" "-w" "-X main.Version=${version}" ];
   nativeBuildInputs = [ makeWrapper ];

@@ -17,6 +17,26 @@
         "type": "github"
       }
     },
+    "fast-resume": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792244370,
+        "narHash": "sha256-J8KCli0q7BiUU1eXbbWfkYWvKaNgMY0GtfG+nwb8qOg=",
+        "owner": "angristan",
+        "repo": "fast-resume",
+        "rev": "cebea9fb2d3a60315c1e5889485f11cd0bbf49e2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "angristan",
+        "repo": "fast-resume",
+        "type": "github"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -73,6 +93,7 @@
     },
     "root": {
       "inputs": {
+        "fast-resume": "fast-resume",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs"

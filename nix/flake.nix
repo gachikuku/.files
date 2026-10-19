@@ -6,9 +6,11 @@
 		nix-darwin.url = "github:LnL7/nix-darwin";
 		nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 		nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+		fast-resume.url = "github:angristan/fast-resume";
+		fast-resume.inputs.nixpkgs.follows = "nixpkgs";
 	};
 
-	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }: let
+	outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, ... }: let
 		username = "gachikuku";
 
 		# Run ./update-codex --switch to pin GitHub's Latest release and rebuild.
@@ -65,6 +67,17 @@
 			nixpkgs.overlays = [
 				(final: prev: {
 					crunchyroll-tui = final.callPackage ./packages/crunchyroll-tui { };
+					fast-resume = inputs.fast-resume.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+						# ID search, chat previews, and main-session Codex resumes.
+						src = inputs.fast-resume.outPath;
+						patches = (old.patches or [ ]) ++ [ ./packages/fast-resume/fuzzy-session-ids.patch ];
+						nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.makeBinaryWrapper ];
+						postFixup = (old.postFixup or "") + ''
+							# Use light colors without terminal capability probes on startup.
+							wrapProgram "$out/bin/fr" --set-default FAST_RESUME_NO_IMAGES true \
+								--set-default FAST_RESUME_THEME light
+						'';
+					});
 					kino = final.callPackage ./packages/kino { };
 
 					codex = final.stdenvNoCC.mkDerivation {
@@ -268,6 +281,7 @@
 				entr
 				exiftool
 				omp
+				fast-resume
 				fd
 				feroxbuster
 				ffmpeg

@@ -1,0 +1,2182 @@
+diff --git a/docs/how-it-works.md b/docs/how-it-works.md
+index 9d7ec91..18e2ac1 100644
+--- a/docs/how-it-works.md
++++ b/docs/how-it-works.md
+@@ -20,7 +20,7 @@ Each adapter maps an agent-specific format into the shared `Session` model.
+ | --- | --- | --- |
+ | Antigravity CLI | `~/.gemini/antigravity-cli/conversations/<id>.db` or `brain/<id>/.system_generated/logs/*.jsonl` | Reads native protobuf-backed SQLite conversations with WAL support, falls back to generated transcripts, and excludes tool results |
+ | Claude Code | `~/.claude/projects/<project>/*.jsonl`, title sidecars, and `sessions-index.json` | Reads user and assistant entries, prefers explicit custom titles, and skips agent subprocess files |
+-| Codex | `~/.codex/sessions/**/*.jsonl` | Reads `session_meta`, `response_item`, and `event_msg` records |
++| Codex | `~/.codex/sessions/**/*.jsonl` | Projects user messages and visible assistant replies into chat, excluding injected context, reasoning, tool payloads, and mirrored records; excludes subagents using read-only state metadata or bounded rollout headers |
+ | Copilot CLI | `~/.copilot/session-state/**/*.jsonl` | Reads session identity, user messages, assistant messages, and titles |
+ | Copilot in VS Code | VS Code chat-session JSON | Reads request text, response values, and workspace references |
+ | Crush | Per-project SQLite database | Queries sessions and messages and parses JSON message parts |
+@@ -47,6 +47,7 @@ pub struct Session {
+     pub message_count: usize,
+     pub mtime: f64,
+     pub yolo: bool,
++    pub forked_from_id: Option<String>,
+ }
+ ```
+ 
+@@ -139,6 +140,8 @@ Each adapter returns the command needed to continue its session:
+ 
+ `exec()` replaces fast-resume with the agent process, and the agent receives the session's working directory.
+ 
++Codex selections left in an older cache are checked against the current parent metadata before resume. Nested subagents resolve to their main session; `--cd` preserves the main session's working directory when it differs. Missing or cyclic parent chains produce no resume command. Regular forks remain independent sessions.
++
+ ## Performance
+ 
+ fast-resume avoids a full parse on ordinary launches:
+diff --git a/docs/usage.md b/docs/usage.md
+index 993bfd6..cb1a3a1 100644
+--- a/docs/usage.md
++++ b/docs/usage.md
+@@ -18,6 +18,25 @@ fr -a codex -d backend "api error"
+ 
+ Free text searches titles, conversation content, and bounded single-token directory/path matches. Exact matches are boosted, while fuzzy matching keeps common typos useful.
+ 
++Emoji such as `💎` are searchable in titles and chat content using the same cached index. Compound emoji match their exact sequence, including skin tones and variation selectors.
++
++To find a session by ID, paste its full ID or type a fragment into the same search box. A single token of 3–64 characters also matches IDs case-insensitively, including characters appearing in order with gaps, as in fzf. Full IDs receive a stronger boost than contiguous fragments, which receive a stronger boost than scattered matches. Very long or complex fragments can fall back to full or contiguous matching. ID searches keep the conversation preview and work with the filters below.
++
++Results show a Session ID column. Narrow layouts abbreviate IDs; the conversation preview header shows the full ID.
++
++Codex rows also show `Original` or `Fork` in the Type column. A fork's preview shows `Fork of:` with the immediate source session ID, which you can paste into search to find that conversation. Forks remain independent sessions and resume under their own IDs. This metadata is cached with the index, so showing it does not read session files while you search.
++
++With the preview open, the session list shows five rows above a larger, full-width chat preview. Arrow keys scroll through every matching session; Page Up and Page Down move five sessions at a time. Ctrl-P hides the preview and expands the list. Very short terminals show fewer rows to keep the preview usable.
++
++Codex previews show the chat: your messages and visible assistant replies. Injected `AGENTS.md` instructions, environment context, internal reasoning, tool payloads, and mirrored log records are excluded from previews and content searches. Installing this version refreshes the cached content once; ordinary searches still use the index.
++
++Codex results show main sessions and regular forks. Subagent threads disappear on the next refresh. Selecting a subagent left in an older cache resumes its main session in the main session's directory, following nested parents when needed. If its parent chain is missing or cyclic, resume is unavailable.
++
++```bash
++fr 019abcde-1234-5678-9abc-def012345678
++fr "agent:codex 9abc"
++```
++
+ ## Search filters
+ 
+ Filters work in the initial query and directly in the TUI search box.
+@@ -73,6 +92,8 @@ fr --theme dark
+ FAST_RESUME_THEME=light fr
+ ```
+ 
++Set `FAST_RESUME_NO_IMAGES=true` to skip terminal image probing by default. Explicit `--no-images` remains supported; use `FAST_RESUME_NO_IMAGES=false fr --images` to enable images again.
++
+ The command-line option takes precedence over `FAST_RESUME_THEME`. Automatic detection falls back to the dark theme when the terminal does not report its background color.
+ 
+ ## Non-interactive commands
+diff --git a/src/adapters/codex.rs b/src/adapters/codex.rs
+index 755c5a6..f24dba8 100644
+--- a/src/adapters/codex.rs
++++ b/src/adapters/codex.rs
+@@ -1,18 +1,19 @@
+-use std::collections::HashMap;
++use std::collections::{HashMap, HashSet};
+ use std::fs;
+-use std::io::{BufRead, BufReader};
++use std::io::{BufRead, BufReader, Read};
+ use std::path::{Path, PathBuf};
+ 
+-use serde_json::Value;
++use rusqlite::{Connection, OpenFlags};
++use serde_json::{Value, json};
+ use walkdir::WalkDir;
+ 
+ use crate::config;
+ use crate::model::{RawAdapterStats, Session, file_mtime_seconds, file_timestamp, truncate_title};
+ 
+ use super::shared::{
+-    SessionFileScan, build_resume_command, codex_session_id_from_path, content_texts,
+-    fallback_session_id, incremental_parse_jsonl, incremental_scan, parse_timestamp_seconds,
+-    raw_stats_for_tree, string_at,
++    SessionFileScan, build_resume_command, codex_session_id_from_path, fallback_session_id,
++    incremental_parse_jsonl, incremental_scan, parse_timestamp_seconds, raw_stats_for_tree,
++    string_at,
+ };
+ use super::{Adapter, IncrementalScan, KnownSessions, SessionCallback};
+ 
+@@ -32,6 +33,98 @@ impl Default for CodexAdapter {
+ }
+ 
+ impl CodexAdapter {
++    fn state_database(&self) -> Option<Connection> {
++        let path = fs::read_dir(self.sessions_dir.parent()?)
++            .ok()?
++            .filter_map(Result::ok)
++            .filter_map(|entry| {
++                let name = entry.file_name();
++                let version = name
++                    .to_str()?
++                    .strip_prefix("state_")?
++                    .strip_suffix(".sqlite")?
++                    .parse::<u64>()
++                    .ok()?;
++                Some((version, entry.path()))
++            })
++            .max_by_key(|(version, _)| *version)?
++            .1;
++        Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY).ok()
++    }
++
++    fn thread_metadata(
++        &self,
++        id: &str,
++        db: Option<&Connection>,
++        path: Option<&Path>,
++    ) -> Option<Value> {
++        if let Some(db) = db {
++            let row = db
++                .query_row(
++                    "SELECT source, agent_path, cwd FROM threads WHERE id = ?1",
++                    [id],
++                    |row| {
++                        Ok((
++                            row.get::<_, String>(0)?,
++                            row.get::<_, Option<String>>(1)?,
++                            row.get::<_, String>(2)?,
++                        ))
++                    },
++                )
++                .ok();
++            let parent = db
++                .query_row(
++                    "SELECT parent_thread_id FROM thread_spawn_edges WHERE child_thread_id = ?1",
++                    [id],
++                    |row| row.get::<_, String>(0),
++                )
++                .ok();
++            if row.is_some() || parent.is_some() {
++                let (source, agent_path, cwd) = row.unwrap_or_default();
++                return Some(json!({
++                    "source": serde_json::from_str::<Value>(&source).unwrap_or(Value::String(source)),
++                    "agent_path": agent_path, "cwd": cwd, "parent_thread_id": parent,
++                }));
++            }
++        }
++        if let Some(path) = path {
++            return rollout_metadata(path);
++        }
++        // Legacy stores have no database. Find only this ID's filename and read
++        // its bounded header, never its transcript or other rollout contents.
++        let suffix = format!("-{id}");
++        WalkDir::new(&self.sessions_dir)
++            .into_iter()
++            .filter_map(Result::ok)
++            .find_map(|entry| {
++                let path = entry.path();
++                let stem = path.file_stem()?.to_str()?;
++                if path.extension()? == "jsonl" && (stem == id || stem.ends_with(&suffix)) {
++                    rollout_metadata(path)
++                } else {
++                    None
++                }
++            })
++    }
++
++    fn resume_target(&self, id: &str) -> Option<(String, String)> {
++        let db = self.state_database();
++        let mut current = id.to_string();
++        let mut seen = HashSet::new();
++        while seen.insert(current.clone()) {
++            let Some(metadata) = self.thread_metadata(&current, db.as_ref(), None) else {
++                // Preserve ordinary resume when metadata is unavailable, but
++                // never launch a known child whose main session cannot be found.
++                return (current == id).then(|| (current, String::new()));
++            };
++            if !is_subagent(&metadata) {
++                return Some((current, string_at(&metadata, &["cwd"])));
++            }
++            current = parent_thread_id(&metadata)?.to_string();
++        }
++        None
++    }
++
+     fn incremental(
+         &self,
+         known: &KnownSessions,
+@@ -64,11 +157,14 @@ impl CodexAdapter {
+         let mut session_id = codex_session_id_from_path(path).unwrap_or_default();
+         let mut directory = String::new();
+         let mut messages = Vec::new();
+-        let mut user_prompts = Vec::new();
+-        let mut response_user_prompts = Vec::new();
+         let mut yolo = false;
++        let mut forked_from_id = None;
+ 
+-        for line in BufReader::new(file).lines().map_while(Result::ok) {
++        for (record, line) in BufReader::new(file)
++            .lines()
++            .map_while(Result::ok)
++            .enumerate()
++        {
+             if line.trim().is_empty() {
+                 continue;
+             }
+@@ -80,12 +176,21 @@ impl CodexAdapter {
+ 
+             match msg_type.as_str() {
+                 "session_meta" => {
++                    if is_subagent(payload) {
++                        return None;
++                    }
+                     if session_id.is_empty() {
+                         session_id = string_at(payload, &["id"]);
+                     }
+                     if directory.is_empty() {
+                         directory = string_at(payload, &["cwd"]);
+                     }
++                    forked_from_id = payload
++                        .get("forked_from_id")
++                        .and_then(Value::as_str)
++                        .map(str::trim)
++                        .filter(|id| !id.is_empty())
++                        .map(str::to_string);
+                 }
+                 "turn_context" => {
+                     let approval = string_at(payload, &["approval_policy"]);
+@@ -98,35 +203,59 @@ impl CodexAdapter {
+                     }
+                 }
+                 "response_item" => {
+-                    let role = string_at(payload, &["role"]);
+-                    if role == "user" || role == "assistant" {
+-                        let role_prefix = if role == "user" { "» " } else { "  " };
+-                        if let Some(content) = payload.get("content") {
+-                            for text in content_texts(content) {
+-                                if text.trim_start().starts_with("<environment_context>") {
+-                                    continue;
+-                                }
+-                                if role == "user" && string_at(payload, &["type"]) == "message" {
+-                                    response_user_prompts.push(text.clone());
+-                                }
+-                                messages.push(format!("{role_prefix}{text}"));
+-                            }
+-                        }
++                    if payload
++                        .get("type")
++                        .and_then(Value::as_str)
++                        .is_some_and(|kind| kind != "message")
++                    {
++                        continue;
+                     }
++                    let role = match payload.get("role").and_then(Value::as_str) {
++                        Some("user") => "user",
++                        Some("assistant") if visible_assistant_message(payload) => "assistant",
++                        _ => continue,
++                    };
++                    append_chat_message(
++                        &mut messages,
++                        role,
++                        chat_text(payload, role == "user"),
++                        ChatSource::Response,
++                        record,
++                    );
+                 }
+                 "event_msg" => match string_at(payload, &["type"]).as_str() {
+                     "user_message" => {
+-                        let message = string_at(payload, &["message"]);
+-                        if !message.is_empty() {
+-                            messages.push(format!("» {message}"));
+-                            user_prompts.push(message);
+-                        }
++                        append_chat_message(
++                            &mut messages,
++                            "user",
++                            clean_user_chat(&string_at(payload, &["message"])).to_string(),
++                            ChatSource::Event,
++                            record,
++                        );
++                    }
++                    "agent_message" if visible_assistant_message(payload) => {
++                        append_chat_message(
++                            &mut messages,
++                            "assistant",
++                            string_at(payload, &["message"]),
++                            ChatSource::Event,
++                            record,
++                        );
+                     }
+-                    "agent_reasoning" => {
+-                        let text = string_at(payload, &["text"]);
+-                        if !text.is_empty() {
+-                            messages.push(format!("  {text}"));
+-                        }
++                    "item_completed" => {
++                        let item = payload.get("item").unwrap_or(&Value::Null);
++                        let role = match item.get("type").and_then(Value::as_str) {
++                            Some("UserMessage") => "user",
++                            Some("AgentMessage") if visible_assistant_message(item) => "assistant",
++                            _ => continue,
++                        };
++                        append_chat_message(
++                            &mut messages,
++                            role,
++                            chat_text(item, role == "user"),
++                            ChatSource::Event,
++                            record,
++                        );
+                     }
+                     _ => {}
+                 },
+@@ -137,9 +266,11 @@ impl CodexAdapter {
+         if session_id.is_empty() {
+             session_id = fallback_session_id(path);
+         }
+-        if user_prompts.is_empty() {
+-            user_prompts = response_user_prompts;
+-        }
++        let user_prompts: Vec<_> = messages
++            .iter()
++            .filter(|message| message.role == "user")
++            .map(|message| &message.text)
++            .collect();
+         if user_prompts.is_empty() {
+             return None;
+         }
+@@ -148,18 +279,29 @@ impl CodexAdapter {
+         let title_source = thread_names
+             .get(&session_id)
+             .cloned()
+-            .unwrap_or_else(|| user_prompts[0].clone());
++            .unwrap_or_else(|| user_prompts[0].to_string());
+         let mut session = Session::new(
+             session_id,
+             self.name(),
+             truncate_title(&title_source, 80, false),
+             directory,
+             file_timestamp(path),
+-            messages.join("\n\n"),
++            messages
++                .into_iter()
++                .map(|message| {
++                    format!(
++                        "{}{}",
++                        if message.role == "user" { "» " } else { "  " },
++                        message.text
++                    )
++                })
++                .collect::<Vec<_>>()
++                .join("\n\n"),
+             turns,
+         );
+         session.mtime = file_mtime_seconds(path);
+         session.yolo = yolo;
++        session.forked_from_id = forked_from_id;
+         Some(session)
+     }
+ 
+@@ -229,6 +371,7 @@ impl CodexAdapter {
+         }
+ 
+         let thread_index = self.load_thread_index();
++        let db = self.state_database();
+         for entry in WalkDir::new(&self.sessions_dir) {
+             let Ok(entry) = entry else {
+                 complete = false;
+@@ -239,6 +382,13 @@ impl CodexAdapter {
+                 continue;
+             }
+             let session_id = self.session_id_from_file(path);
++            if self
++                .thread_metadata(&session_id, db.as_ref(), Some(path))
++                .as_ref()
++                .is_some_and(is_subagent)
++            {
++                continue;
++            }
+             let mut mtime = file_mtime_seconds(path);
+             if let Some((_, index_mtime)) = thread_index.get(&session_id) {
+                 mtime = mtime.max(*index_mtime);
+@@ -286,13 +436,20 @@ impl Adapter for CodexAdapter {
+     }
+ 
+     fn resume_command(&self, session: &Session, yolo: bool) -> Vec<String> {
+-        build_resume_command(
++        let Some((id, directory)) = self.resume_target(&session.id) else {
++            return Vec::new();
++        };
++        let mut command = build_resume_command(
+             "codex",
+             &["--dangerously-bypass-approvals-and-sandbox"],
+             yolo,
+             &["resume"],
+-            &session.id,
+-        )
++            &id,
++        );
++        if id != session.id && !directory.is_empty() && directory != session.directory {
++            command.splice(1..1, ["--cd".to_string(), directory]);
++        }
++        command
+     }
+ 
+     fn raw_stats(&self) -> RawAdapterStats {
+@@ -300,6 +457,206 @@ impl Adapter for CodexAdapter {
+     }
+ }
+ 
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum ChatSource {
++    Response,
++    Event,
++}
++
++struct ChatMessage {
++    role: &'static str,
++    text: String,
++    source: ChatSource,
++    record: usize,
++}
++
++fn append_chat_message(
++    messages: &mut Vec<ChatMessage>,
++    role: &'static str,
++    text: String,
++    source: ChatSource,
++    record: usize,
++) {
++    let text = text.trim();
++    if text.is_empty() {
++        return;
++    }
++    // Codex can record one visible message in both streams. Pair only local,
++    // adjacent opposite-source records; intervening turn boundaries or other
++    // records prevent identical real messages from being mistaken for mirrors.
++    if let Some(previous) = messages.last()
++        && previous.role == role
++        && previous.text == text
++        && previous.source != source
++        && previous.record + 1 == record
++    {
++        return;
++    }
++    messages.push(ChatMessage {
++        role,
++        text: text.to_string(),
++        source,
++        record,
++    });
++}
++
++fn visible_assistant_message(payload: &Value) -> bool {
++    ["channel", "phase"].iter().all(|key| {
++        matches!(
++            payload.get(*key).and_then(Value::as_str),
++            None | Some("commentary" | "final" | "final_answer")
++        )
++    }) && matches!(
++        payload.get("recipient").and_then(Value::as_str),
++        None | Some("all")
++    )
++}
++
++fn chat_text(payload: &Value, user: bool) -> String {
++    let text = |part: &Value, kind: Option<&str>| {
++        if user
++            && kind.is_some_and(|kind| {
++                kind.starts_with("agents_md.") || kind.starts_with("environments.")
++            })
++        {
++            return None;
++        }
++        if part
++            .get("type")
++            .and_then(Value::as_str)
++            .is_some_and(|kind| !matches!(kind, "text" | "Text" | "input_text" | "output_text"))
++        {
++            return None;
++        }
++        let text = part
++            .as_str()
++            .or_else(|| part.get("text").and_then(Value::as_str))?;
++        Some(
++            if !user {
++                text
++            } else if kind == Some("user.text")
++                || payload.get("type").and_then(Value::as_str) == Some("UserMessage")
++            {
++                // Explicit human text may deliberately quote an instruction
++                // envelope. Use prefix heuristics only for legacy/unknown kinds.
++                text
++            } else {
++                clean_user_chat(text)
++            }
++            .to_string(),
++        )
++    };
++    let content = payload.get("content").unwrap_or(&Value::Null);
++    match content {
++        Value::Array(parts) => {
++            let kinds = payload
++                .pointer("/internal_chat_message_metadata_passthrough/content_item_kinds")
++                .and_then(Value::as_array)
++                .filter(|kinds| kinds.len() == parts.len());
++            parts
++                .iter()
++                .enumerate()
++                .filter_map(|(index, part)| {
++                    text(part, kinds.and_then(|kinds| kinds[index].as_str()))
++                })
++                .collect::<Vec<_>>()
++                .join("\n")
++        }
++        _ => text(content, None).unwrap_or_default(),
++    }
++}
++
++fn clean_user_chat(mut text: &str) -> &str {
++    text = text.trim();
++    loop {
++        if text.starts_with("# AGENTS.md instructions") {
++            // This header is an injected document only when accompanied by
++            // its envelope. Ordinary requests mentioning AGENTS.md stay intact.
++            if text.contains("<INSTRUCTIONS>") {
++                let Some((_, remaining)) = text.split_once("</INSTRUCTIONS>") else {
++                    return "";
++                };
++                text = remaining.trim_start();
++                continue;
++            }
++        }
++        let envelope = [
++            ("<environment_context", "</environment_context>"),
++            ("<system_reminder", "</system_reminder>"),
++            ("<subagent_notification", "</subagent_notification>"),
++            ("<agent_notification", "</agent_notification>"),
++            ("<developer_instructions", "</developer_instructions>"),
++            ("<user_instructions", "</user_instructions>"),
++            ("<INSTRUCTIONS", "</INSTRUCTIONS>"),
++        ]
++        .into_iter()
++        .find(|(open, _)| {
++            text.strip_prefix(open)
++                .is_some_and(|rest| rest.starts_with('>') || rest.starts_with(' '))
++        });
++        if let Some((_, close)) = envelope {
++            let Some((_, remaining)) = text.split_once(close) else {
++                return "";
++            };
++            text = remaining.trim_start();
++            continue;
++        }
++        break;
++    }
++    ide_request(text)
++}
++
++fn ide_request(text: &str) -> &str {
++    let text = text.trim();
++    if (text.starts_with("# Context from my IDE setup:")
++        || text.starts_with("# Files mentioned by the user:")
++        || text.starts_with("## My request for Codex:"))
++        && let Some((_, request)) = text.split_once("## My request for Codex:")
++    {
++        return request.trim();
++    }
++    text.trim()
++}
++
++fn parent_thread_id(metadata: &Value) -> Option<&str> {
++    metadata
++        .get("parent_thread_id")
++        .and_then(Value::as_str)
++        .or_else(|| {
++            metadata
++                .pointer("/source/subagent/thread_spawn/parent_thread_id")
++                .and_then(Value::as_str)
++        })
++        .filter(|id| !id.is_empty())
++}
++
++fn is_subagent(metadata: &Value) -> bool {
++    parent_thread_id(metadata).is_some()
++        || metadata.pointer("/source/subagent").is_some()
++        || metadata.get("source").and_then(Value::as_str) == Some("subagent")
++        || metadata
++            .get("agent_path")
++            .and_then(Value::as_str)
++            .is_some_and(|path| !path.is_empty() && path != "/root")
++}
++
++fn rollout_metadata(path: &Path) -> Option<Value> {
++    let file = fs::File::open(path).ok()?;
++    for line in BufReader::new(file.take(1024 * 1024))
++        .lines()
++        .take(16)
++        .map_while(Result::ok)
++    {
++        let Ok(row) = serde_json::from_str::<Value>(&line) else {
++            continue;
++        };
++        if row.get("type").and_then(Value::as_str) == Some("session_meta") {
++            return row.get("payload").cloned();
++        }
++    }
++    None
++}
++
+ #[cfg(test)]
+ mod tests {
+     use std::fs;
+@@ -324,6 +681,293 @@ mod tests {
+         .unwrap();
+     }
+ 
++    fn project_chat(rows: &[Value]) -> Session {
++        let temp = tempdir().unwrap();
++        let sessions_dir = temp.path().join("sessions");
++        fs::create_dir_all(&sessions_dir).unwrap();
++        let mut records =
++            vec![json!({"type":"session_meta", "payload":{"id":"chat", "cwd":"/work/chat"}})];
++        records.extend_from_slice(rows);
++        write_jsonl(&sessions_dir.join("rollout-chat.jsonl"), &records);
++        CodexAdapter::new(sessions_dir, temp.path().join("session_index.jsonl"))
++            .find_sessions()
++            .pop()
++            .unwrap()
++    }
++
++    #[test]
++    fn chat_projection_excludes_context_reasoning_and_tools() {
++        let session = project_chat(&[
++            json!({"type":"response_item","payload":{"type":"message","role":"user","content":[{"text":"# AGENTS.md instructions for /work\n<INSTRUCTIONS>Hidden rules</INSTRUCTIONS>\n<environment_context>Hidden cwd</environment_context>\nPlease edit AGENTS.md."}]}}),
++            json!({"type":"event_msg","payload":{"type":"user_message","message":"Please edit AGENTS.md."}}),
++            json!({"type":"response_item","payload":{"type":"message","role":"assistant","phase":"commentary","content":[{"type":"output_text","text":"Checking now."}]}}),
++            json!({"type":"event_msg","payload":{"type":"agent_message","message":"Checking now."}}),
++            json!({"type":"response_item","payload":{"type":"message","role":"assistant","channel":"analysis","content":[{"text":"Hidden analysis"}]}}),
++            json!({"type":"response_item","payload":{"type":"message","role":"assistant","phase":"analysis","content":[{"text":"Hidden phase"}]}}),
++            json!({"type":"response_item","payload":{"type":"reasoning","role":"assistant","content":[{"text":"Hidden reasoning"}]}}),
++            json!({"type":"response_item","payload":{"type":"function_call_output","role":"assistant","content":[{"text":"Hidden tool output"}]}}),
++            json!({"type":"response_item","payload":{"role":"developer","content":[{"text":"Hidden developer"}]}}),
++            json!({"type":"event_msg","payload":{"type":"agent_reasoning","text":"Hidden old reasoning"}}),
++            json!({"type":"response_item","payload":{"role":"user","content":[{"text":"<subagent_notification agent_id=\"x\">Hidden completion</subagent_notification>"}]}}),
++            json!({"type":"response_item","payload":{"type":"message","role":"assistant","phase":"final_answer","content":[{"type":"output_text","text":"Done.\n```rust\nlet x = 1;\n```"}]}}),
++        ]);
++        assert_eq!(
++            session.content,
++            "» Please edit AGENTS.md.\n\n  Checking now.\n\n  Done.\n```rust\nlet x = 1;\n```"
++        );
++        assert_eq!(session.title, "Please edit AGENTS.md.");
++        assert_eq!(session.message_count, 1);
++    }
++
++    #[test]
++    fn modern_content_kinds_and_canonical_events_preserve_human_text() {
++        let actual = "# AGENTS.md instructions for a quoted example\n<INSTRUCTIONS>Preserve this literal example.</INSTRUCTIONS>";
++        let session = project_chat(&[
++            json!({"type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"Hidden injected instructions without a header"},{"type":"input_text","text":"Hidden environment without a wrapper"},{"type":"input_text","text":actual}],"internal_chat_message_metadata_passthrough":{"content_item_kinds":["agents_md.instructions","environments.environment_context","user.text"]}}}),
++            json!({"type":"event_msg","payload":{"type":"item_completed","item":{"type":"UserMessage","id":"u1","content":[{"type":"text","text":actual}]}}}),
++            json!({"type":"event_msg","payload":{"type":"item_completed","item":{"type":"AgentMessage","id":"a1","phase":"commentary","content":[{"type":"Text","text":"Visible commentary"}]}}}),
++            json!({"type":"response_item","payload":{"type":"message","role":"assistant","phase":"commentary","content":[{"type":"output_text","text":"Visible commentary"}]}}),
++            json!({"type":"event_msg","payload":{"type":"item_completed","item":{"type":"AgentMessage","id":"a2","phase":"final_answer","content":[{"type":"Text","text":"Event-only final reply"}]}}}),
++        ]);
++        assert_eq!(
++            session.content,
++            format!("» {actual}\n\n  Visible commentary\n\n  Event-only final reply")
++        );
++        assert_eq!(session.message_count, 1);
++    }
++
++    #[test]
++    fn mirrors_do_not_remove_repeated_real_messages_or_mixed_history() {
++        let session = project_chat(&[
++            json!({"type":"event_msg","payload":{"type":"user_message","message":"Repeat"}}),
++            json!({"type":"response_item","payload":{"role":"user","content":[{"text":"Repeat"}]}}),
++            json!({"type":"response_item","payload":{"role":"assistant","content":[{"text":"Same reply"}]}}),
++            json!({"type":"event_msg","payload":{"type":"agent_message","message":"Same reply"}}),
++            json!({"type":"response_item","payload":{"role":"user","content":[{"text":"Repeat"}]}}),
++            json!({"type":"event_msg","payload":{"type":"task_complete"}}),
++            json!({"type":"event_msg","payload":{"type":"task_started"}}),
++            json!({"type":"event_msg","payload":{"type":"user_message","message":"Repeat"}}),
++            json!({"type":"event_msg","payload":{"type":"agent_message","message":"Same reply"}}),
++            json!({"type":"event_msg","payload":{"type":"agent_message","message":"Same reply"}}),
++        ]);
++        assert_eq!(session.message_count, 3);
++        assert_eq!(session.content.matches("» Repeat").count(), 3);
++        assert_eq!(session.content.matches("  Same reply").count(), 3);
++    }
++
++    #[test]
++    fn legacy_wrappers_preserve_request_tails_and_literal_examples() {
++        for prefix in [
++            "# Context from my IDE setup:",
++            "# Files mentioned by the user:",
++        ] {
++            assert_eq!(
++                clean_user_chat(&format!(
++                    "{prefix}\nfile.rs\n## My request for Codex:\nFix this."
++                )),
++                "Fix this."
++            );
++        }
++        assert_eq!(
++            clean_user_chat("<system_reminder>Hidden</system_reminder>\nActual question"),
++            "Actual question"
++        );
++        assert_eq!(clean_user_chat("<environment_context>Incomplete"), "");
++        for literal in [
++            "Please explain AGENTS.md and <system_reminder> tags.",
++            "```text\n<environment_context>Example</environment_context>\n```",
++            "# AGENTS.md instructions explained",
++        ] {
++            assert_eq!(clean_user_chat(literal), literal);
++        }
++    }
++
++    #[test]
++    fn stale_indexed_subagent_resume_routes_to_main_session() {
++        let temp = tempdir().unwrap();
++        let sessions_dir = temp.path().join("sessions");
++        fs::create_dir_all(&sessions_dir).unwrap();
++        for (id, parent) in [
++            ("child", Some("parent")),
++            ("parent", Some("main")),
++            ("main", None),
++        ] {
++            let source = parent.map_or(
++                json!("cli"),
++                |parent| json!({"subagent": {"thread_spawn": {"parent_thread_id": parent}}}),
++            );
++            write_jsonl(
++                &sessions_dir.join(format!("rollout-{id}.jsonl")),
++                &[
++                    json!({"type": "session_meta", "payload": {"id": id, "cwd": "/work/main", "source": source}}),
++                ],
++            );
++        }
++        let adapter = CodexAdapter::new(sessions_dir, temp.path().join("session_index.jsonl"));
++        // Model the stale persisted search result: no new scan or reindex runs
++        // before the user selects this child.
++        let selected = Session::new(
++            "child".to_string(),
++            "codex",
++            "Child task".to_string(),
++            "/work/child".to_string(),
++            chrono::Local::now(),
++            String::new(),
++            1,
++        );
++
++        assert_eq!(
++            adapter.resume_command(&selected, false),
++            vec!["codex", "--cd", "/work/main", "resume", "main"]
++        );
++    }
++
++    #[test]
++    fn sqlite_lineage_routes_nested_children_and_rejects_broken_parents() {
++        let temp = tempdir().unwrap();
++        let db = Connection::open(temp.path().join("state_5.sqlite")).unwrap();
++        db.execute_batch(
++            "CREATE TABLE threads (id TEXT PRIMARY KEY, source TEXT, agent_path TEXT, cwd TEXT);
++             CREATE TABLE thread_spawn_edges (child_thread_id TEXT PRIMARY KEY, parent_thread_id TEXT);
++             INSERT INTO threads VALUES
++               ('main', 'cli', NULL, '/work/main'),
++               ('child', 'cli', '/root/parent/child', '/work/child'),
++               ('parent', '{\"subagent\":{\"thread_spawn\":{\"parent_thread_id\":\"main\"}}}', '/root/parent', '/work/parent'),
++               ('orphan', 'cli', '/root/orphan', '/work/orphan');
++             INSERT INTO thread_spawn_edges VALUES
++               ('child', 'parent'), ('missing', 'absent'),
++               ('cycle-a', 'cycle-b'), ('cycle-b', 'cycle-a');",
++        ).unwrap();
++        let adapter = CodexAdapter::new(
++            temp.path().join("sessions"),
++            temp.path().join("session_index.jsonl"),
++        );
++        let selected = |id: &str| {
++            Session::new(
++                id.to_string(),
++                "codex",
++                String::new(),
++                "/work/child".to_string(),
++                chrono::Local::now(),
++                String::new(),
++                1,
++            )
++        };
++        assert_eq!(
++            adapter.resume_command(&selected("child"), true),
++            vec![
++                "codex",
++                "--cd",
++                "/work/main",
++                "--dangerously-bypass-approvals-and-sandbox",
++                "resume",
++                "main"
++            ]
++        );
++        for id in ["orphan", "missing", "cycle-a"] {
++            assert!(
++                adapter.resume_command(&selected(id), false).is_empty(),
++                "unsafe resume for {id}"
++            );
++        }
++        assert_eq!(
++            adapter.resume_command(&selected("main"), false),
++            vec!["codex", "resume", "main"]
++        );
++    }
++
++    #[test]
++    fn refresh_removes_cached_subagents_but_preserves_main_sessions_and_regular_forks() {
++        let temp = tempdir().unwrap();
++        let sessions_dir = temp.path().join("sessions");
++        fs::create_dir_all(&sessions_dir).unwrap();
++        for (id, extra) in [
++            ("main", json!({"source": "cli"})),
++            (
++                "child",
++                json!({"parent_thread_id": "main", "agent_path": "/root/child", "forked_from_id": "main"}),
++            ),
++            ("fork", json!({"source": "cli", "forked_from_id": "main"})),
++            (
++                "nested-fork",
++                json!({"source": "cli", "forked_from_id": "fork"}),
++            ),
++        ] {
++            let mut payload = json!({"id": id, "cwd": "/work/main"});
++            payload
++                .as_object_mut()
++                .unwrap()
++                .extend(extra.as_object().unwrap().clone());
++            write_jsonl(
++                &sessions_dir.join(format!("rollout-{id}.jsonl")),
++                &[
++                    json!({"type": "session_meta", "payload": payload}),
++                    json!({"type": "event_msg", "payload": {"type": "user_message", "message": "Synthetic request"}}),
++                ],
++            );
++        }
++        let adapter = CodexAdapter::new(
++            sessions_dir.clone(),
++            temp.path().join("session_index.jsonl"),
++        );
++        let sessions = adapter.find_sessions();
++        let mut ids: Vec<_> = sessions.iter().map(|session| session.id.as_str()).collect();
++        ids.sort();
++        assert_eq!(ids, vec!["fork", "main", "nested-fork"]);
++        for (id, parent) in [
++            ("main", None),
++            ("fork", Some("main")),
++            ("nested-fork", Some("fork")),
++        ] {
++            let session = sessions.iter().find(|session| session.id == id).unwrap();
++            assert_eq!(session.forked_from_id.as_deref(), parent);
++            assert_eq!(
++                adapter.resume_command(session, false),
++                vec!["codex", "resume", id]
++            );
++        }
++        let known = ["main", "child", "fork", "nested-fork"]
++            .into_iter()
++            .map(|id| {
++                (
++                    ("codex".to_string(), id.to_string()),
++                    file_mtime_seconds(&sessions_dir.join(format!("rollout-{id}.jsonl"))),
++                )
++            })
++            .collect();
++        let scan = adapter.find_sessions_incremental(&known);
++        assert!(scan.new_or_modified.is_empty());
++        assert_eq!(scan.deleted_ids, vec!["child"]);
++    }
++
++    #[test]
++    fn empty_or_invalid_fork_metadata_does_not_mark_an_original_as_a_fork() {
++        let temp = tempdir().unwrap();
++        let sessions_dir = temp.path().join("sessions");
++        fs::create_dir_all(&sessions_dir).unwrap();
++        for (id, parent) in [
++            ("null", Value::Null),
++            ("empty", json!(" ")),
++            ("invalid", json!(7)),
++        ] {
++            write_jsonl(
++                &sessions_dir.join(format!("rollout-{id}.jsonl")),
++                &[
++                    json!({"type":"session_meta", "payload":{"id":id,"source":"cli","forked_from_id":parent}}),
++                    json!({"type":"event_msg", "payload":{"type":"user_message","message":"A real prompt"}}),
++                ],
++            );
++        }
++        let sessions = CodexAdapter::new(sessions_dir, temp.path().join("session_index.jsonl"))
++            .find_sessions();
++        assert_eq!(sessions.len(), 3);
++        assert!(
++            sessions
++                .iter()
++                .all(|session| session.forked_from_id.is_none())
++        );
++    }
++
+     #[test]
+     fn full_scan_mtimes_match_the_incremental_scan() {
+         let temp = tempdir().unwrap();
+@@ -418,10 +1062,11 @@ mod tests {
+             &[
+                 json!({"type": "session_meta", "payload": {"id": "test123", "cwd": "/work/app"}}),
+                 json!({"type": "event_msg", "payload": {"type": "user_message", "message": "First prompt"}}),
++                json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "First prompt"}]}}),
+                 json!({"type": "event_msg", "payload": {"type": "user_message", "message": "Second prompt"}}),
+-                json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Replay of first prompt"}]}}),
++                json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Second prompt"}]}}),
+                 json!({"type": "response_item", "payload": {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "First answer"}]}}),
+-                json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Replay after compaction"}]}}),
++                json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "<environment_context>Replayed context</environment_context>"}]}}),
+                 json!({"type": "response_item", "payload": {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "Second answer"}]}}),
+             ],
+         );
+diff --git a/src/config.rs b/src/config.rs
+index e2c069d..b501045 100644
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -8,7 +8,8 @@ use serde_json::Value;
+ use once_cell::sync::Lazy;
+ 
+ pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+-pub const INDEX_SCHEMA_VERSION: u32 = 24;
++// Rebuild cached sessions to persist ordinary Codex fork lineage.
++pub const INDEX_SCHEMA_VERSION: u32 = 27;
+ 
+ pub const AGENT_ORDER: [&str; 13] = [
+     "antigravity",
+diff --git a/src/index.rs b/src/index.rs
+index f4f3100..8d15bfd 100644
+--- a/src/index.rs
++++ b/src/index.rs
+@@ -20,6 +20,7 @@ mod document;
+ mod queries;
+ mod schema;
+ mod stats;
++mod tokenizer;
+ 
+ pub use stats::IndexStats;
+ 
+@@ -157,6 +158,7 @@ impl SessionIndex {
+             index
+         };
+ 
++        tokenizer::register(&index);
+         let fields = schema::IndexFields::from_schema(&index.schema())?;
+         let reader = index
+             .reader_builder()
+@@ -626,6 +628,39 @@ mod tests {
+         assert!(after_ninety_days < 10.2);
+     }
+ 
++    #[test]
++    fn fork_lineage_survives_index_reopen_without_changing_identity() {
++        let temp = tempdir().unwrap();
++        let path = temp.path().join("index");
++        {
++            let index = SessionIndex::open(path.clone()).unwrap();
++            let original = session("original", "codex", "Original", "/repo", "plain");
++            let mut fork = session("fork", "codex", "Fork", "/repo", "plain");
++            fork.forked_from_id = Some("original".into());
++            index.rebuild(vec![original, fork]).unwrap();
++        }
++        let index = SessionIndex::open(path).unwrap();
++        let sessions = index.all_sessions().unwrap();
++        assert_eq!(sessions.len(), 2);
++        assert_eq!(
++            sessions
++                .iter()
++                .find(|session| session.id == "fork")
++                .unwrap()
++                .forked_from_id
++                .as_deref(),
++            Some("original")
++        );
++        assert!(
++            sessions
++                .iter()
++                .find(|session| session.id == "original")
++                .unwrap()
++                .forked_from_id
++                .is_none()
++        );
++    }
++
+     #[test]
+     fn ranking_does_not_depend_on_when_the_search_runs() {
+         // Paginated `--json` calls each measure recency from their own "now".
+diff --git a/src/index/document.rs b/src/index/document.rs
+index 435807a..6c83bd8 100644
+--- a/src/index/document.rs
++++ b/src/index/document.rs
+@@ -7,7 +7,7 @@ use crate::model::Session;
+ use super::schema::IndexFields;
+ 
+ pub(super) fn session_document(fields: IndexFields, session: &Session) -> TantivyDocument {
+-    doc!(
++    let mut doc = doc!(
+         fields.id => session.id.clone(),
+         fields.session_key => session_key(&session.agent, &session.id),
+         fields.title => session.title.clone(),
+@@ -18,7 +18,11 @@ pub(super) fn session_document(fields: IndexFields, session: &Session) -> Tantiv
+         fields.message_count => session.message_count as i64,
+         fields.mtime => session.mtime,
+         fields.yolo => session.yolo,
+-    )
++    );
++    if let Some(parent) = &session.forked_from_id {
++        doc.add_text(fields.forked_from_id, parent);
++    }
++    doc
+ }
+ 
+ pub(super) fn doc_to_session(fields: IndexFields, doc: &TantivyDocument) -> Option<Session> {
+@@ -34,6 +38,7 @@ pub(super) fn doc_to_session(fields: IndexFields, doc: &TantivyDocument) -> Opti
+     );
+     session.mtime = number(doc, fields.mtime).unwrap_or(0.0);
+     session.yolo = boolean(doc, fields.yolo).unwrap_or(false);
++    session.forked_from_id = text(doc, fields.forked_from_id).map(str::to_string);
+     Some(session)
+ }
+ 
+diff --git a/src/index/queries.rs b/src/index/queries.rs
+index e933160..698d667 100644
+--- a/src/index/queries.rs
++++ b/src/index/queries.rs
+@@ -64,6 +64,8 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
+     let fuzzy_parts: Vec<(Occur, Box<dyn Query>)> = search_text
+         .split_whitespace()
+         .filter(|term| term.chars().count() >= 3)
++        // A one-character edit of an emoji sequence is a different emoji.
++        .filter(|term| !super::tokenizer::contains_symbols(term))
+         .map(|term| {
+             let term = term.to_lowercase();
+             let title =
+@@ -84,10 +86,54 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
+     if let Some(directory_query) = directory_text_query(fields, search_text)? {
+         alternatives.push((Occur::Should, directory_query));
+     }
++    if let Some(id_query) = id_text_query(fields, search_text) {
++        alternatives.push((Occur::Should, id_query));
++    }
+ 
+     Ok(Box::new(BooleanQuery::new(alternatives)))
+ }
+ 
++fn id_text_query(fields: IndexFields, search_text: &str) -> Option<Box<dyn Query>> {
++    let search_text = search_text.trim();
++    // Keep broad, single-character matches and unbounded automata out of the
++    // interactive path. UUIDs and 64-character IDs fit without reindexing.
++    if !(3..=64).contains(&search_text.chars().count())
++        || search_text.split_whitespace().count() != 1
++    {
++        return None;
++    }
++
++    let literal = regex::escape(search_text);
++    let subsequence = search_text
++        .chars()
++        .map(|ch| {
++            let literal = regex::escape(&ch.to_string());
++            format!("[^{literal}]*{literal}")
++        })
++        .collect::<String>();
++    let mut alternatives: Vec<(Occur, Box<dyn Query>)> = Vec::new();
++    // These query the existing raw ID term dictionary, never stored content.
++    // Prefer stronger ID matches while preserving normal text relevance.
++    for (pattern, boost) in [
++        (format!("(?i){literal}"), 25.0),
++        (format!("(?i).*{literal}.*"), 8.0),
++        // Matching each next character at its first occurrence is equivalent
++        // to .*a.*b, but avoids ambiguous gaps and expensive DFA construction.
++        (format!("(?i){subsequence}.*"), 1.0),
++    ] {
++        // Tantivy also bounds DFA size. A complex subsequence must not make
++        // the full-ID, contiguous-ID, or ordinary text query fail with it.
++        let Ok(query) = RegexQuery::from_pattern(&pattern, fields.id) else {
++            continue;
++        };
++        alternatives.push((
++            Occur::Should,
++            Box::new(BoostQuery::new(Box::new(query), boost)),
++        ));
++    }
++    Some(Box::new(BooleanQuery::new(alternatives)))
++}
++
+ fn directory_text_query(fields: IndexFields, search_text: &str) -> Result<Option<Box<dyn Query>>> {
+     let search_text = search_text.trim();
+     if search_text.chars().count() < 3 || search_text.split_whitespace().count() != 1 {
+diff --git a/src/index/schema.rs b/src/index/schema.rs
+index 57d64be..cd45dd7 100644
+--- a/src/index/schema.rs
++++ b/src/index/schema.rs
+@@ -3,7 +3,7 @@ use std::path::Path;
+ 
+ use anyhow::{Context, Result};
+ use tantivy::schema::{
+-    Field, IndexRecordOption, NumericOptions, STORED, Schema, TEXT, TextFieldIndexing, TextOptions,
++    Field, IndexRecordOption, NumericOptions, STORED, Schema, TextFieldIndexing, TextOptions,
+ };
+ 
+ use crate::config::INDEX_SCHEMA_VERSION;
+@@ -22,6 +22,7 @@ pub(super) struct IndexFields {
+     pub(super) message_count: Field,
+     pub(super) mtime: Field,
+     pub(super) yolo: Field,
++    pub(super) forked_from_id: Field,
+ }
+ 
+ impl IndexFields {
+@@ -37,6 +38,7 @@ impl IndexFields {
+             message_count: schema.get_field("message_count")?,
+             mtime: schema.get_field("mtime")?,
+             yolo: schema.get_field("yolo")?,
++            forked_from_id: schema.get_field("forked_from_id")?,
+         })
+     }
+ }
+@@ -47,10 +49,10 @@ pub(super) fn build_schema() -> Schema {
+     // from columnar storage without decompressing stored conversation content.
+     schema.add_text_field("id", raw_text_options().set_fast(Some("raw")));
+     schema.add_text_field("session_key", raw_text_options());
+-    schema.add_text_field("title", TEXT | STORED);
++    schema.add_text_field("title", chat_text_options());
+     schema.add_text_field("directory", raw_text_options());
+     schema.add_text_field("agent", raw_text_options().set_fast(Some("raw")));
+-    schema.add_text_field("content", TEXT | STORED);
++    schema.add_text_field("content", chat_text_options());
+     schema.add_f64_field(
+         "timestamp",
+         NumericOptions::default()
+@@ -61,6 +63,7 @@ pub(super) fn build_schema() -> Schema {
+     schema.add_i64_field("message_count", STORED);
+     schema.add_f64_field("mtime", NumericOptions::default().set_stored().set_fast());
+     schema.add_bool_field("yolo", STORED);
++    schema.add_text_field("forked_from_id", STORED);
+     schema.build()
+ }
+ 
+@@ -84,3 +87,11 @@ fn raw_text_options() -> TextOptions {
+             .set_index_option(IndexRecordOption::WithFreqsAndPositions),
+     )
+ }
++
++fn chat_text_options() -> TextOptions {
++    TextOptions::default().set_stored().set_indexing_options(
++        TextFieldIndexing::default()
++            .set_tokenizer(super::tokenizer::NAME)
++            .set_index_option(IndexRecordOption::WithFreqsAndPositions),
++    )
++}
+diff --git a/src/index/tokenizer.rs b/src/index/tokenizer.rs
+new file mode 100644
+index 0000000..ed71892
+--- /dev/null
++++ b/src/index/tokenizer.rs
+@@ -0,0 +1,35 @@
++use std::sync::LazyLock;
++
++use regex::Regex;
++use tantivy::Index;
++use tantivy::tokenizer::{LowerCaser, RegexTokenizer, RemoveLongFilter, TextAnalyzer};
++
++pub(super) const NAME: &str = "chat";
++
++// Preserve SimpleTokenizer's alphanumeric words, and keep emoji sequences
++// together so a search for one compound emoji does not match its components.
++static ANALYZER: LazyLock<TextAnalyzer> = LazyLock::new(|| {
++    let tokenizer = RegexTokenizer::new(concat!(
++        r"[#*0-9]\u{FE0F}?\u{20E3}|",
++        r"\p{Regional_Indicator}{2}|",
++        r"\u{1F3F4}[\u{E0020}-\u{E007E}]+\u{E007F}|",
++        r"\p{S}[\u{FE0E}\u{FE0F}\p{Emoji_Modifier}]*",
++        r"(?:\u{200D}\p{S}[\u{FE0E}\u{FE0F}\p{Emoji_Modifier}]*)*|",
++        r"[\p{Alphabetic}\p{N}]+",
++    ))
++    .expect("valid chat token pattern");
++    TextAnalyzer::builder(tokenizer)
++        .filter(RemoveLongFilter::limit(40))
++        .filter(LowerCaser)
++        .build()
++});
++
++pub(super) fn register(index: &Index) {
++    index.tokenizers().register(NAME, ANALYZER.clone());
++}
++
++pub(super) fn contains_symbols(text: &str) -> bool {
++    static SYMBOLS: LazyLock<Regex> =
++        LazyLock::new(|| Regex::new(r"[\p{S}\u{20E3}]").expect("valid symbol pattern"));
++    SYMBOLS.is_match(text)
++}
+diff --git a/src/main.rs b/src/main.rs
+index 123fa27..5cdad4e 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -101,7 +101,7 @@ struct Args {
+     images: bool,
+ 
+     /// Disable agent PNGs in the TUI.
+-    #[arg(long, conflicts_with = "images")]
++    #[arg(long, env = "FAST_RESUME_NO_IMAGES", conflicts_with = "images")]
+     no_images: bool,
+ 
+     /// Force a terminal image protocol for --images.
+@@ -297,9 +297,19 @@ fn exec_resume_with(
+     if command.is_empty() {
+         bail!("selected session has no resume command");
+     }
++    // A routed Codex sub-agent may refer to a worktree that no longer exists.
++    // Its explicit root directory takes precedence over the cached directory.
++    let directory = if command[0] == "codex" {
++        command
++            .windows(2)
++            .find(|args| args[0] == "--cd")
++            .map_or(directory.as_str(), |args| args[1].as_str())
++    } else {
++        directory.as_str()
++    };
+     if !directory.is_empty() {
+         backend
+-            .set_current_dir(&directory)
++            .set_current_dir(directory)
+             .with_context(|| format!("failed to change directory to {directory}"))?;
+     }
+ 
+@@ -374,6 +384,23 @@ mod tests {
+         assert!(error.to_string().contains("no resume command"));
+     }
+ 
++    #[test]
++    fn exec_resume_uses_main_directory_for_routed_codex_subagent() {
++        let mut backend = RecordingExec::default();
++        let command = vec![
++            "codex".to_string(),
++            "--cd".to_string(),
++            "/repo/main".to_string(),
++            "resume".to_string(),
++            "main-session".to_string(),
++        ];
++
++        exec_resume_with(&mut backend, command.clone(), "/deleted/child".to_string()).unwrap_err();
++
++        assert_eq!(backend.directories, vec!["/repo/main"]);
++        assert_eq!(backend.commands, vec![command]);
++    }
++
+     #[test]
+     fn accepts_legacy_no_version_check_flag() {
+         let args = Args::try_parse_from(["fr", "--no-version-check", "--list"]).unwrap();
+diff --git a/src/model.rs b/src/model.rs
+index 3c5aff8..30a8cc6 100644
+--- a/src/model.rs
++++ b/src/model.rs
+@@ -16,6 +16,8 @@ pub struct Session {
+     pub message_count: usize,
+     pub mtime: f64,
+     pub yolo: bool,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub forked_from_id: Option<String>,
+ }
+ 
+ impl Session {
+@@ -38,6 +40,7 @@ impl Session {
+             message_count,
+             mtime: 0.0,
+             yolo: false,
++            forked_from_id: None,
+         }
+     }
+ 
+diff --git a/src/output.rs b/src/output.rs
+index 13d9668..e8b895b 100644
+--- a/src/output.rs
++++ b/src/output.rs
+@@ -18,6 +18,8 @@ struct SessionOutput<'a> {
+     timestamp: &'a chrono::DateTime<chrono::Local>,
+     message_count: usize,
+     resume_command: Vec<String>,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    forked_from_id: Option<&'a str>,
+ }
+ 
+ impl<'a> SessionOutput<'a> {
+@@ -33,6 +35,7 @@ impl<'a> SessionOutput<'a> {
+             timestamp: &session.timestamp,
+             message_count: session.message_count,
+             resume_command,
++            forked_from_id: session.forked_from_id.as_deref(),
+         }
+     }
+ }
+@@ -175,5 +178,6 @@ mod tests {
+         assert!(json["sessions"][0].get("content").is_none());
+         assert!(json["sessions"][0].get("mtime").is_none());
+         assert!(json["sessions"][0].get("yolo").is_none());
++        assert!(json["sessions"][0].get("forked_from_id").is_none());
+     }
+ }
+diff --git a/src/search.rs b/src/search.rs
+index a3520ab..7238a63 100644
+--- a/src/search.rs
++++ b/src/search.rs
+@@ -142,6 +142,135 @@ mod tests {
+         assert_eq!(engine.search("", None, None, 10).len(), 2);
+     }
+ 
++    #[test]
++    fn searches_a_diamond_emoji_in_chat_content() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![session(
++                "chat",
++                "codex",
++                "Neutral",
++                "/work/project",
++                "💎",
++            )])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        let results = engine.search_result("💎", None, None, 10).unwrap();
++        assert_eq!(
++            results.len(),
++            1,
++            "an indexed chat containing 💎 must match 💎"
++        );
++        assert_eq!(results[0].id, "chat");
++    }
++
++    #[test]
++    fn emoji_searches_titles_and_chat_after_reopening_the_index() {
++        let temp = tempdir().unwrap();
++        let path = temp.path().join("index");
++        {
++            let index = SessionIndex::open(path.clone()).unwrap();
++            index
++                .rebuild(vec![
++                    session("title", "codex", "release💎notes", "/work/api", "plain"),
++                    session("chat", "codex", "Neutral", "/work/api", "fix💎done 💎✨"),
++                    session("word", "codex", "Diamond", "/work/api", "diamond"),
++                    session("other", "codex", "Other", "/work/api", "✨"),
++                ])
++                .unwrap();
++        }
++        let engine = SearchEngine::from_index(SessionIndex::open(path).unwrap());
++
++        assert_eq!(result_ids(&engine, "💎"), ["chat", "title"]);
++        assert_eq!(result_ids(&engine, "✨"), ["chat", "other"]);
++        assert!(result_ids(&engine, "🚀").is_empty());
++        assert_eq!(result_ids(&engine, "RELEASE"), ["title"]);
++        assert_eq!(result_ids(&engine, "releas"), ["title"]);
++        assert_eq!(result_ids(&engine, "diamond"), ["word"]);
++        assert_eq!(result_ids(&engine, "fix"), ["chat"]);
++        assert_eq!(result_ids(&engine, "done"), ["chat"]);
++    }
++
++    #[test]
++    fn emoji_sequences_and_symbols_are_exact_indexed_tokens() {
++        let england = "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}";
++        let scotland = "\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}";
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("coder", "codex", "Neutral", "/work/api", "👩🏽‍💻"),
++                session("nearby", "codex", "Neutral", "/work/api", "👩🏼‍💻 👨🏽‍💻"),
++                session("parts", "codex", "Neutral", "/work/api", "👩 🏽 💻"),
++                session("keycap", "codex", "Neutral", "/work/api", "1️⃣ #️⃣ *️⃣"),
++                session("digit", "codex", "Neutral", "/work/api", "1 2️⃣"),
++                session("gear", "codex", "Neutral", "/work/api", "⚙️"),
++                session("bare", "codex", "Neutral", "/work/api", "⚙"),
++                session("flag", "codex", "Neutral", "/work/api", "🇬🇷"),
++                session("england", "codex", "Neutral", "/work/api", england),
++                session("scotland", "codex", "Neutral", "/work/api", scotland),
++                session("black", "codex", "Neutral", "/work/api", "🏴"),
++                session("symbols", "codex", "Neutral", "/work/api", "∞ €"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        for (query, expected) in [
++            ("👩🏽‍💻", "coder"),
++            ("👩", "parts"),
++            ("💻", "parts"),
++            ("1️⃣", "keycap"),
++            ("#️⃣", "keycap"),
++            ("*️⃣", "keycap"),
++            ("⚙️", "gear"),
++            ("⚙", "bare"),
++            ("🇬🇷", "flag"),
++            (england, "england"),
++            (scotland, "scotland"),
++            ("🏴", "black"),
++            ("∞", "symbols"),
++            ("€", "symbols"),
++        ] {
++            assert_eq!(result_ids(&engine, query), [expected], "query: {query}");
++        }
++        assert!(result_ids(&engine, "👩🏻‍💻").is_empty());
++        assert!(result_ids(&engine, "🇬🇧").is_empty());
++    }
++
++    #[test]
++    fn emoji_search_keeps_agent_directory_and_date_filters() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("match", "codex", "Neutral", "/work/api", "💎"),
++                session("agent", "claude", "Neutral", "/work/api", "💎"),
++                session("dir", "codex", "Neutral", "/work/web", "💎"),
++                session_at(
++                    "old",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "💎",
++                    ChronoDuration::days(10),
++                ),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        let results = engine.search("date:<1d 💎", Some("codex"), Some("api"), 10);
++        assert_eq!(results.len(), 1);
++        assert_eq!(results[0].id, "match");
++        assert_eq!(
++            engine
++                .count_result("date:<1d 💎", Some("codex"), Some("api"))
++                .unwrap(),
++            1
++        );
++    }
++
+     #[test]
+     fn filters_by_agent_and_directory_keyword() {
+         let temp = tempdir().unwrap();
+@@ -176,6 +305,173 @@ mod tests {
+         assert_eq!(results[0].id, "a");
+     }
+ 
++    #[test]
++    fn plain_text_search_matches_metadata_only_session_ids() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        let id = "A19bc2D3-45eF-6789-aBcD-ef0123456789";
++        index
++            .rebuild(vec![
++                session(id, "codex", "Neutral title", "/work/project", "hello"),
++                session("unrelated", "claude", "Other", "/work/project", "world"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        for query in [
++            id,
++            &id.to_lowercase(),
++            &id.to_uppercase(),
++            &id.replace('-', ""),
++            "A19c2D3-45eF-6789-aBcD-ef0123456789", // full UUID with a gap
++            "a19bc",                               // prefix
++            "45ef-6789",                           // middle
++            "3456789",                             // suffix
++            "a2d45f",                              // ordered, noncontiguous characters
++        ] {
++            assert_eq!(result_ids(&engine, query), [id], "query: {query}");
++        }
++        assert!(result_ids(&engine, "f54d2a").is_empty());
++        assert!(result_ids(&engine, "a2d 45f").is_empty());
++    }
++
++    #[test]
++    fn id_match_quality_outweighs_recency() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session_at(
++                    "a1b2c3",
++                    "codex",
++                    "Neutral",
++                    "/work/project",
++                    "hello",
++                    ChronoDuration::days(90),
++                ),
++                session("x-a1b2c3-y", "codex", "Neutral", "/work/project", "hello"),
++                session("a_1_b_2_c_3", "codex", "Neutral", "/work/project", "hello"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        let ids: Vec<_> = engine
++            .search("A1B2C3", None, None, 10)
++            .into_iter()
++            .map(|session| session.id)
++            .collect();
++        assert_eq!(ids, ["a1b2c3", "x-a1b2c3-y", "a_1_b_2_c_3"]);
++    }
++
++    #[test]
++    fn id_search_keeps_agent_directory_and_date_filters() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("a1b2c3-new", "codex", "Neutral", "/work/api", "hello"),
++                session("a1b2c3-agent", "claude", "Neutral", "/work/api", "hello"),
++                session("a1b2c3-dir", "codex", "Neutral", "/work/web", "hello"),
++                session_at(
++                    "a1b2c3-old",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "hello",
++                    ChronoDuration::days(10),
++                ),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        assert_eq!(
++            result_ids(&engine, "agent:codex dir:api date:<1d a123"),
++            ["a1b2c3-new"]
++        );
++        assert_eq!(
++            result_ids(&engine, "-agent:claude dir:!web date:>1d a123"),
++            ["a1b2c3-old"]
++        );
++        let results = engine.search("date:<1d a123", Some("codex"), Some("api"), 10);
++        assert_eq!(results.len(), 1);
++        assert_eq!(results[0].id, "a1b2c3-new");
++    }
++
++    #[test]
++    fn id_search_treats_regex_punctuation_literally() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        let id = "prefix-a.b[1]+?-suffix";
++        index
++            .rebuild(vec![
++                session(id, "codex", "Neutral", "/work/project", "hello"),
++                session(
++                    "prefix-axb111x-suffix",
++                    "codex",
++                    "Neutral",
++                    "/work/project",
++                    "hello",
++                ),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        assert_eq!(result_ids(&engine, "a.b[1]+?"), [id]);
++        assert_eq!(result_ids(&engine, "a.[+?"), [id]);
++        assert!(result_ids(&engine, "a.*").is_empty());
++    }
++
++    #[test]
++    fn id_search_bounds_query_length_without_errors() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        let max_id = "ab12".repeat(16);
++        let longer_id = format!("{max_id}z");
++        index
++            .rebuild(vec![
++                session(&max_id, "codex", "Neutral", "/work/project", "hello"),
++                session(&longer_id, "codex", "Neutral", "/work/project", "hello"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        let results = engine.search_result(&max_id, None, None, 10).unwrap();
++        assert_eq!(results.len(), 2);
++        assert_eq!(results[0].id, max_id);
++        assert!(
++            engine
++                .search_result(&longer_id, None, None, 10)
++                .unwrap()
++                .is_empty()
++        );
++        assert!(
++            engine
++                .search_result("ab", None, None, 10)
++                .unwrap()
++                .is_empty()
++        );
++    }
++
++    #[test]
++    fn id_search_preserves_unicode_gaps_and_case() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        let id = "A💡b.Γ-C";
++        index
++            .rebuild(vec![session(
++                id,
++                "codex",
++                "Neutral",
++                "/work/project",
++                "hello",
++            )])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++
++        assert_eq!(result_ids(&engine, "aBγc"), [id]);
++        assert!(result_ids(&engine, "aγbc").is_empty());
++    }
++
+     #[test]
+     fn normalizes_typed_agent_filter_case() {
+         let temp = tempdir().unwrap();
+diff --git a/src/tui.rs b/src/tui.rs
+index 5ecf768..2b5939e 100644
+--- a/src/tui.rs
++++ b/src/tui.rs
+@@ -757,11 +757,13 @@ mod tests {
+     #[test]
+     fn mouse_wheel_over_preview_scrolls_preview() {
+         let mut state = test_state(vec![session("a")]);
++        let area = Rect::new(0, 0, 120, 40);
++        let preview = super::layout::app(area, true).main.preview().unwrap();
+ 
+         assert!(super::handle_mouse(
+             &mut state,
+-            mouse(MouseEventKind::ScrollDown, 100, 6),
+-            Rect::new(0, 0, 120, 40),
++            mouse(MouseEventKind::ScrollDown, 100, preview.y + 1),
++            area,
+         ));
+ 
+         assert_eq!(state.selected, 0);
+diff --git a/src/tui/input.rs b/src/tui/input.rs
+index b2ee6a3..8b0aca2 100644
+--- a/src/tui/input.rs
++++ b/src/tui/input.rs
+@@ -5,6 +5,7 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+ use crate::adapters::adapter_for;
+ 
+ use super::TuiExit;
++use super::layout::VISIBLE_SESSION_ROWS;
+ use super::state::{AppState, PENDING_SEARCH_STATUS, PendingAction, YoloModal};
+ use super::text::{shell_join, shell_quote};
+ 
+@@ -52,8 +53,18 @@ pub(super) fn handle_key(state: &mut AppState, key: KeyEvent) -> Result<Option<T
+         }
+         (KeyCode::Up, _) | (KeyCode::Char('k'), KeyModifiers::CONTROL) => state.move_selection(-1),
+         (KeyCode::Down, _) | (KeyCode::Char('j'), KeyModifiers::CONTROL) => state.move_selection(1),
+-        (KeyCode::PageUp, _) => state.move_selection(-10),
+-        (KeyCode::PageDown, _) => state.move_selection(10),
++        (KeyCode::PageUp, _) | (KeyCode::PageDown, _) => {
++            let page = if state.show_preview {
++                VISIBLE_SESSION_ROWS as isize
++            } else {
++                10
++            };
++            state.move_selection(if key.code == KeyCode::PageUp {
++                -page
++            } else {
++                page
++            });
++        }
+         (KeyCode::Tab, _) => {
+             if !state.accept_suggestion() {
+                 state.cycle_agent(false);
+@@ -155,14 +166,20 @@ fn finish_action(
+         return Ok(None);
+     };
+     let command = adapter.resume_command(&session, yolo);
++    if command.is_empty() {
++        state.status = "Cannot resolve this session's main thread".to_string();
++        return Ok(None);
++    }
+     match action {
+         PendingAction::Resume => Ok(Some(TuiExit::Resume {
+             command,
+             directory: session.directory,
+         })),
+         PendingAction::Copy => {
++            let has_codex_directory =
++                command[0] == "codex" && command.windows(2).any(|args| args[0] == "--cd");
+             let command = shell_join(&command);
+-            let full = if session.directory.is_empty() {
++            let full = if session.directory.is_empty() || has_codex_directory {
+                 command
+             } else {
+                 format!("cd {} && {}", shell_quote(&session.directory), command)
+diff --git a/src/tui/layout.rs b/src/tui/layout.rs
+index aacc4b1..c0704d7 100644
+--- a/src/tui/layout.rs
++++ b/src/tui/layout.rs
+@@ -1,5 +1,7 @@
+ use ratatui::layout::{Constraint, Direction, Layout, Rect};
+ 
++pub(super) const VISIBLE_SESSION_ROWS: u16 = 5;
++
+ #[derive(Debug, Clone, Copy)]
+ pub(super) struct AppLayout {
+     pub(super) header: Rect,
+@@ -81,24 +83,16 @@ fn main(area: Rect, show_preview: bool) -> MainLayout {
+         return MainLayout::ResultsOnly { results: area };
+     }
+ 
+-    if area.width >= 116 {
+-        let chunks = Layout::default()
+-            .direction(Direction::Horizontal)
+-            .constraints([Constraint::Percentage(62), Constraint::Percentage(38)])
+-            .split(area);
+-        MainLayout::Split {
+-            results: chunks[0],
+-            preview: chunks[1],
+-        }
+-    } else {
+-        let chunks = Layout::default()
+-            .direction(Direction::Vertical)
+-            .constraints([Constraint::Min(8), Constraint::Length(12)])
+-            .split(area);
+-        MainLayout::Split {
+-            results: chunks[0],
+-            preview: chunks[1],
+-        }
++    // Two borders and a column header surround the five session rows.
++    // On short terminals, shrink the list so the chat still gets more space.
++    let results_height = (VISIBLE_SESSION_ROWS + 3).min(area.height.saturating_sub(1) / 2);
++    let chunks = Layout::default()
++        .direction(Direction::Vertical)
++        .constraints([Constraint::Length(results_height), Constraint::Min(0)])
++        .split(area);
++    MainLayout::Split {
++        results: chunks[0],
++        preview: chunks[1],
+     }
+ }
+ 
+@@ -111,17 +105,25 @@ mod tests {
+     use super::*;
+ 
+     #[test]
+-    fn hit_tests_horizontal_results_and_preview() {
+-        let area = Rect::new(0, 0, 120, 40);
+-
+-        assert_eq!(
+-            scroll_target(area, true, 10, 6),
+-            Some(ScrollTarget::Results)
+-        );
+-        assert_eq!(
+-            scroll_target(area, true, 100, 6),
+-            Some(ScrollTarget::Preview)
+-        );
++    fn five_session_rows_leave_more_space_for_chat_at_every_width() {
++        for width in [80, 106, 160] {
++            let area = Rect::new(0, 0, width, 40);
++            let main = app(area, true).main;
++            let results = main.results();
++            let preview = main.preview().unwrap();
++            assert_eq!(results.height - 3, 5);
++            assert!(preview.height > results.height);
++            assert_eq!(preview.width, width);
++            assert_eq!(preview.y, results.bottom());
++            assert_eq!(
++                scroll_target(area, true, 10, 6),
++                Some(ScrollTarget::Results)
++            );
++            assert_eq!(
++                scroll_target(area, true, width - 5, preview.y + 1),
++                Some(ScrollTarget::Preview)
++            );
++        }
+     }
+ 
+     #[test]
+diff --git a/src/tui/render.rs b/src/tui/render.rs
+index 1229be0..7a3ae91 100644
+--- a/src/tui/render.rs
++++ b/src/tui/render.rs
+@@ -15,7 +15,7 @@ use super::text::{
+     age_style, display_width_until, line_width, search_query_spans, time_ago, truncate,
+ };
+ use super::theme::Theme;
+-const SEARCH_PLACEHOLDER: &str = "Search titles, messages, paths. Try agent:claude";
++const SEARCH_PLACEHOLDER: &str = "Search IDs, titles, messages, paths. Try agent:codex";
+ 
+ pub(super) fn draw(frame: &mut Frame, state: &AppState) {
+     let area = frame.area();
+@@ -506,6 +506,10 @@ fn draw_results(frame: &mut Frame, area: Rect, state: &AppState) {
+ struct ResultColumns {
+     agent_x: u16,
+     agent_w: u16,
++    id_x: u16,
++    id_w: u16,
++    kind_x: u16,
++    kind_w: u16,
+     title_x: u16,
+     title_w: u16,
+     dir_x: u16,
+@@ -517,23 +521,36 @@ struct ResultColumns {
+ }
+ 
+ fn result_columns(width: u16) -> ResultColumns {
+-    let (agent_w, dir_w, turns_w, age_w) = if width >= 100 {
+-        (15, 32, 7, 10)
+-    } else if width >= 72 {
+-        (13, 22, 6, 9)
++    let (agent_w, id_w, dir_w, turns_w, age_w) = if width >= 140 {
++        (15, 36, 32, 7, 10)
++    } else if width >= 110 {
++        (13, 36, 20, 6, 9)
++    } else if width >= 84 {
++        (13, 36, 0, 5, 8)
++    } else if width >= 68 {
++        (13, 36, 0, 0, 0)
++    } else if width >= 48 {
++        (13, 16, 0, 0, 0)
+     } else {
+-        (13, 0, 5, 8)
++        (0, 12, 0, 0, 0)
+     };
+-    let fixed = agent_w + dir_w + turns_w + age_w + 4;
+-    let title_w = width.saturating_sub(fixed).max(16);
++    let kind_w = 8;
++    let fixed = agent_w + id_w + kind_w + dir_w + turns_w + age_w + 6;
++    let title_w = width.saturating_sub(fixed);
+     let agent_x = 0;
+-    let title_x = agent_x + agent_w + 1;
++    let id_x = agent_x + agent_w + 1;
++    let kind_x = id_x + id_w + 1;
++    let title_x = kind_x + kind_w + 1;
+     let dir_x = title_x + title_w + 1;
+     let turns_x = dir_x + dir_w + 1;
+     let age_x = turns_x + turns_w + 1;
+     ResultColumns {
+         agent_x,
+         agent_w,
++        id_x,
++        id_w,
++        kind_x,
++        kind_w,
+         title_x,
+         title_w,
+         dir_x,
+@@ -552,6 +569,16 @@ fn agent_badge(agent: &str) -> &str {
+         .unwrap_or(agent)
+ }
+ 
++fn session_kind_label(session: &Session) -> &'static str {
++    if session.agent != "codex" {
++        ""
++    } else if session.forked_from_id.is_some() {
++        "Fork"
++    } else {
++        "Original"
++    }
++}
++
+ fn draw_result_header(frame: &mut Frame, inner: Rect, columns: ResultColumns, theme: &Theme) {
+     let style = Style::new().fg(theme.secondary).bold();
+     draw_cell(
+@@ -563,6 +590,24 @@ fn draw_result_header(frame: &mut Frame, inner: Rect, columns: ResultColumns, th
+         "  Agent",
+         style,
+     );
++    draw_cell(
++        frame,
++        inner,
++        columns.id_x,
++        0,
++        columns.id_w,
++        "Session ID",
++        style,
++    );
++    draw_cell(
++        frame,
++        inner,
++        columns.kind_x,
++        0,
++        columns.kind_w,
++        "Type",
++        style,
++    );
+     draw_cell(
+         frame,
+         inner,
+@@ -636,6 +681,7 @@ fn draw_result_row(
+         .images
+         .as_ref()
+         .and_then(|images| images.row.get(&session.agent))
++        && columns.agent_w >= 5
+     {
+         frame.render_widget(
+             TuiImage::new(protocol).allow_clipping(true),
+@@ -658,6 +704,28 @@ fn draw_result_row(
+         ),
+         row_style.fg(agent_color).add_modifier(Modifier::BOLD),
+     );
++    draw_cell(
++        frame,
++        rows_area,
++        columns.id_x,
++        row_y - rows_area.y,
++        columns.id_w,
++        &session.id,
++        row_style.fg(state.theme.muted),
++    );
++    draw_cell(
++        frame,
++        rows_area,
++        columns.kind_x,
++        row_y - rows_area.y,
++        columns.kind_w,
++        session_kind_label(session),
++        row_style.fg(if session.forked_from_id.is_some() {
++            state.theme.accent
++        } else {
++            state.theme.muted
++        }),
++    );
+     draw_cell(
+         frame,
+         rows_area,
+@@ -732,7 +800,15 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+         .get(session.agent.as_str())
+         .map(|agent| state.theme.agent_color(agent))
+         .unwrap_or(state.theme.foreground);
+-    let header_lines = vec![
++    let mut identity = vec![
++        Span::styled("ID: ", Style::new().fg(state.theme.muted)),
++        Span::raw(&session.id),
++    ];
++    if session.agent == "codex" {
++        identity.push(Span::styled("  Type: ", Style::new().fg(state.theme.muted)));
++        identity.push(Span::raw(session_kind_label(session)));
++    }
++    let mut header_lines = vec![
+         Line::from(vec![
+             Span::styled(&session.agent, Style::new().fg(agent_color).bold()),
+             Span::raw("  "),
+@@ -749,25 +825,40 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+                 Style::new().fg(state.theme.muted),
+             ),
+         ]),
++        Line::from(identity),
+     ];
++    if session.agent == "codex"
++        && let Some(source_id) = &session.forked_from_id
++    {
++        header_lines.push(Line::from(vec![
++            Span::styled("Fork of: ", Style::new().fg(state.theme.muted)),
++            Span::raw(source_id),
++        ]));
++    }
+ 
+     let mut body_area = inner;
+     if let Some(protocol) = state
+         .images
+         .as_ref()
+         .and_then(|images| images.preview.get(&session.agent))
+-        && inner.width > 48
++        && inner.width >= if session.agent == "codex" { 65 } else { 49 }
+         && inner.height > 7
+     {
++        let header_height = header_lines.len() as u16;
+         let logo_area = Rect::new(inner.right().saturating_sub(8), inner.y, 8, 4);
+-        let text_area = Rect::new(inner.x, inner.y, inner.width.saturating_sub(9), 3);
++        let text_area = Rect::new(
++            inner.x,
++            inner.y,
++            inner.width.saturating_sub(9),
++            header_height,
++        );
+         frame.render_widget(Paragraph::new(Text::from(header_lines.clone())), text_area);
+         frame.render_widget(TuiImage::new(protocol).allow_clipping(true), logo_area);
+         body_area = Rect::new(
+             inner.x,
+-            inner.y + 4,
++            inner.y + header_height + 1,
+             inner.width,
+-            inner.height.saturating_sub(4),
++            inner.height.saturating_sub(header_height + 1),
+         );
+     }
+ 
+diff --git a/tests/cli.rs b/tests/cli.rs
+index 6827c1c..64a4504 100644
+--- a/tests/cli.rs
++++ b/tests/cli.rs
+@@ -692,6 +692,122 @@ fn xdg_cache_home_controls_index_location() {
+     assert!(!temp.path().join(".cache/fast-resume").exists());
+ }
+ 
++#[test]
++fn json_search_matches_full_partial_and_fuzzy_metadata_ids() {
++    let temp = TempDir::new().unwrap();
++    let id = "019abcde-1234-5678-9abc-def012345678";
++    write_codex_session(temp.path(), id, "/repo/backend", "Neutral conversation");
++    write_codex_session(
++        temp.path(),
++        "unrelated",
++        "/repo/backend",
++        "Other conversation",
++    );
++    // Build once, then prove all ID forms work against the existing index.
++    assert_success(run_fr(temp.path(), &["--json"]));
++
++    for query in [
++        id,
++        "1234-5678",
++        "0ACE1359",
++        "agent:codex dir:backend date:<1d 0ACE1359",
++    ] {
++        let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--no-refresh", query]));
++        let result: Value = serde_json::from_str(&stdout).unwrap();
++        assert_eq!(result["meta"]["total"], 1, "query: {query}");
++        assert_eq!(result["sessions"][0]["id"], id, "query: {query}");
++        assert_eq!(
++            result["sessions"][0]["resume_command"],
++            json!(["codex", "resume", id])
++        );
++    }
++}
++
++#[test]
++fn codex_forks_expose_their_source_and_resume_themselves_without_subagents() {
++    let temp = TempDir::new().unwrap();
++    for (id, parent) in [
++        ("original", None),
++        ("fork-one", Some("original")),
++        ("fork-two", Some("fork-one")),
++        ("child", Some("fork-one")),
++    ] {
++        let path = write_codex_session(temp.path(), id, "/repo/forks", "Shared prompt");
++        let mut metadata = json!({"id":id,"cwd":"/repo/forks","source":"cli"});
++        if let Some(parent) = parent {
++            metadata["forked_from_id"] = json!(parent);
++        }
++        if id == "child" {
++            metadata["source"] =
++                json!({"subagent":{"thread_spawn":{"parent_thread_id":"fork-one"}}});
++        }
++        write_jsonl(
++            &path,
++            &[
++                json!({"type":"session_meta","payload":metadata}),
++                json!({"type":"event_msg","payload":{"type":"user_message","message":"Shared prompt"}}),
++            ],
++        );
++    }
++    assert_success(run_fr(temp.path(), &["--json", "--all"]));
++    let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--no-refresh", "--all"]));
++    let output: Value = serde_json::from_str(&stdout).unwrap();
++    assert_eq!(output["schema_version"], 1);
++    let sessions = output["sessions"].as_array().unwrap();
++    assert_eq!(sessions.len(), 3);
++    assert!(sessions.iter().all(|session| session["id"] != "child"));
++    for (id, parent) in [
++        ("original", None),
++        ("fork-one", Some("original")),
++        ("fork-two", Some("fork-one")),
++    ] {
++        let session = sessions.iter().find(|session| session["id"] == id).unwrap();
++        assert_eq!(
++            session.get("forked_from_id").and_then(Value::as_str),
++            parent
++        );
++        assert_eq!(session["resume_command"], json!(["codex", "resume", id]));
++        for internal in ["content", "mtime", "yolo"] {
++            assert!(session.get(internal).is_none());
++        }
++    }
++}
++
++#[test]
++fn cached_codex_subagent_routes_to_main_then_refresh_hides_it() {
++    let temp = TempDir::new().unwrap();
++    let root_id = "019abcde-1234-5678-9abc-def012345678";
++    let child_id = "019abcde-9876-5432-9abc-def087654321";
++    write_codex_session(temp.path(), root_id, "/repo/main", "Main request");
++    let child_path = write_codex_session(temp.path(), child_id, "/repo/worktree", "Child request");
++    assert_success(run_fr(temp.path(), &["--json", "--all"]));
++
++    // Simulate a cached child from a previous picker version: the persisted
++    // document has no ancestry, but Codex's durable header records its parent.
++    write_jsonl(
++        &child_path,
++        &[
++            json!({"type": "session_meta", "payload": {"id": child_id, "cwd": "/repo/worktree", "source": {"subagent": {"thread_spawn": {"parent_thread_id": root_id}}}}}),
++            json!({"type": "event_msg", "payload": {"type": "user_message", "message": "Child request"}}),
++        ],
++    );
++    let (stdout, _) = assert_success(run_fr(
++        temp.path(),
++        &["--json", "--no-refresh", "--limit", "1", child_id],
++    ));
++    let cached: Value = serde_json::from_str(&stdout).unwrap();
++    assert_eq!(cached["sessions"][0]["id"], child_id);
++    assert_eq!(
++        cached["sessions"][0]["resume_command"],
++        json!(["codex", "--cd", "/repo/main", "resume", root_id])
++    );
++
++    let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--all", "-a", "codex"]));
++    let refreshed: Value = serde_json::from_str(&stdout).unwrap();
++    assert_eq!(refreshed["sessions"].as_array().unwrap().len(), 1);
++    assert_eq!(refreshed["sessions"][0]["id"], root_id);
++}
++
+ #[test]
+ fn relative_xdg_cache_home_is_ignored() {
+     let temp = TempDir::new().unwrap();
+@@ -841,6 +957,55 @@ fn agent_context_exposes_the_portable_skill() {
+     assert!(stdout.contains("meta.next_offset"));
+ }
+ 
++#[test]
++fn codex_search_indexes_chat_without_injected_context_or_reasoning() {
++    let temp = TempDir::new().unwrap();
++    let path = write_codex_session(temp.path(), "clean-chat", "/repo/chat", "placeholder");
++    let prompt = "Please update AGENTS.md with chatvisiblemarker.";
++    write_jsonl(
++        &path,
++        &[
++            json!({"type": "session_meta", "payload": {"id": "clean-chat", "cwd": "/repo/chat"}}),
++            json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "# AGENTS.md instructions for /repo/chat\n<INSTRUCTIONS>\ninjectedonlymarker\n</INSTRUCTIONS>"}]}}),
++            json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "<environment_context>environmentonlymarker</environment_context>"}]}}),
++            json!({"type": "event_msg", "payload": {"type": "user_message", "message": prompt}}),
++            json!({"type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": prompt}]}}),
++            json!({"type": "event_msg", "payload": {"type": "agent_reasoning", "text": "reasoningonlymarker"}}),
++            json!({"type": "response_item", "payload": {"type": "message", "role": "assistant", "channel": "analysis", "content": [{"type": "output_text", "text": "analysisonlymarker"}]}}),
++            json!({"type": "response_item", "payload": {"type": "function_call_output", "output": "toolonlymarker"}}),
++            json!({"type": "response_item", "payload": {"type": "message", "role": "assistant", "channel": "final", "content": [{"type": "output_text", "text": "Updated with replyvisiblemarker."}]}}),
++            json!({"type": "event_msg", "payload": {"type": "agent_message", "message": "Updated with replyvisiblemarker."}}),
++            json!({"type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "UserMessage", "id": "user-two", "content": [{"type": "text", "text": "modernusermarker"}]}}}),
++            json!({"type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "AgentMessage", "id": "reply-two", "phase": "final_answer", "content": [{"type": "Text", "text": "modernreplymarker"}]}}}),
++        ],
++    );
++    assert_success(run_fr(temp.path(), &["--rebuild"]));
++    for query in [
++        "chatvisiblemarker",
++        "replyvisiblemarker",
++        "AGENTS.md",
++        "modernusermarker",
++        "modernreplymarker",
++    ] {
++        let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--no-refresh", query]));
++        let value: Value = serde_json::from_str(&stdout).unwrap();
++        assert_eq!(value["sessions"][0]["id"], "clean-chat", "{query}");
++        assert_eq!(value["sessions"][0]["title"], prompt);
++        assert_eq!(value["sessions"][0]["message_count"], 2);
++    }
++    for query in [
++        "injectedonlymarker",
++        "environmentonlymarker",
++        "reasoningonlymarker",
++        "analysisonlymarker",
++        "toolonlymarker",
++    ] {
++        let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--no-refresh", query]));
++        let value: Value = serde_json::from_str(&stdout).unwrap();
++        assert_eq!(value["meta"]["total"], 0, "{query}");
++    }
++}
++
+ #[test]
+ fn json_empty_results_and_invalid_pagination_are_explicit() {
+     let temp = TempDir::new().unwrap();
