@@ -66,16 +66,18 @@
 
 			nixpkgs.overlays = [
 				(final: prev: {
+					ccsession = final.callPackage ./packages/ccsession { };
 					crunchyroll-tui = final.callPackage ./packages/crunchyroll-tui { };
 					fast-resume = inputs.fast-resume.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
-						# ID search, chat previews, and main-session Codex resumes.
+						# ID/regex search, chat previews, and main-session Codex resumes.
 						src = inputs.fast-resume.outPath;
 						patches = (old.patches or [ ]) ++ [ ./packages/fast-resume/fuzzy-session-ids.patch ];
 						nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.makeBinaryWrapper ];
 						postFixup = (old.postFixup or "") + ''
 							# Use light colors without terminal capability probes on startup.
 							wrapProgram "$out/bin/fr" --set-default FAST_RESUME_NO_IMAGES true \
-								--set-default FAST_RESUME_THEME light
+								--set-default FAST_RESUME_THEME light \
+								--set-default FAST_RESUME_COMPACT true
 						'';
 					});
 					kino = final.callPackage ./packages/kino { };
@@ -266,6 +268,7 @@
 				browsh
 				cacert
 				cargo
+				ccsession
 				claude-code
 				cmake
 				cmus

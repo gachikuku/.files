@@ -1,0 +1,3120 @@
+diff --git a/README.md b/README.md
+index bd2ed38..34496e9 100644
+--- a/README.md
++++ b/README.md
+@@ -250,12 +250,47 @@ lower-case fzf syntax (`ctrl-r`, `alt-f`, `f1`, …); the three keys must be
+ distinct and must not be a reserved fzf event name (`enter`, `change`, …), or
+ ccsession exits with an error instead of starting the picker.
+ 
++## Local Nix setup
++
++Run `cs` (also available as `ccsession`) for Codex sessions. The conversation
++preview is at the top, with five session rows above the fixed bottom search bar.
++Mode prompts have the same width; result counts occupy a separate line, and the
++panes adapt when the terminal resizes.
++
++Normal unquoted input searches IDs and labels fuzzily inside fzf. Double quotes
++add case-insensitive Go regular expressions over visible chat text: `"mizu"`
++finds chat containing mizu, and `"mizu|water"` matches either. Mixed input such as
++`"mizu" dply` requires the quoted chat match AND a fuzzy match for `dply` in an
++ID, title, or one chat word (for example, deployment). Each term may match a
++different message. Multiple quoted conditions are also ANDed. Regex patterns
++use message-text substring semantics; use anchors when needed.
++
++Ctrl-G keeps content search strict: plain input is a case-insensitive literal
++substring, including spaces and punctuation. Quoted terms are regex; any bare
++terms alongside them are literal, not fuzzy. Ctrl-F returns to normal search.
++`cs --exact -q QUERY` treats all query punctuation, including quotes, literally.
++Invalid quoted patterns clear the list and show an error. Query edits and mode
++changes cannot resume stale content results while a reload is pending.
++
++Preview matches use reverse video: regex matches and the full word matching a
++fuzzy chat term are highlighted. Active searches show a window around a matching
++message, and long bodies are clipped around the hit; normal previews show the
++latest messages. The default fzf color scheme is light; set
++`CCSESSION_FZF_SCHEME=dark` for a dark terminal.
++
++Codex rows show `Original` or `Fork`; forks also show their immediate source ID
++in the preview and resume their own session. `Unknown` means the rollout header
++is unavailable. Subagent sessions are excluded, including direct locator lookup.
++Codex's read-only SQLite projections supply metadata and previews; each list
++invocation reads at most 16 lines / 1 MiB of each candidate's rollout header to
++identify forks. Unquoted fuzzy typing stays in fzf without rereading transcripts.
++
+ ## How it works
+ 
+ 1. `ccsession list` reads the selected backend (`~/.claude/projects/*/` by
+    default, or `--source=opencode` / `--source=grok` / `--source=codex` /
+    `--source=pi` / `--source=omp` / `--source=kiro` / `--source=cortex`) and prints one TSV row
+-   per session (`id`, `locator`, `epoch`, relative time, cwd basename, label).
++   per session (`id`, `locator`, `epoch`, relative time, cwd basename, label, session type).
+    `ccsession list --json --limit N` emits the same candidates as a JSON array
+    for agent integrations.
+ 2. `fzf` consumes the TSV. The three key bindings swap fzf's matcher
+diff --git a/cmd/ccsession/main.go b/cmd/ccsession/main.go
+index e09408e..ab2f5e4 100644
+--- a/cmd/ccsession/main.go
++++ b/cmd/ccsession/main.go
+@@ -1,6 +1,7 @@
+ package main
+ 
+ import (
++	"bytes"
+ 	"errors"
+ 	"flag"
+ 	"fmt"
+@@ -11,6 +12,7 @@ import (
+ 	"strings"
+ 
+ 	"github.com/sorafujitani/ccsession/internal/config"
++	"github.com/sorafujitani/ccsession/internal/grep"
+ 	"github.com/sorafujitani/ccsession/internal/last"
+ 	"github.com/sorafujitani/ccsession/internal/list"
+ 	"github.com/sorafujitani/ccsession/internal/preview"
+@@ -68,7 +70,7 @@ func init() {
+ const usage = `ccsession - fzf frontend for agent session resume
+ 
+ USAGE:
+-  ccsession [--all | --source <s>] [--exclude-dir <s>] # list -> fzf -> resume
++  ccsession [--all | --source <s>] [--query Q] [--exact] # list -> fzf -> resume
+   ccsession list [--grep Q] [--exclude-dir S]         # TSV rows, or JSON with --json
+   ccsession preview [--query Q] [--regex] [--locator L] [--json] [--color M] [--no-color] <sessionId>
+   ccsession resume-spec [--locator L] <sessionId> # print the resume target as JSON
+@@ -97,6 +99,16 @@ GLOBAL FLAGS:
+   --bind-dir  <key>   key that switches the picker to dir  mode (default ctrl-o)
+   --bind-fuzzy <key>  key that switches the picker to fuzzy mode (default ctrl-f)
+ 
++PICKER SEARCH:
++  Search session IDs and labels with the conversation preview above.
++  The default fuzzy search also matches the displayed time and directory.
++  "regex" bare-term  require regex in chat AND fuzzy bare terms in chat/title/ID
++  --query, -q <text>  start the picker with this query
++  --exact             match the whole query as a case-insensitive literal
++                      substring, including spaces and punctuation. Applies
++                      to ID/label and directory search; ctrl-f returns to
++                      literal search in this mode. Grep searches content.
++
+ PICKER KEYBINDINGS:
+   Resolved as flag > env > config file > default. The on-screen header is
+   regenerated from the resolved keys. Override via the flags above, the env
+@@ -191,13 +203,15 @@ func main() {
+ 		os.Exit(2)
+ 	}
+ 	if len(args) == 0 {
+-		if err := runDefault(gf.binds); err != nil {
++		if err := runDefault(gf.binds, gf.query, gf.exact); err != nil {
+ 			fmt.Fprintln(os.Stderr, "ccsession:", err)
+ 			os.Exit(1)
+ 		}
+ 		return
+ 	}
+ 	switch args[0] {
++	case "picker-action":
++		cmdPickerAction(args[1:])
+ 	case "list":
+ 		cmdList(args[1:])
+ 	case "preview":
+@@ -229,6 +243,8 @@ func main() {
+ 
+ type globalFlags struct {
+ 	excludeDir string
++	query      string
++	exact      bool
+ 	source     string
+ 	all        bool
+ 	opencode   bool
+@@ -314,6 +330,8 @@ func applySource(gf globalFlags) error {
+ func parseGlobalFlags(args []string) (gf globalFlags, rest []string) {
+ 	dst := map[string]*string{
+ 		"--exclude-dir": &gf.excludeDir,
++		"--query":       &gf.query,
++		"-q":            &gf.query,
+ 		"--source":      &gf.source,
+ 		"--bind-grep":   &gf.binds.Grep,
+ 		"--bind-dir":    &gf.binds.Dir,
+@@ -323,6 +341,11 @@ func parseGlobalFlags(args []string) (gf globalFlags, rest []string) {
+ next:
+ 	for i < len(args) {
+ 		a := args[i]
++		if a == "--exact" {
++			gf.exact = true
++			i++
++			continue next
++		}
+ 		// --all is sugar for --source=all and takes no value.
+ 		if a == "--all" {
+ 			gf.all = true
+@@ -418,6 +441,7 @@ func cmdList(args []string) {
+ 	fs := newFlagSet("list", listUsage)
+ 	grepFlag := fs.String("grep", "", "filter sessions by user/assistant content (fixed-string)")
+ 	regexFlag := fs.Bool("regex", false, "treat --grep query as a regular expression")
++	pickerFlag := fs.Bool("picker-query", false, "read the picker query from fzf")
+ 	// Default from env so `ccsession --exclude-dir foo list` works the same
+ 	// as `ccsession list --exclude-dir foo`. An explicit flag still wins.
+ 	excludeDirFlag := fs.String("exclude-dir", os.Getenv(excludeDirEnv), "hide sessions whose cwd contains <s> (case-insensitive)")
+@@ -428,27 +452,47 @@ func cmdList(args []string) {
+ 	if err := fs.Parse(args); err != nil {
+ 		handleFlagError("list", fs, err)
+ 	}
++	var plan *grep.QueryPlan
++	if *pickerFlag {
++		var err error
++		plan, err = pickerQuery(os.Getenv("FZF_QUERY"), pickerExact(), os.Getenv("FZF_PROMPT"))
++		if err != nil {
++			fmt.Fprintln(os.Stderr, "ccsession list:", err)
++			os.Exit(2)
++		}
++		*grepFlag = os.Getenv("FZF_QUERY")
++	}
+ 	if *limitFlag < 0 {
+ 		fmt.Fprintln(os.Stderr, "ccsession list: limit must be >= 0")
+ 		os.Exit(2)
+ 	}
++	var rows bytes.Buffer
++	var out io.Writer
++	if *pickerFlag && !*jsonFlag {
++		out = &rows
++	}
+ 	if err := list.Run(list.Options{
+-		Grep:       *grepFlag,
+-		Regex:      *regexFlag,
+-		ExcludeDir: *excludeDirFlag,
+-		Color:      *colorFlag,
+-		NoColor:    *noColor,
+-		JSON:       *jsonFlag,
+-		Limit:      *limitFlag,
++		Grep: *grepFlag, Regex: *regexFlag, QueryPlan: plan, ExcludeDir: *excludeDirFlag,
++		Color: *colorFlag, NoColor: *noColor, JSON: *jsonFlag, Limit: *limitFlag, Out: out,
+ 	}); err != nil {
+ 		fmt.Fprintln(os.Stderr, "ccsession list:", err)
+ 		os.Exit(1)
+ 	}
++	if out != nil {
++		token := pickerQueryToken(os.Getenv("FZF_QUERY"))
++		for _, row := range strings.Split(strings.TrimSuffix(rows.String(), "\n"), "\n") {
++			if row != "" {
++				fmt.Fprintln(os.Stdout, row+"\t"+token)
++			}
++		}
++	}
+ }
+ 
+ func cmdPreview(args []string) {
+ 	fs := newFlagSet("preview", previewUsage)
+ 	queryFlag := fs.String("query", "", "highlight matches of <query> in the preview")
++	fzfQuery := fs.Bool("fzf-query", false, "recognize a leading fzf exact-term marker")
++	pickerFlag := fs.Bool("picker-query", false, "interpret the picker query")
+ 	regexFlag := fs.Bool("regex", false, "treat --query as a regular expression")
+ 	locatorFlag := fs.String("locator", "", "opaque session locator from list output")
+ 	jsonFlag := fs.Bool("json", false, "emit JSON instead of pane text")
+@@ -463,7 +507,19 @@ func cmdPreview(args []string) {
+ 		fs.Usage()
+ 		os.Exit(2)
+ 	}
+-	if err := preview.Run(rest[0], preview.Options{Query: *queryFlag, Regex: *regexFlag, Locator: *locatorFlag, JSON: *jsonFlag, Color: *colorFlag, NoColor: *noColor}); err != nil {
++	var plan *grep.QueryPlan
++	if *pickerFlag {
++		var err error
++		plan, err = pickerQuery(*queryFlag, pickerExact(), os.Getenv("FZF_PROMPT"))
++		if err != nil {
++			fmt.Fprintln(os.Stderr, "ccsession preview:", err)
++			os.Exit(2)
++		}
++		if plan != nil {
++			*fzfQuery = false
++		}
++	}
++	if err := preview.Run(rest[0], preview.Options{Query: *queryFlag, QueryPlan: plan, FzfQuery: *fzfQuery && os.Getenv("FZF_PROMPT") != "grep   > ", Regex: *regexFlag, Locator: *locatorFlag, JSON: *jsonFlag, Color: *colorFlag, NoColor: *noColor}); err != nil {
+ 		fmt.Fprintln(os.Stderr, "ccsession preview:", err)
+ 		os.Exit(1)
+ 	}
+@@ -539,7 +595,7 @@ func cmdLast(args []string) {
+ 	}
+ }
+ 
+-func runDefault(flagBinds config.Keybindings) error {
++func runDefault(flagBinds config.Keybindings, query string, exact bool) error {
+ 	if _, err := exec.LookPath("fzf"); err != nil {
+ 		return fmt.Errorf("fzf is required but not found in PATH")
+ 	}
+@@ -566,8 +622,8 @@ func runDefault(flagBinds config.Keybindings) error {
+ 	if err != nil {
+ 		return err
+ 	}
+-	cmd := exec.Command("bash", "-c", buildScript(kb, sourceLabel()))
+-	cmd.Env = append(os.Environ(), "CCSESSION_BIN="+self)
++	cmd := exec.Command("bash", "-c", buildScript(kb, sourceLabel(), exact))
++	cmd.Env = append(os.Environ(), "CCSESSION_BIN="+self, "CCSESSION_QUERY="+query)
+ 	cmd.Stdin = os.Stdin
+ 	cmd.Stdout = os.Stdout
+ 	cmd.Stderr = os.Stderr
+@@ -582,28 +638,41 @@ func sourceLabel() string {
+ 	return "claude"
+ }
+ 
+-// buildScript fills defaultScriptTmpl's __CCS_BIND_*__ and __CCS_SOURCE__
+-// tokens. NewReplacer (not Sprintf/template) leaves the script's bash %q
++// buildScript fills defaultScriptTmpl's key, source, and search-mode tokens.
++// NewReplacer (not Sprintf/template) leaves the script's bash %q
+ // escapes, $vars and {q} placeholders untouched.
+-func buildScript(kb config.Keybindings, src string) string {
++func buildScript(kb config.Keybindings, src string, exact bool) string {
++	mode, prompt, matchFlags, previewFlags := "fuzzy", "fuzzy  > ", "", "--fzf-query"
++	if exact {
++		mode, prompt, matchFlags, previewFlags = "literal", "literal> ", "--exact --no-extended --ignore-case --literal", ""
++	}
+ 	return strings.NewReplacer(
+ 		"__CCS_BIND_GREP__", kb.Grep,
+ 		"__CCS_BIND_DIR__", kb.Dir,
+ 		"__CCS_BIND_FUZZY__", kb.Fuzzy,
+ 		"__CCS_SOURCE__", src,
++		"__CCS_SEARCH_MODE__", mode,
++		"__CCS_SEARCH_PROMPT__", prompt,
++		"__CCS_MATCH_FLAGS__", matchFlags,
++		"__CCS_PREVIEW_FLAGS__", previewFlags,
++		"__CCS_EXACT__", map[bool]string{false: "0", true: "1"}[exact],
+ 	).Replace(defaultScriptTmpl)
+ }
+ 
+ // defaultScriptTmpl wires `ccsession list` into fzf with three input modes.
+-// fuzzy mode: fzf's own matcher filters across time/dir/label (columns 3,4,5).
+-// dir   mode: fzf's matcher narrowed to the directory column only (column 4).
+-// grep  mode: every keystroke reloads the list through `ccsession list --grep`.
++// fuzzy mode: fzf matches type/time/dir/id/label (display columns 1-5).
++// dir   mode: fzf's matcher narrowed to the directory (display column 3).
++// grep mode and quoted queries reload strict content results; normal unquoted
++// edits only update fzf. A private result token prevents accepting stale rows.
++// --exact uses literal matching in both searchable modes for this invocation.
++// --with-nth changes display/search fields only; preview and resume retain the
++// original row's ID and locator in raw columns 1 and 2.
+ // The mode-switch keys are __CCS_BIND_*__ tokens filled in by buildScript;
+ // the defaults are ctrl-g: grep, ctrl-o: dir, ctrl-f: fuzzy.
+ //
+ // --no-hscroll anchors every row at its left edge. Without it, fzf scrolls a
+ // row sideways to reveal the matched substring, so a query that hits the label
+-// (the rightmost column) pushes the time+dir prefix off-screen behind a "··"
++// or ID pushes the time+dir prefix off-screen behind a "··"
+ // ellipsis while a query that hits the dir keeps it visible. That left every
+ // row looking different depending on where the match landed; anchoring left
+ // keeps the time+dir prefix as the start of every row (the match may instead
+@@ -613,37 +682,38 @@ func buildScript(kb config.Keybindings, src string) string {
+ // the list (fuzzy/dir modes) matches the reverse-video highlight the preview
+ // applies to the query, instead of fzf's default colored background.
+ //
+-// If CCSESSION_EXCLUDE_DIR is set at startup, every list invocation
+-// (initial + every reload) is prefixed with --exclude-dir VALUE so the
+-// matching sessions never appear in the picker. Two forms are kept:
+-// exclude_args[] feeds the direct bash subshell with proper word splitting;
+-// $exclude_arg (printf %q) feeds the fzf --bind strings, which sh -c will
+-// later re-parse. The value is never typed inside the TUI, so it can't
+-// leak into screenshots. The ${arr[@]+...} idiom keeps macOS bash 3.2
+-// happy under set -u when the array is empty.
++// list inherits CCSESSION_EXCLUDE_DIR for initial loads and every reload.
+ const defaultScriptTmpl = `set -u
+-exclude_args=()
+-exclude_arg=""
+-if [ -n "${CCSESSION_EXCLUDE_DIR:-}" ]; then
+-  exclude_args=(--exclude-dir "$CCSESSION_EXCLUDE_DIR")
+-  exclude_arg=$(printf -- '--exclude-dir %q' "$CCSESSION_EXCLUDE_DIR")
+-fi
+-selected=$("$CCSESSION_BIN" list --color=always "${exclude_args[@]+"${exclude_args[@]}"}" | fzf \
++export CCSESSION_PICKER_EXACT=__CCS_EXACT__
++export CCSESSION_PICKER_HEADER='[__CCS_SOURCE__] __CCS_BIND_GREP__: grep / __CCS_BIND_DIR__: dir / __CCS_BIND_FUZZY__: __CCS_SEARCH_MODE__ / enter: resume'
++# One prompt, one count row, one header, five results, and the preview border.
++# FZF_LINES is updated by fzf for its start/resize child commands.
++preview_layout='printf "change-preview-window(up,%d,wrap,border-bottom)" "$((FZF_LINES > 10 ? FZF_LINES - 9 : 1))"'
++selected=$("$CCSESSION_BIN" list --color=always | fzf \
+   --ansi \
+   --delimiter=$'\t' \
+-  --with-nth=4,5,6 \
+-  --nth=1,2,3 \
++  --with-nth=$'{7}\t{4}\t{5}\t{1}\t{6}' \
++  --nth=1,2,3,4,5 \
++  --tabstop=2 \
++  --layout=reverse-list --info=right --no-separator \
++  --border=none --list-border=none --input-border=none --header-border=none \
++  --query="${CCSESSION_QUERY:-}" \
++  __CCS_MATCH_FLAGS__ \
++  --prompt='__CCS_SEARCH_PROMPT__' \
+   --no-sort \
+   --no-hscroll \
+-  --color='hl:-1:reverse,hl+:-1:reverse' \
+-  --preview "$CCSESSION_BIN preview --color=always --locator {2} --query {q} {1}" \
+-  --preview-window=right,60%,wrap \
+-  --header='[__CCS_SOURCE__] __CCS_BIND_GREP__: grep / __CCS_BIND_DIR__: dir / __CCS_BIND_FUZZY__: fuzzy / enter: resume' \
+-  --bind 'start:unbind(change)' \
+-  --bind "change:reload(sleep 0.05; $CCSESSION_BIN list --color=always $exclude_arg --grep {q})" \
+-  --bind "__CCS_BIND_GREP__:transform:echo \"change-prompt(grep> )+disable-search+reload(sleep 0.05; $CCSESSION_BIN list --color=always $exclude_arg --grep {q})+rebind(change)\"" \
+-  --bind "__CCS_BIND_DIR__:transform:echo \"change-prompt(dir> )+enable-search+change-nth(2)+reload($CCSESSION_BIN list --color=always $exclude_arg)+unbind(change)\"" \
+-  --bind "__CCS_BIND_FUZZY__:transform:echo \"change-prompt(> )+enable-search+change-nth(1,2,3)+reload($CCSESSION_BIN list --color=always $exclude_arg)+unbind(change)\"" \
++  --color="${CCSESSION_FZF_SCHEME:-light},hl:-1:reverse,hl+:-1:reverse" \
++  --preview "$CCSESSION_BIN preview --color=always __CCS_PREVIEW_FLAGS__ --picker-query --locator {2} --query {q} {1}" \
++  --preview-window=up,70%,wrap,border-bottom \
++  --header='[__CCS_SOURCE__] __CCS_BIND_GREP__: grep / __CCS_BIND_DIR__: dir / __CCS_BIND_FUZZY__: __CCS_SEARCH_MODE__ / enter: resume' \
++  --bind "start:transform:$CCSESSION_BIN picker-action start" \
++  --bind "resize:transform:$preview_layout" \
++  --bind "change:unbind(enter)+transform:$CCSESSION_BIN picker-action change" \
++  --bind "load:transform:$CCSESSION_BIN picker-action ready" \
++  --bind "enter:transform:$CCSESSION_BIN picker-action accept {}" \
++  --bind "__CCS_BIND_GREP__:unbind(enter)+transform:$CCSESSION_BIN picker-action grep" \
++  --bind "__CCS_BIND_DIR__:unbind(enter)+transform:$CCSESSION_BIN picker-action dir" \
++  --bind "__CCS_BIND_FUZZY__:unbind(enter)+transform:$CCSESSION_BIN picker-action fuzzy" \
+   ) || true
+ if [ -n "$selected" ]; then
+   IFS=$'\t' read -r id locator _rest <<< "$selected"
+diff --git a/cmd/ccsession/main_test.go b/cmd/ccsession/main_test.go
+index 6bbdd01..55c5739 100644
+--- a/cmd/ccsession/main_test.go
++++ b/cmd/ccsession/main_test.go
+@@ -15,15 +15,16 @@ import (
+ // keys the script must keep the original header and binds, preserve the
+ // start/change wiring, and leave no __CCS_BIND_*__ token unsubstituted.
+ func TestBuildScriptDefaults(t *testing.T) {
+-	got := buildScript(config.Defaults(), "claude")
++	got := buildScript(config.Defaults(), "claude", false)
+ 
+ 	wants := []string{
+ 		`--header='[claude] ctrl-g: grep / ctrl-o: dir / ctrl-f: fuzzy / enter: resume'`,
+-		`--bind 'start:unbind(change)'`,
+-		`--bind "change:reload(sleep 0.05;`,
+-		`--bind "ctrl-g:transform:echo \"change-prompt(grep> )`,
+-		`--bind "ctrl-o:transform:echo \"change-prompt(dir> )`,
+-		`--bind "ctrl-f:transform:echo \"change-prompt(> )`,
++		`--bind "start:transform:$CCSESSION_BIN picker-action start"`,
++		`--bind "resize:transform:$preview_layout"`,
++		`--bind "change:unbind(enter)+transform:$CCSESSION_BIN picker-action change"`,
++		`--bind "ctrl-g:unbind(enter)+transform:$CCSESSION_BIN picker-action grep"`,
++		`--bind "ctrl-o:unbind(enter)+transform:$CCSESSION_BIN picker-action dir"`,
++		`--bind "ctrl-f:unbind(enter)+transform:$CCSESSION_BIN picker-action fuzzy"`,
+ 	}
+ 	for _, w := range wants {
+ 		if !strings.Contains(got, w) {
+@@ -38,13 +39,13 @@ func TestBuildScriptDefaults(t *testing.T) {
+ // TestBuildScriptCustom verifies resolved keys reach the header and binds and
+ // that the defaults they replace are gone.
+ func TestBuildScriptCustom(t *testing.T) {
+-	got := buildScript(config.Keybindings{Grep: "ctrl-r", Dir: "alt-d", Fuzzy: "alt-f"}, "opencode")
++	got := buildScript(config.Keybindings{Grep: "ctrl-r", Dir: "alt-d", Fuzzy: "alt-f"}, "opencode", false)
+ 
+ 	wants := []string{
+ 		`--header='[opencode] ctrl-r: grep / alt-d: dir / alt-f: fuzzy / enter: resume'`,
+-		`--bind "ctrl-r:transform:echo \"change-prompt(grep> )`,
+-		`--bind "alt-d:transform:echo \"change-prompt(dir> )`,
+-		`--bind "alt-f:transform:echo \"change-prompt(> )`,
++		`--bind "ctrl-r:unbind(enter)+transform:$CCSESSION_BIN picker-action grep"`,
++		`--bind "alt-d:unbind(enter)+transform:$CCSESSION_BIN picker-action dir"`,
++		`--bind "alt-f:unbind(enter)+transform:$CCSESSION_BIN picker-action fuzzy"`,
+ 	}
+ 	for _, w := range wants {
+ 		if !strings.Contains(got, w) {
+@@ -52,7 +53,7 @@ func TestBuildScriptCustom(t *testing.T) {
+ 		}
+ 	}
+ 	// The default keys must not survive as bind triggers.
+-	for _, gone := range []string{`--bind "ctrl-g:transform`, `--bind "ctrl-o:transform`, `--bind "ctrl-f:transform`} {
++	for _, gone := range []string{`--bind "ctrl-g:`, `--bind "ctrl-o:`, `--bind "ctrl-f:`} {
+ 		if strings.Contains(got, gone) {
+ 			t.Errorf("buildScript(custom) still contains default bind %q", gone)
+ 		}
+@@ -60,10 +61,10 @@ func TestBuildScriptCustom(t *testing.T) {
+ }
+ 
+ func TestBuildScriptPassesHiddenKeyToPreviewAndResume(t *testing.T) {
+-	got := buildScript(config.Defaults(), "all")
++	got := buildScript(config.Defaults(), "all", false)
+ 	wants := []string{
+-		`--with-nth=4,5,6`,
+-		`--preview "$CCSESSION_BIN preview --color=always --locator {2} --query {q} {1}"`,
++		`--with-nth=$'{7}\t{4}\t{5}\t{1}\t{6}'`,
++		`--preview "$CCSESSION_BIN preview --color=always --fzf-query --picker-query --locator {2} --query {q} {1}"`,
+ 		`IFS=$'\t' read -r id locator _rest <<< "$selected"`,
+ 		`exec "$CCSESSION_BIN" resume --locator "$locator" "$id"`,
+ 	}
+@@ -75,10 +76,29 @@ func TestBuildScriptPassesHiddenKeyToPreviewAndResume(t *testing.T) {
+ }
+ 
+ func TestBuildScriptIsValidBash(t *testing.T) {
+-	cmd := exec.Command("bash", "-n")
+-	cmd.Stdin = strings.NewReader(buildScript(config.Defaults(), "claude"))
+-	if out, err := cmd.CombinedOutput(); err != nil {
+-		t.Fatalf("bash -n failed: %v\n%s", err, out)
++	for _, exact := range []bool{false, true} {
++		cmd := exec.Command("bash", "-n")
++		cmd.Stdin = strings.NewReader(buildScript(config.Defaults(), "claude", exact))
++		if out, err := cmd.CombinedOutput(); err != nil {
++			t.Fatalf("bash -n (exact=%v) failed: %v\n%s", exact, err, out)
++		}
++	}
++}
++
++func TestBuildScriptLiteralMode(t *testing.T) {
++	got := buildScript(config.Defaults(), "codex", true)
++	for _, want := range []string{
++		`--exact --no-extended --ignore-case --literal`,
++		`--prompt='literal> '`,
++		`ctrl-f: literal / enter: resume`,
++		`export CCSESSION_PICKER_EXACT=1`,
++		`picker-action dir`,
++		`picker-action grep`,
++		`--query="${CCSESSION_QUERY:-}"`,
++	} {
++		if !strings.Contains(got, want) {
++			t.Errorf("literal picker missing %q", want)
++		}
+ 	}
+ }
+ 
+@@ -94,6 +114,32 @@ func TestParseGlobalFlags(t *testing.T) {
+ 			args:     []string{"list", "--grep", "foo"},
+ 			wantRest: []string{"list", "--grep", "foo"},
+ 		},
++		{
++			name:   "literal picker query",
++			args:   []string{"--exact", "--query", "Ship !fix | v2.0"},
++			wantGF: globalFlags{exact: true, query: "Ship !fix | v2.0"},
++		},
++		{
++			name:   "short picker query",
++			args:   []string{"-q", "a1b2"},
++			wantGF: globalFlags{query: "a1b2"},
++		},
++		{
++			name:   "equals picker query",
++			args:   []string{"--query=label with spaces"},
++			wantGF: globalFlags{query: "label with spaces"},
++		},
++		{
++			name:     "preview query belongs to subcommand",
++			args:     []string{"preview", "--query", "hello", "session-id"},
++			wantRest: []string{"preview", "--query", "hello", "session-id"},
++		},
++		{
++			name:     "picker options do not enter subcommand flags",
++			args:     []string{"--exact", "--query=label", "list", "--grep", "hello"},
++			wantGF:   globalFlags{exact: true, query: "label"},
++			wantRest: []string{"list", "--grep", "hello"},
++		},
+ 		{
+ 			name:   "space form binds",
+ 			args:   []string{"--bind-grep", "ctrl-r", "--bind-fuzzy", "alt-f"},
+diff --git a/cmd/ccsession/picker_query.go b/cmd/ccsession/picker_query.go
+new file mode 100644
+index 0000000..02c32ab
+--- /dev/null
++++ b/cmd/ccsession/picker_query.go
+@@ -0,0 +1,92 @@
++package main
++
++import (
++	"crypto/sha256"
++	"fmt"
++	"github.com/sorafujitani/ccsession/internal/grep"
++	"os"
++	"strconv"
++	"strings"
++)
++
++// --exact preserves quote punctuation; normal and grep modes share the quoted
++// regex parser, with fuzzy bare terms enabled only outside strict grep mode.
++func pickerQuery(raw string, exact bool, prompt string) (*grep.QueryPlan, error) {
++	if exact {
++		return nil, nil
++	}
++	return grep.ParseQuery(raw, prompt != "grep   > ")
++}
++
++func pickerQueryToken(raw string) string {
++	value := raw + "\x00" + os.Getenv("FZF_PROMPT") + "\x00" + os.Getenv("CCSESSION_PICKER_EXACT")
++	return fmt.Sprintf("%x", sha256.Sum256([]byte(value)))
++}
++
++func pickerExact() bool { return os.Getenv("CCSESSION_PICKER_EXACT") == "1" }
++
++// fzf supplies query/state through the environment. User text is never inserted
++// into shell commands or fzf action syntax. Unquoted fuzzy edits do no data I/O.
++func cmdPickerAction(args []string) {
++	event := "change"
++	if len(args) > 0 {
++		event = args[0]
++	}
++	prompt := os.Getenv("FZF_PROMPT")
++	actions := []string{}
++	if event == "start" {
++		lines, _ := strconv.Atoi(os.Getenv("FZF_LINES"))
++		actions = append(actions, fmt.Sprintf("change-preview-window(up,%d,wrap,border-bottom)", max(1, lines-9)))
++	}
++	switch event {
++	case "grep":
++		prompt = "grep   > "
++		actions = append(actions, "change-prompt("+prompt+")")
++	case "dir":
++		prompt = "dir    > "
++		actions = append(actions, "change-prompt("+prompt+")", "change-nth(3)")
++	case "fuzzy":
++		prompt = "fuzzy  > "
++		if pickerExact() {
++			prompt = "literal> "
++		}
++		actions = append(actions, "change-prompt("+prompt+")", "change-nth(1,2,3,4,5)")
++	}
++	plan, err := pickerQuery(os.Getenv("FZF_QUERY"), pickerExact(), prompt)
++	if err != nil {
++		// Clear candidates rather than leave an old result selectable. Enter also
++		// runs this guard, including between an edit and its reload completing.
++		actions = append(actions, "change-header(Invalid regex or unclosed double quote)", "disable-search", "unbind(enter)")
++		if event != "ready" && event != "accept" {
++			actions = append(actions, "reload(printf '')")
++		}
++	} else if event == "accept" {
++		current := len(args) > 1 && strings.HasSuffix(args[1], "\t"+pickerQueryToken(os.Getenv("FZF_QUERY")))
++		if plan == nil && prompt != "grep   > " && os.Getenv("FZF_INPUT_STATE") == "disabled" {
++			actions = append(actions, "unbind(enter)", `reload-sync("$CCSESSION_BIN" list --color=always)`)
++		} else if (plan != nil || prompt == "grep   > ") && !current {
++			actions = append(actions, "unbind(enter)", `reload("$CCSESSION_BIN" list --color=always --picker-query)`)
++		} else {
++			actions = append(actions, "accept")
++		}
++	} else {
++		actions = append(actions, "change-header("+os.Getenv("CCSESSION_PICKER_HEADER")+")")
++		switch {
++		case event == "ready":
++			if plan == nil && prompt != "grep   > " {
++				actions = append(actions, "enable-search")
++			}
++			actions = append(actions, "rebind(enter)")
++		case plan != nil || prompt == "grep   > ":
++			actions = append(actions, "disable-search", `reload("$CCSESSION_BIN" list --color=always --picker-query)`)
++		case os.Getenv("FZF_INPUT_STATE") == "disabled" || event == "dir" || event == "fuzzy":
++			// Native filtering must wait for the complete corpus. Enabling it
++			// before an asynchronous reload lets rapid edits skip restoration
++			// while an older content-filtered reload is still queued.
++			actions = append(actions, `reload-sync("$CCSESSION_BIN" list --color=always)`)
++		default:
++			actions = append(actions, "rebind(enter)")
++		}
++	}
++	fmt.Println(strings.Join(actions, "+"))
++}
+diff --git a/cmd/ccsession/picker_query_test.go b/cmd/ccsession/picker_query_test.go
+new file mode 100644
+index 0000000..32945fc
+--- /dev/null
++++ b/cmd/ccsession/picker_query_test.go
+@@ -0,0 +1,124 @@
++package main
++
++import (
++	"io"
++	"os"
++	"strings"
++	"testing"
++)
++
++func TestPickerExactPreservesQuotes(t *testing.T) {
++	plan, err := pickerQuery(`"["`, true, "literal> ")
++	if err != nil || plan != nil {
++		t.Fatalf("exact query parsed as regex: %v %v", plan, err)
++	}
++}
++
++func pickerActionsForTest(t *testing.T, query, prompt, state string, args ...string) string {
++	t.Helper()
++	t.Setenv("FZF_QUERY", query)
++	t.Setenv("FZF_PROMPT", prompt)
++	t.Setenv("FZF_INPUT_STATE", state)
++	t.Setenv("CCSESSION_PICKER_HEADER", "Synthetic help")
++	r, w, err := os.Pipe()
++	if err != nil {
++		t.Fatal(err)
++	}
++	stdout := os.Stdout
++	os.Stdout = w
++	cmdPickerAction(args)
++	os.Stdout = stdout
++	w.Close()
++	out, err := io.ReadAll(r)
++	r.Close()
++	if err != nil {
++		t.Fatal(err)
++	}
++	return string(out)
++}
++
++func TestPickerStrictContentAndStaleSelection(t *testing.T) {
++	t.Setenv("CCSESSION_PICKER_EXACT", "0")
++	for _, query := range []string{`"mizu|water"`, "mizu [fix]"} {
++		prompt := "fuzzy  > "
++		if query[0] != '"' {
++			prompt = "grep   > "
++		}
++		got := pickerActionsForTest(t, query, prompt, "enabled", "change")
++		if !strings.Contains(got, "disable-search") || !strings.Contains(got, "--picker-query") {
++			t.Fatalf("content search used fzf fallback: %q", got)
++		}
++		stale := pickerActionsForTest(t, query, prompt, "disabled", "accept", "id\tlocator\t"+pickerQueryToken("previous"))
++		if strings.Contains(stale, "+accept") || strings.HasPrefix(stale, "accept") {
++			t.Fatalf("accepted stale results: %q", stale)
++		}
++		fresh := pickerActionsForTest(t, query, prompt, "disabled", "accept", "id\tlocator\t"+pickerQueryToken(query))
++		if !strings.Contains(fresh, "accept") {
++			t.Fatalf("rejected current result: %q", fresh)
++		}
++	}
++}
++
++func TestPickerInvalidRegexClearsResultsWithoutAccepting(t *testing.T) {
++	t.Setenv("CCSESSION_PICKER_EXACT", "0")
++	for _, event := range []string{"change", "accept", "ready"} {
++		got := pickerActionsForTest(t, `"["`, "fuzzy  > ", "disabled", event, "id\tlocator")
++		if !strings.Contains(got, "Invalid regex") || strings.Contains(got, "rebind(enter)") || strings.Contains(got, "+accept") {
++			t.Fatalf("invalid query actions: %q", got)
++		}
++		if event == "change" && !strings.Contains(got, "reload(printf '')") {
++			t.Fatalf("old results not cleared: %q", got)
++		}
++		if event == "ready" && strings.Contains(got, "reload(") {
++			t.Fatalf("empty reload loop: %q", got)
++		}
++	}
++}
++
++func TestPickerUnquotedFuzzyDoesNotReloadData(t *testing.T) {
++	t.Setenv("CCSESSION_PICKER_EXACT", "0")
++	got := pickerActionsForTest(t, "mizu", "fuzzy  > ", "enabled", "change")
++	if strings.Contains(got, "reload(") || strings.Contains(got, "disable-search") {
++		t.Fatalf("unquoted fuzzy read data: %q", got)
++	}
++	got = pickerActionsForTest(t, "mizu", "fuzzy  > ", "disabled", "change")
++	if !strings.Contains(got, "reload-sync(") || strings.Contains(got, "--picker-query") {
++		t.Fatalf("unquoting did not restore full fuzzy list: %q", got)
++	}
++}
++
++func TestPickerRestoresCorpusBeforeEnablingNativeSearch(t *testing.T) {
++	t.Setenv("CCSESSION_PICKER_EXACT", "0")
++	got := pickerActionsForTest(t, "case", "fuzzy  > ", "disabled", "change")
++	if !strings.Contains(got, "reload-sync(") || strings.Contains(got, "enable-search") || strings.Contains(got, "rebind(enter)") {
++		t.Fatalf("native search became ready before the full corpus arrived: %q", got)
++	}
++	got = pickerActionsForTest(t, "case", "fuzzy  > ", "disabled", "ready")
++	if !strings.Contains(got, "enable-search") || !strings.Contains(got, "rebind(enter)") {
++		t.Fatalf("completed native corpus did not enable search: %q", got)
++	}
++	got = pickerActionsForTest(t, "case", "fuzzy  > ", "disabled", "accept", "old-content-row")
++	if strings.Contains(got, "+accept") || strings.HasPrefix(got, "accept") {
++		t.Fatalf("accepted a row before the native corpus arrived: %q", got)
++	}
++}
++
++func TestPickerModeChangeCannotAcceptOldMixedRows(t *testing.T) {
++	t.Setenv("CCSESSION_PICKER_EXACT", "0")
++	t.Setenv("FZF_PROMPT", "fuzzy  > ")
++	query := `"mizu" dply`
++	oldRow := "id\tlocator\t" + pickerQueryToken(query)
++	got := pickerActionsForTest(t, query, "grep   > ", "disabled", "accept", oldRow)
++	if strings.Contains(got, "+accept") || strings.HasPrefix(got, "accept") {
++		t.Fatalf("mode switch accepted old mixed result: %q", got)
++	}
++}
++
++func TestPickerQueryNeverBecomesActionCode(t *testing.T) {
++	t.Setenv("CCSESSION_PICKER_EXACT", "0")
++	query := `"mizu" $(touch /tmp/should-never-exist)`
++	got := pickerActionsForTest(t, query, "fuzzy  > ", "enabled", "change")
++	if strings.Contains(got, "touch") || strings.Contains(got, "mizu") {
++		t.Fatalf("query leaked into action syntax: %q", got)
++	}
++}
+diff --git a/cmd/ccsession/picker_test.go b/cmd/ccsession/picker_test.go
+new file mode 100644
+index 0000000..f5662e8
+--- /dev/null
++++ b/cmd/ccsession/picker_test.go
+@@ -0,0 +1,116 @@
++package main
++
++import (
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"github.com/sorafujitani/ccsession/internal/config"
++)
++
++// Run the generated picker script with real fzf in noninteractive filter mode.
++// Its input is synthetic, and resume only records its arguments. This checks
++// fzf's transformed search fields and unchanged output identity together.
++func TestPickerSearchWithFzf(t *testing.T) {
++	fzf, err := exec.LookPath("fzf")
++	if err != nil {
++		t.Skip("fzf is not installed")
++	}
++	const id = "019a1b2c-3d4e-75f6-8890-abcde1234567"
++	const locator = "codex:locator-one"
++	row := strings.Join([]string{id, locator, "1720000000", "2h ago", "my-project", "Ship !fix | v2.0 [rc] $cash $(touch injected) café", "Original"}, "\t")
++	other := strings.Join([]string{"019f0e9d-8c7b-6a54-3210-fedcb9876543", "codex:locator-two", "1720000001", "1h ago", "another-project", "Ship fix v2x0 rc cash my-project", "Fork"}, "\t")
++	cases := []struct {
++		name  string
++		query string
++		exact bool
++		nth   string
++		match bool
++	}{
++		{name: "fuzzy ID subsequence", query: "a1b2c75f68890", match: true},
++		{name: "fuzzy label", query: "Shp!fx", match: true},
++		{name: "literal ID case insensitive", query: "3D4E-75F6", exact: true, match: true},
++		{name: "literal label punctuation and spaces", query: "SHIP !fix | v2.0 [rc] $cash", exact: true, match: true},
++		{name: "literal spaces are significant", query: "Ship  !fix", exact: true},
++		{name: "literal fzf operators", query: "!fix |", exact: true, match: true},
++		{name: "literal accented text case insensitive", query: "CAFÉ", exact: true, match: true},
++		{name: "literal accents are significant", query: "cafe", exact: true},
++		{name: "query shell syntax is data", query: "$(touch injected)", exact: true, match: true},
++		{name: "directory excludes matching labels", query: "my-project", nth: "3", match: true},
++		{name: "literal directory case insensitive", query: "MY-PROJECT", exact: true, nth: "3", match: true},
++		{name: "directory excludes IDs", query: "a1b2c75f68890", nth: "3"},
++		{name: "ID is a separate fourth display field", query: "a1b2c75f68890", nth: "4", match: true},
++		{name: "ID does not merge into label", query: "a1b2c75f68890", nth: "5"},
++		{name: "hidden locator is not searchable", query: "locator-one"},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			write := func(name, body string, mode os.FileMode) string {
++				t.Helper()
++				path := filepath.Join(dir, name)
++				if err := os.WriteFile(path, []byte(body), mode); err != nil {
++					t.Fatal(err)
++				}
++				return path
++			}
++			rows := write("rows.tsv", row+"\n"+other+"\n", 0600)
++			selected := filepath.Join(dir, "selected.tsv")
++			resumed := filepath.Join(dir, "resumed.txt")
++			bin := write("ccsession", `#!/bin/bash
++case "$1" in
++  list) cat "$PICKER_ROWS" ;;
++  resume) printf '%s\n' "$@" > "$PICKER_RESUMED" ;;
++  *) exit 2 ;;
++esac
++`, 0700)
++			write("fzf", `#!/bin/bash
++if [ -n "$PICKER_NTH" ]; then
++  set -- "$@" --nth="$PICKER_NTH"
++fi
++"$REAL_FZF" "$@" --filter="$CCSESSION_QUERY" > "$PICKER_SELECTED"
++result=$?
++cat "$PICKER_SELECTED"
++exit "$result"
++`, 0700)
++			cmd := exec.Command("bash", "-c", buildScript(config.Defaults(), "codex", tc.exact))
++			cmd.Dir = dir
++			cmd.Env = append(os.Environ(),
++				"PATH="+dir+string(os.PathListSeparator)+os.Getenv("PATH"),
++				"REAL_FZF="+fzf, "FZF_DEFAULT_OPTS=", "FZF_DEFAULT_OPTS_FILE=",
++				"CCSESSION_BIN="+bin, "CCSESSION_QUERY="+tc.query, "CCSESSION_EXCLUDE_DIR=",
++				"PICKER_ROWS="+rows, "PICKER_SELECTED="+selected, "PICKER_RESUMED="+resumed, "PICKER_NTH="+tc.nth,
++			)
++			if out, err := cmd.CombinedOutput(); err != nil {
++				t.Fatalf("picker failed: %v\n%s", err, out)
++			}
++			got, err := os.ReadFile(selected)
++			if err != nil {
++				t.Fatal(err)
++			}
++			want := ""
++			if tc.match {
++				want = row + "\n"
++			}
++			if string(got) != want {
++				t.Fatalf("selected row = %q, want %q", got, want)
++			}
++			got, err = os.ReadFile(resumed)
++			if tc.match {
++				if err != nil {
++					t.Fatal(err)
++				}
++				if want := "resume\n--locator\n" + locator + "\n" + id + "\n"; string(got) != want {
++					t.Errorf("resume arguments = %q, want %q", got, want)
++				}
++			} else if !os.IsNotExist(err) {
++				t.Errorf("empty selection should not resume, got %q, error %v", got, err)
++			}
++			if _, err := os.Stat(filepath.Join(dir, "injected")); !os.IsNotExist(err) {
++				t.Error("query was interpreted as shell syntax")
++			}
++		})
++	}
++}
+diff --git a/internal/codex/chat.go b/internal/codex/chat.go
+new file mode 100644
+index 0000000..9364c2e
+--- /dev/null
++++ b/internal/codex/chat.go
+@@ -0,0 +1,145 @@
++package codex
++
++import (
++	"encoding/json"
++	"strings"
++	"time"
++
++	"github.com/sorafujitani/ccsession/internal/session"
++)
++
++type chatPayload struct {
++	Type      string          `json:"type"`
++	Role      string          `json:"role"`
++	Phase     string          `json:"phase"`
++	Channel   string          `json:"channel"`
++	Recipient string          `json:"recipient"`
++	Text      string          `json:"text"`
++	Message   string          `json:"message"`
++	Content   json.RawMessage `json:"content"`
++	Item      json.RawMessage `json:"item"`
++	Metadata  struct {
++		Kinds []string `json:"content_item_kinds"`
++	} `json:"internal_chat_message_metadata_passthrough"`
++}
++
++// The bool distinguishes supported chat items from an unknown projection.
++// Recognized instructions/analysis return an empty body, not a raw fallback.
++func parseChatPayload(raw json.RawMessage, itemType string, ts time.Time) (session.Message, bool) {
++	var p chatPayload
++	if err := json.Unmarshal(raw, &p); err != nil {
++		return session.Message{}, false
++	}
++	if p.Type == "item_completed" {
++		if err := json.Unmarshal(p.Item, &p); err != nil {
++			return session.Message{}, false
++		}
++	}
++	if p.Type == "" {
++		p.Type = itemType
++	}
++	role := p.Role
++	switch p.Type {
++	case "message":
++		if role != "user" && role != "assistant" {
++			return session.Message{}, false
++		}
++	case "UserMessage", "userMessage", "user_message":
++		role = "user"
++	case "AgentMessage", "agentMessage", "agent_message":
++		role = "assistant"
++	default:
++		return session.Message{}, false
++	}
++	msg := session.Message{Role: role, Timestamp: ts}
++	if role == "assistant" {
++		for _, phase := range []string{p.Channel, p.Phase} {
++			if phase != "" && phase != "commentary" && phase != "final" && phase != "final_answer" {
++				return msg, true
++			}
++		}
++		if p.Recipient != "" && p.Recipient != "all" {
++			return msg, true
++		}
++	}
++	canonicalUser := p.Type == "UserMessage" || p.Type == "userMessage"
++	clean := func(text, kind string) string {
++		if role == "user" && (strings.HasPrefix(kind, "agents_md.") || strings.HasPrefix(kind, "environments.")) {
++			return ""
++		}
++		if role != "user" || canonicalUser || kind == "user.text" {
++			return text
++		}
++		return userVisibleBody(text)
++	}
++	var body string
++	if len(p.Content) > 0 {
++		var text string
++		if json.Unmarshal(p.Content, &text) == nil {
++			body = clean(text, "")
++		} else {
++			var blocks []struct {
++				Type string `json:"type"`
++				Text string `json:"text"`
++			}
++			if json.Unmarshal(p.Content, &blocks) != nil {
++				return session.Message{}, false
++			}
++			var parts []string
++			for i, block := range blocks {
++				if block.Type != "" && block.Type != "text" && block.Type != "Text" && block.Type != "input_text" && block.Type != "output_text" {
++					continue
++				}
++				kind := ""
++				if len(p.Metadata.Kinds) == len(blocks) {
++					kind = p.Metadata.Kinds[i]
++				}
++				if text := clean(block.Text, kind); text != "" {
++					parts = append(parts, text)
++				}
++			}
++			body = strings.Join(parts, "\n")
++		}
++	} else if p.Text != "" {
++		body = clean(p.Text, "")
++	} else {
++		body = clean(p.Message, "")
++	}
++	msg.Body = strings.TrimSpace(body)
++	return msg, true
++}
++
++func userVisibleBody(body string) string {
++	body = strings.TrimSpace(body)
++	for {
++		if strings.HasPrefix(body, "# AGENTS.md instructions") && strings.Contains(body, "<INSTRUCTIONS>") {
++			_, after, ok := strings.Cut(body, "</INSTRUCTIONS>")
++			if !ok {
++				return ""
++			}
++			body = strings.TrimSpace(after)
++			continue
++		}
++		stripped := false
++		for _, tag := range []string{"environment_context", "system_reminder", "subagent_notification", "agent_notification", "developer_instructions", "user_instructions", "INSTRUCTIONS"} {
++			if !strings.HasPrefix(body, "<"+tag+">") && !strings.HasPrefix(body, "<"+tag+" ") {
++				continue
++			}
++			_, after, ok := strings.Cut(body, "</"+tag+">")
++			if !ok {
++				return ""
++			}
++			body, stripped = strings.TrimSpace(after), true
++			break
++		}
++		if !stripped {
++			break
++		}
++	}
++	if strings.HasPrefix(body, "# Context from my IDE setup:") || strings.HasPrefix(body, "# Files mentioned by the user:") || strings.HasPrefix(body, "## My request for Codex:") {
++		if _, after, ok := strings.Cut(body, "## My request for Codex:"); ok {
++			return strings.TrimSpace(after)
++		}
++	}
++	return body
++}
+diff --git a/internal/codex/chat_test.go b/internal/codex/chat_test.go
+new file mode 100644
+index 0000000..0d3c83d
+--- /dev/null
++++ b/internal/codex/chat_test.go
+@@ -0,0 +1,73 @@
++package codex
++
++import (
++	"encoding/json"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/sorafujitani/ccsession/internal/grep"
++)
++
++func TestChatPayloadKeepsOnlyVisibleText(t *testing.T) {
++	for _, tc := range []struct {
++		name, raw, want string
++	}{
++		{"canonical user", `{"type":"item_completed","item":{"type":"UserMessage","content":[{"type":"text","text":"mizu"},{"type":"local_image","text":"hidden"}]}}`, "mizu"},
++		{"canonical assistant", `{"type":"item_completed","item":{"type":"AgentMessage","phase":"final_answer","content":[{"type":"Text","text":"mizu reply"}]}}`, "mizu reply"},
++		{"legacy event", `{"type":"agent_message","message":"mizu legacy reply"}`, "mizu legacy reply"},
++		{"analysis", `{"type":"message","role":"assistant","channel":"analysis","content":[{"type":"output_text","text":"hidden"}]}`, ""},
++		{"tool recipient", `{"type":"message","role":"assistant","recipient":"tools.exec","content":"hidden"}`, ""},
++		{"context then request", `{"type":"message","role":"user","content":"<environment_context>hidden</environment_context>\nmizu request"}`, "mizu request"},
++		{"ordinary mention", `{"type":"message","role":"user","content":"Please explain AGENTS.md and <INSTRUCTIONS> here"}`, "Please explain AGENTS.md and <INSTRUCTIONS> here"},
++		{"metadata blocks", `{"type":"message","role":"user","content":[{"type":"input_text","text":"hidden"},{"type":"input_text","text":"# AGENTS.md instructions for example\n<INSTRUCTIONS>genuine text</INSTRUCTIONS>"}],"internal_chat_message_metadata_passthrough":{"content_item_kinds":["agents_md.instructions","user.text"]}}`, "# AGENTS.md instructions for example\n<INSTRUCTIONS>genuine text</INSTRUCTIONS>"},
++		{"canonical metadata blocks", `{"type":"userMessage","content":[{"type":"text","text":"hidden instructions"},{"type":"text","text":"hidden environment"},{"type":"text","text":"mizu actual request"}],"internal_chat_message_metadata_passthrough":{"content_item_kinds":["agents_md.instructions","environments.environment_context","user.text"]}}`, "mizu actual request"},
++		{"canonical quoted example", `{"type":"userMessage","content":[{"type":"text","text":"# AGENTS.md instructions for example\n<INSTRUCTIONS>genuine pasted text</INSTRUCTIONS>"}]}`, "# AGENTS.md instructions for example\n<INSTRUCTIONS>genuine pasted text</INSTRUCTIONS>"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			msg, ok := parseChatPayload(json.RawMessage(tc.raw), "", time.Time{})
++			if !ok || msg.Body != tc.want {
++				t.Fatalf("body=%q supported=%v, want %q", msg.Body, ok, tc.want)
++			}
++		})
++	}
++}
++
++func TestModernEventGrepFallbackAndMirroredPreview(t *testing.T) {
++	t.Setenv(grep.EnvCacheDir, t.TempDir())
++	home := t.TempDir()
++	id := "019ec14c-b49c-7a40-a386-0a1699dbb01c"
++	lines := []string{
++		`{"type":"session_meta","payload":{"id":"` + id + `","cwd":"` + home + `"}}`,
++		`{"type":"response_item","payload":{"type":"message","role":"user","content":"neutral question"}}`,
++		`{"type":"event_msg","payload":{"type":"item_completed","item":{"type":"UserMessage","content":[{"type":"text","text":"neutral question"}]}}}`,
++		`{"type":"event_msg","payload":{"type":"item_completed","item":{"type":"AgentMessage","phase":"final_answer","content":[{"type":"Text","text":"MIZU literal.[x] answer"}]}}}`,
++		`{"type":"response_item","payload":{"type":"message","role":"assistant","channel":"analysis","content":"hidden-analysis-only"}}`,
++		`{"type":"event_msg","payload":{"type":"item_completed","item":{"type":"CommandExecution","text":"hidden-tool-only"}}}`,
++		`{"type":"event_msg","payload":{"type":"task_complete"}}`,
++		`{"type":"event_msg","payload":{"type":"item_completed","item":{"type":"UserMessage","content":[{"type":"text","text":"neutral question"}]}}}`,
++	}
++	writeSession(t, home, id, strings.Join(lines, "\n")+"\n")
++	store := OpenAt(home)
++	for _, tc := range []struct {
++		query       string
++		regex, want bool
++	}{
++		{"mizu", false, true},
++		{"literal.[x]", false, true},
++		{"literalXx", false, false},
++		{"mizu|water", true, true},
++		{"hidden-analysis-only", false, false},
++		{"hidden-tool-only", false, false},
++	} {
++		keys, err := store.GrepKeys(tc.query, tc.regex)
++		_, hit := keys[id]
++		if err != nil || hit != tc.want {
++			t.Fatalf("GrepKeys(%q, %v): keys=%v err=%v", tc.query, tc.regex, keys, err)
++		}
++	}
++	msgs, _, total, err := store.Messages(id, 0)
++	if err != nil || len(msgs) != 3 || total != 3 || msgs[1].Role != "assistant" || !strings.Contains(msgs[1].Body, "MIZU") {
++		t.Fatalf("mirrored/event-only preview: messages=%+v total=%d err=%v", msgs, total, err)
++	}
++}
+diff --git a/internal/codex/children_test.go b/internal/codex/children_test.go
+new file mode 100644
+index 0000000..e94db47
+--- /dev/null
++++ b/internal/codex/children_test.go
+@@ -0,0 +1,73 @@
++package codex
++
++import (
++	"errors"
++	"path/filepath"
++	"testing"
++
++	"github.com/sorafujitani/ccsession/internal/session"
++)
++
++func TestJSONLFallbackExcludesSubagents(t *testing.T) {
++	for _, tc := range []struct {
++		name, fields string
++		child        bool
++	}{
++		{"subagent source", `"source":{"subagent":{"thread_spawn":{"parent_thread_id":"parent"}}}`, true},
++		{"agent path", `"agent_path":"root/worker"`, true},
++		{"parent thread", `"parent_thread_id":"parent"`, true},
++		{"main CLI", `"source":"cli"`, false},
++		{"main null fields", `"source":null,"agent_path":null,"parent_thread_id":null`, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			home := t.TempDir()
++			const id = "019a1b2c-3d4e-75f6-8890-abcde1234567"
++			body := `{"type":"session_meta","payload":{"id":"` + id + `","cwd":"` + home + `",` + tc.fields + `}}` + "\n" +
++				`{"type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"Synthetic request"}]}}` + "\n"
++			writeSession(t, home, id, body)
++			path := filepath.Join(home, "sessions/2026/06/14/rollout-2026-06-14T00-00-00-"+id+".jsonl")
++			store := OpenAt(home)
++			ss, err := store.Scan()
++			if err != nil {
++				t.Fatal(err)
++			}
++			if tc.child {
++				if len(ss) != 0 {
++					t.Errorf("fallback listed child session: %+v", ss)
++				}
++				if _, err := store.FindByID(id); !errors.Is(err, session.ErrSessionFileMissing) {
++					t.Errorf("FindByID child: got %v, want missing", err)
++				}
++				if _, err := store.FindByLocator(id, path); !errors.Is(err, session.ErrSessionFileMissing) {
++					t.Errorf("FindByLocator child: got %v, want missing", err)
++				}
++			} else {
++				if len(ss) != 1 || ss[0].ID != id {
++					t.Fatalf("fallback lost main session: %+v", ss)
++				}
++				if _, err := store.FindByLocator(id, path); err != nil {
++					t.Errorf("FindByLocator main session: %v", err)
++				}
++			}
++		})
++	}
++}
++
++func TestIndexedLocatorDoesNotBypassSubagentFilter(t *testing.T) {
++	// Older JSONL metadata may omit child markers while the live SQLite
++	// projection knows the session is a child. A locator must not bypass it.
++	home, cwd, id := fixture(t)
++	store := OpenAt(home)
++	before, err := store.FindByID(id)
++	if err != nil {
++		t.Fatal(err)
++	}
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	if _, err := db.Exec(`INSERT INTO threads (id, rollout_path, cwd, title, agent_path)
++ VALUES (?, ?, ?, 'synthetic child', 'root/worker')`, id, before.JSONLPath, cwd); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := store.FindByLocator(id, before.JSONLPath); !errors.Is(err, session.ErrSessionFileMissing) {
++		t.Fatalf("FindByLocator bypassed the indexed child filter: %v", err)
++	}
++}
+diff --git a/internal/codex/codex.go b/internal/codex/codex.go
+index f16eafa..6e100a0 100644
+--- a/internal/codex/codex.go
++++ b/internal/codex/codex.go
+@@ -37,20 +37,13 @@ type entry struct {
+ }
+ 
+ type sessionMetaPayload struct {
+-	ID        string `json:"id"`
+-	Timestamp string `json:"timestamp"`
+-	CWD       string `json:"cwd"`
+-}
+-
+-type messagePayload struct {
+-	Type    string          `json:"type"`
+-	Role    string          `json:"role"`
+-	Content json.RawMessage `json:"content"`
+-}
+-
+-type contentBlock struct {
+-	Type string `json:"type"`
+-	Text string `json:"text"`
++	ID             string          `json:"id"`
++	Timestamp      string          `json:"timestamp"`
++	CWD            string          `json:"cwd"`
++	ForkedFromID   string          `json:"forked_from_id"`
++	ParentThreadID string          `json:"parent_thread_id"`
++	AgentPath      string          `json:"agent_path"`
++	Source         json.RawMessage `json:"source"`
+ }
+ 
+ var parseSessionFile = parseFile
+@@ -100,6 +93,14 @@ func (s *Store) FindByID(id string) (*session.Session, error) {
+ }
+ 
+ func (s *Store) FindByLocator(id, path string) (*session.Session, error) {
++	if indexed, ok := s.indexedSessions(id); ok {
++		for _, sess := range indexed {
++			if filepath.Clean(sess.JSONLPath) == filepath.Clean(path) {
++				return sess, nil
++			}
++		}
++		return nil, session.ErrSessionFileMissing
++	}
+ 	sess, _, _, _, err := parseSessionFile(path, false, 0)
+ 	if err != nil {
+ 		return nil, err
+@@ -118,17 +119,38 @@ func (s *Store) GrepKeys(query string, regex bool) (map[string]struct{}, error)
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	return s.matchingKeys(func(_, _ string) func(string) bool { return match })
++}
++
++func (s *Store) QueryKeys(plan grep.QueryPlan) (map[string]struct{}, error) {
++	factory, err := grep.CompilePlan(plan)
++	if err != nil {
++		return nil, err
++	}
++	return s.matchingKeys(factory)
++}
++
++func (s *Store) matchingKeys(factory grep.MatcherFactory) (map[string]struct{}, error) {
+ 	sessions, err := s.representativeSessions()
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	set := make(map[string]struct{})
++	matchers := make(map[string]func(string) bool, len(sessions))
+ 	for _, sess := range sessions {
+-		if match(sess.Label) {
+-			set[sess.ID] = struct{}{}
++		matchers[sess.ID] = factory(sess.ID, sess.Label)
++	}
++	set, projected, err := s.indexedGrep(sessions, matchers)
++	if err != nil {
++		return nil, err
++	}
++	for _, sess := range sessions {
++		if _, ok := set[sess.ID]; ok {
++			continue
++		}
++		if _, ok := projected[sess.ID]; ok {
+ 			continue
+ 		}
+-		ok, err := fileMessagesMatch(sess.JSONLPath, match)
++		ok, err := fileMessagesMatch(sess.JSONLPath, matchers[sess.ID])
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -151,6 +173,9 @@ func (s *Store) MessagesForSession(sess *session.Session, limit int) ([]session.
+ 	if sess == nil || sess.JSONLPath == "" {
+ 		return nil, time.Time{}, 0, session.ErrSessionFileMissing
+ 	}
++	if msgs, startedAt, total, ok := s.indexedMessages(sess, limit); ok {
++		return msgs, startedAt, total, nil
++	}
+ 	_, msgs, startedAt, total, err := parseFile(sess.JSONLPath, true, limit)
+ 	if err != nil {
+ 		return nil, time.Time{}, 0, err
+@@ -204,6 +229,9 @@ func (s *Store) sessionPaths() ([]string, error) {
+ }
+ 
+ func (s *Store) representativeSessions() ([]*session.Session, error) {
++	if sessions, ok := s.indexedSessions(""); ok {
++		return sessions, nil
++	}
+ 	paths, err := s.sessionPaths()
+ 	if err != nil {
+ 		return nil, err
+@@ -228,6 +256,10 @@ func (s *Store) representativeSessions() ([]*session.Session, error) {
+ }
+ 
+ func parseFile(path string, includeMessages bool, messageLimit int) (*session.Session, []session.Message, time.Time, int, error) {
++	meta, known := readSessionMetadata(path)
++	if known && meta.isSubagent() {
++		return nil, nil, time.Time{}, 0, session.ErrSessionFileMissing
++	}
+ 	f, err := os.Open(path)
+ 	if err != nil {
+ 		if errors.Is(err, os.ErrNotExist) {
+@@ -238,18 +270,24 @@ func parseFile(path string, includeMessages bool, messageLimit int) (*session.Se
+ 	defer f.Close()
+ 
+ 	sess := &session.Session{
+-		ID:         idFromPath(path),
+-		ProjectDir: filepath.Dir(path),
+-		JSONLPath:  path,
++		ID:                idFromPath(path),
++		ProjectDir:        filepath.Dir(path),
++		JSONLPath:         path,
++		ForkMetadataKnown: known,
++		ForkedFromID:      cleanForkID(meta.ForkedFromID),
+ 	}
+ 	var (
+-		label     string
+-		lastTS    time.Time
+-		startedAt time.Time
+-		msgs      []session.Message
+-		total     int
++		label          string
++		lastTS         time.Time
++		startedAt      time.Time
++		msgs           []session.Message
++		total          int
++		previous       session.Message
++		previousSource string
+ 	)
+ 	err = scanJSONLLines(f, func(line []byte) {
++		prior, priorSource := previous, previousSource
++		previousSource = ""
+ 		var e entry
+ 		if err := json.Unmarshal(line, &e); err != nil {
+ 			return
+@@ -277,11 +315,17 @@ func parseFile(path string, includeMessages bool, messageLimit int) (*session.Se
+ 			if !metaTS.IsZero() && metaTS.After(lastTS) {
+ 				lastTS = metaTS
+ 			}
+-		case "response_item":
+-			msg, ok := parseMessagePayload(e.Payload, lineTS)
+-			if !ok {
++		case "response_item", "event_msg":
++			msg, ok := parseChatPayload(e.Payload, "", lineTS)
++			if !ok || msg.Body == "" {
+ 				return
+ 			}
++			// Modern rollouts can mirror one chat item in adjacent response and
++			// event records. Pair only neighbors, preserving repeated real turns.
++			if priorSource != "" && priorSource != e.Type && prior.Role == msg.Role && prior.Body == msg.Body {
++				return
++			}
++			previous, previousSource = msg, e.Type
+ 			if startedAt.IsZero() && !msg.Timestamp.IsZero() {
+ 				startedAt = msg.Timestamp
+ 			}
+@@ -321,24 +365,6 @@ func parseFile(path string, includeMessages bool, messageLimit int) (*session.Se
+ 	return sess, collectMessages(msgs, total, messageLimit), startedAt, total, nil
+ }
+ 
+-func parseMessagePayload(raw json.RawMessage, ts time.Time) (session.Message, bool) {
+-	var p messagePayload
+-	if err := json.Unmarshal(raw, &p); err != nil {
+-		return session.Message{}, false
+-	}
+-	if p.Type != "message" || (p.Role != "user" && p.Role != "assistant") {
+-		return session.Message{}, false
+-	}
+-	body := extractContent(p.Content)
+-	if p.Role == "user" {
+-		body = userVisibleBody(body)
+-	}
+-	if strings.TrimSpace(body) == "" {
+-		return session.Message{}, false
+-	}
+-	return session.Message{Role: p.Role, Timestamp: ts, Body: body}, true
+-}
+-
+ func fileMessagesMatch(path string, match func(string) bool) (bool, error) {
+ 	return grep.FileContains(path, match, fileMessageTexts)
+ }
+@@ -352,11 +378,11 @@ func fileMessageTexts(path string) ([]string, error) {
+ 	var texts []string
+ 	err = scanJSONLLines(f, func(line []byte) {
+ 		var e entry
+-		if err := json.Unmarshal(line, &e); err != nil || e.Type != "response_item" {
++		if err := json.Unmarshal(line, &e); err != nil || (e.Type != "response_item" && e.Type != "event_msg") {
+ 			return
+ 		}
+-		msg, ok := parseMessagePayload(e.Payload, time.Time{})
+-		if ok {
++		msg, ok := parseChatPayload(e.Payload, "", time.Time{})
++		if ok && msg.Body != "" {
+ 			texts = append(texts, msg.Body)
+ 		}
+ 	})
+@@ -386,41 +412,6 @@ func collectMessages(msgs []session.Message, total, limit int) []session.Message
+ 	return out
+ }
+ 
+-func userVisibleBody(body string) string {
+-	body = strings.TrimSpace(body)
+-	if body == "" {
+-		return ""
+-	}
+-	if strings.HasPrefix(body, "# AGENTS.md instructions for ") ||
+-		strings.Contains(body, "\n<INSTRUCTIONS>") ||
+-		strings.HasPrefix(body, "<environment_context>") ||
+-		strings.HasPrefix(body, "<system_reminder>") {
+-		return ""
+-	}
+-	if _, after, ok := strings.Cut(body, "## My request for Codex:\n"); ok {
+-		return strings.TrimSpace(after)
+-	}
+-	return body
+-}
+-
+-func extractContent(raw json.RawMessage) string {
+-	var s string
+-	if err := json.Unmarshal(raw, &s); err == nil {
+-		return s
+-	}
+-	var blocks []contentBlock
+-	if err := json.Unmarshal(raw, &blocks); err != nil {
+-		return ""
+-	}
+-	var parts []string
+-	for _, b := range blocks {
+-		if b.Text != "" {
+-			parts = append(parts, b.Text)
+-		}
+-	}
+-	return strings.Join(parts, "\n")
+-}
+-
+ func scanJSONLLines(r io.Reader, visit func([]byte)) error {
+ 	br := bufio.NewReaderSize(r, 64*1024)
+ 	for {
+diff --git a/internal/codex/index.go b/internal/codex/index.go
+new file mode 100644
+index 0000000..d6e1f80
+--- /dev/null
++++ b/internal/codex/index.go
+@@ -0,0 +1,334 @@
++package codex
++
++// Codex's SQLite projections contain the same metadata and visible messages as
++// the rollout files, without requiring a scan of potentially enormous JSONL
++// logs. Older installations and unsupported schemas retain the JSONL reader.
++import (
++	"database/sql"
++	"fmt"
++	"net/url"
++	"os"
++	"path/filepath"
++	"slices"
++	"strconv"
++	"strings"
++	"time"
++
++	_ "github.com/ncruces/go-sqlite3/driver"
++	"github.com/sorafujitani/ccsession/internal/filescan"
++	"github.com/sorafujitani/ccsession/internal/session"
++)
++
++func openIndex(home, prefix string) (*sql.DB, error) {
++	paths, err := filepath.Glob(filepath.Join(home, prefix+"_*.sqlite"))
++	if err != nil {
++		return nil, err
++	}
++	version := func(path string) int {
++		n, _ := strconv.Atoi(strings.TrimSuffix(strings.TrimPrefix(filepath.Base(path), prefix+"_"), ".sqlite"))
++		return n
++	}
++	slices.SortFunc(paths, func(a, b string) int { return version(b) - version(a) })
++	for _, path := range paths {
++		if fi, err := os.Stat(path); err != nil || fi.IsDir() || version(path) == 0 {
++			continue
++		}
++		path, err = filepath.Abs(path)
++		if err != nil {
++			return nil, err
++		}
++		u := url.URL{Scheme: "file", Path: path}
++		// Do not use immutable=1: live Codex sessions are commonly in the WAL.
++		u.RawQuery = "mode=ro&_pragma=busy_timeout(1000)&_pragma=query_only(1)"
++		db, err := sql.Open("sqlite3", u.String())
++		if err == nil {
++			db.SetMaxOpenConns(1)
++		}
++		return db, err
++	}
++	return nil, os.ErrNotExist
++}
++
++func indexColumns(db *sql.DB, table string) (map[string]bool, error) {
++	// Table names are internal constants, never caller input.
++	rows, err := db.Query("PRAGMA table_info(" + table + ")")
++	if err != nil {
++		return nil, err
++	}
++	defer rows.Close()
++	columns := make(map[string]bool)
++	for rows.Next() {
++		var cid, notNull, pk int
++		var name, typ string
++		var defaultValue any
++		if err := rows.Scan(&cid, &name, &typ, &notNull, &defaultValue, &pk); err != nil {
++			return nil, err
++		}
++		columns[name] = true
++	}
++	return columns, rows.Err()
++}
++
++func indexCoalesce(columns map[string]bool, fallback string, names ...string) string {
++	parts := make([]string, 0, len(names)+1)
++	for _, name := range names {
++		if columns[name] {
++			parts = append(parts, "NULLIF("+name+", '')")
++		}
++	}
++	if len(parts) == 0 {
++		return fallback
++	}
++	return "COALESCE(" + strings.Join(append(parts, fallback), ", ") + ")"
++}
++
++func indexMillis(columns map[string]bool, names ...string) string {
++	var parts []string
++	for _, name := range names {
++		if columns[name] {
++			part := "NULLIF(" + name + ", 0)"
++			if !strings.HasSuffix(name, "_ms") {
++				part += " * 1000"
++			}
++			parts = append(parts, part)
++		}
++	}
++	if len(parts) == 0 {
++		return "0"
++	}
++	return "COALESCE(" + strings.Join(append(parts, "0"), ", ") + ")"
++}
++
++func (s *Store) indexedSessions(id string) ([]*session.Session, bool) {
++	db, err := openIndex(s.home, "state")
++	if err != nil {
++		return nil, false
++	}
++	defer db.Close()
++	columns, err := indexColumns(db, "threads")
++	if err != nil || !columns["id"] || !columns["rollout_path"] || !columns["cwd"] ||
++		(!columns["name"] && !columns["title"] && !columns["first_user_message"]) {
++		return nil, false
++	}
++	label := indexCoalesce(columns, "'(no user message)'", "name", "title", "first_user_message")
++	recent := indexMillis(columns, "recency_at_ms", "updated_at_ms", "recency_at", "updated_at")
++	where := []string{"1=1"}
++	for _, filter := range []struct{ column, condition string }{
++		{"archived", "COALESCE(archived, 0) = 0"},
++		{"agent_path", "(agent_path IS NULL OR agent_path IN ('', '/root'))"},
++		{"source", "COALESCE(source, '') NOT IN ('exec', 'subagent') AND CASE WHEN json_valid(source) THEN json_type(source, '$.subagent') IS NULL ELSE 1 END"},
++		{"originator", "COALESCE(originator, '') != 'codex_exec'"},
++	} {
++		if columns[filter.column] {
++			where = append(where, filter.condition)
++		}
++	}
++	var args []any
++	if id != "" {
++		where = append(where, "id = ?")
++		args = append(args, id)
++	}
++	rows, err := db.Query("SELECT id, COALESCE(cwd, ''), rollout_path, "+label+", "+recent+
++		" FROM threads WHERE "+strings.Join(where, " AND "), args...)
++	if err != nil {
++		return nil, false
++	}
++	defer rows.Close()
++	var ids []string
++	byID := make(map[string]*session.Session)
++	for rows.Next() {
++		var sess session.Session
++		var recentMS int64
++		if err := rows.Scan(&sess.ID, &sess.CWD, &sess.JSONLPath, &sess.Label, &recentMS); err != nil {
++			return nil, false
++		}
++		if sess.ID == "" || idCorruptsRow(sess.ID) || sess.JSONLPath == "" {
++			continue
++		}
++		sess.Label = session.SanitizeLabel(sess.Label)
++		sess.ProjectDir = filepath.Dir(sess.JSONLPath)
++		sess.LastTime = time.UnixMilli(recentMS)
++		sess.LastEpoch = sess.LastTime.Unix()
++		sess.CWDUnknown = sess.CWD == ""
++		if !sess.CWDUnknown {
++			sess.CWDBasename = filepath.Base(sess.CWD)
++			sess.CWDExists = pathIsDir(sess.CWD)
++		}
++		ids = append(ids, sess.ID)
++		byID[sess.ID] = &sess
++	}
++	if rows.Err() != nil {
++		return nil, false
++	}
++	// Bound each header read and overlap independent file opens. Parallel
++	// preserves row order; each callback owns a distinct session pointer.
++	out := filescan.Parallel(ids, func(id string) (*session.Session, bool) {
++		sess := byID[id]
++		meta, known := readSessionMetadata(sess.JSONLPath)
++		known = known && meta.ID == sess.ID
++		if known && meta.isSubagent() {
++			return nil, false
++		}
++		sess.ForkMetadataKnown = known
++		if known {
++			sess.ForkedFromID = cleanForkID(meta.ForkedFromID)
++		}
++		return sess, true
++	})
++	return out, true
++}
++
++func (s *Store) indexedMessages(sess *session.Session, limit int) ([]session.Message, time.Time, int, bool) {
++	db, err := openIndex(s.home, "state")
++	if err != nil {
++		return nil, time.Time{}, 0, false
++	}
++	columns, err := indexColumns(db, "threads")
++	if err != nil || !columns["id"] || !columns["rollout_path"] {
++		db.Close()
++		return nil, time.Time{}, 0, false
++	}
++	var path, preview string
++	var createdMS int64
++	err = db.QueryRow("SELECT rollout_path, "+indexCoalesce(columns, "''", "preview")+", "+
++		indexMillis(columns, "created_at_ms", "created_at")+" FROM threads WHERE id = ?", sess.ID).
++		Scan(&path, &preview, &createdMS)
++	db.Close()
++	if err != nil || filepath.Clean(path) != filepath.Clean(sess.JSONLPath) {
++		return nil, time.Time{}, 0, false
++	}
++	var startedAt time.Time
++	if createdMS != 0 {
++		startedAt = time.UnixMilli(createdMS)
++	}
++	if msgs, total, err := s.indexedHistory(sess.ID, limit); err == nil && total > 0 {
++		if startedAt.IsZero() && len(msgs) > 0 {
++			startedAt = msgs[0].Timestamp
++		}
++		return msgs, startedAt, total, true
++	}
++	// Even installations without a history projection often have a useful
++	// state preview. Prefer that to opening a multi-gigabyte rollout file.
++	if strings.TrimSpace(preview) != "" {
++		return []session.Message{{Role: "assistant", Timestamp: sess.LastTime, Body: preview}}, startedAt, 1, true
++	}
++	return nil, time.Time{}, 0, false
++}
++
++// Use one read-only connection for the entire search. Coverage is independent
++// of matches: a miss in a projected thread must not rescan its huge rollout.
++func (s *Store) indexedGrep(sessions []*session.Session, matchers map[string]func(string) bool) (map[string]struct{}, map[string]struct{}, error) {
++	matched, covered := make(map[string]struct{}), make(map[string]struct{})
++	if len(sessions) == 0 {
++		return matched, covered, nil
++	}
++	db, err := openIndex(s.home, "thread_history")
++	if err != nil {
++		return matched, covered, nil
++	}
++	defer db.Close()
++	columns, err := indexColumns(db, "thread_items")
++	if err != nil || !columns["thread_id"] || !columns["item_type"] || !columns["item_json"] {
++		return matched, covered, nil
++	}
++	args := make([]any, len(sessions))
++	for i, sess := range sessions {
++		args[i] = sess.ID
++	}
++	where := "thread_id IN (" + strings.TrimSuffix(strings.Repeat("?,", len(args)), ",") + ")"
++	rows, err := db.Query("SELECT DISTINCT thread_id FROM thread_items WHERE "+where, args...)
++	if err != nil {
++		return nil, nil, err
++	}
++	for rows.Next() {
++		var id string
++		if err := rows.Scan(&id); err != nil {
++			rows.Close()
++			return nil, nil, err
++		}
++		covered[id] = struct{}{}
++	}
++	err = rows.Err()
++	rows.Close()
++	if err != nil {
++		return nil, nil, err
++	}
++	rows, err = db.Query("SELECT thread_id, item_type, item_json FROM thread_items WHERE "+where+
++		" AND item_type IN ('userMessage', 'agentMessage')", args...)
++	if err != nil {
++		return nil, nil, err
++	}
++	defer rows.Close()
++	for rows.Next() {
++		var id, typ string
++		var raw []byte
++		if err := rows.Scan(&id, &typ, &raw); err != nil {
++			return nil, nil, err
++		}
++		if _, ok := matched[id]; ok {
++			continue
++		}
++		msg, supported := parseChatPayload(raw, typ, time.Time{})
++		if !supported {
++			delete(covered, id)
++			continue
++		}
++		if msg.Body != "" && matchers[id](msg.Body) {
++			matched[id] = struct{}{}
++		}
++	}
++	return matched, covered, rows.Err()
++}
++
++func (s *Store) indexedHistory(id string, limit int) ([]session.Message, int, error) {
++	db, err := openIndex(s.home, "thread_history")
++	if err != nil {
++		return nil, 0, err
++	}
++	defer db.Close()
++	columns, err := indexColumns(db, "thread_items")
++	if err != nil {
++		return nil, 0, err
++	}
++	for _, name := range []string{"thread_id", "item_type", "item_json", "rollout_ordinal"} {
++		if !columns[name] {
++			return nil, 0, fmt.Errorf("unsupported Codex history schema: missing %s", name)
++		}
++	}
++	// Count projected message items without decoding their JSON. Only the
++	// bounded preview query below extracts text; tool events are not messages.
++	var total int
++	if err := db.QueryRow("SELECT count(*) FROM thread_items WHERE thread_id = ? AND item_type IN ('userMessage', 'agentMessage')", id).Scan(&total); err != nil {
++		return nil, 0, err
++	}
++	// Decode exactly the same visible-chat shapes as grep. Streaming newest
++	// first allows a bounded preview to stop after enough visible messages.
++	rows, err := db.Query("SELECT item_type, item_json, "+indexMillis(columns, "started_at_ms", "created_at_ms")+
++		" FROM thread_items WHERE thread_id = ? AND item_type IN ('userMessage', 'agentMessage') ORDER BY rollout_ordinal DESC", id)
++	if err != nil {
++		return nil, 0, err
++	}
++	defer rows.Close()
++	var msgs []session.Message
++	for rows.Next() {
++		var typ string
++		var raw []byte
++		var ms int64
++		if err := rows.Scan(&typ, &raw, &ms); err != nil {
++			return nil, 0, err
++		}
++		msg, supported := parseChatPayload(raw, typ, time.Time{})
++		if !supported || msg.Body == "" {
++			continue
++		}
++		if ms != 0 {
++			msg.Timestamp = time.UnixMilli(ms)
++		}
++		msgs = append(msgs, msg)
++		if limit > 0 && len(msgs) >= limit {
++			break
++		}
++	}
++	slices.Reverse(msgs)
++	return msgs, total, rows.Err()
++}
+diff --git a/internal/codex/index_test.go b/internal/codex/index_test.go
+new file mode 100644
+index 0000000..5e58ba4
+--- /dev/null
++++ b/internal/codex/index_test.go
+@@ -0,0 +1,399 @@
++package codex
++
++import (
++	"database/sql"
++	"encoding/json"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/sorafujitani/ccsession/internal/grep"
++)
++
++func testIndexDB(t *testing.T, home, name, schema string) *sql.DB {
++	t.Helper()
++	db, err := sql.Open("sqlite3", filepath.Join(home, name))
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { db.Close() })
++	if _, err := db.Exec(schema); err != nil {
++		t.Fatal(err)
++	}
++	return db
++}
++
++const testStateSchema = `CREATE TABLE threads (
++ id TEXT PRIMARY KEY, rollout_path TEXT, cwd TEXT, name TEXT, title TEXT,
++ first_user_message TEXT, preview TEXT, created_at INTEGER, updated_at INTEGER,
++ created_at_ms INTEGER, updated_at_ms INTEGER, recency_at_ms INTEGER,
++ archived INTEGER DEFAULT 0, agent_path TEXT, source TEXT, originator TEXT
++)`
++
++func testIndexThread(t *testing.T, db *sql.DB, home, id, name string) string {
++	t.Helper()
++	path := filepath.Join(home, id+".jsonl")
++	// This cannot provide any metadata or messages through the JSONL reader.
++	if err := os.WriteFile(path, []byte("not a JSONL transcript\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	_, err := db.Exec(`INSERT INTO threads (id, rollout_path, cwd, name, title, first_user_message,
++ created_at, updated_at, created_at_ms, updated_at_ms, recency_at_ms)
++ VALUES (?, ?, ?, ?, 'old title', 'first message', 100, 200, 100123, 200123, 300123)`, id, path, home, name)
++	if err != nil {
++		t.Fatal(err)
++	}
++	return path
++}
++
++func TestIndexedSessionsPreferRenamesAndExcludeInactiveThreads(t *testing.T) {
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	for _, id := range []string{"renamed", "title", "first", "archive", "subagent", "exec", "originator"} {
++		testIndexThread(t, db, home, id, "new name")
++	}
++	for _, q := range []string{
++		`UPDATE threads SET name='', recency_at_ms=0, updated_at_ms=400123 WHERE id='title'`,
++		`UPDATE threads SET name=NULL, title='', recency_at_ms=NULL, updated_at_ms=NULL, updated_at=500 WHERE id='first'`,
++		`UPDATE threads SET archived=1 WHERE id='archive'`,
++		`UPDATE threads SET agent_path='root/child' WHERE id='subagent'`,
++		`UPDATE threads SET source='exec' WHERE id='exec'`,
++		`UPDATE threads SET originator='codex_exec' WHERE id='originator'`,
++	} {
++		if _, err := db.Exec(q); err != nil {
++			t.Fatal(err)
++		}
++	}
++	calls := countParseCalls(t)
++	store := OpenAt(home)
++	ss, err := store.Scan()
++	if err != nil || len(ss) != 3 {
++		t.Fatalf("Scan: sessions=%v err=%v", ss, err)
++	}
++	if got := []string{ss[0].ID, ss[1].ID, ss[2].ID}; !reflect.DeepEqual(got, []string{"first", "title", "renamed"}) {
++		t.Fatalf("recency order = %v", got)
++	}
++	if ss[0].Label != "first message" || ss[1].Label != "old title" || ss[2].Label != "new name" {
++		t.Fatalf("label priority = %q, %q, %q", ss[0].Label, ss[1].Label, ss[2].Label)
++	}
++	got, err := store.FindByID("renamed")
++	if err != nil || got.CWD != home || !got.CWDExists || got.CWDUnknown {
++		t.Fatalf("FindByID: got=%+v err=%v", got, err)
++	}
++	located, err := store.FindByLocator(got.ID, got.JSONLPath)
++	if err != nil || located.Label != "new name" {
++		t.Fatalf("FindByLocator: got=%+v err=%v", located, err)
++	}
++	if calls.Load() != 0 {
++		t.Fatalf("indexed metadata parsed JSONL %d times", calls.Load())
++	}
++	if _, err := db.Exec(`UPDATE threads SET name='renamed again' WHERE id='renamed'`); err != nil {
++		t.Fatal(err)
++	}
++	got, err = store.FindByID("renamed")
++	if err != nil || got.Label != "renamed again" {
++		t.Fatalf("fresh rename: got=%+v err=%v", got, err)
++	}
++}
++
++func TestIndexedMessagesHaveOrderLimitAndTimestamps(t *testing.T) {
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	testIndexThread(t, db, home, "thread", "label")
++	history := testIndexDB(t, home, "thread_history_1.sqlite", `CREATE TABLE thread_items (
++ thread_id TEXT, rollout_ordinal INTEGER, item_type TEXT, item_json TEXT, created_at_ms INTEGER);
++ CREATE INDEX page ON thread_items(thread_id, rollout_ordinal)`)
++	for _, item := range []struct {
++		ordinal  int
++		typ, raw string
++	}{
++		{1, "userMessage", `{"content":[{"type":"text","text":"first user"}]}`},
++		{2, "agentMessage", `{"text":"assistant response"}`},
++		{3, "commandExecution", `{"text":"do not show this tool"}`},
++		{4, "userMessage", `{"content":[{"type":"image"},{"type":"text","text":"latest"},{"type":"text","text":"question"}]}`},
++	} {
++		if _, err := history.Exec("INSERT INTO thread_items VALUES ('thread', ?, ?, ?, ?)", item.ordinal, item.typ, item.raw, item.ordinal*1000); err != nil {
++			t.Fatal(err)
++		}
++	}
++	store := OpenAt(home)
++	msgs, started, total, err := store.Messages("thread", 2)
++	if err != nil || len(msgs) != 2 || total != 3 {
++		t.Fatalf("Messages: got=%+v total=%d err=%v", msgs, total, err)
++	}
++	if msgs[0].Role != "assistant" || msgs[0].Body != "assistant response" || msgs[1].Role != "user" || msgs[1].Body != "latest\nquestion" {
++		t.Fatalf("messages out of order or wrong content: %+v", msgs)
++	}
++	if started.UnixMilli() != 100123 || msgs[0].Timestamp.UnixMilli() != 2000 || msgs[1].Timestamp.UnixMilli() != 4000 {
++		t.Fatalf("timestamps: start=%v messages=%+v", started, msgs)
++	}
++	msgs, _, total, err = store.Messages("thread", 0)
++	if err != nil || len(msgs) != 3 || total != 3 {
++		t.Fatalf("unlimited messages: len=%d total=%d err=%v", len(msgs), total, err)
++	}
++}
++
++func TestIndexedGrepFindsChatAbsentFromRollout(t *testing.T) {
++	t.Setenv(grep.EnvCacheDir, t.TempDir())
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	testIndexThread(t, db, home, "projected", "neutral label")
++	history := testIndexDB(t, home, "thread_history_1.sqlite", `CREATE TABLE thread_items (
++ thread_id TEXT, rollout_ordinal INTEGER, item_type TEXT, item_json TEXT, created_at_ms INTEGER)`)
++	if _, err := history.Exec(`INSERT INTO thread_items VALUES ('projected', 1, 'agentMessage', '{"text":"mizu appears only in chat"}', 1000)`); err != nil {
++		t.Fatal(err)
++	}
++	keys, err := OpenAt(home).GrepKeys("mizu", false)
++	if _, ok := keys["projected"]; err != nil || !ok {
++		t.Fatalf("history-only chat missing from GrepKeys: keys=%v err=%v", keys, err)
++	}
++}
++
++func TestGrepDoesNotMatchOnlyMetadataLabel(t *testing.T) {
++	t.Setenv(grep.EnvCacheDir, t.TempDir())
++	home, cwd, id := fixture(t)
++	store := OpenAt(home)
++	sess, err := store.FindByID(id)
++	if err != nil {
++		t.Fatal(err)
++	}
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	if _, err := db.Exec(`INSERT INTO threads (id, rollout_path, cwd, title) VALUES (?, ?, ?, 'mizu title only')`, id, sess.JSONLPath, cwd); err != nil {
++		t.Fatal(err)
++	}
++	keys, err := store.GrepKeys("mizu", false)
++	if err != nil || len(keys) != 0 {
++		t.Fatalf("metadata-only label must not match chat grep: keys=%v err=%v", keys, err)
++	}
++}
++
++func TestIndexedGrepIsStrictAndNeverScansCoveredRollouts(t *testing.T) {
++	t.Setenv(grep.EnvCacheDir, t.TempDir())
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	history := testIndexDB(t, home, "thread_history_1.sqlite", `CREATE TABLE thread_items (
++ thread_id TEXT, rollout_ordinal INTEGER, item_type TEXT, item_json TEXT);
++ CREATE INDEX page ON thread_items(thread_id, rollout_ordinal)`)
++	for _, tc := range []struct{ id, typ, raw string }{
++		{"chat", "agentMessage", `{"type":"agentMessage","text":"MIZU literal.[x] Café 💎","phase":"final_answer"}`},
++		{"metadata", "userMessage", `{"type":"userMessage","content":[{"type":"text","text":"neutral question"}]}`},
++		{"analysis", "agentMessage", `{"type":"agentMessage","text":"mizu hidden","phase":"analysis"}`},
++		{"tool", "commandExecution", `{"text":"mizu hidden tool"}`},
++		{"subagent", "agentMessage", `{"text":"mizu hidden child"}`},
++	} {
++		path := testIndexThread(t, db, home, tc.id, "mizu metadata label")
++		// Even a negative search must use projection coverage rather than try
++		// to open these absent rollout bodies. Metadata header reads are bounded.
++		if err := os.Remove(path); err != nil {
++			t.Fatal(err)
++		}
++		if _, err := history.Exec("INSERT INTO thread_items VALUES (?, 1, ?, ?)", tc.id, tc.typ, tc.raw); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if _, err := db.Exec(`UPDATE threads SET agent_path='/root/child' WHERE id='subagent'`); err != nil {
++		t.Fatal(err)
++	}
++	for _, tc := range []struct {
++		query       string
++		regex, want bool
++	}{
++		{"mizu", false, true}, {"literal.[x]", false, true}, {"CAFÉ 💎", false, true},
++		{"mi.*", false, false}, {"mizu|water", true, true}, {"never-present", false, false},
++	} {
++		keys, err := OpenAt(home).GrepKeys(tc.query, tc.regex)
++		_, hit := keys["chat"]
++		if err != nil || hit != tc.want || (tc.want && len(keys) != 1) || (!tc.want && len(keys) != 0) {
++			t.Fatalf("GrepKeys(%q): keys=%v err=%v", tc.query, keys, err)
++		}
++	}
++}
++
++func TestIndexedGrepUnsupportedHistoryFallsBackToRawChat(t *testing.T) {
++	t.Setenv(grep.EnvCacheDir, t.TempDir())
++	home, _, id := fixture(t)
++	testIndexDB(t, home, "thread_history_1.sqlite", `CREATE TABLE thread_items (thread_id TEXT, other TEXT)`)
++	keys, err := OpenAt(home).GrepKeys("assistant answer", false)
++	if _, ok := keys[id]; err != nil || !ok {
++		t.Fatalf("unsupported history fallback: keys=%v err=%v", keys, err)
++	}
++}
++
++func TestMixedQueryCombinesChatConstraintsAcrossMessages(t *testing.T) {
++	for _, projected := range []bool{false, true} {
++		t.Run(map[bool]string{false: "raw", true: "projected"}[projected], func(t *testing.T) {
++			t.Setenv(grep.EnvCacheDir, t.TempDir())
++			home := t.TempDir()
++			var state, history *sql.DB
++			if projected {
++				state = testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++				history = testIndexDB(t, home, "thread_history_1.sqlite", `CREATE TABLE thread_items (thread_id TEXT, rollout_ordinal INTEGER, item_type TEXT, item_json TEXT)`)
++			}
++			for _, tc := range []struct {
++				id, title string
++				messages  []string
++				want      bool
++			}{
++				{"same", "neutral", []string{"mizu deployment"}, true},
++				{"separate", "neutral", []string{"mizu question", "deploy the answer"}, true},
++				{"strict-only", "neutral", []string{"mizu", "distant people like yellow"}, false},
++				{"fuzzy-only", "neutral", []string{"deploy"}, false},
++				{"title", "deploy discussion", []string{"mizu"}, true},
++				{"deploy-id", "neutral", []string{"mizu"}, true},
++				{"title-only", "mizu deploy", []string{"nothing relevant"}, false},
++			} {
++				var lines []string
++				meta, _ := json.Marshal(map[string]any{"type": "session_meta", "payload": map[string]string{"id": tc.id, "cwd": home}})
++				lines = append(lines, string(meta))
++				for i, body := range tc.messages {
++					payload := map[string]any{"type": "message", "role": "assistant", "content": body}
++					raw, _ := json.Marshal(map[string]any{"type": "response_item", "payload": payload})
++					lines = append(lines, string(raw))
++					if projected {
++						raw, _ := json.Marshal(map[string]any{"text": body})
++						if _, err := history.Exec("INSERT INTO thread_items VALUES (?, ?, 'agentMessage', ?)", tc.id, i, string(raw)); err != nil {
++							t.Fatal(err)
++						}
++					}
++				}
++				if projected {
++					path := testIndexThread(t, state, home, tc.id, tc.title)
++					if err := os.Remove(path); err != nil {
++						t.Fatal(err)
++					}
++				} else {
++					// Keep the derived raw title neutral, so letters scattered
++					// across an assistant message cannot match through its title.
++					lines = append(lines, `{"type":"response_item","payload":{"type":"message","role":"user","content":"neutral"}}`)
++					writeSession(t, home, tc.id, strings.Join(lines, "\n")+"\n")
++				}
++				keys, err := OpenAt(home).QueryKeys(grep.QueryPlan{Patterns: []string{"mizu"}, Fuzzy: []string{"dply"}})
++				_, hit := keys[tc.id]
++				want := tc.want && (projected || tc.id != "title")
++				if err != nil || hit != want {
++					t.Fatalf("%s: hit=%v want=%v err=%v", tc.id, hit, want, err)
++				}
++			}
++			keys, err := OpenAt(home).QueryKeys(grep.QueryPlan{Patterns: []string{"mizu", "answer"}, Fuzzy: []string{"dply"}})
++			if _, hit := keys["separate"]; err != nil || !hit || len(keys) != 1 {
++				t.Fatalf("multiple independent chat constraints: keys=%v err=%v", keys, err)
++			}
++		})
++	}
++}
++
++func TestIndexedStatePreviewWithoutHistory(t *testing.T) {
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	testIndexThread(t, db, home, "thread", "label")
++	if _, err := db.Exec(`UPDATE threads SET preview='recent conversation preview'`); err != nil {
++		t.Fatal(err)
++	}
++	msgs, started, total, err := OpenAt(home).Messages("thread", 10)
++	if err != nil || total != 1 || len(msgs) != 1 || msgs[0].Body != "recent conversation preview" || started.UnixMilli() != 100123 {
++		t.Fatalf("state preview: msgs=%+v started=%v total=%d err=%v", msgs, started, total, err)
++	}
++}
++
++func TestIndexedPreviewUsesSameVisibleChatAsSearch(t *testing.T) {
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	testIndexThread(t, db, home, "thread", "neutral")
++	history := testIndexDB(t, home, "thread_history_1.sqlite", `CREATE TABLE thread_items (
++ thread_id TEXT, rollout_ordinal INTEGER, item_type TEXT, item_json TEXT, created_at_ms INTEGER)`)
++	quoted := "# AGENTS.md instructions for a pasted example\n<INSTRUCTIONS>mizu actual user text</INSTRUCTIONS>"
++	user, _ := json.Marshal(map[string]any{"type": "userMessage", "content": []map[string]string{{"type": "text", "text": quoted}}})
++	for i, item := range []struct{ typ, raw string }{
++		{"userMessage", string(user)},
++		{"agentMessage", `{"text":"visible reply","phase":"final_answer"}`},
++		{"agentMessage", `{"text":"hidden analysis","phase":"analysis"}`},
++		{"agentMessage", `{"text":"hidden tool recipient","recipient":"tools.exec"}`},
++	} {
++		if _, err := history.Exec("INSERT INTO thread_items VALUES ('thread', ?, ?, ?, ?)", i, item.typ, item.raw, i*1000); err != nil {
++			t.Fatal(err)
++		}
++	}
++	for _, limit := range []int{0, 2} {
++		msgs, _, _, err := OpenAt(home).Messages("thread", limit)
++		if err != nil || len(msgs) != 2 || msgs[0].Body != quoted || msgs[1].Body != "visible reply" {
++			t.Fatalf("limit=%d visible indexed chat=%+v err=%v", limit, msgs, err)
++		}
++	}
++}
++
++func TestIndexMissingOrUnsupportedFallsBackToJSONL(t *testing.T) {
++	for _, unsupported := range []bool{false, true} {
++		t.Run(map[bool]string{false: "missing", true: "unsupported"}[unsupported], func(t *testing.T) {
++			home, _, id := fixture(t)
++			if unsupported {
++				testIndexDB(t, home, "state_5.sqlite", "CREATE TABLE other (id TEXT)")
++			}
++			store := OpenAt(home)
++			ss, err := store.Scan()
++			if err != nil || len(ss) != 1 || ss[0].ID != id {
++				t.Fatalf("fallback Scan: got=%+v err=%v", ss, err)
++			}
++			msgs, _, total, err := store.Messages(id, 1)
++			if err != nil || len(msgs) != 1 || total != 3 {
++				t.Fatalf("fallback Messages: got=%+v total=%d err=%v", msgs, total, err)
++			}
++			if !unsupported {
++				files, _ := filepath.Glob(filepath.Join(home, "*.sqlite"))
++				if len(files) != 0 {
++					t.Fatalf("missing index was created: %v", files)
++				}
++			}
++		})
++	}
++}
++
++func TestIndexedMetadataPreservesRawGrepFallback(t *testing.T) {
++	t.Setenv(grep.EnvCacheDir, t.TempDir())
++	home, cwd, id := fixture(t)
++	store := OpenAt(home)
++	old, err := store.FindByID(id)
++	if err != nil {
++		t.Fatal(err)
++	}
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	if _, err := db.Exec(`INSERT INTO threads (id, rollout_path, cwd, title, updated_at) VALUES (?, ?, ?, 'renamed', 123)`, id, old.JSONLPath, cwd); err != nil {
++		t.Fatal(err)
++	}
++	for _, query := range []string{"assistant answer"} {
++		keys, err := store.GrepKeys(query, false)
++		if _, ok := keys[id]; err != nil || !ok {
++			t.Fatalf("GrepKeys(%q): keys=%v err=%v", query, keys, err)
++		}
++	}
++	if keys, err := store.GrepKeys("renamed", false); err != nil || len(keys) != 0 {
++		t.Fatalf("metadata label matched chat grep: keys=%v err=%v", keys, err)
++	}
++	msgs, _, total, err := store.Messages(id, 1)
++	if err != nil || total != 3 || len(msgs) != 1 {
++		t.Fatalf("missing history JSONL fallback: msgs=%+v total=%d err=%v", msgs, total, err)
++	}
++}
++
++func TestIndexConnectionsAreReadOnlyAndReadWAL(t *testing.T) {
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	if _, err := db.Exec("PRAGMA journal_mode=WAL"); err != nil {
++		t.Fatal(err)
++	}
++	testIndexThread(t, db, home, "thread", "WAL label")
++	reader, err := openIndex(home, "state")
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer reader.Close()
++	if _, err := reader.Exec("UPDATE threads SET name='should fail'"); err == nil || !strings.Contains(strings.ToLower(err.Error()), "readonly") {
++		t.Fatalf("write was not rejected as read-only: %v", err)
++	}
++	ss, err := OpenAt(home).Scan()
++	if err != nil || len(ss) != 1 || ss[0].Label != "WAL label" || !ss[0].LastTime.Equal(time.UnixMilli(300123)) {
++		t.Fatalf("WAL sessions: %+v err=%v", ss, err)
++	}
++}
+diff --git a/internal/codex/metadata.go b/internal/codex/metadata.go
+new file mode 100644
+index 0000000..ed35672
+--- /dev/null
++++ b/internal/codex/metadata.go
+@@ -0,0 +1,57 @@
++package codex
++
++import (
++	"bufio"
++	"bytes"
++	"encoding/json"
++	"io"
++	"os"
++	"strings"
++)
++
++// Lineage is in the rollout header, not Codex's state database. Limit reads
++// independently of transcript size; normal fuzzy keystrokes stay inside fzf.
++func readSessionMetadata(path string) (sessionMetaPayload, bool) {
++	f, err := os.Open(path)
++	if err != nil {
++		return sessionMetaPayload{}, false
++	}
++	defer f.Close()
++	r := bufio.NewReader(io.LimitReader(f, 1<<20))
++	for range 16 {
++		line, err := r.ReadBytes('\n')
++		var e entry
++		if json.Unmarshal(line, &e) == nil && e.Type == "session_meta" {
++			var meta sessionMetaPayload
++			if json.Unmarshal(e.Payload, &meta) == nil {
++				return meta, true
++			}
++		}
++		if err != nil {
++			break
++		}
++	}
++	return sessionMetaPayload{}, false
++}
++
++func (m sessionMetaPayload) isSubagent() bool {
++	if m.ParentThreadID != "" || (m.AgentPath != "" && m.AgentPath != "/root") {
++		return true
++	}
++	var source struct {
++		Subagent json.RawMessage `json:"subagent"`
++	}
++	if json.Unmarshal(m.Source, &source) == nil && len(source.Subagent) > 0 && !bytes.Equal(source.Subagent, []byte("null")) {
++		return true
++	}
++	var kind string
++	return json.Unmarshal(m.Source, &kind) == nil && kind == "subagent"
++}
++
++func cleanForkID(id string) string {
++	id = strings.TrimSpace(id)
++	if idCorruptsRow(id) {
++		return ""
++	}
++	return id
++}
+diff --git a/internal/codex/metadata_test.go b/internal/codex/metadata_test.go
+new file mode 100644
+index 0000000..c7ab9ce
+--- /dev/null
++++ b/internal/codex/metadata_test.go
+@@ -0,0 +1,70 @@
++package codex
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestIndexedForkMetadataAndSubagentSources(t *testing.T) {
++	home := t.TempDir()
++	db := testIndexDB(t, home, "state_5.sqlite", testStateSchema)
++	for _, tc := range []struct{ id, fields, source, want, parent string }{
++		{"original", `"source":"cli"`, "cli", "Original", ""},
++		{"fork", `"source":"cli","forked_from_id":"original"`, "cli", "Fork", "original"},
++		{"nested", `"source":"cli","forked_from_id":"fork"`, "cli", "Fork", "fork"},
++		{"header-child", `"source":{"subagent":{"thread_spawn":{"parent_thread_id":"original"}}}`, "cli", "", ""},
++		{"source-child", `"source":"cli"`, `{"subagent":{"thread_spawn":{"parent_thread_id":"original"}}}`, "", ""},
++		{"string-child", `"source":"cli"`, "subagent", "", ""},
++		{"missing", "", "cli", "Unknown", ""},
++		{"mismatch", `"source":"cli","forked_from_id":"original"`, "cli", "Unknown", ""},
++	} {
++		path := testIndexThread(t, db, home, tc.id, "Synthetic label")
++		if _, err := db.Exec(`UPDATE threads SET source=? WHERE id=?`, tc.source, tc.id); err != nil {
++			t.Fatal(err)
++		}
++		metaID := tc.id
++		if tc.id == "mismatch" {
++			metaID = "other-id"
++		}
++		if tc.fields != "" && tc.id != "source-child" {
++			body := `{"type":"session_meta","payload":{"id":"` + metaID + `",` + tc.fields + `}}` + "\n" + strings.Repeat("not a transcript\n", 100)
++			if err := os.WriteFile(path, []byte(body), 0600); err != nil {
++				t.Fatal(err)
++			}
++		} else if err := os.Remove(path); err != nil {
++			t.Fatal(err)
++		}
++		sessions, ok := OpenAt(home).indexedSessions(tc.id)
++		if !ok {
++			t.Fatal("index fell back to JSONL")
++		}
++		if tc.want == "" {
++			if len(sessions) != 0 {
++				t.Errorf("%s: listed subagent", tc.id)
++			}
++			continue
++		}
++		if len(sessions) != 1 {
++			t.Fatalf("%s: got %d sessions", tc.id, len(sessions))
++		}
++		sessions[0].Source = "codex" // normally supplied by the source adapter
++		if got := sessions[0]; got.ForkType() != tc.want || got.ForkedFromID != tc.parent {
++			t.Errorf("%s: type=%q parent=%q", tc.id, got.ForkType(), got.ForkedFromID)
++		}
++	}
++}
++
++func TestMetadataReadIsBounded(t *testing.T) {
++	const header = `{"type":"session_meta","payload":{"id":"original","source":"cli"}}`
++	for _, prefix := range []string{strings.Repeat("x", 1<<20), strings.Repeat("{}\n", 16)} {
++		path := filepath.Join(t.TempDir(), "rollout.jsonl")
++		if err := os.WriteFile(path, []byte(prefix+"\n"+header+"\n"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		if _, known := readSessionMetadata(path); known {
++			t.Fatal("read metadata beyond bounded header")
++		}
++	}
++}
+diff --git a/internal/grep/cache.go b/internal/grep/cache.go
+index c487c2a..340f152 100644
+--- a/internal/grep/cache.go
++++ b/internal/grep/cache.go
+@@ -11,8 +11,8 @@ import (
+ const EnvCacheDir = "CCSESSION_GREP_CACHE_DIR"
+ 
+ const (
+-	// Invalidate text cached before Cortex stopped skipping malformed JSONL.
+-	cacheVersion     = 3
++	// Invalidate text extracted before modern Codex visible-chat decoding.
++	cacheVersion     = 4
+ 	cacheIndexName   = "index.json"
+ 	cacheTextSep     = "\x00"
+ 	defaultCachePerm = 0o600
+diff --git a/internal/grep/query.go b/internal/grep/query.go
+new file mode 100644
+index 0000000..fd74a83
+--- /dev/null
++++ b/internal/grep/query.go
+@@ -0,0 +1,154 @@
++package grep
++
++import (
++	"fmt"
++	"regexp"
++	"strings"
++	"unicode"
++)
++
++// QueryPlan ANDs chat-only regular expressions with fuzzy terms. Fuzzy terms
++// match an ID/title subsequence or a subsequence inside one visible chat word.
++type QueryPlan struct {
++	Patterns []string
++	Fuzzy    []string
++}
++type MatcherFactory func(id, label string) func(body string) bool
++
++// ParseQuery returns nil when there are no quotes, retaining native fzf or
++// literal grep semantics. Quoted regex preserves backslashes; bare terms are
++// fuzzy in normal mode and literal in grep mode.
++func ParseQuery(raw string, fuzzyBare bool) (*QueryPlan, error) {
++	if !strings.Contains(raw, `"`) {
++		return nil, nil
++	}
++	chars := []rune(raw)
++	plan := &QueryPlan{}
++	for i := 0; i < len(chars); {
++		if unicode.IsSpace(chars[i]) {
++			i++
++			continue
++		}
++		start := i
++		if chars[i] == '"' {
++			i++
++			start = i
++			escaped := false
++			for i < len(chars) {
++				if chars[i] == '"' && !escaped {
++					break
++				}
++				if chars[i] == '\\' {
++					escaped = !escaped
++				} else {
++					escaped = false
++				}
++				i++
++			}
++			if i == len(chars) {
++				return nil, fmt.Errorf("missing closing double quote")
++			}
++			if i == start {
++				return nil, fmt.Errorf("empty quoted regex")
++			}
++			plan.Patterns = append(plan.Patterns, string(chars[start:i]))
++			i++
++			if i < len(chars) && !unicode.IsSpace(chars[i]) {
++				return nil, fmt.Errorf("separate query terms with whitespace")
++			}
++		} else {
++			for i < len(chars) && !unicode.IsSpace(chars[i]) {
++				if chars[i] == '"' {
++					return nil, fmt.Errorf("double quotes must enclose a whole term")
++				}
++				i++
++			}
++			term := string(chars[start:i])
++			if fuzzyBare {
++				plan.Fuzzy = append(plan.Fuzzy, term)
++			} else {
++				plan.Patterns = append(plan.Patterns, regexp.QuoteMeta(term))
++			}
++		}
++	}
++	if _, err := CompilePlan(*plan); err != nil {
++		return nil, err
++	}
++	return plan, nil
++}
++
++const wordChars = `[\pL\pN\pM\pS_]`
++
++func FuzzyWordPattern(term string) string {
++	parts := make([]string, 0, len(term))
++	for _, r := range term {
++		parts = append(parts, regexp.QuoteMeta(string(r)))
++	}
++	return wordChars + "*" + strings.Join(parts, wordChars+"*") + wordChars + "*"
++}
++
++func FuzzyMatch(text, term string) bool {
++	want := []rune(strings.ToLower(term))
++	i := 0
++	if len(want) == 0 {
++		return true
++	}
++	for _, r := range strings.ToLower(text) {
++		if r == want[i] {
++			i++
++			if i == len(want) {
++				return true
++			}
++		}
++	}
++	return false
++}
++
++func CompilePlan(plan QueryPlan) (MatcherFactory, error) {
++	patterns := append([]string{}, plan.Patterns...)
++	for _, term := range plan.Fuzzy {
++		patterns = append(patterns, FuzzyWordPattern(term))
++	}
++	compiled := make([]*regexp.Regexp, len(patterns))
++	for i, pattern := range patterns {
++		re, err := regexp.Compile("(?i)" + pattern)
++		if err != nil {
++			return nil, fmt.Errorf("invalid regex: %w", err)
++		}
++		compiled[i] = re
++	}
++	return func(id, label string) func(string) bool {
++		matched := make([]bool, len(compiled))
++		for i, term := range plan.Fuzzy {
++			matched[len(plan.Patterns)+i] = FuzzyMatch(id, term) || FuzzyMatch(label, term)
++		}
++		return func(body string) bool {
++			all := true
++			for i, re := range compiled {
++				if !matched[i] {
++					matched[i] = re.MatchString(body)
++				}
++				all = all && matched[i]
++			}
++			return all
++		}
++	}, nil
++}
++
++// Fuzzy preview highlights cover the matching word; regex highlights cover the
++// actual regex match. Both use the same patterns as the content filter.
++func HighlightPlan(plan QueryPlan) (*regexp.Regexp, error) {
++	var patterns []string
++	for _, pattern := range plan.Patterns {
++		if pattern != "" {
++			patterns = append(patterns, "(?:"+pattern+")")
++		}
++	}
++	for _, term := range plan.Fuzzy {
++		patterns = append(patterns, "(?:"+FuzzyWordPattern(term)+")")
++	}
++	if len(patterns) == 0 {
++		return nil, nil
++	}
++	return regexp.Compile("(?i)" + strings.Join(patterns, "|"))
++}
+diff --git a/internal/grep/query_test.go b/internal/grep/query_test.go
+new file mode 100644
+index 0000000..4758d8e
+--- /dev/null
++++ b/internal/grep/query_test.go
+@@ -0,0 +1,83 @@
++package grep
++
++import (
++	"reflect"
++	"strings"
++	"testing"
++)
++
++func TestParseQuotedAndMixedQuery(t *testing.T) {
++	for _, tc := range []struct {
++		raw             string
++		fuzzy           bool
++		patterns, terms []string
++		invalid         bool
++	}{
++		{raw: "mizu [fix]", fuzzy: true},
++		{raw: `"mizu|water"`, fuzzy: true, patterns: []string{"mizu|water"}},
++		{raw: `"\bmizu\b" dply`, fuzzy: true, patterns: []string{`\bmizu\b`}, terms: []string{"dply"}},
++		{raw: `dply "say \"hi\"" "💎"`, fuzzy: true, patterns: []string{`say \"hi\"`, "💎"}, terms: []string{"dply"}},
++		{raw: `"mizu" dply [fix]`, patterns: []string{"mizu", "dply", `\[fix\]`}},
++		{raw: `"" dply`, fuzzy: true, invalid: true},
++		{raw: `"["`, invalid: true},
++		{raw: `"mizu`, invalid: true},
++		{raw: `"mizu\"`, invalid: true},
++		{raw: `"mizu"dply`, invalid: true},
++	} {
++		plan, err := ParseQuery(tc.raw, tc.fuzzy)
++		if (err != nil) != tc.invalid {
++			t.Errorf("%q: plan=%v err=%v", tc.raw, plan, err)
++			continue
++		}
++		if tc.invalid {
++			continue
++		}
++		if tc.patterns == nil && tc.terms == nil {
++			if plan != nil {
++				t.Errorf("plain query should stay native/literal: %v", plan)
++			}
++			continue
++		}
++		if plan == nil || !reflect.DeepEqual(plan.Patterns, tc.patterns) || !reflect.DeepEqual(plan.Fuzzy, tc.terms) {
++			t.Errorf("%q: plan=%+v", tc.raw, plan)
++		}
++	}
++}
++
++func TestMixedQueryAccumulatesAcrossMessages(t *testing.T) {
++	factory, err := CompilePlan(QueryPlan{Patterns: []string{"mizu"}, Fuzzy: []string{"dply"}})
++	if err != nil {
++		t.Fatal(err)
++	}
++	match := factory("id", "neutral")
++	if match("mizu") {
++		t.Fatal("strict-only matched")
++	}
++	if !match("DEPLOY the change") {
++		t.Fatal("separate-message fuzzy condition did not match")
++	}
++	if factory("id", "mizu deploy")("neutral chat") {
++		t.Fatal("title satisfied chat-only regex")
++	}
++	if !factory("id", "deployment")("mizu") {
++		t.Fatal("title could not satisfy bare fuzzy term")
++	}
++	if !factory("d-e-p-l-o-y-id", "neutral")("mizu") {
++		t.Fatal("ID could not satisfy bare fuzzy term")
++	}
++	if factory("id", "neutral")("mizu: do prepare later yes") {
++		t.Fatal("chat subsequence crossed word boundaries")
++	}
++}
++
++func TestMixedHighlightMatchesFilterWords(t *testing.T) {
++	plan := QueryPlan{Patterns: []string{"mizu|water"}, Fuzzy: []string{"dply"}}
++	re, err := HighlightPlan(plan)
++	if err != nil {
++		t.Fatal(err)
++	}
++	got := re.FindAllString("Mizu deployment; do prepare later yes; water", -1)
++	if strings.Join(got, "|") != "Mizu|deployment|water" {
++		t.Fatalf("highlights=%q", got)
++	}
++}
+diff --git a/internal/list/list.go b/internal/list/list.go
+index 3decba7..a3a9646 100644
+--- a/internal/list/list.go
++++ b/internal/list/list.go
+@@ -10,6 +10,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/sorafujitani/ccsession/internal/ansi"
++	"github.com/sorafujitani/ccsession/internal/grep"
+ 	"github.com/sorafujitani/ccsession/internal/session"
+ 	"github.com/sorafujitani/ccsession/internal/source"
+ 	"github.com/sorafujitani/ccsession/internal/timefmt"
+@@ -17,7 +18,8 @@ import (
+ 
+ // Options controls list output.
+ type Options struct {
+-	Grep string
++	Grep      string
++	QueryPlan *grep.QueryPlan
+ 	// ExcludeDir drops sessions whose cwd (or basename, when cwd is empty)
+ 	// contains this substring, case-insensitive. Empty disables the filter.
+ 	ExcludeDir string
+@@ -42,6 +44,8 @@ type JSONSession struct {
+ 	LastActivity string `json:"last_activity"`
+ 	CWDExists    bool   `json:"cwd_exists"`
+ 	CWDUnknown   bool   `json:"cwd_unknown"`
++	ForkedFromID string `json:"forked_from_id,omitempty"`
++	SessionType  string `json:"session_type,omitempty"`
+ }
+ 
+ // Run scans sessions, optionally filters them by grep query, and writes
+@@ -54,7 +58,12 @@ func Run(opts Options) error {
+ 	if err != nil {
+ 		return err
+ 	}
+-	sessions, err := loadSessions(src, opts.Grep, opts.Regex)
++	var sessions []*session.Session
++	if opts.QueryPlan != nil {
++		sessions, err = loadQuerySessions(src, *opts.QueryPlan)
++	} else {
++		sessions, err = loadSessions(src, opts.Grep, opts.Regex)
++	}
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -107,6 +116,8 @@ func jsonSession(s *session.Session) JSONSession {
+ 		LastActivity: lastActivity,
+ 		CWDExists:    s.CWDExists,
+ 		CWDUnknown:   s.CWDUnknown,
++		ForkedFromID: s.ForkedFromID,
++		SessionType:  s.ForkType(),
+ 	}
+ }
+ 
+@@ -158,6 +169,60 @@ func loadSessions(src source.Source, query string, regex bool) ([]*session.Sessi
+ 	return src.ScanFiltered(allow)
+ }
+ 
++// Codex evaluates every condition in one indexed-history pass. Other backends
++// retain their existing grep adapters, intersecting each required condition.
++func loadQuerySessions(src source.Source, plan grep.QueryPlan) ([]*session.Session, error) {
++	if qs, ok := src.(interface {
++		QueryKeys(grep.QueryPlan) (map[string]struct{}, error)
++	}); ok {
++		allow, err := qs.QueryKeys(plan)
++		if err != nil {
++			return nil, err
++		}
++		if len(allow) == 0 {
++			return nil, nil
++		}
++		return src.ScanFiltered(allow)
++	}
++	sessions, err := src.Scan()
++	if err != nil {
++		return nil, err
++	}
++	patterns := append([]string{}, plan.Patterns...)
++	for _, term := range plan.Fuzzy {
++		patterns = append(patterns, grep.FuzzyWordPattern(term))
++	}
++	for i, pattern := range patterns {
++		allow, err := src.GrepKeys(pattern, true)
++		if err != nil {
++			return nil, err
++		}
++		matched := make(map[string]bool)
++		if len(allow) > 0 {
++			filtered, err := src.ScanFiltered(allow)
++			if err != nil {
++				return nil, err
++			}
++			for _, sess := range filtered {
++				matched[source.LocatorFor(sess)] = true
++			}
++		}
++		kept := sessions[:0]
++		for _, sess := range sessions {
++			match := matched[source.LocatorFor(sess)]
++			if i >= len(plan.Patterns) {
++				term := plan.Fuzzy[i-len(plan.Patterns)]
++				match = match || grep.FuzzyMatch(sess.ID, term) || grep.FuzzyMatch(sess.Label, term)
++			}
++			if match {
++				kept = append(kept, sess)
++			}
++		}
++		sessions = kept
++	}
++	return sessions, nil
++}
++
+ func formatLine(s *session.Session, now time.Time, color bool) string {
+ 	rel := timefmt.Relative(s.LastTime, now)
+ 	base := s.CWDBasename
+@@ -190,8 +255,8 @@ func formatLine(s *session.Session, now time.Time, color bool) string {
+ 	} else {
+ 		rel = padRight(rel, 9)
+ 	}
+-	return fmt.Sprintf("%s\t%s\t%d\t%s\t%s\t%s%s",
+-		s.ID, source.LocatorFor(s), s.LastEpoch, rel, base, marker, s.Label)
++	return fmt.Sprintf("%s\t%s\t%d\t%s\t%s\t%s%s\t%s",
++		s.ID, source.LocatorFor(s), s.LastEpoch, rel, base, marker, s.Label, padRight(s.ForkType(), 8))
+ }
+ 
+ func padRight(s string, n int) string {
+diff --git a/internal/list/list_test.go b/internal/list/list_test.go
+index a4b6d36..7a32f50 100644
+--- a/internal/list/list_test.go
++++ b/internal/list/list_test.go
+@@ -12,6 +12,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/sorafujitani/ccsession/internal/ansi"
++	"github.com/sorafujitani/ccsession/internal/grep"
+ 	"github.com/sorafujitani/ccsession/internal/session"
+ 	"github.com/sorafujitani/ccsession/internal/source"
+ )
+@@ -28,8 +29,8 @@ func TestFormatLine_NoColor(t *testing.T) {
+ 	}
+ 	got := formatLine(s, now, false)
+ 	fields := strings.Split(got, "\t")
+-	if len(fields) != 6 {
+-		t.Fatalf("got %d fields, want 6: %q", len(fields), got)
++	if len(fields) != 7 {
++		t.Fatalf("got %d fields, want 7: %q", len(fields), got)
+ 	}
+ 	if fields[0] != "abc" {
+ 		t.Errorf("col1 = %q", fields[0])
+@@ -64,8 +65,8 @@ func TestFormatLine_CompositeIDRemainsHiddenKey(t *testing.T) {
+ 	}
+ 	got := formatLine(s, now, false)
+ 	fields := strings.Split(got, "\t")
+-	if len(fields) != 6 {
+-		t.Fatalf("got %d fields, want 6: %q", len(fields), got)
++	if len(fields) != 7 {
++		t.Fatalf("got %d fields, want 7: %q", len(fields), got)
+ 	}
+ 	if fields[0] != "codex:abc" {
+ 		t.Errorf("hidden key = %q, want composite id", fields[0])
+@@ -317,3 +318,24 @@ func TestPadRight(t *testing.T) {
+ 		t.Errorf("padRight should count runes: got %q (%d runes)", got, len([]rune(got)))
+ 	}
+ }
++
++func TestQuotedQueryUsesClaudePathKeys(t *testing.T) {
++	home, cwd := t.TempDir(), t.TempDir()
++	t.Setenv("HOME", home)
++	t.Setenv(source.EnvVar, "claude")
++	t.Setenv(session.EnvCacheDir, filepath.Join(t.TempDir(), "scan-cache"))
++	const id = "11111111-1111-1111-1111-111111111111"
++	writeListSession(t, home, cwd, id, "2026-05-26T10:00:00Z", "mizu deployment")
++	writeListSession(t, home, cwd, "22222222-2222-2222-2222-222222222222", "2026-05-26T11:00:00Z", "water deployment")
++	var out bytes.Buffer
++	if err := Run(Options{JSON: true, Out: &out, QueryPlan: &grep.QueryPlan{Patterns: []string{"mizu"}, Fuzzy: []string{"dply"}}}); err != nil {
++		t.Fatal(err)
++	}
++	var rows []JSONSession
++	if err := json.Unmarshal(out.Bytes(), &rows); err != nil {
++		t.Fatal(err)
++	}
++	if len(rows) != 1 || rows[0].ID != id {
++		t.Fatalf("quoted query lost Claude path-key match: %+v", rows)
++	}
++}
+diff --git a/internal/preview/preview.go b/internal/preview/preview.go
+index 7ed8b85..a8ad7ff 100644
+--- a/internal/preview/preview.go
++++ b/internal/preview/preview.go
+@@ -13,6 +13,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/sorafujitani/ccsession/internal/ansi"
++	"github.com/sorafujitani/ccsession/internal/grep"
+ 	"github.com/sorafujitani/ccsession/internal/session"
+ 	"github.com/sorafujitani/ccsession/internal/source"
+ 	"github.com/sorafujitani/ccsession/internal/timefmt"
+@@ -23,7 +24,9 @@ import (
+ // (mirroring grep.Options).
+ type Options struct {
+ 	Query        string
++	QueryPlan    *grep.QueryPlan
+ 	Regex        bool
++	FzfQuery     bool
+ 	Locator      string
+ 	JSON         bool
+ 	Color        string
+@@ -62,6 +65,8 @@ type JSONPreview struct {
+ 	TotalMessages int           `json:"total_messages"`
+ 	Messages      []JSONMessage `json:"messages"`
+ 	LoadError     string        `json:"load_error,omitempty"`
++	ForkedFromID  string        `json:"forked_from_id,omitempty"`
++	SessionType   string        `json:"session_type,omitempty"`
+ }
+ 
+ type JSONMessage struct {
+@@ -115,7 +120,7 @@ type routeSource interface {
+ }
+ 
+ func renderFrom(src source.Source, s *session.Session, out io.Writer, opts Options) error {
+-	limit := messageLimit(opts)
++	limit := previewLoadLimit(opts)
+ 	if ms, ok := src.(messageSource); ok {
+ 		msgs, startedAt, total, err := ms.Messages(s, limit)
+ 		return renderWith(s, out, opts, msgs, startedAt, total, err)
+@@ -132,7 +137,7 @@ func renderJSONFrom(src source.Source, s *session.Session, out io.Writer, opts O
+ }
+ 
+ func previewData(src source.Source, s *session.Session, opts Options) ([]session.Message, time.Time, int, error, error) {
+-	limit := messageLimit(opts)
++	limit := previewLoadLimit(opts)
+ 	if ms, ok := src.(messageSource); ok {
+ 		msgs, startedAt, total, loadErr := ms.Messages(s, limit)
+ 		return msgs, startedAt, total, loadErr, nil
+@@ -156,7 +161,9 @@ func writeJSONPreview(s *session.Session, out io.Writer, opts Options, messages
+ 		StartedAt:     formatJSONTime(startedAt),
+ 		LastActivity:  formatJSONTime(s.LastTime),
+ 		TotalMessages: totalMsgs,
+-		Messages:      jsonMessages(messages),
++		Messages:      jsonMessages(messageWindow(messages, opts), opts),
++		ForkedFromID:  s.ForkedFromID,
++		SessionType:   s.ForkType(),
+ 	}
+ 	if row.Locator == "" {
+ 		row.Locator = source.LocatorFor(s)
+@@ -167,13 +174,15 @@ func writeJSONPreview(s *session.Session, out io.Writer, opts Options, messages
+ 	return json.NewEncoder(out).Encode(row)
+ }
+ 
+-func jsonMessages(messages []session.Message) []JSONMessage {
++func jsonMessages(messages []session.Message, opts Options) []JSONMessage {
++	match := compileHighlight(opts, colors{})
+ 	rows := make([]JSONMessage, 0, len(messages))
+ 	for _, m := range messages {
++		body, _ := bodySnippet(m.Body, match)
+ 		rows = append(rows, JSONMessage{
+ 			Role:      m.Role,
+ 			Timestamp: formatJSONTime(m.Timestamp),
+-			Body:      truncateBody(m.Body),
++			Body:      body,
+ 		})
+ 	}
+ 	return rows
+@@ -187,7 +196,7 @@ func formatJSONTime(t time.Time) string {
+ }
+ 
+ func render(s *session.Session, out io.Writer, opts Options) error {
+-	messages, startedAt, totalMsgs, err := loadMessages(s.JSONLPath, messageLimit(opts))
++	messages, startedAt, totalMsgs, err := loadMessages(s.JSONLPath, previewLoadLimit(opts))
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -208,6 +217,12 @@ func renderWith(s *session.Session, out io.Writer, opts Options, messages []sess
+ 	c := colorsFor(opts)
+ 
+ 	fmt.Fprintf(w, "%ssession%s : %s\n", c.bold, c.reset, s.ID)
++	if kind := s.ForkType(); kind != "" {
++		fmt.Fprintf(w, "%stype%s    : %s\n", c.bold, c.reset, kind)
++		if s.ForkedFromID != "" {
++			fmt.Fprintf(w, "%sfork of%s : %s\n", c.bold, c.reset, s.ForkedFromID)
++		}
++	}
+ 	cwd := s.CWD
+ 	if cwd == "" {
+ 		cwd = "(unknown)"
+@@ -236,10 +251,7 @@ func renderWith(s *session.Session, out io.Writer, opts Options, messages []sess
+ 	}
+ 
+ 	highlight := compileHighlight(opts, c)
+-	tail := messages
+-	if limit := messageLimit(opts); len(tail) > limit {
+-		tail = tail[len(tail)-limit:]
+-	}
++	tail := messageWindow(messages, opts)
+ 	for _, m := range tail {
+ 		writeMessage(w, m, c, highlight)
+ 	}
+@@ -259,7 +271,8 @@ func writeMessage(w io.Writer, m session.Message, c colors, highlight *regexp.Re
+ 	if !m.Timestamp.IsZero() {
+ 		stamp = m.Timestamp.Local().Format("15:04")
+ 	}
+-	body := highlightMatches(truncateBody(m.Body), c, highlight)
++	snippet, spans := bodySnippet(m.Body, highlight)
++	body := highlightSpans(snippet, c, spans)
+ 	fmt.Fprintf(w, "%s[%s %s]%s %s\n", color, role, stamp, c.reset, body)
+ }
+ 
+@@ -270,12 +283,21 @@ func compileHighlight(opts Options, c colors) *regexp.Regexp {
+ 	if strings.TrimSpace(opts.Query) == "" {
+ 		return nil
+ 	}
+-	if c.highlight == "" {
+-		return nil
++	if opts.QueryPlan != nil {
++		re, _ := grep.HighlightPlan(*opts.QueryPlan)
++		return re
+ 	}
+ 	pattern := opts.Query
++	// fzf uses a leading apostrophe for an exact term in fuzzy mode.
++	// Literal and grep modes pass FzfQuery=false, preserving punctuation.
++	if opts.FzfQuery {
++		pattern = strings.TrimPrefix(pattern, "'")
++	}
++	if pattern == "" {
++		return nil
++	}
+ 	if !opts.Regex {
+-		pattern = regexp.QuoteMeta(opts.Query)
++		pattern = regexp.QuoteMeta(pattern)
+ 	}
+ 	re, err := regexp.Compile("(?i)" + pattern)
+ 	if err != nil {
+@@ -290,7 +312,10 @@ func highlightMatches(s string, c colors, re *regexp.Regexp) string {
+ 	if re == nil {
+ 		return s
+ 	}
+-	locs := re.FindAllStringIndex(s, -1)
++	return highlightSpans(s, c, re.FindAllStringIndex(s, -1))
++}
++
++func highlightSpans(s string, c colors, locs [][]int) string {
+ 	if len(locs) == 0 {
+ 		return s
+ 	}
+@@ -361,7 +386,11 @@ func loadMessages(path string, limit int) ([]session.Message, time.Time, int, er
+ 				if startedAt.IsZero() && !ts.IsZero() {
+ 					startedAt = ts
+ 				}
+-				ring[total%limit] = item
++				if limit <= 0 {
++					ring = append(ring, item)
++				} else {
++					ring[total%limit] = item
++				}
+ 				total++
+ 			}
+ 		}
+diff --git a/internal/preview/preview_test.go b/internal/preview/preview_test.go
+index a82f054..469f790 100644
+--- a/internal/preview/preview_test.go
++++ b/internal/preview/preview_test.go
+@@ -864,3 +864,57 @@ func (fakePreviewSource) ResumeSpec(*session.Session) (string, []string, error)
+ type ioDiscard struct{}
+ 
+ func (ioDiscard) Write(p []byte) (int, error) { return len(p), nil }
++
++func TestLiteralAndFzfExactHighlights(t *testing.T) {
++	for _, tc := range []struct {
++		query, body, match string
++		fuzzy              bool
++	}{
++		{"mizu", "say Mizu now", "Mizu", false},
++		{"[fix] 💎", "mizu [fix] 💎", "[fix] 💎", false},
++		{"'mizu", "say mizu now", "mizu", true},
++		{"'mizu", "say 'mizu now", "'mizu", false},
++	} {
++		got := highlightForTest(tc.body, Options{Query: tc.query, FzfQuery: tc.fuzzy, Color: "always"})
++		want := "\x1b[7m" + tc.match + "\x1b[0m"
++		if !strings.Contains(got, want) {
++			t.Errorf("query %q fuzzy=%v: got %q want %q", tc.query, tc.fuzzy, got, want)
++		}
++	}
++}
++
++func TestCodexForkPreview(t *testing.T) {
++	for _, tc := range []struct{ parent, kind string }{{"", "Original"}, {"source-id", "Fork"}} {
++		s := &session.Session{ID: "own-id", Source: "codex", ForkMetadataKnown: true, ForkedFromID: tc.parent}
++		var out bytes.Buffer
++		if err := renderWith(s, &out, Options{NoColor: true}, []session.Message{{Role: "user", Body: "Synthetic request"}}, time.Time{}, 1, nil); err != nil {
++			t.Fatal(err)
++		}
++		for _, want := range []string{"session : own-id", "type    : " + tc.kind, "Synthetic request"} {
++			if !strings.Contains(out.String(), want) {
++				t.Errorf("missing %q in %q", want, out.String())
++			}
++		}
++		if tc.parent != "" && !strings.Contains(out.String(), "fork of : "+tc.parent) {
++			t.Errorf("missing fork source: %q", out.String())
++		}
++	}
++}
++
++func TestPreviewSearchFindsOldDeepHit(t *testing.T) {
++	messages := []session.Message{{Role: "assistant", Body: "leading context\n\n" + strings.Repeat("x", 1000) + " mizu historical hit"}}
++	for range 65 {
++		messages = append(messages, session.Message{Role: "assistant", Body: "recent unrelated reply"})
++	}
++	var out bytes.Buffer
++	err := renderWith(&session.Session{ID: "synthetic", Source: "codex"}, &out, Options{Query: "mizu", Color: "always", MessageLimit: 40}, messages, time.Time{}, len(messages), nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !strings.Contains(out.String(), "\x1b[7mmizu\x1b[0m") {
++		t.Fatalf("old/deep matched text was not highlighted")
++	}
++	if strings.Count(out.String(), "[asst ") > 40 {
++		t.Fatal("preview exceeded40 messages")
++	}
++}
+diff --git a/internal/preview/search.go b/internal/preview/search.go
+new file mode 100644
+index 0000000..eecb013
+--- /dev/null
++++ b/internal/preview/search.go
+@@ -0,0 +1,80 @@
++package preview
++
++import (
++	"regexp"
++	"unicode/utf8"
++
++	"github.com/sorafujitani/ccsession/internal/grep"
++	"github.com/sorafujitani/ccsession/internal/session"
++)
++
++func previewLoadLimit(opts Options) int {
++	if compileHighlight(opts, colors{}) != nil {
++		return 0
++	}
++	return messageLimit(opts)
++}
++
++func messageWindow(messages []session.Message, opts Options) []session.Message {
++	limit := messageLimit(opts)
++	if len(messages) <= limit {
++		return messages
++	}
++	match := compileHighlight(opts, colors{})
++	// Prioritize the required chat expression over an incidental fuzzy word.
++	if opts.QueryPlan != nil {
++		match, _ = grep.HighlightPlan(grep.QueryPlan{Patterns: opts.QueryPlan.Patterns})
++	}
++	if match != nil {
++		for i := len(messages) - 1; i >= 0; i-- {
++			if match.MatchString(messages[i].Body) {
++				start := min(max(0, i-limit/2), len(messages)-limit)
++				return messages[start : start+limit]
++			}
++		}
++	}
++	return messages[len(messages)-limit:]
++}
++
++// Keep a bounded excerpt around the first positive match, even on a later
++// line. Match offsets come from the original body so clipped long matches and
++// anchors still highlight correctly after adding ellipses.
++func bodySnippet(body string, re *regexp.Regexp) (string, [][]int) {
++	if re == nil {
++		return truncateBody(body), nil
++	}
++	matches := re.FindAllStringIndex(body, -1)
++	first := -1
++	for i, match := range matches {
++		if match[1] > match[0] {
++			first = i
++			break
++		}
++	}
++	if first < 0 {
++		return truncateBody(body), nil
++	}
++	chars := []rune(body)
++	at := utf8.RuneCountInString(body[:matches[first][0]])
++	start := max(0, at-maxBodyLen/3)
++	end := min(len(chars), start+maxBodyLen)
++	start = min(start, max(0, end-maxBodyLen))
++	byteStart, byteEnd := len(string(chars[:start])), len(string(chars[:end]))
++	snippet := body[byteStart:byteEnd]
++	prefix := 0
++	if start > 0 {
++		snippet = "…" + snippet
++		prefix = len("…")
++	}
++	if end < len(chars) {
++		snippet += "…"
++	}
++	var visible [][]int
++	for _, match := range matches {
++		lo, hi := max(byteStart, match[0]), min(byteEnd, match[1])
++		if hi > lo {
++			visible = append(visible, []int{lo - byteStart + prefix, hi - byteStart + prefix})
++		}
++	}
++	return snippet, visible
++}
+diff --git a/internal/session/types.go b/internal/session/types.go
+index f9be2ea..150acb6 100644
+--- a/internal/session/types.go
++++ b/internal/session/types.go
+@@ -35,7 +35,23 @@ type Session struct {
+ 	Source string
+ 	// ConnectionName is the Snowflake connection used when the session was
+ 	// created (Cortex Code only). Used by resume to pass -c to cortex CLI.
+-	ConnectionName string
++	ConnectionName    string
++	ForkedFromID      string
++	ForkMetadataKnown bool
++}
++
++// ForkType describes Codex's explicit lineage, never inferring from a title.
++func (s *Session) ForkType() string {
++	if s.Source != "codex" {
++		return ""
++	}
++	if !s.ForkMetadataKnown {
++		return "Unknown"
++	}
++	if s.ForkedFromID != "" {
++		return "Fork"
++	}
++	return "Original"
+ }
+ 
+ // Message is one rendered transcript turn, the unit the preview pane displays.
+diff --git a/internal/source/codex.go b/internal/source/codex.go
+index 67b4caf..ca8abe0 100644
+--- a/internal/source/codex.go
++++ b/internal/source/codex.go
+@@ -4,6 +4,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/sorafujitani/ccsession/internal/codex"
++	"github.com/sorafujitani/ccsession/internal/grep"
+ 	"github.com/sorafujitani/ccsession/internal/session"
+ )
+ 
+@@ -55,6 +56,10 @@ func (c codexSource) GrepKeys(query string, regex bool) (map[string]struct{}, er
+ 	return c.store.GrepKeys(query, regex)
+ }
+ 
++func (c codexSource) QueryKeys(plan grep.QueryPlan) (map[string]struct{}, error) {
++	return c.store.QueryKeys(plan)
++}
++
+ func (c codexSource) ResumeSpec(s *session.Session) (string, []string, error) {
+ 	return nameCodex, []string{nameCodex, "resume", s.ID}, nil
+ }

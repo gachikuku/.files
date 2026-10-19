@@ -1,5 +1,5 @@
 diff --git a/docs/how-it-works.md b/docs/how-it-works.md
-index 9d7ec91..18e2ac1 100644
+index 9d7ec91..18149f3 100644
 --- a/docs/how-it-works.md
 +++ b/docs/how-it-works.md
 @@ -20,7 +20,7 @@ Each adapter maps an agent-specific format into the shared `Session` model.
@@ -19,7 +19,28 @@ index 9d7ec91..18e2ac1 100644
  }
  ```
  
-@@ -139,6 +140,8 @@ Each adapter returns the command needed to continue its session:
+@@ -96,6 +97,8 @@ Search combines:
+ - Bounded, single-token directory/path matching
+ - Structured agent, directory, and date filters
+ 
++Double-quoted patterns compile to case-insensitive regex queries over the existing term dictionaries. Unqualified patterns cover title, content, raw ID, and raw directory fields; field-qualified patterns stay scoped. A quote-aware pass preserves regex escapes and extracts filters only outside quoted patterns. The native Tantivy query AST supplies boolean operators and grouping. Quoted queries and native field regex use strict parsing without fuzzy or ID-subsequence alternatives; single-quoted text retains indexed phrase semantics. No schema migration or transcript reads are required for this query mode.
++
+ Text relevance remains the primary ranking signal, but recent sessions receive a smooth, bounded boost. The multiplier follows `1 + 1.5 × 2^(-age / 14 days)`: it starts at 2.5 for a current session, falls to 1.75 after 14 days, and approaches 1 for old sessions. Strong exact matches can still outrank weaker recent matches, while similarly relevant results favor recent activity. Equal scores list the newer session first, so repeated and paginated searches return the same order.
+ 
+ Queries such as `auth midleware` can still find “authentication middleware,” and a token such as `backend` can match `/work/backend`.
+@@ -113,9 +116,9 @@ Keystroke ──► redraw input ──► search worker ──► Tantivy
+ - **Warm path:** render and search the existing index immediately.
+ - **Refresh path:** scan adapters in the background and commit changed sessions in batches.
+ - **Reload path:** refresh the Tantivy reader and re-run the active query.
+-- **Failure path:** keep the current results and show the error instead of presenting an empty successful search.
++- **Failure path:** keep the current results and show the error instead of presenting an empty successful search. Resume and copy remain disabled until a search succeeds, so stale matches cannot be acted on after a query error.
+ 
+-The preview renders roles and code blocks, highlights query terms, and scrolls independently from the result list. Agent artwork uses the terminal's supported image protocol and compensates for terminal cell geometry.
++The preview renders roles and code blocks, highlights query matches, and scrolls independently from the result list. Highlighting reuses the query parser and chat tokenizer for quoted regex and phrases, with one compiled matcher shared by snippet positioning and line rendering. The existing preview cache reuses rendered lines while the selected session and query are unchanged. Agent artwork uses the terminal's supported image protocol and compensates for terminal cell geometry.
+ 
+ ## Resume handoff
+ 
+@@ -139,6 +142,8 @@ Each adapter returns the command needed to continue its session:
  
  `exec()` replaces fast-resume with the agent process, and the agent receives the session's working directory.
  
@@ -29,10 +50,10 @@ index 9d7ec91..18e2ac1 100644
  
  fast-resume avoids a full parse on ordinary launches:
 diff --git a/docs/usage.md b/docs/usage.md
-index 993bfd6..cb1a3a1 100644
+index 993bfd6..435b8e6 100644
 --- a/docs/usage.md
 +++ b/docs/usage.md
-@@ -18,6 +18,25 @@ fr -a codex -d backend "api error"
+@@ -18,6 +18,55 @@ fr -a codex -d backend "api error"
  
  Free text searches titles, conversation content, and bounded single-token directory/path matches. Exact matches are boosted, while fuzzy matching keeps common typos useful.
  
@@ -55,10 +76,58 @@ index 993bfd6..cb1a3a1 100644
 +fr "agent:codex 9abc"
 +```
 +
++## Quoted regex search
++
++In the TUI search box, double quotes select case-insensitive regex matching:
++
++```text
++"mizu"                  # Exact indexed word
++"mizu.*"                # Words beginning with mizu
++".*mizu.*"              # Words containing mizu
++"mizu|water"            # Either word
++content:"mizu.*"        # Chat content only
++title:"mizu|water"      # Titles only
++id:"01a1.*"             # Session IDs beginning with 01a1
++"mizu" AND "water"      # Both words in the session
++```
++
++Unqualified patterns search titles, chat content, session IDs, and directories. Regex matches a whole indexed term: a word or emoji sequence for titles and content, or the whole value for IDs and directories. Use `.*` for a partial match. This searches the cached index; it does not scan transcript files per keystroke. Patterns cannot span separate chat words or messages. For an indexed phrase, use single quotes in the search box: `'mizu water'`.
++
++Quoted search terms and native field regex such as `content:/mizu.*/` use strict matching without fuzzy fallback. Combine them with `AND`, `OR`, and parentheses. Quoted structured filter values such as `dir:"my project"` remain literal filters. Malformed or incomplete patterns show an error; the TUI keeps the last results visible but disables resume and copy until the query succeeds. Patterns are limited to 1,024 bytes and the regex engine's complexity limit. Backslashes inside double quotes are preserved for regex escapes, such as `"mizu\d+"`.
++
++When passing a quoted regex from your shell, preserve the double quotes with outer single quotes:
++
++```bash
++fr -a codex '"mizu|water"'
++fr -a codex 'content:"mizu.*"'
++```
++
++Unquoted text and session-ID fragments keep their usual fuzzy matching.
++
++The chat preview highlights matching text with the current theme's match colors and positions the snippet near the first match. Double-quoted regex highlights whole matching words or emoji; single-quoted phrases highlight their matching text. Filters and excluded terms do not become chat highlights.
++
  ## Search filters
  
  Filters work in the initial query and directly in the TUI search box.
-@@ -73,6 +92,8 @@ fr --theme dark
+@@ -63,6 +112,17 @@ fr "dir:backend -agent:vibe auth"
+ 
+ Type a partial filter such as `agent:cl` and press `Tab` to accept the suggestion.
+ 
++## Compact TUI
++
++Use `fr --compact` or `FAST_RESUME_COMPACT=true fr` for a one-line search,
++quiet separators, five session rows, and a larger preview in the same pane
++order. It hides version/statistics chatter, agent tabs, and the long shortcut
++footer; match count, session IDs, fork metadata, errors, and status remain.
++Press `?` with an empty search, or `F1` at any time, for help.
++
++The local Nix wrapper defaults to compact mode. Run `FAST_RESUME_COMPACT=false fr`
++to restore the full interface. This setting does not change searching or indexing.
++
+ ## TUI color themes
+ 
+ The TUI detects whether the terminal has a dark or light background. Override the detected theme when needed:
+@@ -73,6 +133,8 @@ fr --theme dark
  FAST_RESUME_THEME=light fr
  ```
  
@@ -67,6 +136,14 @@ index 993bfd6..cb1a3a1 100644
  The command-line option takes precedence over `FAST_RESUME_THEME`. Automatic detection falls back to the dark theme when the terminal does not report its background color.
  
  ## Non-interactive commands
+@@ -154,6 +216,7 @@ Options:
+                           (honors -a and -d filters)
+       --agent-context     Print concise instructions for coding agents
+       --yolo              Force auto-approve flags where supported
++      --compact            Use a quieter TUI with more preview space
+       --theme <THEME>      Select auto, dark, or light TUI colors
+                           [env: FAST_RESUME_THEME=] [default: auto]
+       --images            Enable agent artwork when supported
 diff --git a/src/adapters/codex.rs b/src/adapters/codex.rs
 index 755c5a6..f24dba8 100644
 --- a/src/adapters/codex.rs
@@ -943,18 +1020,21 @@ index e2c069d..b501045 100644
  pub const AGENT_ORDER: [&str; 13] = [
      "antigravity",
 diff --git a/src/index.rs b/src/index.rs
-index f4f3100..8d15bfd 100644
+index f4f3100..3c93258 100644
 --- a/src/index.rs
 +++ b/src/index.rs
-@@ -20,6 +20,7 @@ mod document;
+@@ -20,8 +20,10 @@ mod document;
  mod queries;
  mod schema;
  mod stats;
 +mod tokenizer;
  
  pub use stats::IndexStats;
++pub(crate) use tokenizer::chat_analyzer;
  
-@@ -157,6 +158,7 @@ impl SessionIndex {
+ pub const INDEX_REFRESH_BATCH_SIZE: usize = 500;
+ 
+@@ -157,6 +159,7 @@ impl SessionIndex {
              index
          };
  
@@ -962,7 +1042,7 @@ index f4f3100..8d15bfd 100644
          let fields = schema::IndexFields::from_schema(&index.schema())?;
          let reader = index
              .reader_builder()
-@@ -626,6 +628,39 @@ mod tests {
+@@ -626,6 +629,39 @@ mod tests {
          assert!(after_ninety_days < 10.2);
      }
  
@@ -1037,10 +1117,48 @@ index 435807a..6c83bd8 100644
  }
  
 diff --git a/src/index/queries.rs b/src/index/queries.rs
-index e933160..698d667 100644
+index e933160..18df9ed 100644
 --- a/src/index/queries.rs
 +++ b/src/index/queries.rs
-@@ -64,6 +64,8 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
+@@ -1,15 +1,16 @@
+ use std::ops::Bound;
+ 
+-use anyhow::Result;
++use anyhow::{Result, bail};
+ use chrono::{DateTime, Days, TimeZone};
+ use tantivy::query::{
+     AllQuery, BooleanQuery, BoostQuery, FuzzyTermQuery, Occur, Query, QueryParser, RangeQuery,
+     RegexQuery, TermQuery, TermSetQuery,
+ };
++use tantivy::query_grammar::{self, Delimiter, UserInputAst, UserInputLeaf};
+ use tantivy::schema::IndexRecordOption;
+ use tantivy::{Index, Term};
+ 
+-use crate::query::{DateFilter, DateOp, Filter};
++use crate::query::{DateFilter, DateOp, Filter, regex_query_input};
+ 
+ use super::document::datetime_to_seconds;
+ use super::schema::IndexFields;
+@@ -54,8 +55,17 @@ pub(super) fn build(
+ }
+ 
+ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<Box<dyn Query>> {
+-    let parser =
++    let mut parser =
+         QueryParser::for_index(index, vec![fields.title, fields.content, fields.directory]);
++    if let Some(input) = regex_query_input(search_text)? {
++        let ast = query_grammar::parse_query(&input).map_err(|_| {
++            anyhow::anyhow!("Invalid regex query syntax: close quotes and check grouping")
++        })?;
++        parser.allow_regexes();
++        return parser
++            .build_query_from_user_input_ast(regex_ast(ast)?)
++            .map_err(|error| anyhow::anyhow!("Invalid regex query: {error}"));
++    }
+     let (exact, _) = parser.parse_query_lenient(search_text);
+     let boosted_exact = BoostQuery::new(exact, 5.0);
+ 
+@@ -64,6 +74,8 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
      let fuzzy_parts: Vec<(Occur, Box<dyn Query>)> = search_text
          .split_whitespace()
          .filter(|term| term.chars().count() >= 3)
@@ -1049,7 +1167,7 @@ index e933160..698d667 100644
          .map(|term| {
              let term = term.to_lowercase();
              let title =
-@@ -84,10 +86,54 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
+@@ -84,10 +96,111 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
      if let Some(directory_query) = directory_text_query(fields, search_text)? {
          alternatives.push((Occur::Should, directory_query));
      }
@@ -1060,6 +1178,63 @@ index e933160..698d667 100644
      Ok(Box::new(BooleanQuery::new(alternatives)))
  }
  
++fn regex_ast(ast: UserInputAst) -> Result<UserInputAst> {
++    Ok(match ast {
++        UserInputAst::Clause(clauses) => UserInputAst::Clause(
++            clauses
++                .into_iter()
++                .map(|(occur, ast)| Ok((occur, regex_ast(ast)?)))
++                .collect::<Result<_>>()?,
++        ),
++        UserInputAst::Boost(ast, boost) => UserInputAst::Boost(Box::new(regex_ast(*ast)?), boost),
++        UserInputAst::Leaf(leaf) => {
++            let (field, pattern) = match *leaf {
++                UserInputLeaf::Literal(literal) if literal.delimiter == Delimiter::DoubleQuotes => {
++                    if literal.prefix || literal.slop != 0 {
++                        bail!(
++                            "Put regex operators inside double quotes; use single quotes for phrases"
++                        );
++                    }
++                    (literal.field_name, literal.phrase)
++                }
++                UserInputLeaf::Regex { field, pattern } => (field, pattern),
++                other => return Ok(other.into()),
++            };
++            if pattern.is_empty() {
++                bail!("Empty regex: enter a pattern between the quotes");
++            }
++            // Bound input size as well as Tantivy's own finite-automaton limit.
++            if pattern.len() > 1024 {
++                bail!("Regex is too long (maximum 1024 bytes)");
++            }
++            let pattern = format!("(?i:{pattern})");
++            let fields = field.map_or_else(
++                || {
++                    vec![
++                        "title".into(),
++                        "content".into(),
++                        "id".into(),
++                        "directory".into(),
++                    ]
++                },
++                |field| vec![field],
++            );
++            UserInputAst::or(
++                fields
++                    .into_iter()
++                    .map(|field| {
++                        UserInputLeaf::Regex {
++                            field: Some(field),
++                            pattern: pattern.clone(),
++                        }
++                        .into()
++                    })
++                    .collect(),
++            )
++        }
++    })
++}
++
 +fn id_text_query(fields: IndexFields, search_text: &str) -> Option<Box<dyn Query>> {
 +    let search_text = search_text.trim();
 +    // Keep broad, single-character matches and unbounded automata out of the
@@ -1168,10 +1343,10 @@ index 57d64be..cd45dd7 100644
 +}
 diff --git a/src/index/tokenizer.rs b/src/index/tokenizer.rs
 new file mode 100644
-index 0000000..ed71892
+index 0000000..f8c5e33
 --- /dev/null
 +++ b/src/index/tokenizer.rs
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,39 @@
 +use std::sync::LazyLock;
 +
 +use regex::Regex;
@@ -1202,16 +1377,29 @@ index 0000000..ed71892
 +    index.tokenizers().register(NAME, ANALYZER.clone());
 +}
 +
++pub(crate) fn chat_analyzer() -> TextAnalyzer {
++    ANALYZER.clone()
++}
++
 +pub(super) fn contains_symbols(text: &str) -> bool {
 +    static SYMBOLS: LazyLock<Regex> =
 +        LazyLock::new(|| Regex::new(r"[\p{S}\u{20E3}]").expect("valid symbol pattern"));
 +    SYMBOLS.is_match(text)
 +}
 diff --git a/src/main.rs b/src/main.rs
-index 123fa27..5cdad4e 100644
+index 123fa27..dfbafcc 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -101,7 +101,7 @@ struct Args {
+@@ -96,12 +96,16 @@ struct Args {
+     )]
+     theme: ThemeArg,
+ 
++    /// Use a quieter TUI with a one-line search and more preview space.
++    #[arg(long, env = "FAST_RESUME_COMPACT")]
++    compact: bool,
++
+     /// Render agent PNGs in the preview pane (enabled by default when supported).
+     #[arg(long)]
      images: bool,
  
      /// Disable agent PNGs in the TUI.
@@ -1220,7 +1408,15 @@ index 123fa27..5cdad4e 100644
      no_images: bool,
  
      /// Force a terminal image protocol for --images.
-@@ -297,9 +297,19 @@ fn exec_resume_with(
+@@ -198,6 +202,7 @@ fn main() -> Result<()> {
+         args.yolo,
+         image_protocol,
+         args.theme.into(),
++        args.compact,
+     )? {
+         TuiExit::Quit => Ok(()),
+         TuiExit::Resume { command, directory } => exec_resume(command, directory),
+@@ -297,9 +302,19 @@ fn exec_resume_with(
      if command.is_empty() {
          bail!("selected session has no resume command");
      }
@@ -1241,7 +1437,7 @@ index 123fa27..5cdad4e 100644
              .with_context(|| format!("failed to change directory to {directory}"))?;
      }
  
-@@ -374,6 +384,23 @@ mod tests {
+@@ -374,6 +389,23 @@ mod tests {
          assert!(error.to_string().contains("no resume command"));
      }
  
@@ -1265,6 +1461,16 @@ index 123fa27..5cdad4e 100644
      #[test]
      fn accepts_legacy_no_version_check_flag() {
          let args = Args::try_parse_from(["fr", "--no-version-check", "--list"]).unwrap();
+@@ -388,4 +420,9 @@ mod tests {
+ 
+         assert_eq!(args.theme, ThemeArg::Light);
+     }
++    #[test]
++    fn accepts_compact_tui_flag() {
++        let args = Args::try_parse_from(["fr", "--compact"]).unwrap();
++        assert!(args.compact);
++    }
+ }
 diff --git a/src/model.rs b/src/model.rs
 index 3c5aff8..30a8cc6 100644
 --- a/src/model.rs
@@ -1314,8 +1520,175 @@ index 13d9668..e8b895b 100644
 +        assert!(json["sessions"][0].get("forked_from_id").is_none());
      }
  }
+diff --git a/src/query.rs b/src/query.rs
+index ffc7e10..3a28f99 100644
+--- a/src/query.rs
++++ b/src/query.rs
+@@ -1,6 +1,8 @@
++use anyhow::{Result, bail};
+ use chrono::{DateTime, Duration, Local, NaiveTime};
+ use once_cell::sync::Lazy;
+ use regex::Regex;
++use std::ops::Range;
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum DateOp {
+@@ -75,7 +77,20 @@ pub fn parse_query(query: &str) -> ParsedQuery {
+     let mut directory = None;
+     let mut date = None;
+ 
++    let protected = quoted_ranges(query);
++    let mut text = String::new();
++    let mut copied = 0;
+     for caps in KEYWORD_RE.captures_iter(query) {
++        let matched = caps.get(0).unwrap();
++        if protected
++            .iter()
++            .any(|(range, _, _)| range.contains(&matched.start()))
++        {
++            continue;
++        }
++        text.push_str(&query[copied..matched.start()]);
++        text.push(' ');
++        copied = matched.end();
+         let negated = caps.get(1).map(|m| m.as_str()) == Some("-");
+         let keyword = caps.get(2).map(|m| m.as_str()).unwrap_or_default();
+         let value = caps
+@@ -92,17 +107,92 @@ pub fn parse_query(query: &str) -> ParsedQuery {
+         }
+     }
+ 
+-    let text = KEYWORD_RE.replace_all(query, "");
+-    let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
++    text.push_str(&query[copied..]);
+ 
+     ParsedQuery {
+-        text,
++        text: text.trim().to_string(),
+         agent,
+         directory,
+         date,
+     }
+ }
+ 
++// Locate quoted text without interpreting its regex syntax. Filter values can
++// contain quotes too: their keyword begins outside the protected range.
++fn quoted_ranges(query: &str) -> Vec<(Range<usize>, char, bool)> {
++    let mut ranges = Vec::new();
++    let mut chars = query.char_indices().peekable();
++    while let Some((start, ch)) = chars.next() {
++        if ch == '\\' {
++            chars.next();
++            continue;
++        }
++        let boundary =
++            start == 0 || query[..start].ends_with(|c: char| c.is_whitespace() || "(:".contains(c));
++        // Only field:/pattern/ opts in; bare /work/path/ remains a path search.
++        let slash = ch == '/'
++            && ["title:", "content:", "id:", "directory:"]
++                .iter()
++                .any(|field| {
++                    query[..start].strip_suffix(field).is_some_and(|before| {
++                        before.is_empty()
++                            || before.ends_with(|c: char| c.is_whitespace() || "(+-".contains(c))
++                    })
++                });
++        if ch != '"' && !(ch == '\'' && boundary) && !slash {
++            continue;
++        }
++        let mut end = query.len();
++        let mut closed = false;
++        while let Some((offset, next)) = chars.next() {
++            if next == '\\' {
++                chars.next();
++            } else if next == ch {
++                end = offset + next.len_utf8();
++                closed = true;
++                break;
++            }
++        }
++        ranges.push((start..end, ch, closed));
++    }
++    ranges
++}
++
++pub(crate) fn regex_query_input(query: &str) -> Result<Option<String>> {
++    let ranges = quoted_ranges(query);
++    if ranges.is_empty() {
++        return Ok(None);
++    }
++    let mut input = String::new();
++    let mut copied = 0;
++    for (range, delimiter, closed) in ranges {
++        if !closed {
++            bail!("Invalid regex query syntax: close the {delimiter} delimiter");
++        }
++        input.push_str(&query[copied..range.start]);
++        let mut chars = query[range.clone()].chars().peekable();
++        while let Some(ch) = chars.next() {
++            input.push(ch);
++            // Tantivy's quoted-string parser consumes every backslash escape.
++            // Retain regex escapes, while \" still escapes the quote delimiter.
++            if delimiter == '"' && ch == '\\' && chars.peek() != Some(&'"') {
++                input.push('\\');
++            }
++            if ch == '\\'
++                && let Some(next) = chars.next()
++            {
++                input.push(next);
++                if delimiter == '"' && next == '\\' {
++                    input.push('\\');
++                }
++            }
++        }
++        copied = range.end;
++    }
++    input.push_str(&query[copied..]);
++    Ok(Some(input))
++}
++
+ fn parse_agent_filter_value(value: &str, negated: bool) -> Filter {
+     let mut filter = parse_filter_value(value, negated);
+     filter.include = filter
+@@ -270,4 +360,36 @@ mod tests {
+         assert!(parse_query("date:999999999y").date.is_none());
+         assert!(parse_query("date:9223372036854775807y").date.is_none());
+     }
++
++    #[test]
++    fn filters_only_apply_outside_quoted_patterns_and_preserve_pattern_whitespace() {
++        for pattern in [
++            r#"directory:".*agent:codex  dir:api.*""#,
++            r#"directory:/.*agent:codex  dir:api.*/"#,
++            "content:'agent:codex dir:api'",
++        ] {
++            let parsed = parse_query(&format!("agent:claude {pattern} date:<1d"));
++            assert_eq!(parsed.text, pattern);
++            assert_eq!(parsed.agent.unwrap().include, ["claude"]);
++            assert!(parsed.directory.is_none());
++            assert!(parsed.date.is_some());
++        }
++        assert!(
++            regex_query_input("/work/backend agent:codex")
++                .unwrap()
++                .is_none()
++        );
++        assert!(regex_query_input("don't change").unwrap().is_none());
++        assert!(regex_query_input("/work/notitle:/path/").unwrap().is_none());
++        assert!(
++            regex_query_input("/work/backend/ agent:codex")
++                .unwrap()
++                .is_none()
++        );
++        assert!(
++            regex_query_input("https://example.com/path")
++                .unwrap()
++                .is_none()
++        );
++    }
+ }
 diff --git a/src/search.rs b/src/search.rs
-index a3520ab..7238a63 100644
+index a3520ab..868f771 100644
 --- a/src/search.rs
 +++ b/src/search.rs
 @@ -142,6 +142,135 @@ mod tests {
@@ -1454,10 +1827,22 @@ index a3520ab..7238a63 100644
      #[test]
      fn filters_by_agent_and_directory_keyword() {
          let temp = tempdir().unwrap();
-@@ -176,6 +305,173 @@ mod tests {
-         assert_eq!(results[0].id, "a");
-     }
+@@ -164,7 +293,7 @@ mod tests {
+         let index = SessionIndex::open(temp.path().join("index")).unwrap();
+         index
+             .rebuild(vec![
+-                session("a", "claude", "Unrelated", "/work/backend", "alpha"),
++                session("a", "claude", "Unrelated", "/work/backend/", "alpha"),
+                 session("b", "codex", "Other", "/work/frontend", "button"),
+             ])
+             .unwrap();
+@@ -174,6 +303,174 @@ mod tests {
  
+         assert_eq!(results.len(), 1);
+         assert_eq!(results[0].id, "a");
++        assert_eq!(result_ids(&engine, "/work/backend/"), ["a"]);
++    }
++
 +    #[test]
 +    fn plain_text_search_matches_metadata_only_session_ids() {
 +        let temp = tempdir().unwrap();
@@ -1623,21 +2008,223 @@ index a3520ab..7238a63 100644
 +
 +        assert_eq!(result_ids(&engine, "aBγc"), [id]);
 +        assert!(result_ids(&engine, "aγbc").is_empty());
+     }
+ 
+     #[test]
+@@ -195,7 +492,7 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn malformed_text_query_still_returns_lenient_matches() {
++    fn unfinished_quotes_report_errors_but_unquoted_queries_remain_lenient() {
+         let temp = tempdir().unwrap();
+         let index = SessionIndex::open(temp.path().join("index")).unwrap();
+         index
+@@ -209,12 +506,159 @@ mod tests {
+             .unwrap();
+         let engine = SearchEngine::from_index(index);
+ 
+-        let results = engine.search("\"fast", None, None, 10);
++        assert!(engine.search_result("\"fast", None, None, 10).is_err());
++        let results = engine.search("fast(", None, None, 10);
+ 
+         assert_eq!(results.len(), 1);
+         assert_eq!(results[0].id, "a");
+     }
+ 
++    #[test]
++    fn quoted_regexes_match_indexed_terms_without_fuzzy_alternatives() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("exact", "codex", "Neutral", "/work/api", "mizu"),
++                session("upper", "codex", "MIZU", "/work/api", "plain"),
++                session("prefix", "codex", "Neutral", "/work/api", "mizuki"),
++                session("inside", "codex", "Neutral", "/work/api", "kamizu"),
++                session("typo", "codex", "Neutral", "/work/api", "mizo"),
++                session("other", "codex", "Neutral", "/work/api", "water"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert_eq!(result_ids(&engine, r#""mizu""#), ["exact", "upper"]);
++        assert_eq!(
++            result_ids(&engine, r#""MIZU.*""#),
++            ["exact", "prefix", "upper"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"".*mizu.*""#),
++            ["exact", "inside", "prefix", "upper"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#""mizu|water""#),
++            ["exact", "other", "upper"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu|water""#),
++            ["exact", "other"]
++        );
++        assert_eq!(result_ids(&engine, r#"title:"mizu""#), ["upper"]);
++        assert_eq!(
++            result_ids(&engine, "content:/mizu|water/"),
++            ["exact", "other"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"title:"mizu" OR content:"water""#),
++            ["other", "upper"]
++        );
++        assert!(result_ids(&engine, "mizu").contains(&"typo".to_string()));
++        assert!(result_ids(&engine, "mizu").contains(&"prefix".to_string()));
++    }
++
++    #[test]
++    fn quoted_regexes_preserve_raw_ids_escapes_spaces_and_filter_like_text() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("mizu", "codex", "Neutral", "/work/api", "plain"),
++                session("run12", "codex", "Neutral", "/work/api", "plain"),
++                session(r#"id."mizu"\end"#, "codex", "Neutral", "/work/api", "plain"),
++                session(
++                    "path",
++                    "claude",
++                    "Neutral",
++                    "/work/agent:codex  two",
++                    "plain",
++                ),
++                session("unicode", "codex", "Neutral", "/work/api", "CAFÉ 💎"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert_eq!(result_ids(&engine, r#""MIZU""#), ["mizu"]);
++        assert_eq!(result_ids(&engine, r#"id:"run\d+""#), ["run12"]);
++        assert_eq!(
++            result_ids(&engine, r#"id:"id\.\"mizu\"\\end""#),
++            [r#"id."mizu"\end"#]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"directory:".*agent:codex  two" agent:claude"#),
++            ["path"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"directory:/.*agent:codex  two/ agent:claude"#),
++            ["path"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"CAFÉ|💎" agent:codex dir:api date:<1d"#),
++            ["unicode"]
++        );
++        assert!(result_ids(&engine, r#"id:"miz""#).is_empty());
++    }
++
++    #[test]
++    fn regexes_match_single_terms_and_single_quotes_keep_phrase_semantics() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("phrase", "codex", "Neutral", "/work/api", "mizu water"),
++                session("apart", "codex", "Neutral", "/work/api", "mizu then water"),
++                session("reverse", "codex", "Neutral", "/work/api", "water mizu"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert!(result_ids(&engine, r#"content:"mizu.*water""#).is_empty());
++        assert!(result_ids(&engine, r#"content:"mizu water""#).is_empty());
++        assert_eq!(result_ids(&engine, "content:'mizu water'"), ["phrase"]);
++        assert_eq!(
++            result_ids(&engine, r#""mizu" AND "water""#),
++            ["apart", "phrase", "reverse"]
++        );
++    }
++
++    #[test]
++    fn invalid_regexes_fail_explicitly_without_empty_success_or_fuzzy_matches() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![session(
++                "mizu",
++                "codex",
++                "Neutral",
++                "/work/api",
++                "mizu",
++            )])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        for query in [
++            r#""[""#,
++            r#""mizu"#,
++            r#""""#,
++            "content:/mizu",
++            "content:/[/",
++            r#"missing:"mizu""#,
++        ] {
++            assert!(
++                engine.search_result(query, None, None, 10).is_err(),
++                "query: {query}"
++            );
++            assert!(
++                engine.count_result(query, None, None).is_err(),
++                "query: {query}"
++            );
++        }
++        assert!(
++            engine
++                .search_result(&format!("\"{}\"", "a".repeat(1025)), None, None, 10)
++                .is_err()
++        );
++        assert_eq!(result_ids(&engine, r#""mizu""#), ["mizu"]);
 +    }
 +
      #[test]
-     fn normalizes_typed_agent_filter_case() {
+     fn executes_keyword_filter_combinations() {
          let temp = tempdir().unwrap();
 diff --git a/src/tui.rs b/src/tui.rs
-index 5ecf768..2b5939e 100644
+index 5ecf768..8546143 100644
 --- a/src/tui.rs
 +++ b/src/tui.rs
-@@ -757,11 +757,13 @@ mod tests {
+@@ -54,6 +54,7 @@ pub fn run_tui(
+     yolo: bool,
+     image_protocol: Option<ImageProtocol>,
+     theme_mode: ThemeMode,
++    compact: bool,
+ ) -> Result<TuiExit> {
+     let theme = theme_mode.resolve();
+     let engine = SearchEngine::open_default()?;
+@@ -98,6 +99,7 @@ pub fn run_tui(
+         images,
+         theme,
+     );
++    state.compact = compact;
+     let result = run_loop(&mut terminal, &mut state, scan_rx);
+     restore_terminal(&mut terminal)?;
+     result
+@@ -254,7 +256,13 @@ fn handle_mouse(state: &mut AppState, mouse: MouseEvent, area: Rect) -> bool {
+         _ => return false,
+     };
+ 
+-    match layout::scroll_target(area, state.show_preview, mouse.column, mouse.row) {
++    match layout::scroll_target(
++        area,
++        state.show_preview,
++        state.compact,
++        mouse.column,
++        mouse.row,
++    ) {
+         Some(ScrollTarget::Results) => {
+             state.move_selection(delta);
+             true
+@@ -757,11 +765,16 @@ mod tests {
      #[test]
      fn mouse_wheel_over_preview_scrolls_preview() {
          let mut state = test_state(vec![session("a")]);
 +        let area = Rect::new(0, 0, 120, 40);
-+        let preview = super::layout::app(area, true).main.preview().unwrap();
++        let preview = super::layout::app(area, true, false)
++            .main
++            .preview()
++            .unwrap();
  
          assert!(super::handle_mouse(
              &mut state,
@@ -1648,11 +2235,119 @@ index 5ecf768..2b5939e 100644
          ));
  
          assert_eq!(state.selected, 0);
+@@ -1114,6 +1127,18 @@ mod tests {
+         assert_eq!(state.selected_session().unwrap().id, "a");
+         assert_eq!(state.status, "search failed: reload failed");
+         assert!(!state.search_pending());
++        assert!(
++            handle_key(&mut state, key(KeyCode::Enter, KeyModifiers::NONE))
++                .unwrap()
++                .is_none()
++        );
++        assert!(state.modal.is_none());
++
++        assert!(state.apply_search_result(request.generation, vec![session("b")], 1.0, None));
++        assert!(!state.search_failed);
++        assert!(state.status.is_empty());
++        handle_key(&mut state, key(KeyCode::Enter, KeyModifiers::NONE)).unwrap();
++        assert!(state.modal.is_some());
+     }
+ 
+     #[test]
+@@ -1236,4 +1261,88 @@ mod tests {
+             super::TuiExit::Quit => panic!("expected resume exit"),
+         }
+     }
++    #[test]
++    fn compact_view_keeps_identity_forks_and_errors_while_hiding_chrome() {
++        use ratatui::Terminal;
++        use ratatui::backend::TestBackend;
++        let mut state = test_state((0..8).map(|n| session(&format!("compact-{n}"))).collect());
++        state.compact = true;
++        state.visible[0].forked_from_id = Some("source-session".into());
++        let mut terminal = Terminal::new(TestBackend::new(106, 40)).unwrap();
++        let mut render = |state: &AppState| {
++            terminal.draw(|frame| super::draw(frame, state)).unwrap();
++            terminal
++                .backend()
++                .buffer()
++                .content
++                .iter()
++                .map(|cell| cell.symbol())
++                .collect::<String>()
++        };
++        let compact = render(&state);
++        for required in [
++            "8 matches",
++            "? help",
++            "ID: compact-",
++            "Fork of: source-session",
++        ] {
++            assert!(compact.contains(required), "missing {required}");
++        }
++        for hidden in [
++            "fast-resume v",
++            " indexed",
++            "Ctrl+Y",
++            "╭",
++            "refreshing session stores",
++        ] {
++            assert!(!compact.contains(hidden), "unexpected {hidden}");
++        }
++        state.status = "search failed: Invalid regex query syntax".into();
++        assert!(render(&state).contains(&state.status));
++        state.status.clear();
++        state.refresh_status = "refresh failed after 1s: synthetic failure".into();
++        assert!(render(&state).contains(&state.refresh_status));
++        state.compact = false;
++        let full = render(&state);
++        assert!(full.contains("fast-resume v"));
++        assert!(full.contains("Ctrl+Y"));
++    }
++
++    #[test]
++    fn compact_help_does_not_steal_question_marks_inside_queries() {
++        let mut state = test_state(Vec::new());
++        state.compact = true;
++        handle_key(&mut state, key(KeyCode::Char('?'), KeyModifiers::NONE)).unwrap();
++        assert!(state.show_help);
++        assert!(state.query.is_empty());
++        handle_key(&mut state, key(KeyCode::Esc, KeyModifiers::NONE)).unwrap();
++        type_query(&mut state, "\"mizu?");
++        assert!(!state.show_help);
++        assert_eq!(state.query, "\"mizu?");
++    }
++
++    #[test]
++    fn compact_mouse_uses_the_reclaimed_layout() {
++        let mut state = test_state((0..8).map(|n| session(&format!("mouse-{n}"))).collect());
++        state.compact = true;
++        let area = Rect::new(0, 0, 106, 40);
++        assert!(super::handle_mouse(
++            &mut state,
++            mouse(MouseEventKind::ScrollDown, 5, 3),
++            area
++        ));
++        assert_eq!(state.selected, 3);
++        let preview = super::layout::app(area, true, true).main.preview().unwrap();
++        assert!(super::handle_mouse(
++            &mut state,
++            mouse(MouseEventKind::ScrollDown, 5, preview.y + 1),
++            area
++        ));
++        assert_eq!(state.preview_scroll, 3);
++        assert!(!super::handle_mouse(
++            &mut state,
++            mouse(MouseEventKind::ScrollDown, 5, 0),
++            area
++        ));
++    }
+ }
 diff --git a/src/tui/input.rs b/src/tui/input.rs
-index b2ee6a3..8b0aca2 100644
+index b2ee6a3..82ab96d 100644
 --- a/src/tui/input.rs
 +++ b/src/tui/input.rs
-@@ -5,6 +5,7 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+@@ -5,17 +5,20 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
  use crate::adapters::adapter_for;
  
  use super::TuiExit;
@@ -1660,7 +2355,22 @@ index b2ee6a3..8b0aca2 100644
  use super::state::{AppState, PENDING_SEARCH_STATUS, PendingAction, YoloModal};
  use super::text::{shell_join, shell_quote};
  
-@@ -52,8 +53,18 @@ pub(super) fn handle_key(state: &mut AppState, key: KeyEvent) -> Result<Option<T
+ pub(super) fn handle_key(state: &mut AppState, key: KeyEvent) -> Result<Option<TuiExit>> {
+     if state.show_help {
+-        if matches!(key.code, KeyCode::F(1) | KeyCode::Esc) {
++        if matches!(key.code, KeyCode::F(1) | KeyCode::Esc | KeyCode::Char('?')) {
+             state.show_help = false;
+         }
+         return Ok(None);
+     }
+-    if key.code == KeyCode::F(1) {
++    if key.code == KeyCode::F(1)
++        || (state.compact && state.query.is_empty() && key.code == KeyCode::Char('?'))
++    {
+         state.show_help = true;
+         return Ok(None);
+     }
+@@ -52,8 +55,18 @@ pub(super) fn handle_key(state: &mut AppState, key: KeyEvent) -> Result<Option<T
          }
          (KeyCode::Up, _) | (KeyCode::Char('k'), KeyModifiers::CONTROL) => state.move_selection(-1),
          (KeyCode::Down, _) | (KeyCode::Char('j'), KeyModifiers::CONTROL) => state.move_selection(1),
@@ -1681,7 +2391,25 @@ index b2ee6a3..8b0aca2 100644
          (KeyCode::Tab, _) => {
              if !state.accept_suggestion() {
                  state.cycle_agent(false);
-@@ -155,14 +166,20 @@ fn finish_action(
+@@ -88,6 +101,9 @@ fn begin_action(state: &mut AppState, action: PendingAction) -> Result<Option<Tu
+         state.status = PENDING_SEARCH_STATUS.to_string();
+         return Ok(None);
+     }
++    if state.search_failed {
++        return Ok(None);
++    }
+     let Some(session) = state.selected_session().cloned() else {
+         return Ok(None);
+     };
+@@ -150,19 +166,28 @@ fn finish_action(
+     yolo: bool,
+     session: crate::model::Session,
+ ) -> Result<Option<TuiExit>> {
++    if state.search_failed {
++        return Ok(None);
++    }
+     let Some(adapter) = adapter_for(&session.agent) else {
+         state.status = "No resume command available for selected session".to_string();
          return Ok(None);
      };
      let command = adapter.resume_command(&session, yolo);
@@ -1704,7 +2432,7 @@ index b2ee6a3..8b0aca2 100644
              } else {
                  format!("cd {} && {}", shell_quote(&session.directory), command)
 diff --git a/src/tui/layout.rs b/src/tui/layout.rs
-index aacc4b1..c0704d7 100644
+index aacc4b1..9f402fe 100644
 --- a/src/tui/layout.rs
 +++ b/src/tui/layout.rs
 @@ -1,5 +1,7 @@
@@ -1715,7 +2443,53 @@ index aacc4b1..c0704d7 100644
  #[derive(Debug, Clone, Copy)]
  pub(super) struct AppLayout {
      pub(super) header: Rect,
-@@ -81,24 +83,16 @@ fn main(area: Rect, show_preview: bool) -> MainLayout {
+@@ -36,13 +38,13 @@ pub(super) enum ScrollTarget {
+     Preview,
+ }
+ 
+-pub(super) fn app(area: Rect, show_preview: bool) -> AppLayout {
++pub(super) fn app(area: Rect, show_preview: bool, compact: bool) -> AppLayout {
+     let outer = Layout::default()
+         .direction(Direction::Vertical)
+         .constraints([
+-            Constraint::Length(1),
+-            Constraint::Length(3),
+-            Constraint::Length(1),
++            Constraint::Length(if compact { 0 } else { 1 }),
++            Constraint::Length(if compact { 1 } else { 3 }),
++            Constraint::Length(if compact { 0 } else { 1 }),
+             Constraint::Min(3),
+             Constraint::Length(1),
+         ])
+@@ -52,7 +54,7 @@ pub(super) fn app(area: Rect, show_preview: bool) -> AppLayout {
+         header: outer[0],
+         search: outer[1],
+         filters: outer[2],
+-        main: main(outer[3], show_preview),
++        main: main(outer[3], show_preview, compact),
+         footer: outer[4],
+     }
+ }
+@@ -60,10 +62,11 @@ pub(super) fn app(area: Rect, show_preview: bool) -> AppLayout {
+ pub(super) fn scroll_target(
+     area: Rect,
+     show_preview: bool,
++    compact: bool,
+     column: u16,
+     row: u16,
+ ) -> Option<ScrollTarget> {
+-    let main = app(area, show_preview).main;
++    let main = app(area, show_preview, compact).main;
+     if contains(main.results(), column, row) {
+         return Some(ScrollTarget::Results);
+     }
+@@ -76,29 +79,22 @@ pub(super) fn scroll_target(
+     None
+ }
+ 
+-fn main(area: Rect, show_preview: bool) -> MainLayout {
++fn main(area: Rect, show_preview: bool, compact: bool) -> MainLayout {
+     if !show_preview {
          return MainLayout::ResultsOnly { results: area };
      }
  
@@ -1737,9 +2511,10 @@ index aacc4b1..c0704d7 100644
 -            results: chunks[0],
 -            preview: chunks[1],
 -        }
-+    // Two borders and a column header surround the five session rows.
++    // A column header and the panel borders surround the five session rows.
 +    // On short terminals, shrink the list so the chat still gets more space.
-+    let results_height = (VISIBLE_SESSION_ROWS + 3).min(area.height.saturating_sub(1) / 2);
++    let overhead = if compact { 2 } else { 3 };
++    let results_height = (VISIBLE_SESSION_ROWS + overhead).min(area.height.saturating_sub(1) / 2);
 +    let chunks = Layout::default()
 +        .direction(Direction::Vertical)
 +        .constraints([Constraint::Length(results_height), Constraint::Min(0)])
@@ -1750,7 +2525,7 @@ index aacc4b1..c0704d7 100644
      }
  }
  
-@@ -111,17 +105,25 @@ mod tests {
+@@ -111,17 +107,25 @@ mod tests {
      use super::*;
  
      #[test]
@@ -1768,7 +2543,7 @@ index aacc4b1..c0704d7 100644
 +    fn five_session_rows_leave_more_space_for_chat_at_every_width() {
 +        for width in [80, 106, 160] {
 +            let area = Rect::new(0, 0, width, 40);
-+            let main = app(area, true).main;
++            let main = app(area, true, false).main;
 +            let results = main.results();
 +            let preview = main.preview().unwrap();
 +            assert_eq!(results.height - 3, 5);
@@ -1776,22 +2551,666 @@ index aacc4b1..c0704d7 100644
 +            assert_eq!(preview.width, width);
 +            assert_eq!(preview.y, results.bottom());
 +            assert_eq!(
-+                scroll_target(area, true, 10, 6),
++                scroll_target(area, true, false, 10, 6),
 +                Some(ScrollTarget::Results)
 +            );
 +            assert_eq!(
-+                scroll_target(area, true, width - 5, preview.y + 1),
++                scroll_target(area, true, false, width - 5, preview.y + 1),
 +                Some(ScrollTarget::Preview)
 +            );
 +        }
      }
  
      #[test]
+@@ -129,11 +133,11 @@ mod tests {
+         let area = Rect::new(0, 0, 80, 40);
+ 
+         assert_eq!(
+-            scroll_target(area, true, 10, 8),
++            scroll_target(area, true, false, 10, 8),
+             Some(ScrollTarget::Results)
+         );
+         assert_eq!(
+-            scroll_target(area, true, 10, 30),
++            scroll_target(area, true, false, 10, 30),
+             Some(ScrollTarget::Preview)
+         );
+     }
+@@ -143,9 +147,36 @@ mod tests {
+         let area = Rect::new(0, 0, 120, 40);
+ 
+         assert_eq!(
+-            scroll_target(area, false, 100, 6),
++            scroll_target(area, false, false, 100, 6),
+             Some(ScrollTarget::Results)
+         );
+-        assert_eq!(scroll_target(area, false, 100, 1), None);
++        assert_eq!(scroll_target(area, false, false, 100, 1), None);
++    }
++    #[test]
++    fn compact_layout_reclaims_chrome_without_changing_pane_order_or_mouse_targets() {
++        for width in [80, 106, 160] {
++            for height in [30, 40, 50] {
++                let area = Rect::new(0, 0, width, height);
++                let compact = app(area, true, true);
++                let full = app(area, true, false);
++                assert_eq!(compact.header.height, 0);
++                assert_eq!(compact.filters.height, 0);
++                assert_eq!(compact.search.height, 1);
++                assert_eq!(compact.main.results().height - 2, 5);
++                let preview = compact.main.preview().unwrap();
++                assert_eq!(preview.y, compact.main.results().bottom());
++                assert!(preview.height > full.main.preview().unwrap().height);
++                assert_eq!(scroll_target(area, true, true, 5, 0), None);
++                assert_eq!(
++                    scroll_target(area, true, true, 5, 3),
++                    Some(ScrollTarget::Results)
++                );
++                assert_eq!(
++                    scroll_target(area, true, true, 5, preview.y + 1),
++                    Some(ScrollTarget::Preview)
++                );
++                assert_eq!(scroll_target(area, true, true, 5, height - 1), None);
++            }
++        }
+     }
+ }
+diff --git a/src/tui/preview.rs b/src/tui/preview.rs
+index 7c758aa..8e377c0 100644
+--- a/src/tui/preview.rs
++++ b/src/tui/preview.rs
+@@ -1,3 +1,5 @@
++use std::ops::Range;
++
+ use ratatui::style::{Color, Style};
+ use ratatui::text::{Line, Span};
+ 
+@@ -6,51 +8,47 @@ use crate::model::Session;
+ 
+ use super::theme::Theme;
+ 
++mod highlight;
++use highlight::HighlightMatcher;
++
+ pub(super) fn render_preview_lines(
+     session: &Session,
+     query: &str,
+     theme: &Theme,
+ ) -> Vec<Line<'static>> {
+-    let snippet = preview_snippet(session, query);
++    let matcher = HighlightMatcher::new(query);
++    let snippet = preview_snippet(session, &matcher);
++    let matches = matcher.ranges(&snippet);
+     let agent = AGENTS.get(session.agent.as_str());
+     let agent_label = agent.map(|agent| agent.badge).unwrap_or(&session.agent);
+     let agent_color = agent
+         .map(|agent| theme.agent_color(agent))
+         .unwrap_or(theme.foreground);
+-    let terms = preview_terms(query);
+-
+     let mut lines = Vec::new();
++    let mut offset = 0;
+     for message in snippet.split("\n\n") {
++        let message_matches = relative_ranges(&matches, offset..offset + message.len());
++        offset += message.len() + 2;
+         if message.trim().is_empty() {
+             continue;
+         }
+         if !lines.is_empty() {
+             lines.push(Line::raw(""));
+         }
+-        render_preview_message(&mut lines, message, agent_label, agent_color, &terms, theme);
++        render_preview_message(
++            &mut lines,
++            message,
++            agent_label,
++            agent_color,
++            &message_matches,
++            theme,
++        );
+     }
+     lines
+ }
+ 
+-fn preview_snippet(session: &Session, query: &str) -> String {
+-    if query.trim().is_empty() {
+-        return truncate_chars(&session.content, 6_000);
+-    }
+-
+-    let terms = preview_terms(query);
+-    if terms.is_empty() {
+-        return truncate_chars(&session.content, 6_000);
+-    }
+-
+-    let content_lc = session.content.to_ascii_lowercase();
+-    let mut best = None;
+-    for term in &terms {
+-        if let Some(pos) = content_lc.find(term.as_str()) {
+-            best = Some(best.map_or(pos, |current: usize| current.min(pos)));
+-        }
+-    }
+-
+-    if let Some(pos) = best {
++fn preview_snippet(session: &Session, matcher: &HighlightMatcher) -> String {
++    if let Some(pos) = matcher.first_match(&session.content) {
+         let start = session.content[..pos]
+             .char_indices()
+             .rev()
+@@ -88,7 +86,7 @@ fn render_preview_message(
+     message: &str,
+     agent_label: &str,
+     agent_color: Color,
+-    terms: &[String],
++    matches: &[Range<usize>],
+     theme: &Theme,
+ ) {
+     let role = preview_role(message);
+@@ -96,8 +94,13 @@ fn render_preview_message(
+     let mut code_language = String::new();
+     let mut first_content_line = true;
+ 
+-    for raw_line in message.lines() {
++    let mut offset = 0;
++    for segment in message.split_inclusive('\n') {
++        let raw_line = segment.trim_end_matches('\n').trim_end_matches('\r');
+         let line = strip_role_prefix(raw_line, role);
++        let start = offset + raw_line.len() - line.len();
++        let line_matches = relative_ranges(matches, start..start + line.len());
++        offset += segment.len();
+         if let Some(language) = code_fence_language(line) {
+             out.push(render_code_fence_line(
+                 language,
+@@ -119,23 +122,28 @@ fn render_preview_message(
+         }
+ 
+         if in_code {
+-            out.push(render_code_line(line, &code_language, terms, theme));
++            out.push(render_code_line(line, &code_language, &line_matches, theme));
+             continue;
+         }
+ 
+         match role {
+             PreviewRole::User => {
+-                out.push(render_user_line(line, terms, first_content_line, theme));
++                out.push(render_user_line(
++                    line,
++                    &line_matches,
++                    first_content_line,
++                    theme,
++                ));
+             }
+             PreviewRole::Assistant => out.push(render_agent_line(
+                 line,
+-                terms,
++                &line_matches,
+                 agent_label,
+                 agent_color,
+                 first_content_line,
+                 theme,
+             )),
+-            PreviewRole::Other => out.push(render_plain_preview_line(line, terms, theme)),
++            PreviewRole::Other => out.push(render_plain_preview_line(line, &line_matches, theme)),
+         }
+         first_content_line = false;
+     }
+@@ -167,7 +175,12 @@ fn code_fence_language(line: &str) -> Option<&str> {
+         .map(|language| language.split_whitespace().next().unwrap_or_default())
+ }
+ 
+-fn render_user_line(line: &str, terms: &[String], first: bool, theme: &Theme) -> Line<'static> {
++fn render_user_line(
++    line: &str,
++    matches: &[Range<usize>],
++    first: bool,
++    theme: &Theme,
++) -> Line<'static> {
+     let mut spans = Vec::new();
+     if first {
+         spans.push(Span::styled(
+@@ -182,7 +195,7 @@ fn render_user_line(line: &str, terms: &[String], first: bool, theme: &Theme) ->
+             line.to_string(),
+             Style::new().fg(theme.user_text).bold(),
+         )],
+-        terms,
++        matches,
+         theme,
+     ));
+     Line::from(spans)
+@@ -190,7 +203,7 @@ fn render_user_line(line: &str, terms: &[String], first: bool, theme: &Theme) ->
+ 
+ fn render_agent_line(
+     line: &str,
+-    terms: &[String],
++    matches: &[Range<usize>],
+     agent_label: &str,
+     agent_color: Color,
+     first: bool,
+@@ -210,13 +223,13 @@ fn render_agent_line(
+             line.to_string(),
+             Style::new().fg(theme.assistant_text),
+         )],
+-        terms,
++        matches,
+         theme,
+     ));
+     Line::from(spans)
+ }
+ 
+-fn render_plain_preview_line(line: &str, terms: &[String], theme: &Theme) -> Line<'static> {
++fn render_plain_preview_line(line: &str, matches: &[Range<usize>], theme: &Theme) -> Line<'static> {
+     let style = if line.starts_with("...") {
+         Style::new().fg(theme.muted).italic()
+     } else {
+@@ -224,7 +237,7 @@ fn render_plain_preview_line(line: &str, terms: &[String], theme: &Theme) -> Lin
+     };
+     Line::from(highlight_spans(
+         vec![Span::styled(line.to_string(), style)],
+-        terms,
++        matches,
+         theme,
+     ))
+ }
+@@ -259,14 +272,19 @@ fn render_code_fence_line(
+     Line::from(spans)
+ }
+ 
+-fn render_code_line(line: &str, language: &str, terms: &[String], theme: &Theme) -> Line<'static> {
++fn render_code_line(
++    line: &str,
++    language: &str,
++    matches: &[Range<usize>],
++    theme: &Theme,
++) -> Line<'static> {
+     let mut spans = vec![Span::styled(
+         "    ".to_string(),
+         Style::new().fg(theme.muted),
+     )];
+     spans.extend(highlight_spans(
+         code_spans(line, language, theme),
+-        terms,
++        matches,
+         theme,
+     ));
+     Line::from(spans)
+@@ -426,60 +444,53 @@ fn take_while_len(value: &str, mut predicate: impl FnMut(char) -> bool) -> usize
+         .unwrap_or(value.len())
+ }
+ 
++fn relative_ranges(ranges: &[Range<usize>], within: Range<usize>) -> Vec<Range<usize>> {
++    ranges
++        .iter()
++        .filter_map(|range| {
++            let start = range.start.max(within.start);
++            let end = range.end.min(within.end);
++            (start < end)
++                .then_some(start.saturating_sub(within.start)..end.saturating_sub(within.start))
++        })
++        .collect()
++}
++
+ fn highlight_spans(
+     spans: Vec<Span<'static>>,
+-    terms: &[String],
++    matches: &[Range<usize>],
+     theme: &Theme,
+ ) -> Vec<Span<'static>> {
+-    if terms.is_empty() {
++    if matches.is_empty() {
+         return spans;
+     }
+-
+     let mut highlighted = Vec::new();
++    let mut offset = 0;
+     for span in spans {
+         let text = span.content.into_owned();
+-        let lower = text.to_ascii_lowercase();
+-        let mut idx = 0usize;
+-        while idx < text.len() {
+-            let next = terms
+-                .iter()
+-                .filter(|term| !term.is_empty())
+-                .filter_map(|term| lower[idx..].find(term).map(|pos| (idx + pos, term.len())))
+-                .min_by_key(|(pos, _)| *pos);
+-            let Some((hit, len)) = next else {
+-                highlighted.push(Span::styled(text[idx..].to_string(), span.style));
+-                break;
+-            };
+-            if hit > idx {
+-                highlighted.push(Span::styled(text[idx..hit].to_string(), span.style));
++        let ranges = relative_ranges(matches, offset..offset + text.len());
++        offset += text.len();
++        let mut cursor = 0;
++        for range in ranges {
++            if cursor < range.start {
++                highlighted.push(Span::styled(
++                    text[cursor..range.start].to_string(),
++                    span.style,
++                ));
+             }
+-            let end = (hit + len).min(text.len());
+             highlighted.push(Span::styled(
+-                text[hit..end].to_string(),
++                text[range.clone()].to_string(),
+                 Style::new().fg(theme.match_fg).bg(theme.match_bg).bold(),
+             ));
+-            idx = end;
++            cursor = range.end;
++        }
++        if cursor < text.len() {
++            highlighted.push(Span::styled(text[cursor..].to_string(), span.style));
+         }
+     }
+     highlighted
+ }
+ 
+-fn preview_terms(query: &str) -> Vec<String> {
+-    query
+-        .split_whitespace()
+-        .filter(|term| !is_search_filter_token(term))
+-        .map(|term| term.to_ascii_lowercase())
+-        .filter(|term| !term.is_empty())
+-        .collect()
+-}
+-
+-fn is_search_filter_token(token: &str) -> bool {
+-    let token = token.strip_prefix('-').unwrap_or(token);
+-    ["agent:", "dir:", "date:"]
+-        .iter()
+-        .any(|prefix| token.starts_with(prefix))
+-}
+-
+ fn truncate_chars(value: &str, max: usize) -> String {
+     if value.chars().count() <= max {
+         return value.to_string();
+@@ -521,6 +532,15 @@ mod tests {
+             .join("\n")
+     }
+ 
++    fn highlighted_text(lines: &[Line<'_>], theme: &Theme) -> String {
++        lines
++            .iter()
++            .flat_map(|line| &line.spans)
++            .filter(|span| span.style.bg == Some(theme.match_bg))
++            .map(|span| span.content.as_ref())
++            .collect()
++    }
++
+     #[test]
+     fn preview_lines_render_roles_and_code_blocks() {
+         let session = session_with_content(
+@@ -588,4 +608,90 @@ mod tests {
+ 
+         assert_eq!(response.style.fg, Some(Color::Reset));
+     }
++
++    #[test]
++    fn quoted_literal_highlights_the_matching_word_in_light_preview() {
++        let session = session_with_content("» mizu mizuki mizo");
++        let theme = Theme::light();
++        let lines = render_preview_lines(&session, r#""mizu""#, &theme);
++        let matched: String = lines
++            .iter()
++            .flat_map(|line| &line.spans)
++            .filter(|span| span.style.bg == Some(theme.match_bg))
++            .map(|span| span.content.as_ref())
++            .collect();
++        assert_eq!(matched, "mizu");
++    }
++
++    #[test]
++    fn quoted_regex_highlights_share_search_token_boundaries_and_theme_colors() {
++        let session =
++            session_with_content("» MIZU mizuki kamizu mizo water waterfall Café CAFÉ 💎👩🏽‍💻");
++        for theme in [Theme::light(), Theme::dark()] {
++            for (query, expected) in [
++                (r#""mizu""#, "MIZU"),
++                (r#""mizu.*""#, "MIZUmizuki"),
++                (r#"".*mizu.*""#, "MIZUmizukikamizu"),
++                (r#"content:"mizu|water""#, "MIZUwater"),
++                ("content:/mizu|water/", "MIZUwater"),
++                (r#""café|💎|👩🏽‍💻""#, "CaféCAFÉ💎👩🏽‍💻"),
++                (r#""👩""#, ""),
++            ] {
++                let lines = render_preview_lines(&session, query, &theme);
++                assert_eq!(highlighted_text(&lines, &theme), expected, "{query}");
++                for span in lines
++                    .iter()
++                    .flat_map(|line| &line.spans)
++                    .filter(|span| span.style.bg == Some(theme.match_bg))
++                {
++                    assert_eq!(span.style.fg, Some(theme.match_fg));
++                    assert!(span.style.add_modifier.contains(Modifier::BOLD));
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn literal_phrases_highlight_across_code_spans_and_line_breaks() {
++        let session = session_with_content(
++            "  ```rust\nmizu.water();\n```\n\n» mizu\nwater\n\n  mizu then water",
++        );
++        let theme = Theme::light();
++        let lines = render_preview_lines(&session, "content:'mizu water'", &theme);
++        assert_eq!(highlighted_text(&lines, &theme), "mizu.watermizuwater");
++        assert!(rendered_text(&lines).contains("mizu.water();"));
++    }
++
++    #[test]
++    fn preview_ignores_filters_fields_and_negative_clauses_but_keeps_literal_highlights() {
++        let session = session_with_content("» mizu water mizu12 agent codex title content");
++        let theme = Theme::light();
++        for (query, expected) in [
++            (
++                r#"agent:codex dir:"mizu folder" content:"water" -content:"mizu""#,
++                "water",
++            ),
++            (r#"title:"water" OR id:"mizu""#, ""),
++            (r#"content:"mizu\d+""#, "mizu12"),
++            ("mizu agent:codex", "mizumizu"),
++            (r#""[""#, ""),
++            (r#""mizu"#, ""),
++        ] {
++            assert_eq!(
++                highlighted_text(&render_preview_lines(&session, query, &theme), &theme),
++                expected,
++                "{query}"
++            );
++        }
++    }
++
++    #[test]
++    fn quoted_match_centers_the_bounded_snippet_on_late_unicode_content() {
++        let session = session_with_content(&format!("» {}CAFÉ 💎", "plain ".repeat(1500)));
++        let theme = Theme::light();
++        let lines = render_preview_lines(&session, r#""café|💎""#, &theme);
++        assert_eq!(highlighted_text(&lines, &theme), "CAFÉ💎");
++        assert!(rendered_text(&lines).starts_with("..."));
++        assert!(rendered_text(&lines).chars().count() < 1000);
++    }
+ }
+diff --git a/src/tui/preview/highlight.rs b/src/tui/preview/highlight.rs
+new file mode 100644
+index 0000000..7ed2f17
+--- /dev/null
++++ b/src/tui/preview/highlight.rs
+@@ -0,0 +1,171 @@
++use std::collections::VecDeque;
++use std::ops::Range;
++
++use regex::{Regex, RegexBuilder};
++use tantivy::query_grammar::{self, Delimiter, Occur, UserInputAst, UserInputLeaf};
++use tantivy::tokenizer::Token;
++
++use crate::index::chat_analyzer;
++use crate::query::{parse_query, regex_query_input};
++
++#[derive(Default)]
++pub(super) struct HighlightMatcher {
++    literals: Vec<Regex>,
++    tokens: Vec<Regex>,
++    phrases: Vec<Vec<Token>>,
++}
++
++impl HighlightMatcher {
++    pub(super) fn new(query: &str) -> Self {
++        let text = parse_query(query).text;
++        let ast = match regex_query_input(&text) {
++            Ok(Some(input)) => match query_grammar::parse_query(&input) {
++                Ok(ast) => ast,
++                Err(_) => return Self::default(),
++            },
++            Ok(None) => query_grammar::parse_query_lenient(&text).0,
++            Err(_) => return Self::default(),
++        };
++        let mut matcher = Self::default();
++        matcher.collect(ast);
++        matcher
++    }
++
++    fn collect(&mut self, ast: UserInputAst) {
++        match ast {
++            UserInputAst::Clause(clauses) => {
++                for (occur, ast) in clauses {
++                    if occur != Some(Occur::MustNot) {
++                        self.collect(ast);
++                    }
++                }
++            }
++            UserInputAst::Boost(ast, _) => self.collect(*ast),
++            UserInputAst::Leaf(leaf) => match *leaf {
++                UserInputLeaf::Literal(literal)
++                    if literal
++                        .field_name
++                        .as_deref()
++                        .is_none_or(|field| field == "content") =>
++                {
++                    match literal.delimiter {
++                        Delimiter::DoubleQuotes => self.add_regex(&literal.phrase),
++                        Delimiter::SingleQuotes => {
++                            let mut analyzer = chat_analyzer();
++                            let mut stream = analyzer.token_stream(&literal.phrase);
++                            let mut phrase = Vec::new();
++                            while stream.advance() {
++                                phrase.push(stream.token().clone());
++                            }
++                            if !phrase.is_empty() {
++                                self.phrases.push(phrase);
++                            }
++                        }
++                        Delimiter::None => {
++                            if !literal.phrase.is_empty()
++                                && let Ok(regex) =
++                                    RegexBuilder::new(&regex::escape(&literal.phrase))
++                                        .case_insensitive(true)
++                                        .build()
++                            {
++                                self.literals.push(regex);
++                            }
++                        }
++                    }
++                }
++                UserInputLeaf::Regex { field, pattern }
++                    if field.as_deref().is_none_or(|field| field == "content") =>
++                {
++                    self.add_regex(&pattern)
++                }
++                _ => {}
++            },
++        }
++    }
++
++    fn add_regex(&mut self, pattern: &str) {
++        if !pattern.is_empty()
++            && pattern.len() <= 1024
++            && let Ok(regex) = Regex::new(&format!(r"\A(?i:{pattern})\z"))
++        {
++            self.tokens.push(regex);
++        }
++    }
++
++    pub(super) fn first_match(&self, text: &str) -> Option<usize> {
++        self.literals
++            .iter()
++            .filter_map(|regex| regex.find(text).map(|hit| hit.start()))
++            .chain(
++                self.token_ranges(text, true)
++                    .into_iter()
++                    .map(|range| range.start),
++            )
++            .min()
++    }
++
++    pub(super) fn ranges(&self, text: &str) -> Vec<Range<usize>> {
++        let mut ranges = self.token_ranges(text, false);
++        for regex in &self.literals {
++            ranges.extend(regex.find_iter(text).map(|hit| hit.range()));
++        }
++        ranges.sort_by_key(|range| range.start);
++        let mut merged: Vec<Range<usize>> = Vec::new();
++        for range in ranges {
++            if let Some(last) = merged.last_mut()
++                && range.start <= last.end
++            {
++                last.end = last.end.max(range.end);
++            } else {
++                merged.push(range);
++            }
++        }
++        merged
++    }
++
++    fn token_ranges(&self, text: &str, first_only: bool) -> Vec<Range<usize>> {
++        if self.tokens.is_empty() && self.phrases.is_empty() {
++            return Vec::new();
++        }
++        let mut analyzer = chat_analyzer();
++        let mut stream = analyzer.token_stream(text);
++        let mut ranges = Vec::new();
++        let max_phrase = self.phrases.iter().map(Vec::len).max().unwrap_or(0);
++        let mut recent: VecDeque<Token> = VecDeque::new();
++        while stream.advance() {
++            let token = stream.token();
++            if self.tokens.iter().any(|regex| regex.is_match(&token.text)) {
++                ranges.push(token.offset_from..token.offset_to);
++            }
++            if max_phrase > 0 {
++                recent.push_back(token.clone());
++                if recent.len() > max_phrase {
++                    recent.pop_front();
++                }
++                for phrase in &self.phrases {
++                    if recent.len() < phrase.len() {
++                        continue;
++                    }
++                    let start = recent.len() - phrase.len();
++                    let first = &recent[start];
++                    if recent
++                        .iter()
++                        .skip(start)
++                        .zip(phrase)
++                        .all(|(actual, expected)| {
++                            actual.text == expected.text
++                                && actual.position - first.position
++                                    == expected.position - phrase[0].position
++                        })
++                    {
++                        ranges.push(first.offset_from..token.offset_to);
++                    }
++                }
++            }
++            if first_only && !ranges.is_empty() {
++                break;
++            }
++        }
++        ranges
++    }
++}
 diff --git a/src/tui/render.rs b/src/tui/render.rs
-index 1229be0..7a3ae91 100644
+index 1229be0..13fe23c 100644
 --- a/src/tui/render.rs
 +++ b/src/tui/render.rs
-@@ -15,7 +15,7 @@ use super::text::{
+@@ -15,13 +15,15 @@ use super::text::{
      age_style, display_width_until, line_width, search_query_spans, time_ago, truncate,
  };
  use super::theme::Theme;
@@ -1800,7 +3219,82 @@ index 1229be0..7a3ae91 100644
  
  pub(super) fn draw(frame: &mut Frame, state: &AppState) {
      let area = frame.area();
-@@ -506,6 +506,10 @@ fn draw_results(frame: &mut Frame, area: Rect, state: &AppState) {
+-    let layout = layout::app(area, state.show_preview);
++    let layout = layout::app(area, state.show_preview, state.compact);
+ 
+-    draw_header(frame, layout.header, state);
++    if !state.compact {
++        draw_header(frame, layout.header, state);
++    }
+     draw_search(frame, layout.search, state);
+     draw_filters(frame, layout.filters, state);
+     draw_main(frame, layout.main, state);
+@@ -82,13 +84,18 @@ fn header_line(state: &AppState, width: u16) -> Line<'static> {
+ }
+ 
+ fn draw_search(frame: &mut Frame, area: Rect, state: &AppState) {
+-    let block = Block::default()
+-        .borders(Borders::ALL)
+-        .border_type(BorderType::Rounded)
+-        .border_style(Style::new().fg(state.theme.accent))
+-        .title(" Search ");
+-    let inner = block.inner(area);
+-    frame.render_widget(block, area);
++    let inner = if state.compact {
++        area
++    } else {
++        let block = Block::default()
++            .borders(Borders::ALL)
++            .border_type(BorderType::Rounded)
++            .border_style(Style::new().fg(state.theme.accent))
++            .title(" Search ");
++        let inner = block.inner(area);
++        frame.render_widget(block, area);
++        inner
++    };
+ 
+     let prompt = Span::styled(" / ", Style::new().fg(state.theme.accent).bold());
+     let input_width = inner.width.saturating_sub(3) as usize;
+@@ -96,7 +103,14 @@ fn draw_search(frame: &mut Frame, area: Rect, state: &AppState) {
+     if state.query.is_empty() {
+         if input_width > 0 {
+             spans.push(Span::styled(
+-                truncate(SEARCH_PLACEHOLDER, input_width),
++                truncate(
++                    if state.compact {
++                        "Search sessions…"
++                    } else {
++                        SEARCH_PLACEHOLDER
++                    },
++                    input_width,
++                ),
+                 Style::new().fg(state.theme.muted).italic(),
+             ));
+         }
+@@ -454,11 +468,17 @@ fn draw_main(frame: &mut Frame, layout: MainLayout, state: &AppState) {
+ }
+ 
+ fn draw_results(frame: &mut Frame, area: Rect, state: &AppState) {
+-    let block = Block::default()
+-        .borders(Borders::ALL)
+-        .border_type(BorderType::Rounded)
+-        .border_style(Style::new().fg(state.theme.panel_border))
+-        .title(" Sessions ");
++    let block = if state.compact {
++        Block::default()
++            .borders(Borders::BOTTOM)
++            .border_style(Style::new().fg(state.theme.panel_border))
++    } else {
++        Block::default()
++            .borders(Borders::ALL)
++            .border_type(BorderType::Rounded)
++            .border_style(Style::new().fg(state.theme.panel_border))
++            .title(" Sessions ")
++    };
+     let inner = block.inner(area);
+     frame.render_widget(block, area);
+ 
+@@ -506,6 +526,10 @@ fn draw_results(frame: &mut Frame, area: Rect, state: &AppState) {
  struct ResultColumns {
      agent_x: u16,
      agent_w: u16,
@@ -1811,7 +3305,7 @@ index 1229be0..7a3ae91 100644
      title_x: u16,
      title_w: u16,
      dir_x: u16,
-@@ -517,23 +521,36 @@ struct ResultColumns {
+@@ -517,23 +541,36 @@ struct ResultColumns {
  }
  
  fn result_columns(width: u16) -> ResultColumns {
@@ -1856,7 +3350,7 @@ index 1229be0..7a3ae91 100644
          title_x,
          title_w,
          dir_x,
-@@ -552,6 +569,16 @@ fn agent_badge(agent: &str) -> &str {
+@@ -552,6 +589,16 @@ fn agent_badge(agent: &str) -> &str {
          .unwrap_or(agent)
  }
  
@@ -1873,7 +3367,7 @@ index 1229be0..7a3ae91 100644
  fn draw_result_header(frame: &mut Frame, inner: Rect, columns: ResultColumns, theme: &Theme) {
      let style = Style::new().fg(theme.secondary).bold();
      draw_cell(
-@@ -563,6 +590,24 @@ fn draw_result_header(frame: &mut Frame, inner: Rect, columns: ResultColumns, th
+@@ -563,6 +610,24 @@ fn draw_result_header(frame: &mut Frame, inner: Rect, columns: ResultColumns, th
          "  Agent",
          style,
      );
@@ -1898,7 +3392,7 @@ index 1229be0..7a3ae91 100644
      draw_cell(
          frame,
          inner,
-@@ -636,6 +681,7 @@ fn draw_result_row(
+@@ -636,6 +701,7 @@ fn draw_result_row(
          .images
          .as_ref()
          .and_then(|images| images.row.get(&session.agent))
@@ -1906,7 +3400,7 @@ index 1229be0..7a3ae91 100644
      {
          frame.render_widget(
              TuiImage::new(protocol).allow_clipping(true),
-@@ -658,6 +704,28 @@ fn draw_result_row(
+@@ -658,6 +724,28 @@ fn draw_result_row(
          ),
          row_style.fg(agent_color).add_modifier(Modifier::BOLD),
      );
@@ -1935,7 +3429,28 @@ index 1229be0..7a3ae91 100644
      draw_cell(
          frame,
          rows_area,
-@@ -732,7 +800,15 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+@@ -709,11 +797,15 @@ fn draw_cell(frame: &mut Frame, area: Rect, x: u16, y: u16, width: u16, text: &s
+ }
+ 
+ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+-    let block = Block::default()
+-        .borders(Borders::ALL)
+-        .border_type(BorderType::Rounded)
+-        .border_style(Style::new().fg(state.theme.panel_border))
+-        .title(" Preview ");
++    let block = if state.compact {
++        Block::default()
++    } else {
++        Block::default()
++            .borders(Borders::ALL)
++            .border_type(BorderType::Rounded)
++            .border_style(Style::new().fg(state.theme.panel_border))
++            .title(" Preview ")
++    };
+     let inner = block.inner(area).inner(Margin {
+         vertical: 0,
+         horizontal: 1,
+@@ -732,7 +824,15 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
          .get(session.agent.as_str())
          .map(|agent| state.theme.agent_color(agent))
          .unwrap_or(state.theme.foreground);
@@ -1952,7 +3467,7 @@ index 1229be0..7a3ae91 100644
          Line::from(vec![
              Span::styled(&session.agent, Style::new().fg(agent_color).bold()),
              Span::raw("  "),
-@@ -749,25 +825,40 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+@@ -749,25 +849,40 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
                  Style::new().fg(state.theme.muted),
              ),
          ]),
@@ -1997,11 +3512,161 @@ index 1229be0..7a3ae91 100644
          );
      }
  
+@@ -791,11 +906,34 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+ 
+ fn draw_footer(frame: &mut Frame, area: Rect, state: &AppState) {
+     frame.render_widget(
+-        Paragraph::new(footer_line(&state.status, area.width, &state.theme)),
++        Paragraph::new(if state.compact {
++            let status =
++                if state.status.is_empty() && state.refresh_status.starts_with("refresh failed") {
++                    &state.refresh_status
++                } else {
++                    &state.status
++                };
++            compact_footer_line(status, state.visible.len(), area.width, &state.theme)
++        } else {
++            footer_line(&state.status, area.width, &state.theme)
++        }),
+         area,
+     );
+ }
+ 
++fn compact_footer_line(status: &str, count: usize, width: u16, theme: &Theme) -> Line<'static> {
++    if !status.trim().is_empty() {
++        return Line::from(Span::styled(
++            truncate(status, width as usize),
++            Style::new().fg(theme.warning),
++        ));
++    }
++    Line::from(Span::styled(
++        truncate(&format!("{count} matches  ·  ? help"), width as usize),
++        Style::new().fg(theme.muted),
++    ))
++}
++
+ fn shortcut_footer(theme: &Theme) -> Line<'static> {
+     Line::from(vec![
+         Span::styled(" Enter ", Style::new().fg(theme.key_fg).bg(theme.accent)),
+@@ -821,7 +959,7 @@ fn footer_line(status: &str, width: u16, theme: &Theme) -> Line<'static> {
+ 
+     let shortcut_width = line_width(&shortcuts);
+     let width = width as usize;
+-    if width <= shortcut_width + 4 {
++    if width < shortcut_width + status.width() + 2 {
+         return Line::from(Span::styled(
+             truncate(status, width),
+             Style::new().fg(theme.warning),
+@@ -1096,6 +1234,19 @@ mod tests {
+         assert!(!rendered.contains("Enter"));
+     }
+ 
++    #[test]
++    fn footer_keeps_query_errors_readable_at_medium_width() {
++        let status = "search failed: Invalid regex query syntax: close quotes and check grouping";
++        let line = footer_line(status, 106, &Theme::light());
++        let rendered = line
++            .spans
++            .iter()
++            .map(|span| span.content.as_ref())
++            .collect::<String>();
++
++        assert_eq!(rendered, status);
++    }
++
+     #[test]
+     fn yolo_modal_prompt_matches_pending_action() {
+         assert_eq!(
+diff --git a/src/tui/state.rs b/src/tui/state.rs
+index c77ca2d..2cf9339 100644
+--- a/src/tui/state.rs
++++ b/src/tui/state.rs
+@@ -76,9 +76,11 @@ pub(super) struct AppState {
+     pub(super) yolo: bool,
+     pub(super) scanning: bool,
+     pub(super) status: String,
++    pub(super) search_failed: bool,
+     pub(super) refresh_status: String,
+     pub(super) last_search_ms: f64,
+     pub(super) show_preview: bool,
++    pub(super) compact: bool,
+     pub(super) show_help: bool,
+     pub(super) modal: Option<YoloModal>,
+     pub(super) images: Option<AgentImages>,
+@@ -135,9 +137,11 @@ impl AppState {
+             yolo,
+             scanning: true,
+             status: String::new(),
++            search_failed: false,
+             refresh_status: "refreshing session stores".to_string(),
+             last_search_ms: 0.0,
+             show_preview: true,
++            compact: false,
+             show_help: false,
+             modal: None,
+             images,
+@@ -168,15 +172,27 @@ impl AppState {
+         let start = Instant::now();
+         let agent_filter = self.effective_agent_filter();
+         let directory_filter = self.effective_directory_filter();
+-        self.visible = self.engine.search(
++        let result = self.engine.search_result(
+             &self.query,
+             agent_filter.as_deref(),
+             directory_filter.as_deref(),
+             100,
+         );
+-        self.last_search_ms = start.elapsed().as_secs_f64() * 1000.0;
+-        self.update_selection_after_search(selected_session.as_ref());
+-        self.preview_scroll = 0;
++        let elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
++        match result {
++            Ok(visible) => {
++                self.apply_search_result(
++                    self.search_generation,
++                    visible,
++                    elapsed_ms,
++                    selected_session.as_ref(),
++                );
++            }
++            Err(error) => {
++                self.last_search_ms = elapsed_ms;
++                self.apply_search_error(self.search_generation, &format!("{error:#}"));
++            }
++        }
+     }
+ 
+     pub(super) fn request_search(&mut self) {
+@@ -231,9 +247,10 @@ impl AppState {
+         self.update_selection_after_search(selected_session.as_ref());
+         self.search_preserve_selection = None;
+         self.preview_scroll = 0;
+-        if self.status == PENDING_SEARCH_STATUS {
++        if self.status == PENDING_SEARCH_STATUS || self.search_failed {
+             self.status.clear();
+         }
++        self.search_failed = false;
+         true
+     }
+ 
+@@ -243,7 +260,11 @@ impl AppState {
+         }
+         self.applied_search_generation = generation;
+         self.search_preserve_selection = None;
+-        self.status = format!("search failed: {error}");
++        self.search_failed = true;
++        self.status = format!(
++            "search failed: {}",
++            error.split_whitespace().collect::<Vec<_>>().join(" ")
++        );
+         true
+     }
+ 
 diff --git a/tests/cli.rs b/tests/cli.rs
-index 6827c1c..64a4504 100644
+index 6827c1c..d43d7f9 100644
 --- a/tests/cli.rs
 +++ b/tests/cli.rs
-@@ -692,6 +692,122 @@ fn xdg_cache_home_controls_index_location() {
+@@ -692,6 +692,164 @@ fn xdg_cache_home_controls_index_location() {
      assert!(!temp.path().join(".cache/fast-resume").exists());
  }
  
@@ -2087,6 +3752,48 @@ index 6827c1c..64a4504 100644
 +}
 +
 +#[test]
++fn quoted_regex_queries_use_cached_index_and_report_invalid_patterns() {
++    let temp = TempDir::new().unwrap();
++    for (id, prompt) in [
++        ("exact", "mizu"),
++        ("prefix", "mizuki"),
++        ("inside", "kamizu"),
++        ("typo", "mizo"),
++        ("water", "water"),
++    ] {
++        write_codex_session(temp.path(), id, "/repo/api", prompt);
++    }
++    assert_success(run_fr(temp.path(), &["--json"]));
++    for (query, expected) in [
++        (r#""mizu""#, vec!["exact"]),
++        (r#""mizu.*""#, vec!["exact", "prefix"]),
++        (r#"".*mizu.*""#, vec!["exact", "inside", "prefix"]),
++        (
++            r#""mizu|water" agent:codex dir:api"#,
++            vec!["exact", "water"],
++        ),
++        ("content:/mizu|water/", vec!["exact", "water"]),
++    ] {
++        let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--no-refresh", query]));
++        let value: Value = serde_json::from_str(&stdout).unwrap();
++        let mut ids: Vec<_> = value["sessions"]
++            .as_array()
++            .unwrap()
++            .iter()
++            .map(|session| session["id"].as_str().unwrap())
++            .collect();
++        ids.sort();
++        assert_eq!(ids, expected, "query: {query}");
++    }
++    for query in [r#""[""#, r#""mizu"#, r#""""#] {
++        let (stdout, stderr) =
++            assert_failure(run_fr(temp.path(), &["--json", "--no-refresh", query]));
++        assert!(stdout.is_empty());
++        assert!(stderr.to_lowercase().contains("regex"), "{stderr}");
++    }
++}
++
++#[test]
 +fn cached_codex_subagent_routes_to_main_then_refresh_hides_it() {
 +    let temp = TempDir::new().unwrap();
 +    let root_id = "019abcde-1234-5678-9abc-def012345678";
@@ -2124,7 +3831,7 @@ index 6827c1c..64a4504 100644
  #[test]
  fn relative_xdg_cache_home_is_ignored() {
      let temp = TempDir::new().unwrap();
-@@ -841,6 +957,55 @@ fn agent_context_exposes_the_portable_skill() {
+@@ -841,6 +999,55 @@ fn agent_context_exposes_the_portable_skill() {
      assert!(stdout.contains("meta.next_offset"));
  }
  
