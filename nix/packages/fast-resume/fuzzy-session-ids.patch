@@ -1,5 +1,5 @@
 diff --git a/docs/how-it-works.md b/docs/how-it-works.md
-index 9d7ec91..18149f3 100644
+index 9d7ec91..d6cc9f4 100644
 --- a/docs/how-it-works.md
 +++ b/docs/how-it-works.md
 @@ -20,7 +20,7 @@ Each adapter maps an agent-specific format into the shared `Session` model.
@@ -23,7 +23,7 @@ index 9d7ec91..18149f3 100644
  - Bounded, single-token directory/path matching
  - Structured agent, directory, and date filters
  
-+Double-quoted patterns compile to case-insensitive regex queries over the existing term dictionaries. Unqualified patterns cover title, content, raw ID, and raw directory fields; field-qualified patterns stay scoped. A quote-aware pass preserves regex escapes and extracts filters only outside quoted patterns. The native Tantivy query AST supplies boolean operators and grouping. Quoted queries and native field regex use strict parsing without fuzzy or ID-subsequence alternatives; single-quoted text retains indexed phrase semantics. No schema migration or transcript reads are required for this query mode.
++Double-quoted patterns compile to case-insensitive regex queries over the existing term dictionaries. Unqualified patterns cover title, content, raw ID, and raw directory fields; field-qualified patterns stay scoped. A quote-aware pass preserves regex escapes and extracts filters only outside quoted patterns. The native Tantivy query AST supplies boolean operators and grouping. Quoted leaves and native field regex remain strict; single-quoted text retains indexed phrase semantics. In mixed queries, each bare leaf adds exact and one-edit prefix alternatives within its own field scope. Unqualified bare leaves also retain ID and directory alternatives. Implicit spaces require all conditions only in mixed queries; quoted-only queries retain implicit OR. Conditions can match different messages, but all required conditions apply to the same indexed session. There is no global fuzzy fallback that can bypass a quoted requirement. No schema migration or transcript reads are required for this query mode.
 +
  Text relevance remains the primary ranking signal, but recent sessions receive a smooth, bounded boost. The multiplier follows `1 + 1.5 × 2^(-age / 14 days)`: it starts at 2.5 for a current session, falls to 1.75 after 14 days, and approaches 1 for old sessions. Strong exact matches can still outrank weaker recent matches, while similarly relevant results favor recent activity. Equal scores list the newer session first, so repeated and paginated searches return the same order.
  
@@ -50,10 +50,10 @@ index 9d7ec91..18149f3 100644
  
  fast-resume avoids a full parse on ordinary launches:
 diff --git a/docs/usage.md b/docs/usage.md
-index 993bfd6..435b8e6 100644
+index 993bfd6..3b1f2f1 100644
 --- a/docs/usage.md
 +++ b/docs/usage.md
-@@ -18,6 +18,55 @@ fr -a codex -d backend "api error"
+@@ -18,6 +18,66 @@ fr -a codex -d backend "api error"
  
  Free text searches titles, conversation content, and bounded single-token directory/path matches. Exact matches are boosted, while fuzzy matching keeps common typos useful.
  
@@ -65,7 +65,7 @@ index 993bfd6..435b8e6 100644
 +
 +Codex rows also show `Original` or `Fork` in the Type column. A fork's preview shows `Fork of:` with the immediate source session ID, which you can paste into search to find that conversation. Forks remain independent sessions and resume under their own IDs. This metadata is cached with the index, so showing it does not read session files while you search.
 +
-+With the preview open, the session list shows five rows above a larger, full-width chat preview. Arrow keys scroll through every matching session; Page Up and Page Down move five sessions at a time. Ctrl-P hides the preview and expands the list. Very short terminals show fewer rows to keep the preview usable.
++With the preview open, the session list shows eight rows below a larger, full-width chat preview. Arrow keys scroll through every matching session; Page Up and Page Down move eight sessions at a time. Ctrl-P hides the preview and expands the list. Very short terminals show fewer rows to keep the preview usable.
 +
 +Codex previews show the chat: your messages and visible assistant replies. Injected `AGENTS.md` instructions, environment context, internal reasoning, tool payloads, and mirrored log records are excluded from previews and content searches. Installing this version refreshes the cached content once; ordinary searches still use the index.
 +
@@ -93,7 +93,7 @@ index 993bfd6..435b8e6 100644
 +
 +Unqualified patterns search titles, chat content, session IDs, and directories. Regex matches a whole indexed term: a word or emoji sequence for titles and content, or the whole value for IDs and directories. Use `.*` for a partial match. This searches the cached index; it does not scan transcript files per keystroke. Patterns cannot span separate chat words or messages. For an indexed phrase, use single quotes in the search box: `'mizu water'`.
 +
-+Quoted search terms and native field regex such as `content:/mizu.*/` use strict matching without fuzzy fallback. Combine them with `AND`, `OR`, and parentheses. Quoted structured filter values such as `dir:"my project"` remain literal filters. Malformed or incomplete patterns show an error; the TUI keeps the last results visible but disables resume and copy until the query succeeds. Patterns are limited to 1,024 bytes and the regex engine's complexity limit. Backslashes inside double quotes are preserved for regex escapes, such as `"mizu\d+"`.
++Quoted search terms and native field regex such as `content:/mizu.*/` use strict matching without fuzzy fallback. Combine them with `AND`, `OR`, `NOT`, and parentheses. When every term is quoted, spaces retain the default OR behavior; use `AND` to require them all. Quoted structured filter values such as `dir:"my project"` remain literal filters. Malformed or incomplete patterns show an error; the TUI keeps the last results visible but disables resume and copy until the query succeeds. Patterns are limited to 1,024 bytes and the regex engine's complexity limit. Backslashes inside double quotes are preserved for regex escapes, such as `"mizu\d+"`.
 +
 +When passing a quoted regex from your shell, preserve the double quotes with outer single quotes:
 +
@@ -102,32 +102,46 @@ index 993bfd6..435b8e6 100644
 +fr -a codex 'content:"mizu.*"'
 +```
 +
-+Unquoted text and session-ID fragments keep their usual fuzzy matching.
++Mix quoted requirements with bare fuzzy words in the same search box:
++
++```text
++content:"mizu" AND content:"research" AND content:"feed"
++content:"mizu" content:reserch content:fed
++content:'mizu water' content:reserch
++content:"mizu" AND (content:reserch OR content:water) AND NOT content:poison
++```
++
++The first query requires all three exact indexed words in chat. The second keeps `mizu` exact and allows the usual one-edit prefix matching for `reserch` and `fed`, finding words such as `research` and `feed`. Mixed quoted-and-bare queries require every condition separated by spaces; explicit boolean operators and grouping still apply. Every required condition must match the same session, but the matches can appear in different messages anywhere in that conversation. Single-quoted phrases also stay exact when mixed with fuzzy words.
++
++Use `content:` on each term when all matches must be in chat. Unqualified bare words can also match titles, session-ID fragments, and directories; `title:reserch` restricts the fuzzy word to titles. Bare words shorter than three characters and emoji stay exact. Queries containing only unquoted text keep their previous behavior. No index rebuild is needed.
 +
 +The chat preview highlights matching text with the current theme's match colors and positions the snippet near the first match. Double-quoted regex highlights whole matching words or emoji; single-quoted phrases highlight their matching text. Filters and excluded terms do not become chat highlights.
 +
  ## Search filters
  
  Filters work in the initial query and directly in the TUI search box.
-@@ -63,6 +112,17 @@ fr "dir:backend -agent:vibe auth"
+@@ -63,6 +123,20 @@ fr "dir:backend -agent:vibe auth"
  
  Type a partial filter such as `agent:cl` and press `Tab` to accept the suggestion.
  
 +## Compact TUI
 +
 +Use `fr --compact` or `FAST_RESUME_COMPACT=true fr` for a one-line search,
-+quiet separators, five session rows, and a larger preview in the same pane
-+order. It hides version/statistics chatter, agent tabs, and the long shortcut
++quiet separators, eight session rows, and a larger preview. Session metadata
++and the conversation appear at the top, followed by the session picker,
++the match count or status, and a stationary search bar at the bottom.
++It hides version/statistics chatter, agent tabs, and the long shortcut
 +footer; match count, session IDs, fork metadata, errors, and status remain.
 +Press `?` with an empty search, or `F1` at any time, for help.
 +
 +The local Nix wrapper defaults to compact mode. Run `FAST_RESUME_COMPACT=false fr`
-+to restore the full interface. This setting does not change searching or indexing.
++to restore the detailed interface with the same pane order. This setting does
++not change searching or indexing.
 +
  ## TUI color themes
  
  The TUI detects whether the terminal has a dark or light background. Override the detected theme when needed:
-@@ -73,6 +133,8 @@ fr --theme dark
+@@ -73,6 +147,8 @@ fr --theme dark
  FAST_RESUME_THEME=light fr
  ```
  
@@ -136,7 +150,7 @@ index 993bfd6..435b8e6 100644
  The command-line option takes precedence over `FAST_RESUME_THEME`. Automatic detection falls back to the dark theme when the terminal does not report its background color.
  
  ## Non-interactive commands
-@@ -154,6 +216,7 @@ Options:
+@@ -154,6 +230,7 @@ Options:
                            (honors -a and -d filters)
        --agent-context     Print concise instructions for coding agents
        --yolo              Force auto-approve flags where supported
@@ -1117,7 +1131,7 @@ index 435807a..6c83bd8 100644
  }
  
 diff --git a/src/index/queries.rs b/src/index/queries.rs
-index e933160..18df9ed 100644
+index e933160..b9cf542 100644
 --- a/src/index/queries.rs
 +++ b/src/index/queries.rs
 @@ -1,15 +1,16 @@
@@ -1130,7 +1144,7 @@ index e933160..18df9ed 100644
      AllQuery, BooleanQuery, BoostQuery, FuzzyTermQuery, Occur, Query, QueryParser, RangeQuery,
      RegexQuery, TermQuery, TermSetQuery,
  };
-+use tantivy::query_grammar::{self, Delimiter, UserInputAst, UserInputLeaf};
++use tantivy::query_grammar::{self, Delimiter, UserInputAst, UserInputLeaf, UserInputLiteral};
  use tantivy::schema::IndexRecordOption;
  use tantivy::{Index, Term};
  
@@ -1139,7 +1153,7 @@ index e933160..18df9ed 100644
  
  use super::document::datetime_to_seconds;
  use super::schema::IndexFields;
-@@ -54,8 +55,17 @@ pub(super) fn build(
+@@ -54,8 +55,18 @@ pub(super) fn build(
  }
  
  fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<Box<dyn Query>> {
@@ -1151,14 +1165,15 @@ index e933160..18df9ed 100644
 +            anyhow::anyhow!("Invalid regex query syntax: close quotes and check grouping")
 +        })?;
 +        parser.allow_regexes();
-+        return parser
-+            .build_query_from_user_input_ast(regex_ast(ast)?)
-+            .map_err(|error| anyhow::anyhow!("Invalid regex query: {error}"));
++        if has_bare_literal(&ast) && !all_negative(&ast) {
++            return mixed_query(&parser, fields, ast);
++        }
++        return strict_query(&parser, ast);
 +    }
      let (exact, _) = parser.parse_query_lenient(search_text);
      let boosted_exact = BoostQuery::new(exact, 5.0);
  
-@@ -64,6 +74,8 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
+@@ -64,6 +75,8 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
      let fuzzy_parts: Vec<(Occur, Box<dyn Query>)> = search_text
          .split_whitespace()
          .filter(|term| term.chars().count() >= 3)
@@ -1167,7 +1182,7 @@ index e933160..18df9ed 100644
          .map(|term| {
              let term = term.to_lowercase();
              let title =
-@@ -84,10 +96,111 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
+@@ -84,10 +97,219 @@ fn text_query(index: &Index, fields: IndexFields, search_text: &str) -> Result<B
      if let Some(directory_query) = directory_text_query(fields, search_text)? {
          alternatives.push((Occur::Should, directory_query));
      }
@@ -1178,6 +1193,114 @@ index e933160..18df9ed 100644
      Ok(Box::new(BooleanQuery::new(alternatives)))
  }
  
++fn strict_query(parser: &QueryParser, ast: UserInputAst) -> Result<Box<dyn Query>> {
++    parser
++        .build_query_from_user_input_ast(regex_ast(ast)?)
++        .map_err(|error| anyhow::anyhow!("Invalid regex query: {error}"))
++}
++
++fn has_bare_literal(ast: &UserInputAst) -> bool {
++    match ast {
++        UserInputAst::Clause(clauses) => clauses.iter().any(|(_, ast)| has_bare_literal(ast)),
++        UserInputAst::Boost(ast, _) => has_bare_literal(ast),
++        UserInputAst::Leaf(leaf) => {
++            matches!(leaf.as_ref(), UserInputLeaf::Literal(literal) if literal.delimiter == Delimiter::None)
++        }
++    }
++}
++
++// Keep Tantivy's error for queries made solely of exclusions, including nested
++// groups. Positive mixed queries retain each explicit AST occurrence below.
++fn all_negative(ast: &UserInputAst) -> bool {
++    match ast {
++        UserInputAst::Clause(clauses) => clauses
++            .iter()
++            .all(|(occur, ast)| *occur == Some(Occur::MustNot) || all_negative(ast)),
++        UserInputAst::Boost(ast, _) => all_negative(ast),
++        UserInputAst::Leaf(_) => false,
++    }
++}
++
++fn mixed_query(
++    parser: &QueryParser,
++    fields: IndexFields,
++    ast: UserInputAst,
++) -> Result<Box<dyn Query>> {
++    Ok(match ast {
++        UserInputAst::Clause(clauses) => {
++            let mut parts: Vec<_> = clauses
++                .into_iter()
++                // Implicit spaces in a mixed query require every condition;
++                // explicit AND/OR/NOT occurrences come directly from Tantivy.
++                .map(|(occur, ast)| {
++                    Ok((
++                        occur.unwrap_or(Occur::Must),
++                        mixed_query(parser, fields, ast)?,
++                    ))
++                })
++                .collect::<Result<_>>()?;
++            // The grammar represents `AND NOT term` as a required, nested
++            // exclusion. Give that nested clause a positive universe; the
++            // top-level all-negative case is still rejected before recursion.
++            if !parts.is_empty() && parts.iter().all(|(occur, _)| *occur == Occur::MustNot) {
++                parts.push((Occur::Must, Box::new(AllQuery)));
++            }
++            Box::new(BooleanQuery::new(parts))
++        }
++        UserInputAst::Boost(ast, boost) => Box::new(BoostQuery::new(
++            mixed_query(parser, fields, *ast)?,
++            boost.into_inner() as f32,
++        )),
++        UserInputAst::Leaf(leaf) => match *leaf {
++            UserInputLeaf::Literal(literal) if literal.delimiter == Delimiter::None => {
++                mixed_bare_query(parser, fields, literal)?
++            }
++            leaf => strict_query(parser, leaf.into())?,
++        },
++    })
++}
++
++fn mixed_bare_query(
++    parser: &QueryParser,
++    fields: IndexFields,
++    literal: UserInputLiteral,
++) -> Result<Box<dyn Query>> {
++    let exact = strict_query(parser, UserInputLeaf::Literal(literal.clone()).into())?;
++    let mut alternatives: Vec<(Occur, Box<dyn Query>)> =
++        vec![(Occur::Should, Box::new(BoostQuery::new(exact, 5.0)))];
++    let term = literal.phrase.to_lowercase();
++    if term.chars().count() >= 3
++        && term.split_whitespace().count() == 1
++        && !super::tokenizer::contains_symbols(&term)
++    {
++        for (name, field) in [("title", fields.title), ("content", fields.content)] {
++            if literal
++                .field_name
++                .as_deref()
++                .is_none_or(|scope| scope == name)
++            {
++                alternatives.push((
++                    Occur::Should,
++                    Box::new(FuzzyTermQuery::new_prefix(
++                        Term::from_field_text(field, &term),
++                        1,
++                        true,
++                    )),
++                ));
++            }
++        }
++    }
++    if literal.field_name.is_none() {
++        if let Some(query) = directory_text_query(fields, &literal.phrase)? {
++            alternatives.push((Occur::Should, query));
++        }
++        if let Some(query) = id_text_query(fields, &literal.phrase) {
++            alternatives.push((Occur::Should, query));
++        }
++    }
++    Ok(Box::new(BooleanQuery::new(alternatives)))
++}
++
 +fn regex_ast(ast: UserInputAst) -> Result<UserInputAst> {
 +    Ok(match ast {
 +        UserInputAst::Clause(clauses) => UserInputAst::Clause(
@@ -1688,10 +1811,20 @@ index ffc7e10..3a28f99 100644
 +    }
  }
 diff --git a/src/search.rs b/src/search.rs
-index a3520ab..868f771 100644
+index a3520ab..1702647 100644
 --- a/src/search.rs
 +++ b/src/search.rs
-@@ -142,6 +142,135 @@ mod tests {
+@@ -120,7 +120,8 @@ mod tests {
+ 
+     fn result_ids(engine: &SearchEngine, query: &str) -> Vec<String> {
+         let mut ids: Vec<_> = engine
+-            .search(query, None, None, 10)
++            .search_result(query, None, None, 10)
++            .unwrap()
+             .into_iter()
+             .map(|session| session.id)
+             .collect();
+@@ -142,6 +143,135 @@ mod tests {
          assert_eq!(engine.search("", None, None, 10).len(), 2);
      }
  
@@ -1827,7 +1960,7 @@ index a3520ab..868f771 100644
      #[test]
      fn filters_by_agent_and_directory_keyword() {
          let temp = tempdir().unwrap();
-@@ -164,7 +293,7 @@ mod tests {
+@@ -164,7 +294,7 @@ mod tests {
          let index = SessionIndex::open(temp.path().join("index")).unwrap();
          index
              .rebuild(vec![
@@ -1836,7 +1969,7 @@ index a3520ab..868f771 100644
                  session("b", "codex", "Other", "/work/frontend", "button"),
              ])
              .unwrap();
-@@ -174,6 +303,174 @@ mod tests {
+@@ -174,6 +304,174 @@ mod tests {
  
          assert_eq!(results.len(), 1);
          assert_eq!(results[0].id, "a");
@@ -2011,7 +2144,7 @@ index a3520ab..868f771 100644
      }
  
      #[test]
-@@ -195,7 +492,7 @@ mod tests {
+@@ -195,7 +493,7 @@ mod tests {
      }
  
      #[test]
@@ -2020,7 +2153,7 @@ index a3520ab..868f771 100644
          let temp = tempdir().unwrap();
          let index = SessionIndex::open(temp.path().join("index")).unwrap();
          index
-@@ -209,12 +506,159 @@ mod tests {
+@@ -209,12 +507,382 @@ mod tests {
              .unwrap();
          let engine = SearchEngine::from_index(index);
  
@@ -2075,6 +2208,229 @@ index a3520ab..868f771 100644
 +        );
 +        assert!(result_ids(&engine, "mizu").contains(&"typo".to_string()));
 +        assert!(result_ids(&engine, "mizu").contains(&"prefix".to_string()));
++    }
++
++    #[test]
++    fn mixed_queries_require_strict_quotes_and_every_fuzzy_word() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session(
++                    "both",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "mizu\n\nresearch feeds",
++                ),
++                session("strict-only", "codex", "Neutral", "/work/api", "mizu"),
++                session(
++                    "fuzzy-only",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "research feed",
++                ),
++                session("partial", "codex", "Neutral", "/work/api", "mizu research"),
++                session(
++                    "near-quote",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "mizo research feed",
++                ),
++                session("title-quote", "codex", "mizu", "/work/api", "research feed"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" reserch fed"#),
++            ["both"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" AND reserch AND fed"#),
++            ["both"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" content:reserch content:fed"#),
++            ["both"]
++        );
++        assert!(result_ids(&engine, r#"content:"absent" reserch fed"#).is_empty());
++        assert_eq!(
++            engine
++                .count_result(r#"content:"mizu" reserch fed"#, None, None)
++                .unwrap(),
++            1
++        );
++    }
++
++    #[test]
++    fn mixed_queries_preserve_phrase_fields_filters_and_raw_id_choices() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session(
++                    "a",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "mizu water research feed",
++                ),
++                session("b", "codex", "research feed", "/work/api", "mizu water"),
++                session(
++                    "c",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "mizu then water research feed",
++                ),
++                session(
++                    "d",
++                    "claude",
++                    "Neutral",
++                    "/work/api",
++                    "mizu water research feed",
++                ),
++                session(
++                    "e",
++                    "codex",
++                    "Neutral",
++                    "/work/other",
++                    "mizu water research feed",
++                ),
++                session_at(
++                    "f",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "mizu water research feed",
++                    ChronoDuration::days(3),
++                ),
++                session(
++                    "019d-feedeadbeef-98",
++                    "codex",
++                    "Neutral",
++                    "/work/api",
++                    "mizu water",
++                ),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert_eq!(
++            result_ids(
++                &engine,
++                "content:'mizu water' content:reserch content:fed agent:codex dir:api date:<1d"
++            ),
++            ["a"]
++        );
++        assert_eq!(
++            result_ids(&engine, "content:'mizu water' title:reserch title:fed"),
++            ["b"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" 019dfeedeadbeef98"#),
++            ["019d-feedeadbeef-98"]
++        );
++        assert!(result_ids(&engine, r#"content:"mizu" content:019dfeedeadbeef98"#).is_empty());
++        assert!(result_ids(&engine, r#"id:"019dfeedeadbeef98" water"#).is_empty());
++        assert!(result_ids(&engine, r#"content:"mizu" id:019dfeedeadbeef98"#).is_empty());
++        assert_eq!(
++            result_ids(&engine, r#"id:"019d-feedeadbeef-98" wter"#),
++            ["019d-feedeadbeef-98"]
++        );
++        assert!(result_ids(&engine, r#"content:"mizu" content:api"#).is_empty());
++        assert_eq!(
++            result_ids(
++                &engine,
++                "content:/mizu/ content:reserch content:fed agent:claude"
++            ),
++            ["d"]
++        );
++    }
++
++    #[test]
++    fn mixed_queries_preserve_boolean_grouping_negation_and_boosts() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("a", "codex", "Neutral", "/work/api", "mizu research"),
++                session("b", "codex", "Neutral", "/work/api", "mizu water"),
++                session("c", "codex", "Neutral", "/work/api", "mizu research poison"),
++                session("d", "codex", "Neutral", "/work/api", "water"),
++                session("e", "codex", "Neutral", "/work/api", "mizo research"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert_eq!(
++            result_ids(
++                &engine,
++                r#"content:"mizu" AND (content:reserch OR content:water) AND NOT content:poison"#
++            ),
++            ["a", "b"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" content:reserch -content:poison"#),
++            ["a"]
++        );
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" OR content:water"#),
++            ["a", "b", "c", "d"]
++        );
++        // Quoted-only implicit OR remains unchanged; mixed spaces are AND.
++        assert_eq!(
++            result_ids(&engine, r#"content:"mizu" content:"water""#),
++            ["a", "b", "c", "d"]
++        );
++        let ranked = engine.search_result(
++            r#"content:"mizu" AND (content:reserch^100 OR content:water) AND NOT content:poison"#,
++            None, None, 10,
++        ).unwrap();
++        assert_eq!(ranked[0].id, "a");
++        let ranked = engine.search_result(
++            r#"content:"mizu" AND (content:reserch OR content:water^100) AND NOT content:poison"#,
++            None, None, 10,
++        ).unwrap();
++        assert_eq!(ranked[0].id, "b");
++    }
++
++    #[test]
++    fn mixed_queries_keep_emoji_exact_and_reject_invalid_requirements() {
++        let temp = tempdir().unwrap();
++        let index = SessionIndex::open(temp.path().join("index")).unwrap();
++        index
++            .rebuild(vec![
++                session("a", "codex", "Neutral", "/work/api", "CAFÉ 💎 research 1️⃣"),
++                session("b", "codex", "Neutral", "/work/api", "CAFÉ 🔹 research 1"),
++            ])
++            .unwrap();
++        let engine = SearchEngine::from_index(index);
++        assert_eq!(result_ids(&engine, r#"content:"café" 💎 reserch"#), ["a"]);
++        assert_eq!(result_ids(&engine, r#"content:"café" 1️⃣"#), ["a"]);
++        for query in [
++            r#"content:"[" reserch"#,
++            r#"content:"" reserch"#,
++            r#"reserch content:"café"#,
++            r#"content:"café" unknown:reserch"#,
++            r#"NOT content:"café" NOT content:reserch"#,
++        ] {
++            assert!(
++                engine.search_result(query, None, None, 10).is_err(),
++                "{query}"
++            );
++            assert!(engine.count_result(query, None, None).is_err(), "{query}");
++        }
++        assert!(
++            engine
++                .search_result(
++                    &format!("content:\"{}\" reserch", "a".repeat(1025)),
++                    None,
++                    None,
++                    10,
++                )
++                .is_err()
++        );
 +    }
 +
 +    #[test]
@@ -2182,7 +2538,7 @@ index a3520ab..868f771 100644
      fn executes_keyword_filter_combinations() {
          let temp = tempdir().unwrap();
 diff --git a/src/tui.rs b/src/tui.rs
-index 5ecf768..8546143 100644
+index 5ecf768..af85ebd 100644
 --- a/src/tui.rs
 +++ b/src/tui.rs
 @@ -54,6 +54,7 @@ pub fn run_tui(
@@ -2216,6 +2572,15 @@ index 5ecf768..8546143 100644
          Some(ScrollTarget::Results) => {
              state.move_selection(delta);
              true
+@@ -746,7 +754,7 @@ mod tests {
+ 
+         assert!(super::handle_mouse(
+             &mut state,
+-            mouse(MouseEventKind::ScrollDown, 10, 6),
++            mouse(MouseEventKind::ScrollDown, 10, 28),
+             Rect::new(0, 0, 120, 40),
+         ));
+ 
 @@ -757,11 +765,16 @@ mod tests {
      #[test]
      fn mouse_wheel_over_preview_scrolls_preview() {
@@ -2235,6 +2600,24 @@ index 5ecf768..8546143 100644
          ));
  
          assert_eq!(state.selected, 0);
+@@ -774,7 +787,7 @@ mod tests {
+ 
+         assert!(!super::handle_mouse(
+             &mut state,
+-            mouse(MouseEventKind::ScrollDown, 10, 1),
++            mouse(MouseEventKind::ScrollDown, 10, 38),
+             Rect::new(0, 0, 120, 40),
+         ));
+ 
+@@ -790,7 +803,7 @@ mod tests {
+ 
+         assert!(!super::handle_mouse(
+             &mut state,
+-            mouse(MouseEventKind::ScrollDown, 10, 6),
++            mouse(MouseEventKind::ScrollDown, 10, 28),
+             Rect::new(0, 0, 120, 40),
+         ));
+ 
 @@ -1114,6 +1127,18 @@ mod tests {
          assert_eq!(state.selected_session().unwrap().id, "a");
          assert_eq!(state.status, "search failed: reload failed");
@@ -2325,7 +2708,7 @@ index 5ecf768..8546143 100644
 +        let area = Rect::new(0, 0, 106, 40);
 +        assert!(super::handle_mouse(
 +            &mut state,
-+            mouse(MouseEventKind::ScrollDown, 5, 3),
++            mouse(MouseEventKind::ScrollDown, 5, 33),
 +            area
 +        ));
 +        assert_eq!(state.selected, 3);
@@ -2338,7 +2721,7 @@ index 5ecf768..8546143 100644
 +        assert_eq!(state.preview_scroll, 3);
 +        assert!(!super::handle_mouse(
 +            &mut state,
-+            mouse(MouseEventKind::ScrollDown, 5, 0),
++            mouse(MouseEventKind::ScrollDown, 5, 39),
 +            area
 +        ));
 +    }
@@ -2432,18 +2815,18 @@ index b2ee6a3..82ab96d 100644
              } else {
                  format!("cd {} && {}", shell_quote(&session.directory), command)
 diff --git a/src/tui/layout.rs b/src/tui/layout.rs
-index aacc4b1..9f402fe 100644
+index aacc4b1..3419a58 100644
 --- a/src/tui/layout.rs
 +++ b/src/tui/layout.rs
 @@ -1,5 +1,7 @@
  use ratatui::layout::{Constraint, Direction, Layout, Rect};
  
-+pub(super) const VISIBLE_SESSION_ROWS: u16 = 5;
++pub(super) const VISIBLE_SESSION_ROWS: u16 = 8;
 +
  #[derive(Debug, Clone, Copy)]
  pub(super) struct AppLayout {
      pub(super) header: Rect,
-@@ -36,13 +38,13 @@ pub(super) enum ScrollTarget {
+@@ -36,34 +38,35 @@ pub(super) enum ScrollTarget {
      Preview,
  }
  
@@ -2455,22 +2838,27 @@ index aacc4b1..9f402fe 100644
 -            Constraint::Length(1),
 -            Constraint::Length(3),
 -            Constraint::Length(1),
-+            Constraint::Length(if compact { 0 } else { 1 }),
-+            Constraint::Length(if compact { 1 } else { 3 }),
-+            Constraint::Length(if compact { 0 } else { 1 }),
              Constraint::Min(3),
++            Constraint::Length(if compact { 0 } else { 1 }),
++            Constraint::Length(if compact { 0 } else { 1 }),
              Constraint::Length(1),
++            Constraint::Length(if compact { 1 } else { 3 }),
          ])
-@@ -52,7 +54,7 @@ pub(super) fn app(area: Rect, show_preview: bool) -> AppLayout {
-         header: outer[0],
-         search: outer[1],
+         .split(area);
+ 
+     AppLayout {
+-        header: outer[0],
+-        search: outer[1],
++        header: outer[1],
++        search: outer[4],
          filters: outer[2],
 -        main: main(outer[3], show_preview),
-+        main: main(outer[3], show_preview, compact),
-         footer: outer[4],
+-        footer: outer[4],
++        main: main(outer[0], show_preview, compact),
++        footer: outer[3],
      }
  }
-@@ -60,10 +62,11 @@ pub(super) fn app(area: Rect, show_preview: bool) -> AppLayout {
+ 
  pub(super) fn scroll_target(
      area: Rect,
      show_preview: bool,
@@ -2511,21 +2899,21 @@ index aacc4b1..9f402fe 100644
 -            results: chunks[0],
 -            preview: chunks[1],
 -        }
-+    // A column header and the panel borders surround the five session rows.
++    // A column header and the panel borders surround the session rows.
 +    // On short terminals, shrink the list so the chat still gets more space.
 +    let overhead = if compact { 2 } else { 3 };
 +    let results_height = (VISIBLE_SESSION_ROWS + overhead).min(area.height.saturating_sub(1) / 2);
 +    let chunks = Layout::default()
 +        .direction(Direction::Vertical)
-+        .constraints([Constraint::Length(results_height), Constraint::Min(0)])
++        .constraints([Constraint::Min(0), Constraint::Length(results_height)])
 +        .split(area);
 +    MainLayout::Split {
-+        results: chunks[0],
-+        preview: chunks[1],
++        results: chunks[1],
++        preview: chunks[0],
      }
  }
  
-@@ -111,17 +107,25 @@ mod tests {
+@@ -111,17 +107,26 @@ mod tests {
      use super::*;
  
      #[test]
@@ -2540,18 +2928,19 @@ index aacc4b1..9f402fe 100644
 -            scroll_target(area, true, 100, 6),
 -            Some(ScrollTarget::Preview)
 -        );
-+    fn five_session_rows_leave_more_space_for_chat_at_every_width() {
++    fn eight_session_rows_leave_more_space_for_chat_at_every_width() {
 +        for width in [80, 106, 160] {
 +            let area = Rect::new(0, 0, width, 40);
 +            let main = app(area, true, false).main;
 +            let results = main.results();
 +            let preview = main.preview().unwrap();
-+            assert_eq!(results.height - 3, 5);
++            assert_eq!(results.height - 3, 8);
 +            assert!(preview.height > results.height);
 +            assert_eq!(preview.width, width);
-+            assert_eq!(preview.y, results.bottom());
++            assert_eq!(preview.y, area.y);
++            assert_eq!(preview.bottom(), results.y);
 +            assert_eq!(
-+                scroll_target(area, true, false, 10, 6),
++                scroll_target(area, true, false, 10, results.y + 1),
 +                Some(ScrollTarget::Results)
 +            );
 +            assert_eq!(
@@ -2562,21 +2951,21 @@ index aacc4b1..9f402fe 100644
      }
  
      #[test]
-@@ -129,11 +133,11 @@ mod tests {
+@@ -129,11 +134,11 @@ mod tests {
          let area = Rect::new(0, 0, 80, 40);
  
          assert_eq!(
 -            scroll_target(area, true, 10, 8),
-+            scroll_target(area, true, false, 10, 8),
++            scroll_target(area, true, false, 10, 28),
              Some(ScrollTarget::Results)
          );
          assert_eq!(
 -            scroll_target(area, true, 10, 30),
-+            scroll_target(area, true, false, 10, 30),
++            scroll_target(area, true, false, 10, 8),
              Some(ScrollTarget::Preview)
          );
      }
-@@ -143,9 +147,36 @@ mod tests {
+@@ -143,9 +148,40 @@ mod tests {
          let area = Rect::new(0, 0, 120, 40);
  
          assert_eq!(
@@ -2585,10 +2974,10 @@ index aacc4b1..9f402fe 100644
              Some(ScrollTarget::Results)
          );
 -        assert_eq!(scroll_target(area, false, 100, 1), None);
-+        assert_eq!(scroll_target(area, false, false, 100, 1), None);
++        assert_eq!(scroll_target(area, false, false, 100, 38), None);
 +    }
 +    #[test]
-+    fn compact_layout_reclaims_chrome_without_changing_pane_order_or_mouse_targets() {
++    fn compact_layout_keeps_preview_above_eight_rows_and_bottom_search() {
 +        for width in [80, 106, 160] {
 +            for height in [30, 40, 50] {
 +                let area = Rect::new(0, 0, width, height);
@@ -2597,13 +2986,17 @@ index aacc4b1..9f402fe 100644
 +                assert_eq!(compact.header.height, 0);
 +                assert_eq!(compact.filters.height, 0);
 +                assert_eq!(compact.search.height, 1);
-+                assert_eq!(compact.main.results().height - 2, 5);
++                assert_eq!(compact.main.results().height - 2, 8);
 +                let preview = compact.main.preview().unwrap();
-+                assert_eq!(preview.y, compact.main.results().bottom());
++                assert_eq!(preview.y, area.y);
++                assert_eq!(preview.bottom(), compact.main.results().y);
++                assert_eq!(compact.footer.y, compact.main.results().bottom());
++                assert_eq!(compact.search.y, compact.footer.bottom());
++                assert_eq!(compact.search.bottom(), area.bottom());
++                assert_eq!(full.search.bottom(), area.bottom());
 +                assert!(preview.height > full.main.preview().unwrap().height);
-+                assert_eq!(scroll_target(area, true, true, 5, 0), None);
 +                assert_eq!(
-+                    scroll_target(area, true, true, 5, 3),
++                    scroll_target(area, true, true, 5, compact.main.results().y + 2),
 +                    Some(ScrollTarget::Results)
 +                );
 +                assert_eq!(
@@ -3207,7 +3600,7 @@ index 0000000..7ed2f17
 +    }
 +}
 diff --git a/src/tui/render.rs b/src/tui/render.rs
-index 1229be0..13fe23c 100644
+index 1229be0..69c7799 100644
 --- a/src/tui/render.rs
 +++ b/src/tui/render.rs
 @@ -15,13 +15,15 @@ use super::text::{
@@ -3282,7 +3675,7 @@ index 1229be0..13fe23c 100644
 -        .title(" Sessions ");
 +    let block = if state.compact {
 +        Block::default()
-+            .borders(Borders::BOTTOM)
++            .borders(Borders::TOP)
 +            .border_style(Style::new().fg(state.theme.panel_border))
 +    } else {
 +        Block::default()
@@ -3450,38 +3843,36 @@ index 1229be0..13fe23c 100644
      let inner = block.inner(area).inner(Margin {
          vertical: 0,
          horizontal: 1,
-@@ -732,7 +824,15 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+@@ -732,6 +824,22 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
          .get(session.agent.as_str())
          .map(|agent| state.theme.agent_color(agent))
          .unwrap_or(state.theme.foreground);
--    let header_lines = vec![
 +    let mut identity = vec![
 +        Span::styled("ID: ", Style::new().fg(state.theme.muted)),
 +        Span::raw(&session.id),
 +    ];
 +    if session.agent == "codex" {
-+        identity.push(Span::styled("  Type: ", Style::new().fg(state.theme.muted)));
-+        identity.push(Span::raw(session_kind_label(session)));
++        if let Some(source_id) = &session.forked_from_id {
++            identity.push(Span::styled(
++                "  Fork of: ",
++                Style::new().fg(state.theme.muted),
++            ));
++            identity.push(Span::raw(source_id));
++        } else {
++            identity.push(Span::styled("  Type: ", Style::new().fg(state.theme.muted)));
++            identity.push(Span::raw(session_kind_label(session)));
++        }
 +    }
-+    let mut header_lines = vec![
+     let header_lines = vec![
          Line::from(vec![
              Span::styled(&session.agent, Style::new().fg(agent_color).bold()),
-             Span::raw("  "),
-@@ -749,25 +849,40 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+@@ -749,25 +857,31 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
                  Style::new().fg(state.theme.muted),
              ),
          ]),
 +        Line::from(identity),
      ];
-+    if session.agent == "codex"
-+        && let Some(source_id) = &session.forked_from_id
-+    {
-+        header_lines.push(Line::from(vec![
-+            Span::styled("Fork of: ", Style::new().fg(state.theme.muted)),
-+            Span::raw(source_id),
-+        ]));
-+    }
- 
+-
      let mut body_area = inner;
      if let Some(protocol) = state
          .images
@@ -3512,7 +3903,7 @@ index 1229be0..13fe23c 100644
          );
      }
  
-@@ -791,11 +906,34 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
+@@ -791,11 +905,34 @@ fn draw_preview(frame: &mut Frame, area: Rect, state: &AppState) {
  
  fn draw_footer(frame: &mut Frame, area: Rect, state: &AppState) {
      frame.render_widget(
@@ -3548,7 +3939,7 @@ index 1229be0..13fe23c 100644
  fn shortcut_footer(theme: &Theme) -> Line<'static> {
      Line::from(vec![
          Span::styled(" Enter ", Style::new().fg(theme.key_fg).bg(theme.accent)),
-@@ -821,7 +959,7 @@ fn footer_line(status: &str, width: u16, theme: &Theme) -> Line<'static> {
+@@ -821,7 +958,7 @@ fn footer_line(status: &str, width: u16, theme: &Theme) -> Line<'static> {
  
      let shortcut_width = line_width(&shortcuts);
      let width = width as usize;
@@ -3557,7 +3948,7 @@ index 1229be0..13fe23c 100644
          return Line::from(Span::styled(
              truncate(status, width),
              Style::new().fg(theme.warning),
-@@ -1096,6 +1234,19 @@ mod tests {
+@@ -1096,6 +1233,19 @@ mod tests {
          assert!(!rendered.contains("Enter"));
      }
  
@@ -3663,10 +4054,10 @@ index c77ca2d..2cf9339 100644
      }
  
 diff --git a/tests/cli.rs b/tests/cli.rs
-index 6827c1c..d43d7f9 100644
+index 6827c1c..5df0e79 100644
 --- a/tests/cli.rs
 +++ b/tests/cli.rs
-@@ -692,6 +692,164 @@ fn xdg_cache_home_controls_index_location() {
+@@ -692,6 +692,215 @@ fn xdg_cache_home_controls_index_location() {
      assert!(!temp.path().join(".cache/fast-resume").exists());
  }
  
@@ -3794,6 +4185,57 @@ index 6827c1c..d43d7f9 100644
 +}
 +
 +#[test]
++fn mixed_quoted_and_fuzzy_terms_match_one_session_across_messages() {
++    let temp = TempDir::new().unwrap();
++    for (id, messages) in [
++        (
++            "all",
++            vec!["mizu water", "Research findings", "Feed updates"],
++        ),
++        ("first", vec!["mizu water"]),
++        ("rest", vec!["Research findings", "Feed updates"]),
++        (
++            "near",
++            vec!["mizo water", "Research findings", "Feed updates"],
++        ),
++    ] {
++        let path = write_codex_session(temp.path(), id, "/repo/api", "Neutral title");
++        let mut rows = vec![
++            json!({"type":"session_meta","payload":{"id":id,"cwd":"/repo/api"}}),
++            json!({"type":"event_msg","payload":{"type":"user_message","message":"Neutral title"}}),
++        ];
++        for message in messages {
++            rows.push(
++                json!({"type":"event_msg","payload":{"type":"agent_message","message":message}}),
++            );
++        }
++        write_jsonl(&path, &rows);
++    }
++    assert_success(run_fr(temp.path(), &["--json"]));
++    for query in [
++        r#"content:"mizu" content:reserch content:fed"#,
++        r#"content:"mizu" AND content:"research" AND content:"feed""#,
++        "content:'mizu water' AND content:reserch AND content:fed",
++        r#"content:"mizu" content:reserch content:fed agent:codex dir:api"#,
++    ] {
++        let (stdout, _) = assert_success(run_fr(temp.path(), &["--json", "--no-refresh", query]));
++        let value: Value = serde_json::from_str(&stdout).unwrap();
++        assert_eq!(value["meta"]["total"], 1, "query: {query}");
++        assert_eq!(value["sessions"][0]["id"], "all", "query: {query}");
++    }
++    let (stdout, _) = assert_success(run_fr(
++        temp.path(),
++        &[
++            "--json",
++            "--no-refresh",
++            r#"content:"absent" content:reserch content:fed"#,
++        ],
++    ));
++    let value: Value = serde_json::from_str(&stdout).unwrap();
++    assert_eq!(value["meta"]["total"], 0);
++}
++
++#[test]
 +fn cached_codex_subagent_routes_to_main_then_refresh_hides_it() {
 +    let temp = TempDir::new().unwrap();
 +    let root_id = "019abcde-1234-5678-9abc-def012345678";
@@ -3831,7 +4273,7 @@ index 6827c1c..d43d7f9 100644
  #[test]
  fn relative_xdg_cache_home_is_ignored() {
      let temp = TempDir::new().unwrap();
-@@ -841,6 +999,55 @@ fn agent_context_exposes_the_portable_skill() {
+@@ -841,6 +1050,55 @@ fn agent_context_exposes_the_portable_skill() {
      assert!(stdout.contains("meta.next_offset"));
  }
  
