@@ -75,6 +75,8 @@ set -g pane-active-border-style fg=$color_magenta
 setw -g window-status-activity-style fg=$color_tx_1,bg=$color_bg_1,none
 setw -g window-status-separator ""
 setw -g window-status-style fg=$color_tx_1,bg=$color_bg_1,none
+# Keep the current window bold only, without tmux's default underline.
+setw -g window-status-current-style none
 
 # statusline
 set -g status-left "#{?client_prefix,#[fg=#$color_bg_1#,bg=#$color_red],#[fg=#$color_bg_1#,bg=#$color_green]}  #S "
