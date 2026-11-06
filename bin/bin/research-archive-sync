@@ -1,0 +1,4 @@
+#!/bin/sh
+exec "$HOME/Developer/research-archive/bin/research-archive-sync" \
+	--lock-wait 3600 \
+	--replica gachikuku@100.93.87.77:/home/gachikuku/research-archive "$@"
