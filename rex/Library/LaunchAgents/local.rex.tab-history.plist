@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>HOME</key>
+		<string>/Users/gachikuku</string>
+		<key>PATH</key>
+		<string>/usr/bin:/bin</string>
+	</dict>
+	<key>KeepAlive</key>
+	<true/>
+	<key>Label</key>
+	<string>local.rex.tab-history</string>
+	<key>LimitLoadToSessionType</key>
+	<string>Aqua</string>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Applications/Rex Beta.app/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex</string>
+		<string>--autostart=false</string>
+		<string>do</string>
+		<string>/Users/gachikuku/.config/rex/tab-history.lua</string>
+		<string>--all</string>
+		<string>--fail-fast</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/Users/gachikuku/.config/rex/tab-history.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/gachikuku/.config/rex/tab-history.log</string>
+	<key>ThrottleInterval</key>
+	<integer>3</integer>
+</dict>
+</plist>
