@@ -160,6 +160,7 @@ def start_lid_controller() -> int | None:
 
     process = subprocess.Popen(
         ["/bin/sh", LIDCAFFEINATE],
+        env={**os.environ, "LIDCAFFEINATE_RESTORE_SLEEP": "1"},
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,

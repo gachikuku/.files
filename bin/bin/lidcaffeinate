@@ -25,13 +25,29 @@ if [ "$(/usr/bin/id -u)" -eq 0 ]; then
 fi
 
 restore_sleep=1
-if /usr/bin/pmset -g | /usr/bin/grep -q 'SleepDisabled[[:space:]]*1'; then
+# Codex owns a temporary, shared controller and must restore sleep after its
+# last turn, even if a previous controller left the global setting enabled.
+# Standalone callers continue to preserve an already-disabled sleep setting.
+if [ "${LIDCAFFEINATE_RESTORE_SLEEP:-0}" != 1 ] &&
+  /usr/bin/pmset -g | /usr/bin/grep -q 'SleepDisabled[[:space:]]*1'; then
   restore_sleep=0
 fi
 
 runtime_dir=$(/usr/bin/mktemp -d "${TMPDIR:-/tmp}/lidcaffeinate.XXXXXX")
 /bin/chmod 700 "$runtime_dir"
 restore_marker="$runtime_dir/restore-sleep"
+
+restore_sleep_setting() {
+  # A surviving controller may have recovered the flag after another one
+  # stopped. It then owns restoring normal sleep as well.
+  if [ "$restore_sleep" -eq 1 ] || [ -e "$restore_marker" ]; then
+    /usr/bin/sudo -n -- /usr/bin/pmset -a disablesleep 0 ||
+      echo 'lidcaffeinate: could not restore normal sleep' >&2
+  fi
+
+  /bin/rm -f -- "$restore_marker"
+  /bin/rmdir "$runtime_dir" 2>/dev/null || true
+}
 
 cleanup() {
   exit_code=$?
@@ -49,16 +65,7 @@ cleanup() {
     caffeinate_pid=
   fi
 
-  # If another lidcaffeinate instance was stopped while this one remained
-  # active, its cleanup may have reset the global flag. The watchdog records
-  # that transition so the final surviving controller restores normal sleep.
-  if [ "$restore_sleep" -eq 1 ] || [ -e "$restore_marker" ]; then
-    /usr/bin/sudo -n -- /usr/bin/pmset -a disablesleep 0 ||
-      echo 'lidcaffeinate: could not restore normal sleep' >&2
-  fi
-
-  /bin/rm -f -- "$restore_marker"
-  /bin/rmdir "$runtime_dir" 2>/dev/null || true
+  restore_sleep_setting
 
   /usr/bin/pmset -g | /usr/bin/grep SleepDisabled ||
     echo 'SleepDisabled: 0 (normal lid sleep restored)'
@@ -85,7 +92,15 @@ caffeinate_pid=$!
 # restore normal lid sleep when the final controller exits.
 controller_pid=$$
 (
-  while /bin/kill -0 "$caffeinate_pid" 2>/dev/null; do
+  while :; do
+    # SIGKILL bypasses the controller's traps. Do not leave its detached
+    # caffeinate process and global sleep setting alive after the owner dies.
+    if ! /bin/kill -0 "$controller_pid" 2>/dev/null; then
+      /bin/kill -TERM "$caffeinate_pid" 2>/dev/null || true
+      restore_sleep_setting
+      exit 0
+    fi
+    /bin/kill -0 "$caffeinate_pid" 2>/dev/null || exit 0
     current=$(/usr/bin/pmset -g | /usr/bin/awk '/SleepDisabled/{print $2; exit}')
     if [ "${current:-0}" != 1 ]; then
       : > "$restore_marker"
