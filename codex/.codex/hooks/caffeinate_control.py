@@ -9,12 +9,14 @@ import fcntl
 import json
 import os
 from pathlib import Path
+import plistlib
 import signal
 import subprocess
 import sys
 import tempfile
 import time
 from typing import Any
+import uuid
 
 
 CAFFEINATE = "/usr/bin/caffeinate"
@@ -23,6 +25,7 @@ PS = "/bin/ps"
 STATE_ROOT = Path(tempfile.gettempdir()) / f"codex-caffeinate-{os.getuid()}"
 LOCK_PATH = STATE_ROOT / "lock"
 LID_STATE_PATH = STATE_ROOT / "lid-controller.json"
+LID_SLEEP_PATH = STATE_ROOT / "lid-sleep.json"
 MODE_ROOT = Path.home() / ".config" / "codex-awake"
 MODE_PATH = MODE_ROOT / "mode"
 VALID_MODES = {"normal", "lid", "off"}
@@ -216,10 +219,83 @@ def stop_existing(path: Path) -> None:
         stop_lid_controller_if_unused()
 
 
+def renew_lid_sleep_request() -> str:
+    token = uuid.uuid4().hex
+    write_state(LID_SLEEP_PATH, {"token": token})
+    return token
+
+
+def schedule_lid_sleep(stopped_state: dict[str, Any]) -> str | None:
+    # Keep the lid-mode obligation until every overlapping turn has finished,
+    # including turns that selected normal mode. An untracked Stop adds none.
+    if stopped_state.get("mode") != "lid" and not LID_SLEEP_PATH.exists():
+        return None
+    token = renew_lid_sleep_request()
+    prune_dead_sessions()
+    if any(STATE_ROOT.glob("session-*.json")):
+        return None
+    try:
+        subprocess.Popen(
+            [sys.executable, str(Path(__file__).resolve()), "sleep-if-idle", token],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+            close_fds=True,
+        )
+    except OSError:
+        return "Codex keep-awake could not schedule closed-lid sleep."
+    return None
+
+
+def sleep_if_idle(token: str) -> int:
+    # Let the Stop hook return before sleeping. A new prompt invalidates the
+    # token, even if that newer turn also finishes during this short delay.
+    time.sleep(1)
+    with state_lock():
+        pending = read_state(LID_SLEEP_PATH)
+        if pending is None or pending.get("token") != token:
+            return 0
+        prune_dead_sessions()
+        if any(STATE_ROOT.glob("session-*.json")):
+            return 0
+        try:
+            result = subprocess.run(
+                ["/usr/sbin/ioreg", "-a", "-r", "-c", "IOPMrootDomain", "-d", "1"],
+                check=False, capture_output=True, timeout=2,
+            )
+            if result.returncode != 0:
+                return 0
+            roots = plistlib.loads(result.stdout)
+            if not isinstance(roots, list) or not roots or not isinstance(roots[0], dict):
+                return 0
+            power = roots[0]
+            if power.get("AppleClamshellState") is False:
+                LID_SLEEP_PATH.unlink(missing_ok=True)
+                return 0
+            if (
+                power.get("AppleClamshellState") is not True
+                or power.get("SleepDisabled") is not False
+            ):
+                return 0
+            # Hold the same lock used by prompt starts through the request so
+            # another task cannot begin between the idle check and sleep.
+            LID_SLEEP_PATH.unlink(missing_ok=True)
+            result = subprocess.run(
+                ["/usr/bin/sudo", "-n", "--", "/usr/bin/pmset", "sleepnow"],
+                check=False, capture_output=True, timeout=5,
+            )
+            return result.returncode
+        except (OSError, ValueError, plistlib.InvalidFileException, subprocess.TimeoutExpired):
+            return 1
+
+
 def start(path: Path, event: dict[str, Any]) -> str | None:
+    mode = selected_mode()
+    if mode == "lid" or LID_SLEEP_PATH.exists():
+        renew_lid_sleep_request()
     prune_dead_sessions()
     stop_existing(path)
-    mode = selected_mode()
 
     state = {
         "session_id": event.get("session_id"),
@@ -319,6 +395,8 @@ def show_status() -> int:
 
 
 def run_cli(arguments: list[str]) -> int:
+    if len(arguments) == 2 and arguments[0] == "sleep-if-idle":
+        return sleep_if_idle(arguments[1])
     if len(arguments) != 1:
         print("Usage: codex-awake {normal|lid|off|status}", file=sys.stderr)
         return 2
@@ -345,10 +423,13 @@ def main() -> int:
         if event_name == "UserPromptSubmit":
             warning = start(path, event)
         elif event_name in {"Stop", "Interrupt", "SessionEnd"}:
+            stopped_state = read_state(path)
             stop_existing(path)
+            if stopped_state is not None:
+                warning = schedule_lid_sleep(stopped_state)
 
     # Stop hooks require JSON (or no output) on successful exit.
-    print(json.dumps({"systemMessage": warning}) if warning else "{}")
+    print(json.dumps({"systemMessage": warning}) if warning else "{}", flush=True)
     return 0
 
 

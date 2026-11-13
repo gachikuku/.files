@@ -204,6 +204,7 @@ def main() -> int:
         control.STATE_ROOT = Path(temporary)
         control.LOCK_PATH = control.STATE_ROOT / "lock"
         control.LID_STATE_PATH = control.STATE_ROOT / "lid-controller.json"
+        control.LID_SLEEP_PATH = control.STATE_ROOT / "lid-sleep.json"
         control.selected_mode = lambda: "lid"
         owner_command = control.process_command(os.getpid())
         control.codex_owner = lambda: (os.getpid(), owner_command)

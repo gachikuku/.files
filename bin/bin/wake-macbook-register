@@ -1,0 +1,21 @@
+#!/bin/sh
+# Read network identity before launching Python: macOS may mask the Wi-Fi MAC
+# as 02:00:00:00:00:00 in subprocesses attributed to the Python interpreter.
+set -eu
+
+wake_hardware=$(/usr/sbin/networksetup -getmacaddress en0 | /usr/bin/awk '$1 == "Ethernet" && $2 == "Address:" {print $3; exit}')
+wake_wifi=$(/sbin/ifconfig en0 | /usr/bin/awk '$1 == "ether" {print $2; exit}')
+wake_ipv4=$(/usr/sbin/ipconfig getifaddr en0)
+
+if [ -z "$wake_hardware" ] || [ -z "$wake_wifi" ] || [ -z "$wake_ipv4" ] || [ "$wake_wifi" = 02:00:00:00:00:00 ]; then
+  echo 'wake-macbook-register: could not read the home Wi-Fi address; run this command from your terminal while connected to home Wi-Fi.' >&2
+  exit 1
+fi
+
+/run/current-system/sw/bin/python3 - "$wake_hardware" "$wake_wifi" "$wake_ipv4" <<'PY' |
+import json, sys
+print(json.dumps(dict(zip(("hardware_mac", "wifi_mac", "ipv4"), sys.argv[1:]))))
+PY
+  /usr/bin/ssh -T -o RemoteCommand=none -o RequestTTY=no \
+    -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes \
+    pi '/usr/local/bin/wake-macbook --register'

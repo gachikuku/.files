@@ -1,6 +1,7 @@
 -- Run under launchd: rex --autostart=false do tab-history.lua --all --fail-fast
 local path = os.getenv("HOME") .. "/.config/rex/tab-history-state.json"
 local state = { version = 1, sessions = {} }
+local copy_snapshot = dofile(os.getenv("HOME") .. "/.config/rex/copy-snapshot.lua")
 local file = io.open(path, "r")
 if file then
   local ok, saved = pcall(rex.json.decode, file:read("*a"))
@@ -93,6 +94,10 @@ rex.on("session_destroyed", function(_, ev)
   save()
 end)
 
+rex.on("block_closed", function(_, ev)
+  copy_snapshot.closed(ev.block_id)
+end)
+
 local sessions, err = rex.call("session.list", {})
 if not sessions then error(err) end
 local live_sessions = {}
@@ -104,3 +109,4 @@ for session_id in pairs(state.sessions) do
   if not live_sessions[session_id] then state.sessions[session_id] = nil end
 end
 save()
+copy_snapshot.sweep()

@@ -1,12 +1,27 @@
 -- Browser-style close/reopen, retaining the same terminal processes.
-local helper = os.getenv("HOME") .. "/.config/rex/closed-tabs.py"
+local root = os.getenv("HOME") .. "/.config/rex/"
+local cli = "/Applications/Rex Beta.app/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex"
+local copy_mode = require("copy-mode")
 
 local function perform(operation, ctx)
-  local result, err = rex.exec({ "/usr/bin/python3", helper, operation,
-    ctx.session_id, ctx.block_id or "" }, { timeout = 30 })
+  if operation == "close" then
+    local overlay = copy_mode.dismiss_if_active(ctx)
+    if overlay.closed then return overlay end
+  end
+  -- Kernel flock coordinates actions and expiry, including during migration.
+  -- One local Lua worker uses direct APIs over a single Rex connection.
+  local result, err = rex.exec({ "/usr/bin/lockf", "-k", "-s", "-t", "0",
+    root .. "closed-tabs.lock", cli, "--autostart=false", "do",
+    root .. "closed-tabs-worker.lua", "--all", "--json",
+    "operation=" .. operation, "session_id=" .. ctx.session_id,
+    "block_id=" .. (ctx.block_id or "") }, { timeout = 28 })
   if not result then error(err) end
-  if not result.ok then error(result.stderr) end
-  local outcome = rex.json.decode(result.stdout)
+  if not result.ok then
+    if result.code == 75 then error("Another tab operation is running; please retry.", 0) end
+    error(result.stderr ~= "" and result.stderr or "Retained-tab operation failed.", 0)
+  end
+  local outcome, decode_err = rex.json.decode(result.stdout)
+  if not outcome then error(decode_err, 0) end
   if outcome.changed and outcome.window_id and ctx.client_id then
     rex.client.queue("session.select", {
       session_id = outcome.session_id, window_id = outcome.window_id,

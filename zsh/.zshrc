@@ -13,6 +13,9 @@ path=(
   /opt/homebrew/bin
   /opt/homebrew/sbin
 
+  # Rex CLI bundled with the macOS DMG app.
+  "/Applications/Rex Beta.app/Contents/Helpers/Rex Server.rex/Contents/MacOS"
+
   # Nix-managed system tools (including Python environments with modules).
   /run/current-system/sw/bin
 

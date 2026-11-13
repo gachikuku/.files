@@ -6,9 +6,19 @@
     <string>local.rex.closed-tabs-expiry</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
-        <string>/Users/gachikuku/.config/rex/closed-tabs.py</string>
-        <string>expire</string>
+        <string>/usr/bin/lockf</string>
+        <string>-k</string>
+        <string>-s</string>
+        <string>-t</string>
+        <string>0</string>
+        <string>/Users/gachikuku/.config/rex/closed-tabs.lock</string>
+        <string>/Applications/Rex Beta.app/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex</string>
+        <string>--autostart=false</string>
+        <string>do</string>
+        <string>/Users/gachikuku/.config/rex/closed-tabs-worker.lua</string>
+        <string>--all</string>
+        <string>--json</string>
+        <string>operation=expire</string>
     </array>
     <key>EnvironmentVariables</key>
     <dict>

@@ -11,3 +11,6 @@ rex.bind("ctrl+s>space", "last_visited_tab")
 require("closed-tabs")
 rex.bind("cmd+w", "retain_closed_tab")
 rex.bind("cmd+shift+t", "reopen_closed_tab")
+
+require("copy-mode")
+rex.bind("ctrl+s>[", "keyboard_copy_mode")

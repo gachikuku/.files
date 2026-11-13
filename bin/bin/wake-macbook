@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""Send MacBook wake packets from the Raspberry Pi's local network."""
+
+import argparse
+from datetime import datetime, timezone
+import ipaddress
+import json
+import os
+from pathlib import Path
+import re
+import socket
+import subprocess
+import sys
+import time
+
+
+CONFIG = Path.home() / ".config/wake-macbook/config.json"
+
+
+def command_json(arguments):
+    result = subprocess.run(arguments, check=True, capture_output=True, timeout=5)
+    return json.loads(result.stdout)
+
+
+def lan_address():
+    routes = command_json(["ip", "-j", "-4", "route", "show", "table", "main", "default"])
+    for route in sorted(routes, key=lambda item: item.get("metric", 0)):
+        device = route.get("dev", "")
+        if not device or device.startswith(("lo", "tailscale", "docker", "veth", "wg", "tun", "br-")):
+            continue
+        interfaces = command_json(["ip", "-j", "-4", "address", "show", "dev", device])
+        for interface in interfaces:
+            if "BROADCAST" not in interface.get("flags", []) or "UP" not in interface.get("flags", []):
+                continue
+            for address in interface.get("addr_info", []):
+                if address.get("family") == "inet" and address.get("scope") == "global" and address.get("broadcast"):
+                    local = ipaddress.IPv4Interface(f"{address['local']}/{address['prefixlen']}")
+                    return device, local, str(local.network.broadcast_address)
+    raise ValueError("No active LAN interface with an IPv4 broadcast address was found.")
+
+
+def normalize_mac(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}", value):
+        raise ValueError("Expected a MAC address such as 84:2f:57:3e:80:c6.")
+    raw = bytes.fromhex(value.replace(":", ""))
+    if raw == bytes(6) or raw[0] & 1:
+        raise ValueError("The target MAC address must identify one network adapter.")
+    return value.lower()
+
+
+def magic_packet(mac):
+    return b"\xff" * 6 + bytes.fromhex(normalize_mac(mac).replace(":", "")) * 16
+
+
+def save_config(config):
+    CONFIG.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    temporary = CONFIG.with_name(f"config.{os.getpid()}.tmp")
+    try:
+        with temporary.open("w", encoding="utf-8") as stream:
+            os.chmod(temporary, 0o600)
+            json.dump(config, stream, indent=2)
+            stream.write("\n")
+        os.replace(temporary, CONFIG)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def register(device, local):
+    request = json.load(sys.stdin)
+    if not isinstance(request, dict):
+        raise ValueError("Registration must be a JSON object.")
+    macs = list(dict.fromkeys(normalize_mac(request[key]) for key in ("hardware_mac", "wifi_mac")))
+    address = ipaddress.IPv4Address(request["ipv4"])
+    if address not in local.network or address in (local.ip, local.network.network_address, local.network.broadcast_address):
+        raise ValueError(f"Mac address {address} is not on the Pi's home LAN {local.network}. Run registration when the Mac is home.")
+    # Resolve the actual LAN neighbor as well: matching private subnets alone
+    # does not prove the Mac and Pi are physically on the same network.
+    subprocess.run(["ping", "-c", "1", "-W", "1", str(address)], check=False, capture_output=True, timeout=3)
+    neighbors = command_json(["ip", "-j", "neigh", "show", "to", str(address), "dev", device])
+    if not any(neighbor.get("lladdr", "").lower() in macs for neighbor in neighbors):
+        raise ValueError("The Pi could not verify the Mac's local network address. Keep the Mac awake on the same home LAN and retry.")
+    save_config({
+        "macs": macs,
+        "mac_ipv4": str(address),
+        "network": str(local.network),
+        "registered_at": datetime.now(timezone.utc).isoformat(),
+    })
+    print(f"Registered MacBook on {local.network}: {', '.join(macs)}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument("--register", action="store_true", help="read Mac address registration JSON from stdin")
+    action.add_argument("--status", action="store_true", help="show the saved target and Pi LAN")
+    action.add_argument("--dry-run", action="store_true", help="validate and show packets without sending")
+    arguments = parser.parse_args()
+    try:
+        device, local, broadcast = lan_address()
+        if arguments.register:
+            register(device, local)
+            return 0
+        config = json.loads(CONFIG.read_text(encoding="utf-8"))
+        macs = list(dict.fromkeys(normalize_mac(mac) for mac in config["macs"]))
+        if not macs:
+            raise ValueError("No target MAC addresses are configured.")
+        print(f"Pi LAN: {device}, {local}; broadcast {broadcast}:9")
+        print(f"MacBook targets: {', '.join(macs)}")
+        registered = bool(config.get("registered_at"))
+        if registered and config.get("network") != str(local.network):
+            raise ValueError("The Pi's LAN has changed. Register the MacBook again before waking it.")
+        print("Home Wi-Fi registration: " + (config["registered_at"] if registered else "pending; hardware MAC only"))
+        if arguments.status:
+            return 0
+        packets = [magic_packet(mac) for mac in macs]
+        if arguments.dry_run:
+            print(f"Dry run: would send 3 rounds of {len(packets)} x 102-byte magic packets.")
+            return 0
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sender:
+            sender.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            sender.bind((str(local.ip), 0))
+            for round_number in range(3):
+                for packet in packets:
+                    sender.sendto(packet, (broadcast, 9))
+                if round_number != 2:
+                    time.sleep(0.2)
+        print(f"Sent {3 * len(packets)} wake packets. Connect through SSH or Rex after the Mac wakes.")
+        print("Sending packets alone does not confirm that the Mac woke.")
+        return 0
+    except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
+        print(f"wake-macbook: {error}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
