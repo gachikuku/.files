@@ -1,0 +1,7 @@
+# This tab is a viewer: keep file-management and external-open actions disabled.
+[mgr]
+keymap = [
+  { on = "q", run = "quit", desc = "Close image tab" },
+  { on = "<Esc>", run = "quit", desc = "Close image tab" },
+  { on = "<C-c>", run = "quit", desc = "Close image tab" },
+]

@@ -163,18 +163,25 @@ def start_lid_controller() -> int | None:
 
     process = subprocess.Popen(
         ["/bin/sh", LIDCAFFEINATE],
-        env={**os.environ, "LIDCAFFEINATE_RESTORE_SLEEP": "1"},
+        env={
+            **os.environ,
+            "LIDCAFFEINATE_RESTORE_SLEEP": "1",
+            "LIDCAFFEINATE_STATE_FILE": str(LID_STATE_PATH),
+        },
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         start_new_session=True,
         close_fds=True,
     )
+    # Publish ownership immediately. The shell watchdog retires a controller
+    # whose record disappears or is replaced, even if this hook is interrupted.
+    write_state(LID_STATE_PATH, {"pid": process.pid, "command": expected})
     time.sleep(0.15)
     if process.poll() is not None:
+        LID_STATE_PATH.unlink(missing_ok=True)
         return None
 
-    write_state(LID_STATE_PATH, {"pid": process.pid, "command": expected})
     return process.pid
 
 

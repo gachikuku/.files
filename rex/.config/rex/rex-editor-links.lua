@@ -1,4 +1,4 @@
--- Command-Shift-click a local file in Rex to view it with less in a new Rex tab.
+-- Command-Shift-click opens text in less and images in Yazi, in a new Rex tab.
 local M = {}
 local root = os.getenv("HOME") .. "/.config/rex/"
 local paths = dofile(root .. "file-at-click.lua")
@@ -60,6 +60,19 @@ local function terminal_at(element, point, depth)
   end
 end
 
+local function pane_context(element)
+  local frame, layout = element.AXFrame, nil
+  local parent = element.AXParent
+  for _ = 1, 12 do
+    if not parent then break end
+    if parent.AXRole == "AXSplitGroup" then layout = parent.AXFrame end
+    parent = parent.AXParent
+  end
+  if not frame or not layout or layout.w <= 0 or layout.h <= 0 then return end
+  return { x = (frame.x - layout.x) / layout.w, y = (frame.y - layout.y) / layout.h,
+    w = frame.w / layout.w, h = frame.h / layout.h }
+end
+
 function M.fileAtPoint(point)
   local app = hs.application.frontmostApplication()
   if not app or app:bundleID() ~= bundle then return end
@@ -81,6 +94,11 @@ function M.fileAtPoint(point)
   if not byteIndex then return end
   local filename, line = paths.find(text, byteIndex, regular_file)
   if filename then return filename, line, element, app:pid() end
+  local candidates = paths.candidates(text, byteIndex)
+  if #candidates > 0 then
+    local pane = pane_context(element)
+    if pane then return { candidates = candidates, pane = pane }, nil, element, app:pid() end
+  end
 end
 
 function M.open(filename, line, element, pid)
@@ -89,7 +107,13 @@ function M.open(filename, line, element, pid)
   local title = window and window.AXTitle
   if not title then fail("Could not identify the Rex window."); return end
   M.busy = true
-  local args = hs.json.encode({ path = filename, line = line or 0, title = title, pid = pid })
+  local request = { title = title, pid = pid, line = line or 0 }
+  if type(filename) == "table" then
+    request.candidates, request.pane = filename.candidates, filename.pane
+  else
+    request.path = filename
+  end
+  local args = hs.json.encode(request)
   run(rex, { "--autostart=false", "do", root .. "open-file.lua", "--args", args, "--json" }, function(created)
     M.lastOpened = hs.json.decode(created)
     M.busy = false

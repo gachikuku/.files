@@ -178,6 +178,76 @@ def abrupt_controller_death(fixture: Fixture) -> None:
     fixture.assert_stopped()
 
 
+def assert_orphan_released(fixture: Fixture, path: Path) -> None:
+    # Do not call Stop: loss of controller ownership must release the real
+    # power setting and all children without another hook coming along.
+    wait_until(
+        lambda: sleep_disabled() == 0,
+        "untracked controller kept SleepDisabled=1",
+    )
+    wait_until(
+        lambda: all(
+            fixture.control.process_command(pid) != command
+            for pid, command in fixture.owned.items()
+        ),
+        "untracked controller or a child survived losing ownership",
+    )
+    # Only clear isolated metadata after autonomous release was observed.
+    path.unlink(missing_ok=True)
+    fixture.control.LID_STATE_PATH.unlink(missing_ok=True)
+    fixture.assert_stopped()
+
+
+def deleted_controller_state(fixture: Fixture) -> None:
+    set_sleep_disabled(0)
+    path = fixture.start("deleted-controller-state")
+    with fixture.control.state_lock():
+        fixture.control.LID_STATE_PATH.unlink()
+    assert_orphan_released(fixture, path)
+
+
+def deleted_final_session(fixture: Fixture) -> None:
+    set_sleep_disabled(0)
+    path = fixture.start("deleted-final-session")
+    with fixture.control.state_lock():
+        path.unlink()
+    assert fixture.control.LID_STATE_PATH.exists()
+    assert_orphan_released(fixture, path)
+
+
+def replaced_controller_state(fixture: Fixture) -> None:
+    set_sleep_disabled(0)
+    path = fixture.start("replaced-controller-state")
+    # A different PID is now recorded as the owner. The existing process must
+    # retire even though its own PID and caffeinate child are still alive.
+    with fixture.control.state_lock():
+        fixture.control.write_state(
+            fixture.control.LID_STATE_PATH,
+            {"pid": os.getpid(), "command": "replacement-test-owner"},
+        )
+    assert_orphan_released(fixture, path)
+
+
+def live_replacement_keeps_protection(fixture: Fixture) -> None:
+    set_sleep_disabled(0)
+    path = fixture.start("live-replacement")
+    old_processes = dict(fixture.owned)
+    with fixture.control.state_lock():
+        fixture.control.LID_STATE_PATH.unlink()
+        replacement = fixture.control.start_lid_controller()
+    assert replacement is not None
+    fixture.remember_processes(replacement)
+    deadline = time.monotonic() + 5
+    while any(fixture.control.process_command(pid) == command for pid, command in old_processes.items()):
+        assert sleep_disabled() == 1, "obsolete controller cleared its replacement's protection"
+        assert time.monotonic() < deadline, "obsolete controller did not retire"
+        time.sleep(0.05)
+    assert sleep_disabled() == 1
+    assert fixture.control.process_command(replacement) is not None
+    fixture.stop(path)
+    fixture.assert_stopped()
+
+
 def main() -> int:
     sys.dont_write_bytecode = True
     module_path = (
@@ -215,6 +285,10 @@ def main() -> int:
                 inherited_stale_flag,
                 overlapping_sessions,
                 abrupt_controller_death,
+                deleted_controller_state,
+                deleted_final_session,
+                replaced_controller_state,
+                live_replacement_keeps_protection,
             ):
                 try:
                     test(fixture)

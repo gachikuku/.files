@@ -1,0 +1,17 @@
+# Dedicated Rex image tabs; the normal Yazi configuration is separate.
+[mgr]
+ratio = [0, 0, 1]
+show_hidden = true
+mouse_events = []
+
+[preview]
+max_width = 8192
+max_height = 8192
+image_delay = 0
+image_quality = 90
+cache_dir = "/Users/gachikuku/Library/Caches/rex-image-viewer"
+
+[plugin]
+prepend_previewers = [
+  { mime = "image/{png,jpeg,gif,webp,tiff,bmp,x-ms-bmp,x-icon}", run = "fit-image" },
+]
